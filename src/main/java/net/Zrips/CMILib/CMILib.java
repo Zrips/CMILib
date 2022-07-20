@@ -235,9 +235,9 @@ public class CMILib extends JavaPlugin {
 
 			@Override
 			public void failedDownload() {
-			    CMIMessages.consoleMessage("&eAuto CMILib downloader failed");
-			    CMIMessages.consoleMessage("&eSome plugins might not work peroperly without newest version");
-			    CMIMessages.consoleMessage("&eDownloading it from: https://www.zrips.net/CMILib/CMILib" + version + ".jar");
+			    CMIMessages.consoleMessage("&eThe attempt to automatically download CMILib has failed");
+			    CMIMessages.consoleMessage("&eSome plugins might not work properly without the newest version");
+			    CMIMessages.consoleMessage("&eYou can download it manually from: https://www.zrips.net/CMILib/CMILib" + version + ".jar");
 			}
 		    };
 		    downloader.downloadUsingStream("https://www.zrips.net/CMILib/CMILib" + version + ".jar", file.getPath(), false);
