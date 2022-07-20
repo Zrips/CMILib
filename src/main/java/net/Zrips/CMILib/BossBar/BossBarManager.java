@@ -187,11 +187,12 @@ public class BossBarManager {
 			    }
 			    Bukkit.getScheduler().runTask(plugin, () -> {
 				if (CMILib.getInstance().isCmiPresent()) {
-				    if (player != null) {
-					com.Zrips.CMI.CMI.getInstance().getSpecializedCommandManager().processCmds(barInfo.getCommands(player), player);
-				    } else {
-					com.Zrips.CMI.CMI.getInstance().getSpecializedCommandManager().processCmds(barInfo.getCommands(null), Bukkit.getConsoleSender());
-				    }
+						    // Fix
+//				    if (player != null) {
+//					com.Zrips.CMI.CMI.getInstance().getSpecializedCommandManager().processCmds(barInfo.getCommands(player), player);
+//				    } else {
+//					com.Zrips.CMI.CMI.getInstance().getSpecializedCommandManager().processCmds(barInfo.getCommands(null), Bukkit.getConsoleSender());
+//				    }
 				} else {
 				    if (player != null) {
 					CMICommand.performCommand(player, barInfo.getCommands(player), CommandType.bossbar);

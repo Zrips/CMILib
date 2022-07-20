@@ -1,8 +1,6 @@
 package net.Zrips.CMILib.Container;
 
 import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import org.bukkit.Axis;
 import org.bukkit.Location;
@@ -11,17 +9,11 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Waterlogged;
 import org.bukkit.block.data.type.Stairs.Shape;
-import org.bukkit.craftbukkit.v1_19_R1.block.data.CraftBlockData;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
-import com.Zrips.CMI.Containers.BlockStateType;
-import com.google.common.collect.ImmutableMap;
-
 import net.Zrips.CMILib.Items.CMIMaterial;
 import net.Zrips.CMILib.Version.Version;
-import net.minecraft.world.level.block.state.IBlockData;
-import net.minecraft.world.level.block.state.properties.IBlockState;
 
 public class CMIBlock {
     public static enum blockDirection {

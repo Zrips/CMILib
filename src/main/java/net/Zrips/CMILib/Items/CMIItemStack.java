@@ -39,10 +39,10 @@ import net.Zrips.CMILib.Attributes.AttributeType;
 import net.Zrips.CMILib.Colors.CMIChatColor;
 import net.Zrips.CMILib.Colors.CMIColors;
 import net.Zrips.CMILib.Container.CMIText;
+import net.Zrips.CMILib.Container.LeatherAnimationType;
 import net.Zrips.CMILib.Enchants.CMIEnchantment;
 import net.Zrips.CMILib.Entities.CMIEntity;
 import net.Zrips.CMILib.Entities.CMIEntityType;
-import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.Recipes.CMIRecipe;
 import net.Zrips.CMILib.Recipes.CMIRecipeIngredient;
@@ -1061,12 +1061,8 @@ public class CMIItemStack {
 			    }
 
 			    if (cmic == null && CMILib.getInstance().isCmiPresent()) {
-				com.Zrips.CMI.Modules.Animations.AnimationManager.LeatherAnimationType custom = com.Zrips.CMI.Modules.Animations.AnimationManager.LeatherAnimationType.getByName(c);
+				LeatherAnimationType custom = LeatherAnimationType.getByName(c);
 				if (custom != null) {
-//				    ItemStack titem = com.Zrips.CMI.commands.list.dye.setCustom(sender, sender instanceof Player ? (Player) sender : null, cim.getItemStack(), custom);
-//				    if (titem != null) {
-//					cim.setItemStack(titem);
-//				    }
 				    continue;
 				}
 			    }

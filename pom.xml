@@ -18,14 +18,14 @@
 			<version>1.19-R0.1-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
-		<!-- CMI -->
+		<!-- CMI 
 		<dependency>
 			<groupId>net.Zrips</groupId>
 			<artifactId>CMI</artifactId>
 			<version>latest</version>
 			<scope>system</scope>
 			<systemPath>${basedir}/libs/CMI9.0.0.0API.jar</systemPath>
-		</dependency>
+		</dependency> -->
 		<!-- PlaceholderAPI -->
 		<dependency>
 			<groupId>me.clip</groupId>
@@ -41,7 +41,6 @@
 		</dependency>
 	</dependencies>
 	<repositories>
-		<!-- CMI -->
 		<repository>
 			<id>spigot-repo</id>
 			<url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>

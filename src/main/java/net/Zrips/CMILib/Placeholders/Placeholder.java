@@ -280,7 +280,7 @@ public class Placeholder {
 	}
 	if (message.contains("%"))
 	    message = translateOwnPlaceHolder(uuid, message);
-	
+
 	if (plugin.isPlaceholderAPIEnabled()) {
 	    try {
 		if (message.contains("%")) {
@@ -360,7 +360,6 @@ public class Placeholder {
 	return message;
     }
 
-
     public boolean containsPlaceHolder(String msg) {
 
 	Matcher match = placeholderPatern.matcher(msg);
@@ -438,9 +437,10 @@ public class Placeholder {
     public String translateOwnPlaceHolder(UUID uuid, String message) {
 	if (message == null)
 	    return null;
-	if (CMILib.getInstance().isCmiPresent()) {
-	    message = com.Zrips.CMI.CMI.getInstance().getPlaceholderAPIManager().translateOwnPlaceHolder(uuid, message); 
-	}
+	// Fix
+//	if (CMILib.getInstance().isCmiPresent()) {
+//	    message = com.Zrips.CMI.CMI.getInstance().getPlaceholderAPIManager().translateOwnPlaceHolder(uuid, message); 
+//	}
 	if (message.contains("{")) {
 
 	    // Duplicated code

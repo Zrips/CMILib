@@ -35,7 +35,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.scoreboard.Scoreboard;
 
-import com.Zrips.CMI.CMI;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonElement;
 import com.mojang.authlib.properties.Property;
@@ -1217,7 +1216,7 @@ public class Reflections {
 		    // EntityHuman -> Container
 		    Field field = entityplayer.getClass().getField("bU");
 		    Object container = this.CraftContainer.cast(field.get(entityplayer));
-		    Method field2 = container.getClass().getMethod("j"); 
+		    Method field2 = container.getClass().getMethod("j");
 		    Object ids = field2.invoke(container);
 		    return (int) ids;
 		} catch (Throwable e) {
@@ -1819,9 +1818,10 @@ public class Reflections {
 		e.printStackTrace();
 	    }
 	} else {
-	    if (plugin.isCmiPresent()) {
-		CMI.getInstance().getNMS().loadAdvancement(key, advancement);
-	    }
+	    // Fix
+//	    if (plugin.isCmiPresent()) {
+//		CMI.getInstance().getNMS().loadAdvancement(key, advancement);
+//	    }
 	}
 //	Object minecraftkey = CraftNamespacedKey.getClass().getMethod("toMinecraft", NamespacedKey.class).invoke(CraftNamespacedKey, key);
 //	

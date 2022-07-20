@@ -318,11 +318,12 @@ public class ItemManager {
 						lskullMeta.setOwningPlayer(offlineP);
 						lskull.setItemMeta(lskullMeta);
 						if (Version.isCurrentEqualOrHigher(Version.v1_17_R1) && CMILib.getInstance().isCmiPresent()) {
-						    com.Zrips.CMI.Modules.Skin.CMISkin skin = com.Zrips.CMI.CMI.getInstance().getSkinManager().getSkin(d);
-						    if (skin != null) {
-							lskull = CMILib.getInstance().getReflectionManager().setSkullTexture(lskull, offlineP.getName(), skin.getSkin());
-							lskullMeta = (SkullMeta) lskull.getItemMeta();
-						    }
+						    // Fix
+//						    com.Zrips.CMI.Modules.Skin.CMISkin skin = com.Zrips.CMI.CMI.getInstance().getSkinManager().getSkin(d);
+//						    if (skin != null) {
+//							lskull = CMILib.getInstance().getReflectionManager().setSkullTexture(lskull, offlineP.getName(), skin.getSkin());
+//							lskullMeta = (SkullMeta) lskull.getItemMeta();
+//						    }
 						}
 
 						CMINBT nbt = new CMINBT(lskull);
@@ -387,11 +388,13 @@ public class ItemManager {
 						    lskull.setItemMeta(lskullMeta);
 
 						    if (Version.isCurrentEqualOrHigher(Version.v1_17_R1) && CMILib.getInstance().isCmiPresent()) {
-							com.Zrips.CMI.Modules.Skin.CMISkin skin = com.Zrips.CMI.CMI.getInstance().getSkinManager().getSkin(offlineP.getName());
-							if (skin != null) {
-							    lskull = CMILib.getInstance().getReflectionManager().setSkullTexture(lskull, offlineP.getName(), skin.getSkin());
-							    lskullMeta = (SkullMeta) lskull.getItemMeta();
-							}
+
+							// Fix
+//							com.Zrips.CMI.Modules.Skin.CMISkin skin = com.Zrips.CMI.CMI.getInstance().getSkinManager().getSkin(offlineP.getName());
+//							if (skin != null) {
+//							    lskull = CMILib.getInstance().getReflectionManager().setSkullTexture(lskull, offlineP.getName(), skin.getSkin());
+//							    lskullMeta = (SkullMeta) lskull.getItemMeta();
+//							}
 						    }
 
 						    CMINBT nbt = new CMINBT(lskull);
