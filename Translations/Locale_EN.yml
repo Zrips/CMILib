@@ -1,7 +1,7 @@
-# Full color code support and some variables
-# Keep in mind that variables wont work for some lines, when it will for anothers :)
-# Just keep them where there are now and everything will be ok :)
-# Some lines can have global variables set. For player who will be effected. In example /heal Zrips then Zrips data will be used
+# The phrases support full color (hex) code, and some variables.
+# Keep in mind that some variables will not work for certain lines.
+# Just keep them where there are now and everything will be okay :)
+# Some lines can have global variables set. For the player who will be affected. For example /heal Zrips then Zrips will be used as variable
 # [serverName] to show server name
 # [playerName] to show target player name
 # [playerDisplayName] to show target player display name
@@ -13,7 +13,7 @@
 # [gameMode] to show target player gamemode
 # [prefix] to show target player prefix if possible
 # [suffix] to show target player suffix if possible
-# Sender is console or player who performs command. In example Zrips performs /heal Zhax then Zrips data will be used
+# Sender is console or player who performs the command. For example Zrips performs /heal Zhax then Zrips data will be used
 # [senderName] to show Sender player name
 # [senderDisplayName] to show Sender player display name
 # [senderLvl] to show Sender player level
@@ -24,7 +24,7 @@
 # [senderGameMode] to show Sender player gamemode
 # [senderPrefix] to show Sender player prefix if possible
 # [senderSuffix] to show Sender player suffix if possible
-# Source is player which is being used for extra info. In example Zrips performs /tp Zhax Zrips then Zhax data will be used as its location is being taken for new player location
+# Source is player which is being used for extra info. For example Zrips performs /tp Zhax Zrips then Zhax data will be used as its location is being taken for the new player location
 # [sourceName] to show source player name
 # [sourceDisplayName] to show source player display name
 # [sourceLvl] to show source player level
@@ -36,14 +36,14 @@
 # [sourcePrefix] to show source player prefix if possible
 # [sourceSuffix] to show source player suffix if possible
 # ***********************************************
-# Some lines supports option to send them to custom places, like action bar, title, sub title or even create JSON/clickable messages
-# If line starts with !toast! then player will get toast message (advancement popup, only 1.12 and up). Some extra variables can be used to define type and icon. example: !toast! -t:goal -icon:paper Hello world!
-# If line starts with !actionbar! then player will get action bar message defined after this variable
-# If line starts with !actionbar:[seconds]! then player will get action bar message for defined amount of time
-# If line starts with !broadcast! then everyone will receive message. You can add extra !toast! !actionbar! or !title! to send message for everyone to specific place, in example !broadcast!!title!
-# If line starts with !customtext:[cTextName]! then custom text will be taken by name provided and shown for player. In case its used after !broadcast! then everyone who is online will get this custom text message
-# If line starts with !title! then player will get title message defined after this variable, in addition it can contain !subtitle! which will add subtitle message
-# If line starts with !bosbar:[name]-[timer]! then player will get bossbar message defined after this variable, in addition you can define how long this message will be visible. You need to define bossbar name which can be anything you want, but lines with same name will override each other to prevent stacking
+# Some lines support the option to send them to custom places, like action bar, title, sub-title, or even create JSON/clickable messages
+# If the line starts with !toast! then player will get toast message (advancement popup, only 1.12 and up). Some extra variables can be used to define type and icon. example: !toast! -t:goal -icon:paper Hello world!
+# If the line starts with !actionbar! then player will get action bar message defined after this variable
+# If the line starts with !actionbar:[seconds]! then player will get action bar message for a defined amount of time
+# If the line starts with !broadcast! then everyone will receive message. You can add extra !toast! !actionbar! or !title! to send message for everyone to specific place, For example !broadcast!!title!
+# If the line starts with !customtext:[cTextName]! then custom text will be taken by name provided and shown for player. In case it is used after !broadcast! then everyone who is online will get this custom text message
+# If the line starts with !title! then player will get title message defined after this variable, in addition it can contain !subtitle! which will add subtitle message
+# If the line starts with !bossbar:[name]-[timer]! then player will get bossbar message defined after this variable, in addition you can define how long this message will be visible. You need to define bossbar name which can be anything you want, but lines with the same name will override each other to prevent stacking
 # To include clickable messages: <T>Text</T><H>Hover text</H><C>command</C><SC>Suggested text</SC>
 # <T> and </T> required, other is optional
 # Use /n to break line
@@ -77,7 +77,7 @@ info:
   nolocation: '&4Can''t find suitable location'
   PurgeNotEnabled: '&cPurge function is not enabled in config file!'
   FeatureNotEnabled: '&cThis feature is not enabled!'
-  TeamManagementDisabled: '&7This feature will have limited functionalaty while DisableTeamManagement
+  TeamManagementDisabled: '&7This feature will have limited functionality while DisableTeamManagement
     is set to true!'
   ModuleNotEnabled: '&cThis module is not enabled!'
   versionNotSupported: '&cServer version is not supported for this feature'
@@ -98,7 +98,7 @@ info:
   specializedRunning: '&eCommand still running, please wait &6[time]'
   CooldownOneTime: '&eThis command can only be used once!'
   WarmUp:
-    canceled: '&eCommand was cancelled due to your movement'
+    canceled: '&eCommand was canceled due to your movement'
     counter: '!actionbar!&6--> Wait &e[time] &6seconds <--'
     DontMove: '!title!&6Don''t move!!subtitle!&7Wait &c[time] &7seconds'
     Boss:
@@ -253,7 +253,7 @@ info:
     Restored: '&eYou have restored &e[sourcename] &einventory for &e[targetname] &euser.'
     GotRestored: '&eYour inventory was restored from &e[sourcename] &esaved inventory
       on &e[time]'
-    LoadForSelf: '&eLoad this inventory for your self'
+    LoadForSelf: '&eLoad this inventory for yourself'
     LoadForOwner: '&eLoad this inventory for owner'
     NextInventory: '&eNext inventory'
     PreviousInventory: '&ePrevious inventory'
@@ -301,13 +301,13 @@ info:
     armor: '&eYour armor slots should be empty!'
     hand: '&eYour hand should be empty!'
     maininv: '&eYour main inventory should be empty!'
-    maininvslots: '&eYour main inventory should have atleast &6[count] &eempty slots!'
+    maininvslots: '&eYour main inventory should have at least &6[count] &eempty slots!'
     inv: '&eYour inventory should be empty!'
     offhand: '&eYour offhand should be empty!'
     quickbar: '&eYour quick bar should be empty!'
-    quickbarslots: '&eYour quick bar should have atleast &6[count] &eempty slots!'
+    quickbarslots: '&eYour quick bar should have at least &6[count] &eempty slots!'
     subinv: '&eYour sub inventory should be empty!'
-    subinvslots: '&eYour  sub inventory should have atleast &6[count] &eempty slots!'
+    subinvslots: '&eYour  sub inventory should have at least &6[count] &eempty slots!'
   pickIcon: '&8Pick icon'
   DamageCause:
     block_explosion: Explosion
@@ -826,7 +826,7 @@ Ender:
 Chat:
   localPrefix: ''
   shoutPrefix: '&c[S]&r'
-  LocalNoOne: '!actionbar!&cNobody hear you, write ! before message for global chat'
+  LocalNoOne: '!actionbar!&cNobody can hear you, write ! before the message to make it a global chat'
   shoutDeduction: '!actionbar!&cDeducted &e[amount] &cfor shout'
   # Use \n to add new line
   publicHover: '&eSent time: &6%server_time_hh:mm:ss%'
