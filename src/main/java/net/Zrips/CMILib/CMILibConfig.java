@@ -136,7 +136,7 @@ public class CMILibConfig {
 	cfg.addComment("Spawners.mysterySpawners", "List of spawners to pick from while using spawner:random variable");
 	mysterySpawners = cfg.get("Spawners.mysterySpawners", Arrays.asList("skeleton", "zombie", "silverfish", "panda", "fox"));
 
-	cfg.addComment("RMCCommands.ConsoleLog", "When enabled we will include when posible a command to indicate which was performed while using rmc commands");
+	cfg.addComment("RMCCommands.ConsoleLog", "When enabled we will include when possible a command to indicate which was performed while using rmc commands");
 	rmcConsoleLog = cfg.get("RMCCommands.ConsoleLog", true);
 
 	cfg.addComment("Images.Filler", "Symbol to be used to create image fields", "Color codes are NOT supported here",

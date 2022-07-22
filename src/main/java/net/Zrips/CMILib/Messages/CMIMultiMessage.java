@@ -177,14 +177,13 @@ public class CMIMultiMessage {
 	    }
 	    break;
 	case customText:
-						    // Fix
-//	    if (CMILib.getInstance().isCmiPresent()) {
-//		com.Zrips.CMI.Modules.CustomText.CText cText = com.Zrips.CMI.CMI.getInstance().getCTextManager().getCText((String) getExtra().get(0));
-//		if (cText == null)
-//		    sender.sendMessage(message);
-//		else
-//		    com.Zrips.CMI.CMI.getInstance().getCTextManager().showCText(sender, cText, 1);
-//	    }
+	    if (CMILib.getInstance().isCmiPresent()) {
+		com.Zrips.CMI.Modules.CustomText.CText cText = com.Zrips.CMI.CMI.getInstance().getCTextManager().getCText((String) getExtra().get(0));
+		if (cText == null)
+		    sender.sendMessage(message);
+		else
+		    com.Zrips.CMI.CMI.getInstance().getCTextManager().showCText(sender, cText, 1);
+	    }
 	    break;
 	case json:
 	    RawMessage rm = RawMessage.translateRawMessage(sender, message);

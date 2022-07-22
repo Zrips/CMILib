@@ -451,7 +451,7 @@ public class RawMessage {
 	if (!url.toLowerCase().startsWith("http://") && !url.toLowerCase().startsWith("https://"))
 	    url = "http://" + url;
 
-	url = url.replace("\"", "");
+        url = Matcher.quoteReplacement(url);
 
 	String f = "\"clickEvent\":{\"action\":\"open_url\",\"value\":\"" + CMIChatColor.deColorize(url).replace(CMIChatColor.colorReplacerPlaceholder, "&") + "\"}";
 

@@ -32,551 +32,494 @@ public class Placeholder {
     private static ChatFilterRule numericalRule = new ChatFilterRule().setPattern("(\\$)(\\d)");
 
     public Placeholder(CMILib plugin) {
-	this.plugin = plugin;
+        this.plugin = plugin;
     }
 
     Random random = new Random(System.nanoTime());
 
     public enum CMIPlaceHolders {
-	;
+        ;
 
-	static LinkedHashMap<String, CMIPlaceHolders> byNameStatic = new LinkedHashMap<String, CMIPlaceHolders>();
-	static LinkedHashMap<String, LinkedHashSet<CMIPlaceHolders>> byNameComplex = new LinkedHashMap<String, LinkedHashSet<CMIPlaceHolders>>();
+        static LinkedHashMap<String, CMIPlaceHolders> byNameStatic = new LinkedHashMap<String, CMIPlaceHolders>();
+        static LinkedHashMap<String, LinkedHashSet<CMIPlaceHolders>> byNameComplex = new LinkedHashMap<String, LinkedHashSet<CMIPlaceHolders>>();
 
-	static {
-	    for (CMIPlaceHolders one : CMIPlaceHolders.values()) {
-		String fullName = one.toString();
-		if (!one.isComplex()) {
-		    byNameStatic.put(fullName.toLowerCase(), one);
-		    continue;
-		}
-		String[] split = fullName.split("_");
-		String first = split[0] + "_" + split[1];
-		LinkedHashSet<CMIPlaceHolders> old = byNameComplex.getOrDefault(first, new LinkedHashSet<CMIPlaceHolders>());
-		old.add(one);
-		byNameComplex.put(first, old);
-	    }
-	}
+        static {
+            for (CMIPlaceHolders one : CMIPlaceHolders.values()) {
+                String fullName = one.toString();
+                if (!one.isComplex()) {
+                    byNameStatic.put(fullName.toLowerCase(), one);
+                    continue;
+                }
+                String[] split = fullName.split("_");
+                String first = split[0] + "_" + split[1];
+                LinkedHashSet<CMIPlaceHolders> old = byNameComplex.getOrDefault(first, new LinkedHashSet<CMIPlaceHolders>());
+                old.add(one);
+                byNameComplex.put(first, old);
+            }
+        }
 
-	private String[] vars;
-	private List<Integer> groups = new ArrayList<Integer>();
-	private ChatFilterRule rule = null;
-	private boolean hidden = false;
-	private String desc = null;
+        private String[] vars;
+        private List<Integer> groups = new ArrayList<Integer>();
+        private ChatFilterRule rule = null;
+        private boolean hidden = false;
+        private String desc = null;
 
-	CMIPlaceHolders() {
-	}
+        CMIPlaceHolders() {
+        }
 
-	CMIPlaceHolders(boolean hideen) {
-	    this(null, hideen);
-	}
+        CMIPlaceHolders(boolean hideen) {
+            this(null, hideen);
+        }
 
-	CMIPlaceHolders(String desc, String... vars) {
-	    this(desc, false, vars);
-	}
+        CMIPlaceHolders(String desc, String... vars) {
+            this(desc, false, vars);
+        }
 
-	CMIPlaceHolders(String desc, boolean hidden, String... vars) {
-	    this.desc = desc;
-	    this.vars = vars;
-	    this.hidden = hidden;
+        CMIPlaceHolders(String desc, boolean hidden, String... vars) {
+            this.desc = desc;
+            this.vars = vars;
+            this.hidden = hidden;
 
-	    try {
-		Matcher matcher = numericalRule.getMatcher(this.toString());
-		if (matcher != null) {
-		    rule = new ChatFilterRule();
-		    List<String> ls = new ArrayList<>();
-		    ls.add("(%)" + this.toString().replaceAll("\\$\\d", "([^\"^%]*)") + "(%)");
-		    ls.add("(\\{)" + this.toString().replaceAll("\\$\\d", "([^\"^%]*)") + "(\\})");
-		    rule.setPattern(ls);
-		    while (matcher.find()) {
-			try {
-			    int id = Integer.parseInt(matcher.group(2));
+            try {
+                Matcher matcher = numericalRule.getMatcher(this.toString());
+                if (matcher != null) {
+                    rule = new ChatFilterRule();
+                    List<String> ls = new ArrayList<>();
+                    ls.add("(%)" + this.toString().replaceAll("\\$\\d", "([^\"^%]*)") + "(%)");
+                    ls.add("(\\{)" + this.toString().replaceAll("\\$\\d", "([^\"^%]*)") + "(\\})");
+                    rule.setPattern(ls);
+                    while (matcher.find()) {
+                        try {
+                            int id = Integer.parseInt(matcher.group(2));
 
-			    groups.add(id);
-			} catch (Exception e) {
-			    e.printStackTrace();
-			}
-		    }
-		}
-	    } catch (Throwable ex) {
-		ex.printStackTrace();
-	    }
-	}
+                            groups.add(id);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            } catch (Throwable ex) {
+                ex.printStackTrace();
+            }
+        }
 
-	public static CMIPlaceHolders getByName(String name) {
+        public static CMIPlaceHolders getByName(String name) {
 
-	    if (name.startsWith("%") || name.startsWith("{"))
-		name = name.replace("%", "").replace("{", "").replace("}", "");
+            if (name.startsWith("%") || name.startsWith("{"))
+                name = name.replace("%", "").replace("{", "").replace("}", "");
 
-	    String original = name;
+            String original = name;
 
-	    CMIPlaceHolders got = byNameStatic.get(name);
-	    if (got != null)
-		return got;
-	    String[] split = name.split("_");
+            CMIPlaceHolders got = byNameStatic.get(name);
+            if (got != null)
+                return got;
+            String[] split = name.split("_");
 
-	    if (split.length < 3) {
-		return null;
-	    }
+            if (split.length < 3) {
+                return null;
+            }
 
-	    String prefix = split[0] + "_" + split[1];
+            String prefix = split[0] + "_" + split[1];
 
-	    Set<CMIPlaceHolders> main = byNameComplex.get(prefix);
+            Set<CMIPlaceHolders> main = byNameComplex.get(prefix);
 
-	    if (main == null) {
-		return null;
-	    }
+            if (main == null) {
+                return null;
+            }
 
-	    for (CMIPlaceHolders mainOne : main) {
-		if (!mainOne.getComplexRegexMatchers(original).isEmpty()) {
-		    return mainOne;
-		}
-	    }
-	    return null;
-	}
+            for (CMIPlaceHolders mainOne : main) {
+                if (!mainOne.getComplexRegexMatchers(original).isEmpty()) {
+                    return mainOne;
+                }
+            }
+            return null;
+        }
 
-	public static CMIPlaceHolders getByNameExact(String name) {
-	    return getByName(name);
-	}
+        public static CMIPlaceHolders getByNameExact(String name) {
+            return getByName(name);
+        }
 
-	public String getFull() {
-	    if (this.isComplex()) {
-		String name = this.name();
-		int i = 0;
-		for (String one : this.name().split("_")) {
-		    if (!one.startsWith("$"))
-			continue;
-		    if (vars.length >= i - 1)
-			name = name.replace(one, "[" + vars[i] + "]");
-		    i++;
-		}
+        public String getFull() {
+            if (this.isComplex()) {
+                String name = this.name();
+                int i = 0;
+                for (String one : this.name().split("_")) {
+                    if (!one.startsWith("$"))
+                        continue;
+                    if (vars.length >= i - 1)
+                        name = name.replace(one, "[" + vars[i] + "]");
+                    i++;
+                }
 
-		return "%" + name + "%";
-	    }
-	    return "%" + this.name() + "%";
-	}
+                return "%" + name + "%";
+            }
+            return "%" + this.name() + "%";
+        }
 
-	public String getMVdW() {
-	    if (this.isComplex()) {
-		String name = this.name();
-		int i = 0;
-		for (String one : this.name().split("_")) {
-		    if (!one.startsWith("$"))
-			continue;
-		    if (vars.length >= i - 1)
-			name = name.replace(one, "*");
-		    i++;
-		}
+        public String getMVdW() {
+            if (this.isComplex()) {
+                String name = this.name();
+                int i = 0;
+                for (String one : this.name().split("_")) {
+                    if (!one.startsWith("$"))
+                        continue;
+                    if (vars.length >= i - 1)
+                        name = name.replace(one, "*");
+                    i++;
+                }
 
-		return name;
-	    }
-	    return this.name();
-	}
+                return name;
+            }
+            return this.name();
+        }
 
-	public List<String> getComplexRegexMatchers(String text) {
-	    List<String> lsInLs = new ArrayList<String>();
-	    if (!this.isComplex())
-		return lsInLs;
+        public List<String> getComplexRegexMatchers(String text) {
+            List<String> lsInLs = new ArrayList<String>();
+            if (!this.isComplex())
+                return lsInLs;
 
-	    if (!text.startsWith("%") && !text.endsWith("%"))
-		text = "%" + text + "%";
+            if (!text.startsWith("%") && !text.endsWith("%"))
+                text = "%" + text + "%";
 
-	    Matcher matcher = this.getRule().getMatcher(text);
-	    if (matcher == null)
-		return lsInLs;
-	    while (matcher.find()) {
-		lsInLs.add(matcher.group());
-	    }
-	    return lsInLs;
-	}
+            Matcher matcher = this.getRule().getMatcher(text);
+            if (matcher == null)
+                return lsInLs;
+            while (matcher.find()) {
+                lsInLs.add(matcher.group());
+            }
+            return lsInLs;
+        }
 
-	public List<String> getComplexValues(String text) {
+        public List<String> getComplexValues(String text) {
 
-	    List<String> lsInLs = new ArrayList<String>();
-	    if (!this.isComplex() || text == null)
-		return lsInLs;
+            List<String> lsInLs = new ArrayList<String>();
+            if (!this.isComplex() || text == null)
+                return lsInLs;
 
-	    if (!text.startsWith("%") && !text.endsWith("%"))
-		text = "%" + text + "%";
+            if (!text.startsWith("%") && !text.endsWith("%"))
+                text = "%" + text + "%";
 
-	    Matcher matcher = this.getRule().getMatcher(text);
-	    if (matcher == null)
-		return lsInLs;
-	    while (matcher.find()) {
-		try {
-		    for (Integer oneG : groups) {
-			lsInLs.add(matcher.group(oneG + 1));
-		    }
-		} catch (Exception e) {
-		    e.printStackTrace();
-		}
-		break;
-	    }
-	    return lsInLs;
-	}
+            Matcher matcher = this.getRule().getMatcher(text);
+            if (matcher == null)
+                return lsInLs;
+            while (matcher.find()) {
+                try {
+                    for (Integer oneG : groups) {
+                        lsInLs.add(matcher.group(oneG + 1));
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                break;
+            }
+            return lsInLs;
+        }
 
-	public boolean isComplex() {
-	    return rule != null;
-	}
+        public boolean isComplex() {
+            return rule != null;
+        }
 
-	public ChatFilterRule getRule() {
-	    return rule;
-	}
+        public ChatFilterRule getRule() {
+            return rule;
+        }
 
-	public void setRule(ChatFilterRule rule) {
-	    this.rule = rule;
-	}
+        public void setRule(ChatFilterRule rule) {
+            this.rule = rule;
+        }
 
-	public boolean isHidden() {
-	    return hidden;
-	}
+        public boolean isHidden() {
+            return hidden;
+        }
 
-	public String getDescription() {
-	    return desc;
-	}
+        public String getDescription() {
+            return desc;
+        }
     }
 
     public List<String> updatePlaceHolders(Player player, List<String> messages) {
-	List<String> ms = new ArrayList<String>(messages);
-	for (int i = 0, l = messages.size(); i < l; ++i) {
-	    ms.set(i, updatePlaceHolders(player, messages.get(i)));
-	}
-	return ms;
+        List<String> ms = new ArrayList<String>(messages);
+        for (int i = 0, l = messages.size(); i < l; ++i) {
+            ms.set(i, updatePlaceHolders(player, messages.get(i)));
+        }
+        return ms;
     }
 
     public enum CMIPlaceholderType {
-	CMI, PAPI, MVdW;
+        CMI, PAPI, MVdW;
     }
 
     public CMIPlaceholderType getPlaceHolderType(Player player, String placeholder) {
-	if (placeholder == null)
-	    return null;
-	if (placeholder.contains("%")) {
-	    if (!placeholder.equals(translateOwnPlaceHolder(player, placeholder)))
-		return CMIPlaceholderType.CMI;
-	}
-	if (placeholder.contains("{")) {
-	    if (!placeholder.equals(translateOwnPlaceHolder(player, placeholder)))
-		return CMIPlaceholderType.CMI;
-	}
-	if (plugin.isPlaceholderAPIEnabled()) {
-	    try {
-		if (placeholder.contains("%"))
-		    if (!placeholder.equals(me.clip.placeholderapi.PlaceholderAPI.setPlaceholders(player, placeholder)))
-			return CMIPlaceholderType.PAPI;
-	    } catch (Throwable e) {
+        if (placeholder == null)
+            return null;
+        if (placeholder.contains("%")) {
+            if (!placeholder.equals(translateOwnPlaceHolder(player, placeholder)))
+                return CMIPlaceholderType.CMI;
+        }
+        if (placeholder.contains("{")) {
+            if (!placeholder.equals(translateOwnPlaceHolder(player, placeholder)))
+                return CMIPlaceholderType.CMI;
+        }
+        if (plugin.isPlaceholderAPIEnabled()) {
+            try {
+                if (placeholder.contains("%"))
+                    if (!placeholder.equals(me.clip.placeholderapi.PlaceholderAPI.setPlaceholders(player, placeholder)))
+                        return CMIPlaceholderType.PAPI;
+            } catch (Throwable e) {
 
-	    }
-	}
-	return null;
+            }
+        }
+        return null;
     }
 
     public String updatePlaceHolders(UUID uuid, String message) {
 
-	if (message == null)
-	    return null;
-	if (message.contains("{")) {
-	    message = translateOwnPlaceHolder(uuid, message);
-	}
-	if (message.contains("%"))
-	    message = translateOwnPlaceHolder(uuid, message);
+        if (message == null)
+            return null;
+        if (message.contains("{")) {
+            message = translateOwnPlaceHolder(uuid, message);
+        }
+        if (message.contains("%"))
+            message = translateOwnPlaceHolder(uuid, message);
 
-	if (plugin.isPlaceholderAPIEnabled()) {
-	    try {
-		if (message.contains("%")) {
-		    Player player = Bukkit.getPlayer(uuid);
-		    message = me.clip.placeholderapi.PlaceholderAPI.setPlaceholders(player, message);
-		}
-	    } catch (Exception e) {
+        if (plugin.isPlaceholderAPIEnabled()) {
+            try {
+                if (message.contains("%")) {
+                    Player player = Bukkit.getPlayer(uuid);
+                    message = me.clip.placeholderapi.PlaceholderAPI.setPlaceholders(player, message);
+                }
+            } catch (Exception e) {
 
-	    }
-	}
+            }
+        }
 
-	return message;
+        return message;
     }
 
     public String updatePlaceHolders(String message) {
-	UUID uuid = null;
-	return updatePlaceHolders(uuid, message);
+        UUID uuid = null;
+        return updatePlaceHolders(uuid, message);
     }
 
     public String updatePlaceHolders(Player player, String message) {
 
-	if (message == null)
-	    return null;
+        if (message == null)
+            return null;
 
-	HashMap<String, String> temp = new HashMap<String, String>();
+        HashMap<String, String> temp = new HashMap<String, String>();
 
-	if (message.contains("{")) {
-	    // Duplicated code
-	    Matcher match = placeholderOthersKeepPatern.matcher(message);
-	    while (match.find()) {
-		try {
-		    if (!message.contains("%"))
-			break;
-		    String group = match.group();
-//		    String subPlaceholder = match.group(4);
-//		    String mainSub = match.group(2);
-//		    String subResult = updatePlaceHolders(player, "%" + subPlaceholder + "%");
-//
-//		    if (subResult.equalsIgnoreCase("%" + subPlaceholder + "%"))
-//			subResult = subResult.substring(1, subResult.length() - 1);
-//
-//		    message = message.replace(Matcher.quoteReplacement(mainSub), Matcher.quoteReplacement("{" + subResult + "}"));
-//		    group = group.replace(Matcher.quoteReplacement(mainSub), Matcher.quoteReplacement("{" + subResult + "}"));
+        if (message.contains("{")) {
+            // Duplicated code
+            Matcher match = placeholderOthersKeepPatern.matcher(message);
+            while (match.find()) {
+                try {
+                    if (!message.contains("%"))
+                        break;
+                    String group = match.group();
+                    int id = (new Random()).nextInt(Integer.MAX_VALUE);
+                    String with = "|" + id + "|";
+                    temp.put(with, group);
+                    message = message.replaceFirst(Matcher.quoteReplacement(group), Matcher.quoteReplacement(with));
+                } catch (Throwable e) {
+                }
+            }
 
-		    int id = (new Random()).nextInt(Integer.MAX_VALUE);
-		    String with = "|" + id + "|";
-		    temp.put(with, group);
-		    message = message.replaceFirst(Matcher.quoteReplacement(group), Matcher.quoteReplacement(with));
-		} catch (Throwable e) {
-		}
-	    }
+            message = translateOwnPlaceHolder(player, message);
 
-	    message = translateOwnPlaceHolder(player, message);
+            if (message.contains("%")) {
+                message = translateOwnPlaceHolder(player, message);
+            }
 
-	    if (message.contains("%")) {
-		message = translateOwnPlaceHolder(player, message);
-	    }
+            for (Entry<String, String> one : temp.entrySet()) {
+                message = message.replace(one.getKey(), one.getValue());
+            }
+        } else {
+            if (message.contains("%")) {
+                message = translateOwnPlaceHolder(player, message);
+            }
+        }
 
-	    for (Entry<String, String> one : temp.entrySet()) {
-		message = message.replace(one.getKey(), one.getValue());
-	    }
-	} else {
-	    if (message.contains("%")) {
-		message = translateOwnPlaceHolder(player, message);
-	    }
-	}
+        if (plugin.isPlaceholderAPIEnabled()) {
+            try {
+                if (message.contains("%")) {
+                    message = me.clip.placeholderapi.PlaceholderAPI.setPlaceholders(player, message);
+                }
+            } catch (Throwable e) {
+            }
+        }
 
-	if (plugin.isPlaceholderAPIEnabled()) {
-	    try {
-		if (message.contains("%")) {
-		    message = me.clip.placeholderapi.PlaceholderAPI.setPlaceholders(player, message);
-		}
-	    } catch (Throwable e) {
-	    }
-	}
-
-	return message;
+        return message;
     }
 
     public boolean containsPlaceHolder(String msg) {
 
-	Matcher match = placeholderPatern.matcher(msg);
-	while (match.find()) {
-	    return true;
-	}
+        Matcher match = placeholderPatern.matcher(msg);
+        while (match.find()) {
+            return true;
+        }
 
-	match = placeholderPatern2.matcher(msg);
-	while (match.find()) {
-	    return true;
-	}
+        match = placeholderPatern2.matcher(msg);
+        while (match.find()) {
+            return true;
+        }
 
-	return false;
+        return false;
     }
 
     public String translateOwnPlaceHolder(Player player, String message) {
-	return translateOwnPlaceHolder(player == null ? null : player.getUniqueId(), message);
+        return translateOwnPlaceHolder(player == null ? null : player.getUniqueId(), message);
     }
 
-    private int maxDepth = 4;
-
     private String matchInception(UUID uuid, String message, int depth) {
-//	if (depth >= maxDepth)
-//	    return message;
+        
+        if (message.contains("{")) {
+            Matcher match = placeholderPatern2.matcher(message);
+            int i = 0;
+            try {
+                while (match.find()) {
+                    i++;
+                    if (i > 10)
+                        break;
+                    String cmd = match.group(2);
+                    if (!message.contains("{"))
+                        break;
 
-	if (message.contains("{")) {
-	    Matcher match = placeholderPatern2.matcher(message);
-	    int i = 0;
-	    try {
-		while (match.find()) {
-		    i++;
-		    if (i > 10)
-			break;
-		    String cmd = match.group(2);
-		    if (!message.contains("{"))
-			break;
+                    CMIPlaceHolders place = CMIPlaceHolders.getByNameExact(cmd);
+                    if (place == null) {
+                        if (plugin.isPlaceholderAPIEnabled()) {
+                            try {
+                                Player player = Bukkit.getPlayer(uuid);
+                                String group = match.group();
 
-		    CMIPlaceHolders place = CMIPlaceHolders.getByNameExact(cmd);
-		    if (place == null) {
-			if (plugin.isPlaceholderAPIEnabled()) {
-			    try {
-				Player player = Bukkit.getPlayer(uuid);
-				String group = match.group();
+                                if (!group.startsWith(CMIChatColor.colorCodePrefix)) {
+                                    String with = me.clip.placeholderapi.PlaceholderAPI.setPlaceholders(player, "%" + cmd + "%");
+                                    if (with == null)
+                                        with = "";
+                                    if (!with.equalsIgnoreCase("%" + cmd + "%")) {
+                                        message = message.replaceFirst(Pattern.quote(group), Matcher.quoteReplacement(with));
+                                    }
+                                }
+                            } catch (Exception e) {
+                            }
+                        }
+                        continue;
+                    }
 
-				if (!group.startsWith(CMIChatColor.colorCodePrefix)) {
-				    String with = me.clip.placeholderapi.PlaceholderAPI.setPlaceholders(player, "%" + cmd + "%");
-				    if (with == null)
-					with = "";
-				    if (!with.equalsIgnoreCase("%" + cmd + "%")) {
-					message = message.replaceFirst(Pattern.quote(group), Matcher.quoteReplacement(with));
-				    }
-				}
-			    } catch (Exception e) {
-			    }
-			}
-			continue;
-		    }
+                    String group = match.group();
+                    String with = this.getValue(uuid, place, group);
+                    if (with == null)
+                        with = "";
+                    message = message.replaceFirst(Matcher.quoteReplacement(group), Matcher.quoteReplacement(with));
+                }
+            } catch (Throwable e) {
+            }
+        }
 
-		    String group = match.group();
-		    String with = this.getValue(uuid, place, group);
-		    if (with == null)
-			with = "";
-		    message = message.replaceFirst(Matcher.quoteReplacement(group), Matcher.quoteReplacement(with));
-		}
-	    } catch (Throwable e) {
-	    }
-//	    depth = depth + 1;
-//	    if (message.contains("{") && i > 0)
-//		return matchInception(uuid, message, depth);
-	}
-
-	return message;
+        return message;
     }
 
     public String translateOwnPlaceHolder(UUID uuid, String message) {
-	if (message == null)
-	    return null;
-	// Fix
-//	if (CMILib.getInstance().isCmiPresent()) {
-//	    message = com.Zrips.CMI.CMI.getInstance().getPlaceholderAPIManager().translateOwnPlaceHolder(uuid, message); 
-//	}
-	if (message.contains("{")) {
+        if (message == null)
+            return null;
 
-	    // Duplicated code
-	    HashMap<String, String> temp = new HashMap<String, String>();
-	    Matcher match = placeholderOthersKeepPatern.matcher(message);
-	    while (match.find()) {
-		try {
-		    if (!message.contains("%"))
-			break;
-		    String group = match.group();
-//		    String subPlaceholder = match.group(4);
-//		    String mainSub = match.group(2);
-//		    
-//		    String subResult = translateOwnPlaceHolder(uuid, "%" + subPlaceholder + "%");
-//		    
-//		    if (subResult.equalsIgnoreCase("%" + subPlaceholder + "%"))
-//			subResult = subResult.substring(1, subResult.length() - 1);
-//		    message = message.replace(Matcher.quoteReplacement(mainSub), Matcher.quoteReplacement("{" + subResult + "}"));
-//		    group = group.replace(Matcher.quoteReplacement(mainSub), Matcher.quoteReplacement("{" + subResult + "}"));
-		    int id = (new Random()).nextInt(Integer.MAX_VALUE);
-		    String with = "|" + id + "|";
-		    temp.put(with, group);
-		    message = message.replaceFirst(Matcher.quoteReplacement(group), Matcher.quoteReplacement(with));
-		} catch (Throwable e) {
-		}
-	    }
+        if (CMILib.getInstance().isCmiPresent()) {
+            message = com.Zrips.CMI.CMI.getInstance().getPlaceholderAPIManager().translateOwnPlaceHolder(uuid, message); 
+        }
+        
+        if (message.contains("{")) {
 
-	    message = matchInception(uuid, message, 0);
+            // Duplicated code
+            HashMap<String, String> temp = new HashMap<String, String>();
+            Matcher match = placeholderOthersKeepPatern.matcher(message);
+            while (match.find()) {
+                try {
+                    if (!message.contains("%"))
+                        break;
+                    String group = match.group();
+                    int id = (new Random()).nextInt(Integer.MAX_VALUE);
+                    String with = "|" + id + "|";
+                    temp.put(with, group);
+                    message = message.replaceFirst(Matcher.quoteReplacement(group), Matcher.quoteReplacement(with));
+                } catch (Throwable e) {
+                }
+            }
 
-	    for (Entry<String, String> one : temp.entrySet()) {
-		message = message.replace(one.getKey(), one.getValue());
-	    }
+            message = matchInception(uuid, message, 0);
 
-//	    Matcher match = placeholderPatern2.matcher(message);
-//	    while (match.find()) {
-//		try {
-//		    String cmd = match.group(2);
-//		    if (!message.contains("{"))
-//			break;
-//		    CMIPlaceHolders place = CMIPlaceHolders.getByNameExact(cmd);
-//		    if (place == null)
-//			continue;
-//		    String group = match.group();
-//		    String with = this.getValue(uuid, place, group);
-//		    if (with == null)
-//			with = "";
-//		    message = message.replaceFirst(Pattern.quote(group), Matcher.quoteReplacement(with));
-//		} catch (Exception e) {
-////		    e.printStackTrace();
-//		}
-//	    }
-	}
+            for (Entry<String, String> one : temp.entrySet()) {
+                message = message.replace(one.getKey(), one.getValue());
+            }
+        }
 
-	if (message.contains("%")) {
+        if (message.contains("%")) {
 
-	    HashMap<String, String> temp = new HashMap<String, String>();
-	    Matcher matchKeep = placeholderKeepPatern.matcher(message);
-	    while (matchKeep.find()) {
-		try {
-		    if (!message.contains("%"))
-			break;
-		    String group = matchKeep.group();
+            HashMap<String, String> temp = new HashMap<String, String>();
+            Matcher matchKeep = placeholderKeepPatern.matcher(message);
+            while (matchKeep.find()) {
+                try {
+                    if (!message.contains("%"))
+                        break;
+                    String group = matchKeep.group();
 
-		    int id = (new Random()).nextInt(Integer.MAX_VALUE);
+                    int id = (new Random()).nextInt(Integer.MAX_VALUE);
 
-		    String with = "|" + id + "|";
+                    String with = "|" + id + "|";
 
-		    temp.put(with, group.substring(1, group.length() - 1));
+                    temp.put(with, group.substring(1, group.length() - 1));
 
-		    message = message.replaceFirst(Matcher.quoteReplacement(group), Matcher.quoteReplacement(with));
-//		    message = message.replaceFirst(Pattern.quote(group), Matcher.quoteReplacement(group.substring(1, group.length() - 1)));
+                    message = message.replaceFirst(Matcher.quoteReplacement(group), Matcher.quoteReplacement(with));
+                } catch (Throwable e) {
+                }
+            }
 
-		} catch (Throwable e) {
-		}
-	    }
+            Matcher match = placeholderPatern.matcher(message);
+            while (match.find()) {
+                try {
+                    String cmd = match.group(2);
+                    if (!message.contains("%"))
+                        break;
+                    CMIPlaceHolders place = CMIPlaceHolders.getByNameExact(cmd);
+                    if (place == null)
+                        continue;
 
-	    Matcher match = placeholderPatern.matcher(message);
-	    while (match.find()) {
-		try {
-		    String cmd = match.group(2);
-		    if (!message.contains("%"))
-			break;
-		    CMIPlaceHolders place = CMIPlaceHolders.getByNameExact(cmd);
-		    if (place == null)
-			continue;
+                    String group = match.group();
 
-		    String group = match.group();
+                    String with = this.getValue(uuid, place, group);
 
-		    String with = this.getValue(uuid, place, group);
+                    if (with == null)
+                        with = "";
 
-		    if (with == null)
-			with = "";
-
-		    message = message.replaceFirst(Pattern.quote(group), Matcher.quoteReplacement(with));
-		} catch (Throwable e) {
+                    message = message.replaceFirst(Pattern.quote(group), Matcher.quoteReplacement(with));
+                } catch (Throwable e) {
 //		    e.printStackTrace();
-		}
-	    }
+                }
+            }
 
-	    for (Entry<String, String> one : temp.entrySet()) {
-		message = message.replace(one.getKey(), one.getValue());
-	    }
-
-//	    matchKeep = placeholderKeepPatern.matcher(message);
-//	    while (matchKeep.find()) {
-//		try {
-//		    if (!message.contains("%"))
-//			break;
-//		    String group = matchKeep.group();
-//		    message = message.replaceFirst(Pattern.quote(group), Matcher.quoteReplacement(group.substring(1, group.length() - 1)));
-//		} catch (Throwable e) {
-//		}
-//	    }
-	}
-	return message;
+            for (Entry<String, String> one : temp.entrySet()) {
+                message = message.replace(one.getKey(), one.getValue());
+            }
+        }
+        return message;
     }
 
     private HashMap<String, String> randomCache = new HashMap<String, String>();
 
     public String getValue(Player player, CMIPlaceHolders placeHolder) {
-	return getValue(player, placeHolder, null);
+        return getValue(player, placeHolder, null);
     }
 
     public String getValue(Player player, CMIPlaceHolders placeHolder, String value) {
-	return getValue(player != null ? player.getUniqueId() : null, placeHolder, value);
+        return getValue(player != null ? player.getUniqueId() : null, placeHolder, value);
     }
 
     public String getValue(UUID uuid, CMIPlaceHolders placeHolder, String value) {
-	return null;
+        return null;
     }
 
     private void informFailed(String value) {
-	CMIMessages.consoleMessage("&cInccorrect placeholder format for " + value);
+        CMIMessages.consoleMessage("&cInccorrect placeholder format for " + value);
     }
 
     private String variable(Boolean state) {
-	return state ? CMIMessages.getMsg(LC.info_variables_True) : CMIMessages.getMsg(LC.info_variables_False);
+        return state ? CMIMessages.getMsg(LC.info_variables_True) : CMIMessages.getMsg(LC.info_variables_False);
     }
 }

@@ -244,128 +244,127 @@ public class Language {
 	return msg;
     }
 
-    // Fix
-//    public String updateCmiSnd(com.Zrips.CMI.Containers.Snd snd, String msg) {
-//	if (msg == null)
-//	    return null;
-//	if (!msg.contains("[")) {
-//	    msg = this.filterNewLine(msg);
-//	    return msg;
-//	}
-//
-//	msg = replace(msg, "serverName", com.Zrips.CMI.CMI.getInstance().getBungeeCordManager().isBungeeCord() ? com.Zrips.CMI.CMI.getInstance().getBungeeCordManager().getThisServerName() : plugin
-//	    .getReflectionManager()
-//	    .getServerName());
-//
-//	if (snd.getConsoleSender() != null) {
-//	    String name = snd.getConsoleSender().getName();
-//	    if (name.equalsIgnoreCase("Console") || name.equalsIgnoreCase(com.Zrips.CMI.CMI.getInstance().getPlayerManager().getFakeUserName()))
-//		name = this.getM(LC.info_Console);
-//	    msg = replace(msg, "senderName", name);
-//	    msg = replace(msg, "senderDisplayName", name);
-//	    msg = replace(msg, "senderPrefix", "");
-//	    msg = replace(msg, "senderSuffix", "");
-//	}
-//
-//	if (snd.getPlayerSender() != null) {
-//	    msg = replacePlayer("sender", snd.getPlayerSender(), snd.getPlayerTarget(), msg);
-//	    if (snd.getPlayerSender().getLocation() != null)
-//		msg = replacePlayer(snd.getPlayerSender().getLocation(), msg);
-//	}
-//
-//	if (snd.getSenderUser() != null) {
-//	    msg = replaceCmiUser("sender", snd.getSenderUser(), msg);
-//	}
-//
-//	if (snd.getConsoleTarget() != null) {
-//	    String name = snd.getConsoleTarget().getName();
-//	    if (name.equalsIgnoreCase("Console") || name.equalsIgnoreCase(com.Zrips.CMI.CMI.getInstance().getPlayerManager().getFakeUserName()))
-//		name = this.getM(LC.info_Console);
-//	    msg = replace(msg, "targetName", name);
-//	    msg = replace(msg, "targetDisplayName", name);
-//	}
-//
-//	if (snd.getPlayerTarget() != null) {
-//
-//	    msg = replacePlayer("", snd.getPlayerTarget(), snd.getPlayerSender(), msg);
-//	    msg = replacePlayer("player", snd.getPlayerTarget(), snd.getPlayerSender(), msg);
-//	    if (snd.getPlayerTarget().isOnline() && snd.getPlayerTarget().getLocation() != null)
-//		msg = replacePlayer(snd.getPlayerTarget().getLocation(), msg);
-//	}
-//
-//	if (snd.getTargetUser() != null) {
-//	    msg = replaceCmiUser("", snd.getTargetUser(), msg);
-//	}
-//
-//	if (snd.getConsoleSource() != null) {
-//	    String name = snd.getConsoleSource().getName();
-//	    if (name.equalsIgnoreCase("Console") || name.equalsIgnoreCase(com.Zrips.CMI.CMI.getInstance().getPlayerManager().getFakeUserName()))
-//		name = this.getM(LC.info_Console);
-//	    msg = replace(msg, "sourceName", name);
-//	    msg = replace(msg, "sourceDisplayName", name);
-//	}
-//	if (snd.getSenderName() != null) {
-//	    String name = snd.getSenderName();
-//	    if (name.equalsIgnoreCase("Console") || name.equalsIgnoreCase(com.Zrips.CMI.CMI.getInstance().getPlayerManager().getFakeUserName()))
-//		name = this.getM(LC.info_Console);
-//	    msg = replace(msg, "senderName", name);
-//	    msg = replace(msg, "senderDisplayName", name);
-//	}
-//
-//	if (snd.getTargetName() != null) {
-//	    String name = snd.getTargetName();
-//	    if (name.equalsIgnoreCase("Console") || name.equalsIgnoreCase(com.Zrips.CMI.CMI.getInstance().getPlayerManager().getFakeUserName()))
-//		name = this.getM(LC.info_Console);
-//	    msg = replace(msg, "Name", name);
-//	    msg = replace(msg, "DisplayName", name);
-//	    msg = replace(msg, "playerName", name);
-//	    msg = replace(msg, "playerDisplayName", name);
-//	}
-//
-//	if (snd.getPlayerSource() != null) {
-//	    msg = replacePlayer("source", snd.getPlayerSource(), snd.getPlayerTarget(), msg);
-//	    if (snd.getPlayerSource().getLocation() != null)
-//		msg = replacePlayer(snd.getPlayerSource().getLocation(), msg);
-//	}
-//
-//	if (snd.getSourceUser() != null) {
-//	    msg = replaceCmiUser("source", snd.getSourceUser(), msg);
-//	}
-//
-//	msg = this.filterNewLine(msg);
-//
-//	return msg;
-//    }
-//
-//    public String replaceCmiUser(String type, com.Zrips.CMI.Containers.CMIUser user, String msg) {
-//	msg = replace(msg, "serverName", com.Zrips.CMI.CMI.getInstance().getBungeeCordManager().isBungeeCord() ? com.Zrips.CMI.CMI.getInstance().getBungeeCordManager().getThisServerName() : plugin
-//	    .getReflectionManager()
-//	    .getServerName());
-//	if (msg == null || user == null)
-//	    return msg;
-//	if (user.isOnline())
-//	    msg = replacePlayer(type, user.getPlayer(), null, msg);
-//	msg = replace(msg, type + "offon", getOffOn(user.isOnline()));
-//	msg = replace(msg, type + "Name", user.getName(false));
-//	msg = replace(msg, type + "Nick", user.getNickName());
-//	msg = replace(msg, type + "NickName", user.getNickName());
-//	msg = replace(msg, type + "DisplayName", user.getDisplayName(true));
-//	msg = replace(msg, type + "Prefix", CMIChatColor.translate(user.getPrefix()));
-//	msg = replace(msg, type + "Suffix", CMIChatColor.translate(user.getSuffix()));
-//
-//	if (type.isEmpty()) {
-//	    msg = replace(msg, "playerName", user.getName(false));
-//	    msg = replace(msg, "playerNick", user.getNickName());
-//	    msg = replace(msg, "playerNickName", user.getNickName());
-//	    msg = replace(msg, "playerDisplayName", user.getDisplayName(true));
-//	    msg = replace(msg, "Prefix", CMIChatColor.translate(user.getPrefix()));
-//	    msg = replace(msg, "Suffix", CMIChatColor.translate(user.getSuffix()));
-//	}
-//
-//	if (user.getLogOutLocation() != null)
-//	    msg = replacePlayer(type, user.getLogOutLocation(), msg);
-//	return msg;
-//    }
+    public String updateCmiSnd(com.Zrips.CMI.Containers.Snd snd, String msg) {
+	if (msg == null)
+	    return null;
+	if (!msg.contains("[")) {
+	    msg = this.filterNewLine(msg);
+	    return msg;
+	}
+
+	msg = replace(msg, "serverName", com.Zrips.CMI.CMI.getInstance().getBungeeCordManager().isBungeeCord() ? com.Zrips.CMI.CMI.getInstance().getBungeeCordManager().getThisServerName() : plugin
+	    .getReflectionManager()
+	    .getServerName());
+
+	if (snd.getConsoleSender() != null) {
+	    String name = snd.getConsoleSender().getName();
+	    if (name.equalsIgnoreCase("Console") || name.equalsIgnoreCase(com.Zrips.CMI.CMI.getInstance().getPlayerManager().getFakeUserName()))
+		name = this.getM(LC.info_Console);
+	    msg = replace(msg, "senderName", name);
+	    msg = replace(msg, "senderDisplayName", name);
+	    msg = replace(msg, "senderPrefix", "");
+	    msg = replace(msg, "senderSuffix", "");
+	}
+
+	if (snd.getPlayerSender() != null) {
+	    msg = replacePlayer("sender", snd.getPlayerSender(), snd.getPlayerTarget(), msg);
+	    if (snd.getPlayerSender().getLocation() != null)
+		msg = replacePlayer(snd.getPlayerSender().getLocation(), msg);
+	}
+
+	if (snd.getSenderUser() != null) {
+	    msg = replaceCmiUser("sender", snd.getSenderUser(), msg);
+	}
+
+	if (snd.getConsoleTarget() != null) {
+	    String name = snd.getConsoleTarget().getName();
+	    if (name.equalsIgnoreCase("Console") || name.equalsIgnoreCase(com.Zrips.CMI.CMI.getInstance().getPlayerManager().getFakeUserName()))
+		name = this.getM(LC.info_Console);
+	    msg = replace(msg, "targetName", name);
+	    msg = replace(msg, "targetDisplayName", name);
+	}
+
+	if (snd.getPlayerTarget() != null) {
+
+	    msg = replacePlayer("", snd.getPlayerTarget(), snd.getPlayerSender(), msg);
+	    msg = replacePlayer("player", snd.getPlayerTarget(), snd.getPlayerSender(), msg);
+	    if (snd.getPlayerTarget().isOnline() && snd.getPlayerTarget().getLocation() != null)
+		msg = replacePlayer(snd.getPlayerTarget().getLocation(), msg);
+	}
+
+	if (snd.getTargetUser() != null) {
+	    msg = replaceCmiUser("", snd.getTargetUser(), msg);
+	}
+
+	if (snd.getConsoleSource() != null) {
+	    String name = snd.getConsoleSource().getName();
+	    if (name.equalsIgnoreCase("Console") || name.equalsIgnoreCase(com.Zrips.CMI.CMI.getInstance().getPlayerManager().getFakeUserName()))
+		name = this.getM(LC.info_Console);
+	    msg = replace(msg, "sourceName", name);
+	    msg = replace(msg, "sourceDisplayName", name);
+	}
+	if (snd.getSenderName() != null) {
+	    String name = snd.getSenderName();
+	    if (name.equalsIgnoreCase("Console") || name.equalsIgnoreCase(com.Zrips.CMI.CMI.getInstance().getPlayerManager().getFakeUserName()))
+		name = this.getM(LC.info_Console);
+	    msg = replace(msg, "senderName", name);
+	    msg = replace(msg, "senderDisplayName", name);
+	}
+
+	if (snd.getTargetName() != null) {
+	    String name = snd.getTargetName();
+	    if (name.equalsIgnoreCase("Console") || name.equalsIgnoreCase(com.Zrips.CMI.CMI.getInstance().getPlayerManager().getFakeUserName()))
+		name = this.getM(LC.info_Console);
+	    msg = replace(msg, "Name", name);
+	    msg = replace(msg, "DisplayName", name);
+	    msg = replace(msg, "playerName", name);
+	    msg = replace(msg, "playerDisplayName", name);
+	}
+
+	if (snd.getPlayerSource() != null) {
+	    msg = replacePlayer("source", snd.getPlayerSource(), snd.getPlayerTarget(), msg);
+	    if (snd.getPlayerSource().getLocation() != null)
+		msg = replacePlayer(snd.getPlayerSource().getLocation(), msg);
+	}
+
+	if (snd.getSourceUser() != null) {
+	    msg = replaceCmiUser("source", snd.getSourceUser(), msg);
+	}
+
+	msg = this.filterNewLine(msg);
+
+	return msg;
+    }
+
+    public String replaceCmiUser(String type, com.Zrips.CMI.Containers.CMIUser user, String msg) {
+	msg = replace(msg, "serverName", com.Zrips.CMI.CMI.getInstance().getBungeeCordManager().isBungeeCord() ? com.Zrips.CMI.CMI.getInstance().getBungeeCordManager().getThisServerName() : plugin
+	    .getReflectionManager()
+	    .getServerName());
+	if (msg == null || user == null)
+	    return msg;
+	if (user.isOnline())
+	    msg = replacePlayer(type, user.getPlayer(), null, msg);
+	msg = replace(msg, type + "offon", getOffOn(user.isOnline()));
+	msg = replace(msg, type + "Name", user.getName(false));
+	msg = replace(msg, type + "Nick", user.getNickName());
+	msg = replace(msg, type + "NickName", user.getNickName());
+	msg = replace(msg, type + "DisplayName", user.getDisplayName(true));
+	msg = replace(msg, type + "Prefix", CMIChatColor.translate(user.getPrefix()));
+	msg = replace(msg, type + "Suffix", CMIChatColor.translate(user.getSuffix()));
+
+	if (type.isEmpty()) {
+	    msg = replace(msg, "playerName", user.getName(false));
+	    msg = replace(msg, "playerNick", user.getNickName());
+	    msg = replace(msg, "playerNickName", user.getNickName());
+	    msg = replace(msg, "playerDisplayName", user.getDisplayName(true));
+	    msg = replace(msg, "Prefix", CMIChatColor.translate(user.getPrefix()));
+	    msg = replace(msg, "Suffix", CMIChatColor.translate(user.getSuffix()));
+	}
+
+	if (user.getLogOutLocation() != null)
+	    msg = replacePlayer(type, user.getLogOutLocation(), msg);
+	return msg;
+    }
 
     @SuppressWarnings("deprecation")
     public String replacePlayer(String type, Player player, Player whoGets, String msg) {

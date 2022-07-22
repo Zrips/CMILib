@@ -20,8 +20,11 @@ import javax.imageio.stream.ImageInputStream;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import com.Zrips.CMI.CMI;
+
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Colors.CMIChatColor;
+import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.RawMessages.RawMessage;
 
 public class CMIImage {
@@ -528,7 +531,7 @@ public class CMIImage {
 		player = (Player) sender;
 	    for (int i = 0; i < lines.size(); i++) {
 		if (player != null)
-		    lines.set(i, CMILib.getInstance().getPlaceholderAPIManager().updatePlaceHolders(player, lines.get(i)));
+		    lines.set(i, CMI.getInstance().getPlaceholderAPIManager().updatePlaceHolders(player, lines.get(i)));
 	    }
 	}
 
@@ -545,7 +548,7 @@ public class CMIImage {
 		player = (Player) sender;
 	    for (int i = 0; i < lines.size(); i++) {
 		if (player != null)
-		    lines.set(i, CMILib.getInstance().getPlaceholderAPIManager().updatePlaceHolders(player, lines.get(i)));
+		    lines.set(i, CMI.getInstance().getPlaceholderAPIManager().updatePlaceHolders(player, lines.get(i)));
 	    }
 	}
 

@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	
+
 	<groupId>CMILib</groupId>
 	<artifactId>CMILib</artifactId>
-	<version>1.2.1.2</version>
+	<version>1.2.2.0</version>
 	<name>CMILib</name>
 	<url>http://maven.apache.org</url>
-    <packaging>jar</packaging>
+	<packaging>jar</packaging>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
 	</properties>
 
 	<dependencies>
@@ -22,14 +22,14 @@
 			<version>1.19-R0.1-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
-		<!-- CMI 
+		<!-- CMI  -->
 		<dependency>
 			<groupId>net.Zrips</groupId>
 			<artifactId>CMI</artifactId>
-			<version>latest</version>
+			<version>9.0.0.0</version>
 			<scope>system</scope>
 			<systemPath>${basedir}/libs/CMI9.0.0.0API.jar</systemPath>
-		</dependency> -->
+		</dependency>
 		<!-- PlaceholderAPI -->
 		<dependency>
 			<groupId>me.clip</groupId>
@@ -74,6 +74,14 @@
 				<configuration>
 					<source>1.8</source>
 					<target>1.8</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.3.1</version>
+				<configuration>
+					<outputDirectory>D:\MC\Server 1.19\plugins\</outputDirectory>
 				</configuration>
 			</plugin>
 		</plugins>
