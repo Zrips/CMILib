@@ -13,6 +13,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
 import net.Zrips.CMILib.Items.CMIMaterial;
+import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Version.Version;
 
 public class CMIBlock {
@@ -121,10 +122,10 @@ public class CMIBlock {
 
 	    org.bukkit.block.data.Bisected half = (org.bukkit.block.data.Bisected) blockData;
 
-	    switch (half.getHalf()) {
-	    case TOP:
+	    switch (half.getHalf().toString()) {
+	    case "TOP":
 		return Bisect.TOP;
-	    case BOTTOM:
+	    case "BOTTOM":
 		return Bisect.BOTTOM;
 	    }
 	}
@@ -162,10 +163,10 @@ public class CMIBlock {
 	    if (!(blockData instanceof org.bukkit.block.data.type.Bed))
 		return null;
 	    org.bukkit.block.data.type.Bed half = (org.bukkit.block.data.type.Bed) blockData;
-	    switch (half.getPart()) {
-	    case FOOT:
+	    switch (half.getPart().toString()) {
+	    case "FOOT":
 		return BedPart.FOOT;
-	    case HEAD:
+	    case "HEAD":
 		return BedPart.HEAD;
 	    default:
 		break;
@@ -205,10 +206,9 @@ public class CMIBlock {
 		return directional.getRotation();
 	    }
 	}
-
 	try {
 	    CMIMaterial cm = CMIMaterial.get(block);
-	    switch (cm) {
+	    switch (cm) { 
 	    case COMPARATOR:
 		org.bukkit.material.Comparator Comparator2 = (org.bukkit.material.Comparator) block.getState().getData();
 		return Comparator2.getFacing();
@@ -299,11 +299,11 @@ public class CMIBlock {
 			? (org.bukkit.block.data.Bisected) blockData.clone()
 			: (org.bukkit.block.data.Bisected) blockd;
 		    if (half != null) {
-			switch (half.getHalf()) {
-			case TOP:
+			switch (half.getHalf().toString()) {
+			case "TOP":
 			    half.setHalf(org.bukkit.block.data.Bisected.Half.BOTTOM);
 			    break;
-			case BOTTOM:
+			case "BOTTOM":
 			    half.setHalf(org.bukkit.block.data.Bisected.Half.TOP);
 			    break;
 			}
@@ -324,26 +324,26 @@ public class CMIBlock {
 		    case NORTH_SOUTH:
 
 			if (angle) {
-			    switch (face) {
-			    case NORTH:
+			    switch (face.toString()) {
+			    case "NORTH":
 				directional.setFacing(BlockFace.EAST);
 				break;
-			    case SOUTH:
+			    case "SOUTH":
 				directional.setFacing(BlockFace.WEST);
 				break;
-			    case WEST:
+			    case "WEST":
 				directional.setFacing(BlockFace.SOUTH);
 				break;
-			    case EAST:
+			    case "EAST":
 				directional.setFacing(BlockFace.NORTH);
 				break;
 			    }
 			} else {
-			    switch (face) {
-			    case NORTH:
+			    switch (face.toString()) {
+			    case "NORTH":
 				directional.setFacing(BlockFace.SOUTH);
 				break;
-			    case SOUTH:
+			    case "SOUTH":
 				directional.setFacing(BlockFace.NORTH);
 				break;
 			    }
@@ -353,26 +353,26 @@ public class CMIBlock {
 		    case WEST_EAST:
 
 			if (angle) {
-			    switch (face) {
-			    case WEST:
+			    switch (face.toString()) {
+			    case "WEST":
 				directional.setFacing(BlockFace.NORTH);
 				break;
-			    case EAST:
+			    case "EAST":
 				directional.setFacing(BlockFace.SOUTH);
 				break;
-			    case NORTH:
+			    case "NORTH":
 				directional.setFacing(BlockFace.WEST);
 				break;
-			    case SOUTH:
+			    case "SOUTH":
 				directional.setFacing(BlockFace.EAST);
 				break;
 			    }
 			} else {
-			    switch (face) {
-			    case WEST:
+			    switch (face.toString()) {
+			    case "WEST":
 				directional.setFacing(BlockFace.EAST);
 				break;
-			    case EAST:
+			    case "EAST":
 				directional.setFacing(BlockFace.WEST);
 				break;
 			    }
@@ -380,11 +380,11 @@ public class CMIBlock {
 
 			break;
 		    case UP_DOWN:
-			switch (face) {
-			case UP:
+			switch (face.toString()) {
+			case "UP":
 			    directional.setFacing(BlockFace.DOWN);
 			    break;
-			case DOWN:
+			case "DOWN":
 			    directional.setFacing(BlockFace.UP);
 			    break;
 			}
@@ -403,17 +403,17 @@ public class CMIBlock {
 		switch (direction) {
 		case NORTH_SOUTH:
 		case WEST_EAST:
-		    switch (shape) {
-		    case INNER_LEFT:
+		    switch (shape.toString()) {
+		    case "INNER_LEFT":
 			stair.setShape(Shape.INNER_RIGHT);
 			break;
-		    case INNER_RIGHT:
+		    case "INNER_RIGHT":
 			stair.setShape(Shape.INNER_LEFT);
 			break;
-		    case OUTER_LEFT:
+		    case "OUTER_LEFT":
 			stair.setShape(Shape.OUTER_RIGHT);
 			break;
-		    case OUTER_RIGHT:
+		    case "OUTER_RIGHT":
 			stair.setShape(Shape.OUTER_LEFT);
 			break;
 		    }
