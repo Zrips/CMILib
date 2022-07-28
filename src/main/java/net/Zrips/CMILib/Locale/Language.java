@@ -85,14 +85,13 @@ public class Language {
 		continue;
 	    }
 
-	    // Fix
-//	    if (CMILib.getInstance().isCmiPresent() && one instanceof com.Zrips.CMI.Containers.Snd) {
-//		com.Zrips.CMI.Containers.Snd cmisnd = (com.Zrips.CMI.Containers.Snd) one;
-//		msg = updateCmiSnd(cmisnd, msg);
-//
-//		remove.add(one);
-//		continue;
-//	    }
+	    if (CMILib.getInstance().isCmiPresent() && one instanceof com.Zrips.CMI.Containers.Snd) {
+		com.Zrips.CMI.Containers.Snd cmisnd = (com.Zrips.CMI.Containers.Snd) one;
+		msg = updateCmiSnd(cmisnd, msg);
+
+		remove.add(one);
+		continue;
+	    }
 
 	    if (one instanceof Location && customLoc == null) {
 		customLoc = (Location) one;
