@@ -87,10 +87,25 @@ public class CMIActionBar {
                     consts = ChatMessageclz.getEnumConstants();
                     sub = consts[2].getClass();
                 }
-            } catch (ClassNotFoundException | NoSuchMethodException | SecurityException | NoSuchFieldException ex) {
-                CMIMessages.consoleMessage("Error {0} ");
+            } catch (Throwable ex) {
                 CMIMessages.consoleMessage(ex.toString());
             }
+        }
+
+        try {
+            if (Version.isCurrentEqualOrHigher(Version.v1_19_R1)) {
+                constructor = packetType.getConstructor(nmsIChatBaseComponent, int.class);
+            } else if (Version.isCurrentHigher(Version.v1_15_R1)) {
+                constructor = packetType.getConstructor(nmsIChatBaseComponent, sub, UUID.class);
+            } else if (Version.isCurrentHigher(Version.v1_11_R1)) {
+                constructor = packetType.getConstructor(nmsIChatBaseComponent, sub);
+            } else if (Version.isCurrentHigher(Version.v1_7_R4)) {
+                constructor = packetType.getConstructor(nmsIChatBaseComponent, byte.class);
+            } else {
+                constructor = packetType.getConstructor(nmsIChatBaseComponent, int.class);
+            }
+        } catch (Throwable ex) {
+            CMIMessages.consoleMessage(ex.toString());
         }
     }
 
