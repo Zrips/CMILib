@@ -114,6 +114,7 @@ public class CMILibConfig {
 	GUIEmptyField = CMILib.getInstance().getItemManager().getItem(cfg.get("GlobalGui.EmptyField", "BLACK_STAINED_GLASS_PANE"));
 	if (GUIEmptyField == null)
 	    GUIEmptyField = new CMIItemStack(CMIMaterial.BLACK_STAINED_GLASS_PANE.newItemStack());
+	GUIEmptyField.setDisplayName("&r ");
 
 	cfg.addComment("GlobalGui.Pages.Previous", "Icon for UI previous page button");
 	GUIPreviousPage = CMILib.getInstance().getItemManager().getItem(cfg.get("GlobalGui.Pages.Previous",
