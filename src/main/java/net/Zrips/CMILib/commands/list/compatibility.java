@@ -4,8 +4,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import com.Zrips.CMI.Modules.Advancements.AdvancementManager;
+
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Reflections;
+import net.Zrips.CMILib.BossBar.BossBarInfo;
 import net.Zrips.CMILib.Container.CMICommandSender;
 import net.Zrips.CMILib.Container.CMIServerProperties;
 import net.Zrips.CMILib.FileHandler.ConfigReader;
@@ -77,6 +80,10 @@ public class compatibility implements Cmd {
             CMIMessages.consoleMessage("Error stringTest");
 
         nbt.getKeys();
+
+        AdvancementManager.sendToast(player, "Test");
+
+        plugin.getBossBarManager().Show(new BossBarInfo(player, "Compatibility"));
 
         // Check this
         // ref.setSkullTexture(item, customProfileName, texture)	

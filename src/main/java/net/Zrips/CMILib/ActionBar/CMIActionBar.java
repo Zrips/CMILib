@@ -44,12 +44,6 @@ public class CMIActionBar {
                 sendPacket = Class.forName("net.minecraft.server.network.PlayerConnection").getMethod(Version.isCurrentEqualOrHigher(Version.v1_18_R1) ? "a" : "sendPacket",
                     net.minecraft.network.protocol.Packet.class);
                 getHandle = Class.forName("org.bukkit.craftbukkit." + Version.getCurrent() + ".entity.CraftPlayer").getMethod("getHandle");
-
-                if (Version.isCurrentSubEqual(0))
-                    constructor = packetType.getConstructor(nmsIChatBaseComponent, int.class);
-                else
-                    constructor = packetType.getConstructor(nmsIChatBaseComponent, boolean.class);
-
             } catch (Throwable e) {
                 e.printStackTrace();
             }
@@ -93,8 +87,11 @@ public class CMIActionBar {
         }
 
         try {
-            if (Version.isCurrentEqualOrHigher(Version.v1_19_R1)) {
-                constructor = packetType.getConstructor(nmsIChatBaseComponent, int.class);
+            if (Version.isCurrentEqualOrHigher(Version.v1_19_R1)) {                
+                if (Version.isCurrentSubEqual(0))
+                    constructor = packetType.getConstructor(nmsIChatBaseComponent, int.class);
+                else
+                    constructor = packetType.getConstructor(nmsIChatBaseComponent, boolean.class);                
             } else if (Version.isCurrentHigher(Version.v1_15_R1)) {
                 constructor = packetType.getConstructor(nmsIChatBaseComponent, sub, UUID.class);
             } else if (Version.isCurrentHigher(Version.v1_11_R1)) {

@@ -27,6 +27,7 @@ public class CMIRecipe {
 
     private Recipe recipe = null;
     private String identificator = null;
+    private String customName = null;
     private CMIRecipeType type = null;
 
     private CMIRecipeCraftData data = null;
@@ -610,5 +611,14 @@ public class CMIRecipe {
     public CMIRecipe setData(CMIRecipeCraftData data) {
 	this.data = data;
 	return this;
+    }
+
+    public String getCustomName() {
+        return customName;
+    }
+
+    public CMIRecipe setCustomName(String customName) {
+        this.customName = customName;
+        return this;
     }
 }
