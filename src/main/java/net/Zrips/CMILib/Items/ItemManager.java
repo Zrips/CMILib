@@ -275,7 +275,7 @@ public class ItemManager {
 	    cm = CMIMaterial.PLAYER_HEAD.newCMIItemStack();
 	    data = 3;
 
-	    if (original.contains(":")) {
+	    if (original.contains(":")) {	        
 		ItemStack old = headCache.get(original);
 		if (old != null && (ahead == null || !ahead.isIgnoreCached())) {
 		    cm.setItemStack(old);
@@ -317,13 +317,12 @@ public class ItemManager {
 						SkullMeta lskullMeta = (SkullMeta) lskull.getItemMeta();
 						lskullMeta.setOwningPlayer(offlineP);
 						lskull.setItemMeta(lskullMeta);
-						if (Version.isCurrentEqualOrHigher(Version.v1_17_R1) && CMILib.getInstance().isCmiPresent()) {
-						    // Fix
-//						    com.Zrips.CMI.Modules.Skin.CMISkin skin = com.Zrips.CMI.CMI.getInstance().getSkinManager().getSkin(d);
-//						    if (skin != null) {
-//							lskull = CMILib.getInstance().getReflectionManager().setSkullTexture(lskull, offlineP.getName(), skin.getSkin());
-//							lskullMeta = (SkullMeta) lskull.getItemMeta();
-//						    }
+						if (Version.isCurrentEqualOrHigher(Version.v1_17_R1) && CMILib.getInstance().isCmiPresent()) {						    
+						    com.Zrips.CMI.Modules.Skin.CMISkin skin = com.Zrips.CMI.CMI.getInstance().getSkinManager().getSkin(d);
+						    if (skin != null) {
+							lskull = CMILib.getInstance().getReflectionManager().setSkullTexture(lskull, offlineP.getName(), skin.getSkin());
+							lskullMeta = (SkullMeta) lskull.getItemMeta();
+						    }
 						}
 
 						CMINBT nbt = new CMINBT(lskull);
@@ -355,12 +354,12 @@ public class ItemManager {
 				}
 			    } else {
 				if (Version.isCurrentEqualOrHigher(Version.v1_16_R3)) {
+				    
 				    if ((ahead != null && !ahead.isForce() || ahead == null) && Bukkit.getPlayer(d) != null) {
 					Player player = Bukkit.getPlayer(d);
 					skullMeta.setOwningPlayer(player);
 					skull.setItemMeta(skullMeta);
 					headCache.put(original, skull);
-
 					if (ahead != null)
 					    ahead.afterAsyncUpdate(skull);
 				    } else {
@@ -380,7 +379,6 @@ public class ItemManager {
 						OfflinePlayer offlineP = Bukkit.getOfflinePlayer(d);
 
 						if (offlineP != null) {
-
 						    ItemStack lskull = skull;
 						    SkullMeta lskullMeta = (SkullMeta) lskull.getItemMeta();
 
@@ -389,12 +387,11 @@ public class ItemManager {
 
 						    if (Version.isCurrentEqualOrHigher(Version.v1_17_R1) && CMILib.getInstance().isCmiPresent()) {
 
-							// Fix
-//							com.Zrips.CMI.Modules.Skin.CMISkin skin = com.Zrips.CMI.CMI.getInstance().getSkinManager().getSkin(offlineP.getName());
-//							if (skin != null) {
-//							    lskull = CMILib.getInstance().getReflectionManager().setSkullTexture(lskull, offlineP.getName(), skin.getSkin());
-//							    lskullMeta = (SkullMeta) lskull.getItemMeta();
-//							}
+							com.Zrips.CMI.Modules.Skin.CMISkin skin = com.Zrips.CMI.CMI.getInstance().getSkinManager().getSkin(offlineP.getName());
+							if (skin != null) {
+							    lskull = CMILib.getInstance().getReflectionManager().setSkullTexture(lskull, offlineP.getName(), skin.getSkin());
+							    lskullMeta = (SkullMeta) lskull.getItemMeta();
+							}
 						    }
 
 						    CMINBT nbt = new CMINBT(lskull);
