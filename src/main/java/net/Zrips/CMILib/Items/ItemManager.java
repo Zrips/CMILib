@@ -170,6 +170,10 @@ public class ItemManager {
     }
 
     ConcurrentHashMap<String, ItemStack> headCache = new ConcurrentHashMap<String, ItemStack>();
+    
+    public void clearHeadCache() {
+        headCache.clear();
+    }
 
     public CMIItemStack getItem(String name) {
 	return getItem(name, null);
