@@ -235,7 +235,7 @@ public class CMIEffectManager {
 	}
 
 	public boolean isColored() {
-	    return this.equals(COLOURED_DUST) || this.equals(NOTE);
+	    return this.equals(COLOURED_DUST);
 	}
 
 	public static boolean isParticle(Effect effect) {
