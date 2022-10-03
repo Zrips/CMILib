@@ -1439,6 +1439,7 @@ public enum CMICustomColors {
     Rose("FF007F"),
     Purple_Pizzazz("FF00CC"),
     Magenta("FF00FF"),
+    Fuchsia("FF00FF"),
     Scarlet("FF2400"),
     Wild_Strawberry("FF3399"),
     Razzle_Dazzle_Rose("FF33CC"),

@@ -114,9 +114,8 @@ public class CMIRecipe {
     public static Recipe makeShapedRecipe(ItemStack result, HashMap<Integer, CMIRecipeIngredient> Recipe, String customKey) {
 
         if (Version.isCurrentEqualOrHigher(Version.v1_13_R1)) {
-            ShapedRecipe NewShapedRecipe = null;
-
-            NewShapedRecipe = new ShapedRecipe(new org.bukkit.NamespacedKey(CMILib.getInstance(), customKey == null ? getRecipeIdentificator(CMIRecipeType.Shaped, result, Recipe) : customKey), result);
+            ShapedRecipe NewShapedRecipe = new ShapedRecipe(new org.bukkit.NamespacedKey(CMILib.getInstance(), customKey == null ? getRecipeIdentificator(CMIRecipeType.Shaped, result, Recipe) : customKey),
+                result);
 
             LinkedHashMap<String, CMIRecipeIngredient> itemsused = new LinkedHashMap<String, CMIRecipeIngredient>();
 
@@ -365,7 +364,8 @@ public class CMIRecipe {
             duration = temp.getCookingTime();
         }
 
-        return new org.bukkit.inventory.BlastingRecipe(new org.bukkit.NamespacedKey(CMILib.getInstance(), customKey == null ? getRecipeIdentificator(CMIRecipeType.Blasting, result, ingredient1) : customKey), result,
+        return new org.bukkit.inventory.BlastingRecipe(new org.bukkit.NamespacedKey(CMILib.getInstance(), customKey == null ? getRecipeIdentificator(CMIRecipeType.Blasting, result, ingredient1)
+            : customKey), result,
             (org.bukkit.inventory.RecipeChoice) ingredient1.generateChoice(), exp,
             duration);
     }

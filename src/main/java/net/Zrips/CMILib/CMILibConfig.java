@@ -105,7 +105,7 @@ public class CMILibConfig {
 	lang = cfg.get("Language", locale).toUpperCase();
 
 	cfg.addComment("AutoUpdate", "When enabled plugin will try to keep CMILib up to date automatically");
-	autoUpdate = cfg.get("AutoUpdate", true);
+	autoUpdate = cfg.get("AutoUpdate", false);
 
 	cfg.addComment("AutoFileRemoval", "When enabled plugin will try to clean up outdated CMILib files. This only works when autoUpdate is enabled");
 	autoFileRemoval = cfg.get("AutoFileRemoval", true);

@@ -116,6 +116,10 @@ public enum LC {
     info_Inventory_FullDrop("&5Not all items fit in your inventory. They have been dropped on ground"),
 
     info_TimeNotRecorded("&e-No record-"),
+    info_months("&e[months] &6months "),
+    info_oneMonth("&e[months] &6month "),
+    info_weeks("&e[weeks] &6weeks "),
+    info_oneWeek("&e[weeks] &6week "),
     info_years("&e[years] &6years "),
     info_oneYear("&e[years] &6year "),
     info_day("&e[days] &6days "),
