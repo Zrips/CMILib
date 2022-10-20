@@ -126,6 +126,7 @@ public class CMIEnchantment {
     }
 
     public static Enchantment getByName(String name) {
+        String original = name;
         name = name.replace("_", "").replace(" ", "").toLowerCase();
 
         String tp = enchantList.get(name);
@@ -144,7 +145,13 @@ public class CMIEnchantment {
                 return enchant;
         }
 
-        return null;
+        try {
+            got = Enchantment.getByName(original.toUpperCase());
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+
+        return got;
     }
 
     public static boolean isEnabled(Enchantment enchant) {
