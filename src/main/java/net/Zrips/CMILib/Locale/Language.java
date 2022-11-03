@@ -17,6 +17,7 @@ import org.bukkit.entity.Player;
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Colors.CMIChatColor;
 import net.Zrips.CMILib.Container.CMIList;
+import net.Zrips.CMILib.Logs.CMIDebug;
 
 public class Language {
     public FileConfiguration enlocale;
@@ -62,6 +63,7 @@ public class Language {
      */
 
     public String getMessage(String key, Object... variables) {
+        
         String missing = "Missing locale for " + key + " ";
         String msg = "";
         if (Customlocale.isString(key))
@@ -127,7 +129,10 @@ public class Language {
             }
         }
         msg = msg.replace("!prefix!", getM(LC.info_prefix));
+        
+        
         msg = filterNewLine(msg);
+
         return CMIChatColor.translate(msg);
     }
 
@@ -154,6 +159,9 @@ public class Language {
             msg = CMIList.listToString(Customlocale.getStringList(key));
         else
             msg = getEN().isString(key) ? getEN().getString(key) : missing;
+        
+        
+        CMIDebug.d("s", msg);
 
         return msg;
     }
