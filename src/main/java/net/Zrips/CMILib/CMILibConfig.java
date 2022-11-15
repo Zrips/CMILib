@@ -52,6 +52,7 @@ public class CMILibConfig {
     private CMIItemStack GUINextPage = null;
     private CMIItemStack GUIMiddlePage = null;
     private CMIItemStack GUIClose = null;
+    private CMIItemStack GUIInfo = null;
 
     private ConfigReader localeFile = null;
     private ConfigReader cfg = null;
@@ -140,6 +141,12 @@ public class CMILibConfig {
             "head:eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzM4YWIxNDU3NDdiNGJkMDljZTAzNTQzNTQ5NDhjZTY5ZmY2ZjQxZDllMDk4YzY4NDhiODBlMTg3ZTkxOSJ9fX0="));
         if (GUIClose == null)
             GUIClose = new CMIItemStack(CMIMaterial.LIGHT_GRAY_WOOL.newItemStack());
+        
+        cfg.addComment("GlobalGui.Info", "Icon for UI info button");
+        GUIInfo = CMILib.getInstance().getItemManager().getItem(cfg.get("GlobalGui.Info",
+            "head:eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjcwNWZkOTRhMGM0MzE5MjdmYjRlNjM5YjBmY2ZiNDk3MTdlNDEyMjg1YTAyYjQzOWUwMTEyZGEyMmIyZTJlYyJ9fX0="));
+        if (GUIInfo == null)
+            GUIInfo = new CMIItemStack(CMIMaterial.LIGHT_GRAY_WOOL.newItemStack());
 
 	cfg.addComment("Spawners.mysterySpawners", "List of spawners to pick from while using spawner:random variable");
 	mysterySpawners = cfg.get("Spawners.mysterySpawners", Arrays.asList("skeleton", "zombie", "silverfish", "panda", "fox"));
