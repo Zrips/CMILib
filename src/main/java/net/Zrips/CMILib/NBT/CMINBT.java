@@ -204,7 +204,11 @@ public class CMINBT {
             asStringName = "toString";
             getKeysName = "c";
         }
-
+        
+        if (Version.isCurrentEqualOrHigher(Version.v1_19_R2)) {
+            asStringName = "f_";
+        }
+        
         try {
             met_getString = nbtTagCompound.getMethod(getStringName, String.class);
             met_getInt = nbtTagCompound.getMethod(getIntName, String.class);

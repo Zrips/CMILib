@@ -216,9 +216,16 @@ public class Reflections {
                 IStack = net.minecraft.world.item.ItemStack.class;
 //		EnumHand = net.minecraft.world.EnumHand.class;
 
-                Object advancementData = MinecraftServer.getClass().getMethod(Version.isCurrentEqualOrHigher(Version.v1_18_R1) ? Version.isCurrentEqualOrHigher(Version.v1_19_R1) ? "az" : "ax"
-                    : "getAdvancementData").invoke(MinecraftServer);
-
+                String variable = "ax";
+                                
+                if (Version.isCurrentEqualOrHigher(Version.v1_19_R2))
+                    variable = "ay";
+                else if (Version.isCurrentEqualOrHigher(Version.v1_19_R1))
+                    variable = "az";
+                else if (Version.isCurrentLower(Version.v1_18_R1))
+                    variable = "getAdvancementData";                               
+                
+                Object advancementData = MinecraftServer.getClass().getMethod(variable).invoke(MinecraftServer);
                 advancementRegistry = advancementData.getClass().getField("c").get(advancementData);
 
             } catch (Throwable e) {
@@ -1771,8 +1778,10 @@ public class Reflections {
                     LootPredicateManager = net.minecraft.server.MinecraftServer.getServer().getClass().getMethod("aH").invoke(net.minecraft.server.MinecraftServer.getServer());
                 else if (Version.isCurrentEqualOrLower(Version.v1_18_R2))
                     LootPredicateManager = net.minecraft.server.MinecraftServer.getServer().getClass().getMethod("aG").invoke(net.minecraft.server.MinecraftServer.getServer());
+                else if (Version.isCurrentEqualOrLower(Version.v1_19_R1))
+                    LootPredicateManager = net.minecraft.server.MinecraftServer.getServer().getClass().getMethod("aI").invoke(net.minecraft.server.MinecraftServer.getServer());
                 else
-                    LootPredicateManager = net.minecraft.server.MinecraftServer.getServer().aI();
+                    LootPredicateManager = net.minecraft.server.MinecraftServer.getServer().aH();
 
                 net.minecraft.advancements.critereon.LootDeserializationContext LDC = new net.minecraft.advancements.critereon.LootDeserializationContext(
                     (net.minecraft.resources.MinecraftKey) minecraftkey, (net.minecraft.world.level.storage.loot.LootPredicateManager) LootPredicateManager);
@@ -1781,9 +1790,14 @@ public class Reflections {
 
                 if (nms != null) {
                     //getAdvancementData
-                    if (Version.isCurrentEqualOrHigher(Version.v1_19_R1))
-                        net.minecraft.server.MinecraftServer.getServer().az().c.a(Maps.newHashMap(Collections.singletonMap(minecraftkey, nms)));
-                    else {
+
+                    if (Version.isCurrentEqualOrHigher(Version.v1_19_R2))
+                        net.minecraft.server.MinecraftServer.getServer().ay().c.a(Maps.newHashMap(Collections.singletonMap(minecraftkey, nms)));
+                    else if (Version.isCurrentEqualOrHigher(Version.v1_19_R1)) {
+                        Object ax = net.minecraft.server.MinecraftServer.getServer().getClass().getMethod("az").invoke(net.minecraft.server.MinecraftServer.getServer());
+                        Object c = ax.getClass().getField("c").get(ax);
+                        c.getClass().getMethod("a", Map.class).invoke(c, Maps.newHashMap(Collections.singletonMap(minecraftkey, nms)));
+                    } else {
                         Object ax = net.minecraft.server.MinecraftServer.getServer().getClass().getMethod("ax").invoke(net.minecraft.server.MinecraftServer.getServer());
                         Object c = ax.getClass().getField("c").get(ax);
                         c.getClass().getMethod("a", Map.class).invoke(c, Maps.newHashMap(Collections.singletonMap(minecraftkey, nms)));
