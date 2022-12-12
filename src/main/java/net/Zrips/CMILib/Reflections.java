@@ -217,14 +217,14 @@ public class Reflections {
 //		EnumHand = net.minecraft.world.EnumHand.class;
 
                 String variable = "ax";
-                                
+
                 if (Version.isCurrentEqualOrHigher(Version.v1_19_R2))
                     variable = "ay";
                 else if (Version.isCurrentEqualOrHigher(Version.v1_19_R1))
                     variable = "az";
                 else if (Version.isCurrentLower(Version.v1_18_R1))
-                    variable = "getAdvancementData";                               
-                
+                    variable = "getAdvancementData";
+
                 Object advancementData = MinecraftServer.getClass().getMethod(variable).invoke(MinecraftServer);
                 advancementRegistry = advancementData.getClass().getField("c").get(advancementData);
 
@@ -526,6 +526,25 @@ public class Reflections {
     }
 
     public void setServerProperties(CMIServerProperties setting, Object value, boolean save) {
+        if (Version.isCurrentEqualOrHigher(Version.v1_19_R2)) {
+
+            try {
+                // DedicatedServer -> DedicatedServerSettings
+                Object field1 = MinecraftServer.getClass().getField("u").get(MinecraftServer);
+                // DedicatedServerSettings -> DedicatedServerProperties method
+                Object prop = field1.getClass().getMethod("a").invoke(field1);
+                // PropertyManager -> Properties
+                Object field2 = prop.getClass().getField("Y").get(prop);
+                Method setPropertyMethod = field2.getClass().getDeclaredMethod("setProperty", String.class, String.class);
+                setPropertyMethod.invoke(field2, setting.getPath(), String.valueOf(value));
+                if (save)
+                    // DedicatedServerSettings -> forceSave method
+                    field1.getClass().getMethod("b").invoke(field1);
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+            return;
+        }
         if (Version.isCurrentEqualOrHigher(Version.v1_19_R1)) {
 
             try {
