@@ -16,6 +16,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Entities.CMIEntityType;
 import net.Zrips.CMILib.Items.CMIMaterial;
+import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Version.Version;
 
 public class CMINBT {
@@ -202,14 +203,14 @@ public class CMINBT {
             asStringName = "toString";
             getKeysName = "c";
         }
-        
+
         if (Version.isCurrentEqualOrHigher(Version.v1_19_R2)) {
             asStringName = "f_";
             getKeysName = "e";
-            
+
             getTypeIdName = "b";
         }
-        
+
         try {
             met_getString = nbtTagCompound.getMethod(getStringName, String.class);
             met_getInt = nbtTagCompound.getMethod(getIntName, String.class);
@@ -954,7 +955,7 @@ public class CMINBT {
     }
 
     public byte getTypeId() {
-        try {                        
+        try {
             return (byte) getNbt().getClass().getMethod(getTypeIdName).invoke(getNbt());
         } catch (Throwable e) {
             e.printStackTrace();
@@ -1053,11 +1054,13 @@ public class CMINBT {
                 ff = "aa_";
                 break;
             case v1_19_R1:
-            case v1_19_R2:
                 if (Version.isCurrentSubEqual(0))
                     ff = "ab_";
                 else
                     ff = "aa_";
+                break;
+            case v1_19_R2:
+                    ff = "ad_";                
                 break;
             }
 

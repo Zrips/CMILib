@@ -600,7 +600,7 @@ public class CMIItemStack {
                 try {
                     return bs.getSpawnedType();
                 } catch (Throwable e) {
-                    e.printStackTrace();
+//                    e.printStackTrace();
                 }
             }
         }
