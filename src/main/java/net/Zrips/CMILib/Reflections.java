@@ -52,6 +52,7 @@ import net.Zrips.CMILib.Version.Version;
 import net.minecraft.advancements.Advancement.SerializedAdvancement;
 import net.minecraft.advancements.Advancements;
 import net.minecraft.advancements.critereon.LootDeserializationContext;
+import net.minecraft.network.protocol.game.PacketPlayOutSpawnEntity;
 import net.minecraft.server.AdvancementDataPlayer;
 import net.minecraft.server.AdvancementDataWorld;
 import net.minecraft.server.MinecraftServer;
@@ -1483,8 +1484,16 @@ public class Reflections {
 
     public void spawnInEntityData(Player player, Entity entity) {
 
+        if (Version.isCurrentEqualOrHigher(Version.v1_19_R2))
+            return;
+
         try {
-            Constructor<?> packet = PacketPlayOutSpawnEntityLiving.getConstructor(EntityLiving);
+            Constructor<?> packet = null;
+            if (Version.isCurrentEqualOrHigher(Version.v1_19_R2))
+                packet = PacketPlayOutSpawnEntityLiving.getConstructor(CEntity);
+            else
+                packet = PacketPlayOutSpawnEntityLiving.getConstructor(EntityLiving);
+
             Object craftEntity = CraftEntity.cast(entity);
             Object craftEntityHandle = CraftEntity.getMethod("getHandle").invoke(craftEntity);
 
@@ -1509,13 +1518,24 @@ public class Reflections {
 
             Object watcher = craftEntityHandle.getClass().getMethod(methodName).invoke(craftEntityHandle);
 
-            Constructor<?> packet = PacketPlayOutEntityMetadata.getConstructor(int.class, DataWatcher, boolean.class);
-            Object newPack = packet.newInstance(id, watcher, true);
-            this.sendPlayerPacket(player, newPack);
+            Constructor<?> packet = null;
+            Object newPack = null;
+
+            if (Version.isCurrentEqualOrHigher(Version.v1_19_R2)) {
+                packet = PacketPlayOutEntityMetadata.getConstructor(int.class, List.class);
+                newPack = packet.newInstance(id, watcher.getClass().getMethod("b").invoke(watcher));
+            } else {
+                packet = PacketPlayOutEntityMetadata.getConstructor(int.class, DataWatcher, boolean.class);
+                newPack = packet.newInstance(id, watcher, true);
+            }
+
+            Object pack = newPack;
+
+            this.sendPlayerPacket(player, pack);
 
             Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, () -> {
                 try {
-                    this.sendPlayerPacket(player, newPack);
+                    this.sendPlayerPacket(player, pack);
                 } catch (Throwable e) {
                     e.printStackTrace();
                 }
