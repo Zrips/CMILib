@@ -1500,7 +1500,14 @@ public class Reflections {
             Object craftEntity = CraftEntity.cast(entity);
             int id = (int) CraftEntity.getMethod("getEntityId").invoke(craftEntity);
             Object craftEntityHandle = CraftEntity.getMethod("getHandle").invoke(craftEntity);
-            Object watcher = craftEntityHandle.getClass().getMethod(Version.isCurrentEqualOrHigher(Version.v1_18_R1) ? "ai" : "getDataWatcher").invoke(craftEntityHandle);
+
+            String methodName = "getDataWatcher";
+            if (Version.isCurrentEqualOrHigher(Version.v1_19_R2))
+                methodName = "al";
+            else if (Version.isCurrentEqualOrHigher(Version.v1_18_R1))
+                methodName = "ai";
+
+            Object watcher = craftEntityHandle.getClass().getMethod(methodName).invoke(craftEntityHandle);
 
             Constructor<?> packet = PacketPlayOutEntityMetadata.getConstructor(int.class, DataWatcher, boolean.class);
             Object newPack = packet.newInstance(id, watcher, true);
