@@ -20,6 +20,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Container.CMIList;
 import net.Zrips.CMILib.Container.CMINamespacedKey;
+import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.Version.Version;
 

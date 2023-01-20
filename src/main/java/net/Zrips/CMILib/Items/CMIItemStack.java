@@ -43,6 +43,7 @@ import net.Zrips.CMILib.Container.LeatherAnimationType;
 import net.Zrips.CMILib.Enchants.CMIEnchantment;
 import net.Zrips.CMILib.Entities.CMIEntity;
 import net.Zrips.CMILib.Entities.CMIEntityType;
+import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.Recipes.CMIRecipe;
 import net.Zrips.CMILib.Recipes.CMIRecipeIngredient;
@@ -600,7 +601,7 @@ public class CMIItemStack {
                 try {
                     return bs.getSpawnedType();
                 } catch (Throwable e) {
-//                    e.printStackTrace();
+                    e.printStackTrace();
                 }
             }
         }

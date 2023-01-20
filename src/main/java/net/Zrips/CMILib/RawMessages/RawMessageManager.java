@@ -16,7 +16,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import net.Zrips.CMILib.CMILib;
-import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Messages.CMIMessages;
 import net.Zrips.CMILib.Version.Version;
 import net.Zrips.CMILib.commands.CommandsHandler;
@@ -40,6 +39,7 @@ public class RawMessageManager {
     //Lets limit cache to specific amount to avoid memory leaks
     private static final int MAX_ENTRIES = 5000;
     static LinkedHashMap<Long, RawMessageCommand> map = new LinkedHashMap<Long, RawMessageCommand>(MAX_ENTRIES + 1, .75F, false) {
+
         @Override
         protected boolean removeEldestEntry(Map.Entry<Long, RawMessageCommand> eldest) {
             return size() > MAX_ENTRIES;

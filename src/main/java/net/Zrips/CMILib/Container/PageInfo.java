@@ -208,8 +208,6 @@ public class PageInfo {
             }
         };
 
-        CMIDebug.d(prevpage, getCurrentPage(), nextPage);
-
         rmcb.setOriginalCommand((cmd.replace("/", "") + " " + pagePrefix + prevpage));
 
         rm.addText((getCurrentPage() > 1 ? LC.info_prevPage.getLocale() : LC.info_prevPageOff.getLocale()))
