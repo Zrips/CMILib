@@ -1359,6 +1359,8 @@ public class Reflections {
                     case 54:
                         s = getContainer("f");
                         break;
+                    default:
+                        return;
                     }
                 } else {
                     switch (p.getOpenInventory().getTopInventory().getSize()) {
@@ -1380,6 +1382,8 @@ public class Reflections {
                     case 54:
                         s = getContainer("GENERIC_9X6");
                         break;
+                    default:
+                        return;
                     }
                 }
 
