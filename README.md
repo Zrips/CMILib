@@ -14,20 +14,20 @@ All current versions of the Zrips made plugins require this library to operate.
 
 It's recommended to always keep the CMILib .jar file up to date (as well as all Zrips plugins). You can download the latest release from these urls:
 
-https://www.zrips.net/cmib/
-https://www.spigotmc.org/resources/87610/
+- https://www.zrips.net/cmilib/
+- https://www.spigotmc.org/resources/87610/
 
 ## Plugins using this library
 
-CMI as of 9.x version
-Residence as of 5.x version
-MobFarmManager as of 2.x version
-SelectionVisualizer as of 3.0.4.0 version
-TryMe as of 7.x version
-BottledExp as of 3.x version
-JobsReborn as of 5.x version
-TradeMe as of 6.1.0.0 version
-Recount as of 3.5.0 version
+- CMI as of 9.x version
+- Residence as of 5.x version
+- MobFarmManager as of 2.x version
+- SelectionVisualizer as of 3.0.4.0 version
+- TryMe as of 7.x version
+- BottledExp as of 3.x version
+- JobsReborn as of 5.x version
+- TradeMe as of 6.1.0.0 version
+- Recount as of 3.5.0 version
 
 ## Installation Instructions
 
