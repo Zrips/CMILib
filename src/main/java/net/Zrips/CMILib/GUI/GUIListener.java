@@ -24,6 +24,7 @@ import org.bukkit.inventory.ItemStack;
 
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.GUI.GUIManager.InvType;
+import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.NBT.CMINBT;
 
 public class GUIListener implements Listener {
@@ -131,7 +132,7 @@ public class GUIListener implements Listener {
         final Player player = (Player) event.getWhoClicked();
 
         if (!plugin.getGUIManager().isOpenedGui(player))
-            return;
+            return; 
         CMIGui gui = plugin.getGUIManager().getGui(player);
 
         if (player.isSleeping()) {
@@ -214,7 +215,7 @@ public class GUIListener implements Listener {
         InventoryAction action = event.getAction();
 
         // removing click limit in case its move to another inventory event which can happen after double clicking on item while holding same one on cursor
-        if (action.equals(InventoryAction.MOVE_TO_OTHER_INVENTORY))
+        if (!gui.isAllowMoveAll() && action.equals(InventoryAction.MOVE_TO_OTHER_INVENTORY))
             GUIManager.limit.remove(player.getUniqueId());
 
         boolean click = plugin.getGUIManager().processClick(player, event.getCurrentItem(), buttons, plugin.getGUIManager().getClickType(event.isLeftClick(), event.isShiftClick(), action, event

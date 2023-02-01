@@ -226,17 +226,19 @@ public class GUIManager {
         if (time != null && time > System.currentTimeMillis())
             return false;
 
-        limit.put(player.getUniqueId(), System.currentTimeMillis() + 150L);
-
         CMIGui gui = map.get(player.getUniqueId());
         if (gui == null)
             return false;
+
+        if (!gui.isAllowMoveAll())
+            limit.put(player.getUniqueId(), System.currentTimeMillis() + 150L);
+
         int clicks = 0;
 
         try {
             if (!gui.getInv().equals(player.getOpenInventory().getTopInventory()) || gui.getInv().getHolder() != null) {
                 player.closeInventory();
-                map.remove(player.getUniqueId());                
+                map.remove(player.getUniqueId());
                 return false;
             }
         } catch (Throwable e) {
@@ -259,14 +261,11 @@ public class GUIManager {
             }
 
             if (canClick) {
-                Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-                    @Override
-                    public void run() {
-                        for (GUIButtonCommand oneC : button.getCommands(clickType)) {
-                            CMICommand.performCommand(player, oneC.getCommand(), oneC.getVis());
-                        }
+                Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+                    for (GUIButtonCommand oneC : button.getCommands(clickType)) {
+                        CMICommand.performCommand(player, oneC.getCommand(), oneC.getVis());
                     }
-                }, 1);
+                }, 1L);
             }
 
             button.click();
