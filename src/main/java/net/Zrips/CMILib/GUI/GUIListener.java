@@ -100,6 +100,7 @@ public class GUIListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onInventoryOpenEvent(InventoryOpenEvent event) {
+
         if (!(event.getPlayer() instanceof Player))
             return;
         clearIconItems((Player) event.getPlayer());
@@ -132,7 +133,7 @@ public class GUIListener implements Listener {
         final Player player = (Player) event.getWhoClicked();
 
         if (!plugin.getGUIManager().isOpenedGui(player))
-            return; 
+            return;
         CMIGui gui = plugin.getGUIManager().getGui(player);
 
         if (player.isSleeping()) {

@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 
 import net.Zrips.CMILib.CMILib;
@@ -448,6 +449,10 @@ public class GUIManager {
 
             player.openInventory(gui.getInv());
 
+            if (gui.getInv().getViewers().isEmpty()) {
+                return;
+            }
+
             gui.updateButtons();
 
             gui.playOpenSound();
@@ -464,7 +469,15 @@ public class GUIManager {
         Player player = gui.getPlayer();
         if (player.getOpenInventory() == null || player.getOpenInventory().getTopInventory() == null) {
             player.closeInventory();
+            map.remove(player.getUniqueId());
         }
+
+        if (!player.getOpenInventory().getTopInventory().getType().equals(gui.getInv().getType()) || player.getOpenInventory().getTopInventory().getSize() != gui.getInv().getSize()) {
+            player.closeInventory();
+            map.remove(player.getUniqueId());
+            return;
+        }
+
         player.getOpenInventory().getTopInventory().setContents(gui.getInv().getContents());
         player.updateInventory();
         gui.setInv(player.getOpenInventory().getTopInventory());
