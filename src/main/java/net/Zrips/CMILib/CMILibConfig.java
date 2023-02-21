@@ -540,4 +540,8 @@ public class CMILibConfig {
         return GUIClose;
     }
 
+    public CMIItemStack getGUIInfo() {
+        return GUIInfo;
+    }
+
 }
