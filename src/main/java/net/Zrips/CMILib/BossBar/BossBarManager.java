@@ -342,6 +342,8 @@ public class BossBarManager {
 
                 if (barInfo.getCommands() != null)
                     old.setCmds(barInfo.getCommands());
+                
+                old.setStarted(System.currentTimeMillis());
 
             }
             Show(old);
@@ -350,14 +352,16 @@ public class BossBarManager {
 
     public synchronized BossBarInfo getBossBar(Player player, String name) {
         ConcurrentHashMap<String, BossBarInfo> info = getBossBarInfo(player);
-        if (info == null)
+        if (info == null) {
             return null;
+        }
         return info.get(name.toLowerCase());
     }
 
     public synchronized ConcurrentHashMap<String, BossBarInfo> getBossBarInfo(Player player) {
-        if (player == null)
+        if (player == null) {
             return null;
+        }
         ConcurrentHashMap<String, BossBarInfo> got = this.barMap.get(player.getUniqueId());
         if (got == null) {
             got = new ConcurrentHashMap<String, BossBarInfo>();

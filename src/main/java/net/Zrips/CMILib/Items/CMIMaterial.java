@@ -3466,7 +3466,7 @@ public enum CMIMaterial {
     }
 
     public String getTranslatedName() {
-	return translatedName;
+	return translatedName != null ? translatedName : this.getName();
     }
 
     public void setTranslatedName(String translatedName) {
