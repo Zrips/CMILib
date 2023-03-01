@@ -291,17 +291,10 @@ public class BossBarInfo {
         if (getPercentage() >= 0 && getAdjustPerc() != null && getAdjustPerc() > 0)
             return false;
 
-//	if (getAdjustPerc() == null && this.getKeepFor() > 0 && getStarted() > 0 && System.currentTimeMillis() < getStarted() + (this.getKeepFor() * 50L)) {
-//	    return true;
-//	}
         if (getAdjustPerc() == null && this.getKeepFor() > 0 && getStarted() > 0 && System.currentTimeMillis() < getStarted() + (this.getKeepFor() * 50L)) {
             return true;
         }
 
-        
-        CMIDebug.c(getAdjustPerc() == null && this.getKeepFor() > 0 && getStarted() > 0 && System.currentTimeMillis() < getStarted() + (this.getKeepFor() * 50L), getAdjustPerc() == null && this.getKeepFor() < 0 || (getPercentage() != null && getPercentage() <= 0 && getAdjustPerc() != null && getAdjustPerc() < 0) || (getPercentage() != null
-            && getPercentage() >= 1 && getAdjustPerc() != null && getAdjustPerc() > 0));
-        
         return getAdjustPerc() == null && this.getKeepFor() < 0 || (getPercentage() != null && getPercentage() <= 0 && getAdjustPerc() != null && getAdjustPerc() < 0) || (getPercentage() != null
             && getPercentage() >= 1 && getAdjustPerc() != null && getAdjustPerc() > 0);
     }
