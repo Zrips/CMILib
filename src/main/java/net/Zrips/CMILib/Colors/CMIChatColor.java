@@ -11,15 +11,11 @@ import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
-
-import com.Zrips.CMI.CMI;
-import com.Zrips.CMI.Modules.BungeeCord.BungeePlayer;
 
 import net.Zrips.CMILib.Version.Version;
 
