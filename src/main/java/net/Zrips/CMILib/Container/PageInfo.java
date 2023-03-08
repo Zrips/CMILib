@@ -5,7 +5,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import net.Zrips.CMILib.Locale.LC;
-import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Messages.CMIMessages;
 import net.Zrips.CMILib.RawMessages.RawMessage;
 import net.Zrips.CMILib.RawMessages.RawMessageCommand;
@@ -22,6 +21,9 @@ public class PageInfo {
     private int currentEntry = 0;
 
     private int perPage = 6;
+
+    private String complexPrev = null;
+    private String complexNext = null;
 
     public PageInfo(int perPage, int totalEntries, int currentPage) {
         this.perPage = perPage;
@@ -94,6 +96,10 @@ public class PageInfo {
         return totalPages;
     }
 
+    public void setTotalPages(int totalPages) {
+        this.totalPages = totalPages;
+    }
+
     public int getCurrentPage() {
         return currentPage;
     }
@@ -137,36 +143,7 @@ public class PageInfo {
 
     @Deprecated
     public void ShowPagination(CommandSender sender, String cmd, String pagePref) {
-
-        if (!cmd.startsWith("/"))
-            cmd = "/" + cmd;
-
-        if (getTotalPages() == 1)
-            return;
-
-        String pagePrefix = pagePref == null ? "" : pagePref;
-
-        int nextPage = getCurrentPage() + 1;
-        nextPage = getCurrentPage() < getTotalPages() ? nextPage : getCurrentPage();
-        int prevpage = getCurrentPage() - 1;
-        prevpage = getCurrentPage() > 1 ? prevpage : getCurrentPage();
-
-        if (!(sender instanceof Player)) {
-            CMIMessages.sendMessage(sender, LC.info_nextPageConsole, "[command]", (cmd.replace("/", "") + " " + pagePrefix + nextPage));
-            return;
-        }
-
-        RawMessage rm = new RawMessage();
-        rm.addText((getCurrentPage() > 1 ? CMIMessages.getMsg(LC.info_prevPage) : CMIMessages.getMsg(LC.info_prevPageOff)))
-            .addHover(getCurrentPage() > 1 ? CMIMessages.getMsg(LC.info_prevPageHover) : CMIMessages.getMsg(LC.info_lastPageHover))
-            .addCommand(getCurrentPage() > 1 ? cmd + " " + pagePrefix + prevpage : cmd + " " + pagePrefix + getTotalPages());
-        rm.addText(CMIMessages.getMsg(LC.info_pageCount, "[current]", getCurrentPage(), "[total]", getTotalPages())).addHover(CMIMessages.getMsg(LC.info_pageCountHover, "[totalEntries]",
-            getTotalEntries()));
-        rm.addText(CMIMessages.getMsg(getTotalPages() > getCurrentPage() ? LC.info_nextPage : LC.info_nextPageOff))
-            .addHover(getTotalPages() > getCurrentPage() ? CMIMessages.getMsg(LC.info_nextPageHover) : CMIMessages.getMsg(LC.info_firstPageHover))
-            .addCommand(getTotalPages() > getCurrentPage() ? cmd + " " + pagePrefix + nextPage : cmd + " " + pagePrefix + 1);
-        if (getTotalPages() != 0)
-            rm.show(sender);
+        autoPagination(sender, cmd, pagePref);
     }
 
     public void autoPagination(CMICommandSender sender, String cmd) {
@@ -210,7 +187,7 @@ public class PageInfo {
 
         rmcb.setOriginalCommand((cmd.replace("/", "") + " " + pagePrefix + prevpage));
 
-        rm.addText((getCurrentPage() > 1 ? LC.info_prevPage.getLocale() : LC.info_prevPageOff.getLocale()))
+        rm.addText((getCurrentPage() > 1 ? LC.info_prevPage : LC.info_prevPageOff).getLocale("[value]", this.getComplexPrev() == null ? "" : this.getComplexPrev()))
             .addHover(getCurrentPage() > 1 ? LC.info_prevPageHover.getLocale() : LC.info_lastPageHover.getLocale())
             .addCommand(rmcb.getCommand());
 
@@ -227,10 +204,26 @@ public class PageInfo {
             }
         };
         rmcf.setOriginalCommand((cmd.replace("/", "") + " " + pagePrefix + nextPage));
-        rm.addText(CMIMessages.getMsg(getTotalPages() > getCurrentPage() ? LC.info_nextPage : LC.info_nextPageOff))
+        rm.addText((getTotalPages() > getCurrentPage() ? LC.info_nextPage : LC.info_nextPageOff).getLocale("[value]", this.getComplexNext() == null ? "" : this.getComplexNext()))
             .addHover(getTotalPages() > getCurrentPage() ? LC.info_nextPageHover.getLocale() : LC.info_firstPageHover.getLocale())
             .addCommand(rmcf.getCommand());
         if (getTotalPages() != 0)
             rm.show(sender);
+    }
+
+    public String getComplexPrev() {
+        return complexPrev;
+    }
+
+    public void setComplexPrev(String complexPrev) {
+        this.complexPrev = complexPrev;
+    }
+
+    public String getComplexNext() {
+        return complexNext;
+    }
+
+    public void setComplexNext(String complexNext) {
+        this.complexNext = complexNext;
     }
 }
