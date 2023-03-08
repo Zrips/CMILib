@@ -22,8 +22,8 @@ public class PageInfo {
 
     private int perPage = 6;
 
-    private String complexPrev = null;
-    private String complexNext = null;
+    private String customPrev = null;
+    private String customNext = null;
 
     public PageInfo(int perPage, int totalEntries, int currentPage) {
         this.perPage = perPage;
@@ -187,7 +187,10 @@ public class PageInfo {
 
         rmcb.setOriginalCommand((cmd.replace("/", "") + " " + pagePrefix + prevpage));
 
-        rm.addText((getCurrentPage() > 1 ? LC.info_prevPage : LC.info_prevPageOff).getLocale("[value]", this.getComplexPrev() == null ? "" : this.getComplexPrev()))
+        String prevText = this.getCustomPrev() == null ? (getCurrentPage() > 1 ? LC.info_prevPage : LC.info_prevPageOff).getLocale() : (getCurrentPage() > 1 ? LC.info_prevCustomPage
+            : LC.info_prevCustomPageOff).getLocale("[value]", this.getCustomPrev());
+
+        rm.addText(prevText)
             .addHover(getCurrentPage() > 1 ? LC.info_prevPageHover.getLocale() : LC.info_lastPageHover.getLocale())
             .addCommand(rmcb.getCommand());
 
@@ -204,26 +207,30 @@ public class PageInfo {
             }
         };
         rmcf.setOriginalCommand((cmd.replace("/", "") + " " + pagePrefix + nextPage));
-        rm.addText((getTotalPages() > getCurrentPage() ? LC.info_nextPage : LC.info_nextPageOff).getLocale("[value]", this.getComplexNext() == null ? "" : this.getComplexNext()))
+
+        String nextText = this.getCustomNext() == null ? (getTotalPages() > getCurrentPage() ? LC.info_nextPage : LC.info_nextPageOff).getLocale() : (getTotalPages() > getCurrentPage()
+            ? LC.info_nextCustomPage : LC.info_nextCustomPageOff).getLocale("[value]", this.getCustomNext());
+
+        rm.addText(nextText)
             .addHover(getTotalPages() > getCurrentPage() ? LC.info_nextPageHover.getLocale() : LC.info_firstPageHover.getLocale())
             .addCommand(rmcf.getCommand());
         if (getTotalPages() != 0)
             rm.show(sender);
     }
 
-    public String getComplexPrev() {
-        return complexPrev;
+    public String getCustomPrev() {
+        return customPrev;
     }
 
-    public void setComplexPrev(String complexPrev) {
-        this.complexPrev = complexPrev;
+    public void setCustomPrev(String CustomPrev) {
+        this.customPrev = CustomPrev;
     }
 
-    public String getComplexNext() {
-        return complexNext;
+    public String getCustomNext() {
+        return customNext;
     }
 
-    public void setComplexNext(String complexNext) {
-        this.complexNext = complexNext;
+    public void setCustomNext(String CustomNext) {
+        this.customNext = CustomNext;
     }
 }
