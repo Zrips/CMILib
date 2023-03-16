@@ -17,7 +17,6 @@ import org.bukkit.entity.Player;
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Colors.CMIChatColor;
 import net.Zrips.CMILib.Container.CMIList;
-import net.Zrips.CMILib.Logs.CMIDebug;
 
 public class Language {
     public FileConfiguration enlocale;

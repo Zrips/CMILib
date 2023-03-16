@@ -207,7 +207,6 @@ public class CMINBT {
         if (Version.isCurrentEqualOrHigher(Version.v1_19_R2)) {
             asStringName = "f_";
             getKeysName = "e";
-
             getTypeIdName = "b";
         }
 
@@ -1060,7 +1059,10 @@ public class CMINBT {
                     ff = "aa_";
                 break;
             case v1_19_R2:
-                    ff = "ad_";                
+                    ff = "ad_";
+                break;
+            case v1_19_R3:
+                    ff = "aq_";                 
                 break;
             }
 

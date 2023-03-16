@@ -133,7 +133,6 @@ public class Reflections {
             try {
                 sendPacket = Class.forName("net.minecraft.server.network.PlayerConnection").getMethod(Version.isCurrentEqualOrHigher(Version.v1_18_R1) ? "a" : "sendPacket",
                     net.minecraft.network.protocol.Packet.class);
-//		playerConnection = net.minecraft.server.level.EntityPlayer.class.getField("b");
                 CraftServerClass = getBukkitClass("CraftServer");
                 CraftServer = CraftServerClass.cast(Bukkit.getServer());
                 CraftWorldClass = getBukkitClass("CraftWorld");
@@ -141,14 +140,7 @@ public class Reflections {
 
                 CraftBeehive = getBukkitClass("block.impl.CraftBeehive");
                 CraftNamespacedKey = getBukkitClass("util.CraftNamespacedKey");
-//		TileEntityBeehive = net.minecraft.world.level.block.entity.TileEntityBeehive.class;
-//		PlayerList = net.minecraft.server.players.PlayerList.class;
-//		MojangsonParser = net.minecraft.nbt.MojangsonParser.class;
-//		EntityHuman = net.minecraft.world.entity.player.EntityHuman.class;
-
-//		PacketPlayOutAnimation = net.minecraft.network.protocol.game.PacketPlayOutAnimation.class;
                 PacketPlayOutEntityTeleport = net.minecraft.network.protocol.game.PacketPlayOutEntityTeleport.class;
-//		PacketPlayOutGameStateChange = net.minecraft.network.protocol.game.PacketPlayOutGameStateChange.class;
 
                 if (Version.isCurrentEqualOrLower(Version.v1_18_R2)) {
                     PacketPlayOutSpawnEntityLiving = Class.forName("net.minecraft.network.protocol.game.PacketPlayOutSpawnEntityLiving");
@@ -159,7 +151,6 @@ public class Reflections {
                 PacketPlayOutEntityMetadata = net.minecraft.network.protocol.game.PacketPlayOutEntityMetadata.class;
                 PacketPlayOutSetSlot = net.minecraft.network.protocol.game.PacketPlayOutSetSlot.class;
                 PacketPlayOutOpenWindow = net.minecraft.network.protocol.game.PacketPlayOutOpenWindow.class;
-//		PacketPlayOutWindowItems = net.minecraft.network.protocol.game.PacketPlayOutWindowItems.class;
                 PacketPlayOutWorldParticles = net.minecraft.network.protocol.game.PacketPlayOutWorldParticles.class;
                 CraftContainer = net.minecraft.world.inventory.Container.class;
                 CraftContainers = net.minecraft.world.inventory.Containers.class;
@@ -176,37 +167,31 @@ public class Reflections {
                 WorldServerClass = net.minecraft.server.level.WorldServer.class;
                 dimensionManager = net.minecraft.world.level.dimension.DimensionManager.class;
                 BlockPosition = net.minecraft.core.BlockPosition.class;
-//		TileEntitySign = net.minecraft.world.level.block.entity.TileEntitySign.class;
 
                 nmsChatSerializer = Class.forName("net.minecraft.network.chat.IChatBaseComponent$ChatSerializer");
-//		IChatBaseComponent = Class.forName("net.minecraft.network.chat.IChatBaseComponent");
 
                 MinecraftServer = CraftServer.getClass().getMethod("getServer").invoke(CraftServer);
 
                 CraftStatistic = getBukkitClass("CraftStatistic");
                 CraftPlayer = getBukkitClass("entity.CraftPlayer");
                 CraftEntity = getBukkitClass("entity.CraftEntity");
-//		CraftItemStack = getBukkitClass("inventory.CraftItemStack");
                 Statistics = net.minecraft.stats.Statistic.class;
                 ServerStatisticManager = net.minecraft.stats.ServerStatisticManager.class;
                 PropertyManagerClass = net.minecraft.server.dedicated.PropertyManager.class;
-//		EnumGameMode = net.minecraft.world.level.EnumGamemode.class;
 
-//		EntityPlayer = net.minecraft.server.level.EntityPlayer.class;
                 CEntity = net.minecraft.world.entity.Entity.class;
 
                 nbtTagCompound = net.minecraft.nbt.NBTTagCompound.class;
-//		nbtTagList = net.minecraft.nbt.NBTTagList.class;
                 NBTBase = net.minecraft.nbt.NBTBase.class;
 
                 EntityLiving = net.minecraft.world.entity.EntityLiving.class;
                 Item = net.minecraft.world.item.Item.class;
                 IStack = net.minecraft.world.item.ItemStack.class;
-//		EnumHand = net.minecraft.world.EnumHand.class;
 
                 String variable = "ax";
-
-                if (Version.isCurrentEqualOrHigher(Version.v1_19_R2))
+                if (Version.isCurrentEqualOrHigher(Version.v1_19_R3))
+                    variable = "az";
+                else if (Version.isCurrentEqualOrHigher(Version.v1_19_R2))
                     variable = "ay";
                 else if (Version.isCurrentEqualOrHigher(Version.v1_19_R1))
                     variable = "az";
@@ -981,7 +966,7 @@ public class Reflections {
 
             return i == null ? null : (ItemStack) i;
         } catch (Throwable e) {
-            e.printStackTrace();
+//            e.printStackTrace();
             return item;
         }
     }
@@ -1256,6 +1241,17 @@ public class Reflections {
     private Integer getActiveContainerId(Object entityplayer) {
         try {
             if (Version.isCurrentEqualOrHigher(Version.v1_19_R1)) {
+                try {
+                    // EntityHuman -> Container
+                    Field field = entityplayer.getClass().getField("bP");
+                    Object container = this.CraftContainer.cast(field.get(entityplayer));
+                    Field field2 = container.getClass().getField("j");
+                    Object ids = field2.get(container);
+                    return (int) ids;
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
+            } else if (Version.isCurrentEqualOrHigher(Version.v1_19_R1)) {
                 try {
                     // EntityHuman -> Container
                     Field field = entityplayer.getClass().getField("bU");
@@ -1828,9 +1824,13 @@ public class Reflections {
                 if (nms != null) {
                     //getAdvancementData
 
-                    if (Version.isCurrentEqualOrHigher(Version.v1_19_R2))
-                        net.minecraft.server.MinecraftServer.getServer().ay().c.a(Maps.newHashMap(Collections.singletonMap(minecraftkey, nms)));
-                    else if (Version.isCurrentEqualOrHigher(Version.v1_19_R1)) {
+                    if (Version.isCurrentEqualOrHigher(Version.v1_19_R3))
+                        net.minecraft.server.MinecraftServer.getServer().az().c.a(Maps.newHashMap(Collections.singletonMap(minecraftkey, nms)));
+                    else if (Version.isCurrentEqualOrHigher(Version.v1_19_R2)) {
+                        Object ay = net.minecraft.server.MinecraftServer.getServer().getClass().getMethod("ay").invoke(net.minecraft.server.MinecraftServer.getServer());
+                        Object c = ay.getClass().getField("c").get(ay);
+                        c.getClass().getMethod("a", Map.class).invoke(c, Maps.newHashMap(Collections.singletonMap(minecraftkey, nms)));
+                    } else if (Version.isCurrentEqualOrHigher(Version.v1_19_R1)) {
                         Object ax = net.minecraft.server.MinecraftServer.getServer().getClass().getMethod("az").invoke(net.minecraft.server.MinecraftServer.getServer());
                         Object c = ax.getClass().getField("c").get(ax);
                         c.getClass().getMethod("a", Map.class).invoke(c, Maps.newHashMap(Collections.singletonMap(minecraftkey, nms)));
