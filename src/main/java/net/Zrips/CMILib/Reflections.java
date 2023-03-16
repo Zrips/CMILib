@@ -1240,7 +1240,7 @@ public class Reflections {
 
     private Integer getActiveContainerId(Object entityplayer) {
         try {
-            if (Version.isCurrentEqualOrHigher(Version.v1_19_R1)) {
+            if (Version.isCurrentEqualOrHigher(Version.v1_19_R3)) {
                 try {
                     // EntityHuman -> Container
                     Field field = entityplayer.getClass().getField("bP");
