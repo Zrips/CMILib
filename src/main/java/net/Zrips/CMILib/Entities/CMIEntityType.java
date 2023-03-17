@@ -370,9 +370,9 @@ public enum CMIEntityType {
     }
 
     public String getTranslatedName() {
-	if (!CMILib.getInstance().getLM().isString("info.EntityType." + getName().toLowerCase()))
+	if (!CMILib.getInstance().getLM().isString("info.EntityType." + toString().toLowerCase()))
 	    return getName();
-	return CMILib.getInstance().getLM().getMessage("info.EntityType." + getName().toLowerCase());
+	return CMILib.getInstance().getLM().getMessage("info.EntityType." + toString().toLowerCase());
     }
 
     public List<String> getHeadTextures() {

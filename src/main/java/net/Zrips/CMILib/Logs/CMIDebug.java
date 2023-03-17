@@ -24,7 +24,7 @@ public class CMIDebug {
     }
 
     public static double getIT() {
-	return ((System.nanoTime() - fixedTime) / 1000) / 1000D;
+	return ((System.nanoTime() - fixedTime) / 100) / 10000D;
     }
 
     public static void d(Object... message) {
