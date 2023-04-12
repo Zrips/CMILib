@@ -43,6 +43,10 @@ public class CMINumber {
         return number < min ? min : number > max ? max : number;
     }
 
+    public static double clamp(double number, double min, double max) {
+        return number < min ? min : number > max ? max : number;
+    }
+
     public static int clamp(int number, int min, int max) {
         return number < min ? min : number > max ? max : number;
     }

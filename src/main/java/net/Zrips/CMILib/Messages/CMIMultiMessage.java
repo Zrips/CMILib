@@ -125,6 +125,8 @@ public class CMIMultiMessage {
     }
 
     public boolean show(CommandSender sender) {
+        if (message.isEmpty())
+            return false;
 	message = CMILib.getInstance().getLM().filterNewLine(message);
 	if (isTranslateColors())
 	    message = CMIChatColor.translate(message);

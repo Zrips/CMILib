@@ -103,10 +103,12 @@ public class CMIMessages {
     }
 
     public static void sendMessage(Object sender, String msg, boolean updateSnd, boolean translateColors, boolean translatePlaceholders) {
+        
         if (sender == null)
             return;
         if (msg == null || msg.isEmpty())
             return;
+                
         msg = CMILib.getInstance().getLM().filterNewLine(msg);
 
         CMIMultiMessage multi = new CMIMultiMessage(msg);
@@ -173,12 +175,14 @@ public class CMIMessages {
         return i;
     }
 
-    public static void consoleMessage(String message) {
+    public static void consoleMessage(String message) {    
+        if (message == null || message.isEmpty())
+            return;
         Bukkit.getConsoleSender().sendMessage(CMIChatColor.translate(message));
     }
 
-    public static void sendMessage(CommandSender sender, String message) {
-        sender.sendMessage(CMIChatColor.translate(message));
+    public static void sendMessage(CommandSender sender, String message) {           
+        sendMessage(sender, message, true, true, true);
     }
 
     public static String getMsg(LC lc, Object... variables) {

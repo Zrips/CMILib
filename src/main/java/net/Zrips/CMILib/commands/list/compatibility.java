@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import com.Zrips.CMI.CMI;
 import com.Zrips.CMI.Modules.Advancements.AdvancementManager;
 
 import net.Zrips.CMILib.CMILib;
@@ -13,7 +14,6 @@ import net.Zrips.CMILib.Container.CMICommandSender;
 import net.Zrips.CMILib.Container.CMIServerProperties;
 import net.Zrips.CMILib.FileHandler.ConfigReader;
 import net.Zrips.CMILib.Items.CMIMaterial;
-import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Messages.CMIMessages;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.RawMessages.RawMessage;
@@ -83,6 +83,8 @@ public class compatibility implements Cmd {
         nbt.getKeys();
 
         AdvancementManager.sendToast(player, "Test");
+        
+        CMI.getInstance().getReflectionManager().changePlayerLimit(Bukkit.getMaxPlayers());
 
         plugin.getBossBarManager().Show(new BossBarInfo(player, "Compatibility"));
 
