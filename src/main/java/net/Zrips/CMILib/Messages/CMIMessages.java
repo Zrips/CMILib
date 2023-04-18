@@ -13,7 +13,6 @@ import net.Zrips.CMILib.CMILibConfig;
 import net.Zrips.CMILib.Colors.CMIChatColor;
 import net.Zrips.CMILib.Container.CMICommandSender;
 import net.Zrips.CMILib.Locale.LC;
-import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Permissions.CMILPerm;
 
 public class CMIMessages {

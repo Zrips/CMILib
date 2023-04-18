@@ -22,8 +22,12 @@ public class CMINumber {
         map.put(1, "I");
     }
 
-    public final static String toRoman(int number) {
-        int l = map.floorKey(number);
+    public static final String toRoman(int number) {
+        Integer l = map.floorKey(number);
+        
+        if (l == null)
+            return String.valueOf(number);
+        
         if (number == l) {
             return map.get(number);
         }
