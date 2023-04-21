@@ -1418,1266 +1418,1283 @@ public enum CMIMaterial {
     Material mat;
 
     CMIMaterial(Integer id, String name, String... legacyName) {
-	this(null, null, id, name, legacyName);
+        this(null, null, id, name, legacyName);
     }
 
     CMIMaterial(int id, String name, List<CMIMC> criteria) {
-	this(null, null, id, name, criteria);
+        this(null, null, id, name, criteria);
     }
 
     CMIMaterial(Integer id, String name) {
-	this(null, null, id, name, "");
+        this(null, null, id, name, "");
     }
 
     CMIMaterial(Integer legacyId, Integer legacyData, Integer id, String name) {
-	this(legacyId, legacyData, id, name, "");
+        this(legacyId, legacyData, id, name, "");
     }
 
     CMIMaterial(String name, String... legacyName) {
-	this(null, null, null, name, legacyName);
+        this(null, null, null, name, legacyName);
     }
 
     CMIMaterial(Integer legacyId, Integer legacyData, Integer id, String name, String... legacyName) {
-	this(legacyId, legacyData, id, name, null, legacyName);
+        this(legacyId, legacyData, id, name, null, legacyName);
     }
 
     CMIMaterial(Integer legacyId, Integer legacyData, Integer id, String name, List<CMIMC> criteria, String... legacyName) {
 
-	this.legacyId = legacyId;
-	this.legacyData = legacyData;
-	this.id = id;
-	this.name = name;
-	if (legacyName != null && legacyName.length > 0 && !legacyName[0].isEmpty()) {
-	    this.legacyName = Arrays.asList(legacyName);
-	}
+        this.legacyId = legacyId;
+        this.legacyData = legacyData;
+        this.id = id;
+        this.name = name;
+        if (legacyName != null && legacyName.length > 0 && !legacyName[0].isEmpty()) {
+            this.legacyName = Arrays.asList(legacyName);
+        }
 
-	if (criteria != null)
-	    this.criteria = new HashSet<>(criteria);
+        if (criteria != null)
+            this.criteria = new HashSet<>(criteria);
 
-	if (this.toString().startsWith("LEGACY_")) {
-	    legacy = true;
-	}
+        if (this.toString().startsWith("LEGACY_")) {
+            legacy = true;
+        }
     }
 
     public String getName() {
-	return name;
+        return name;
     }
 
     @Deprecated
     public Integer getLegacyId() {
-	return legacyId == null ? -1 : legacyId;
+        return legacyId == null ? -1 : legacyId;
     }
 
     @Deprecated
     public Integer getId() {
-	if (Version.isCurrentEqualOrHigher(Version.v1_13_R1)) {
-	    return id == null ? -1 : id;
-	}
-	return getLegacyId();
+        if (Version.isCurrentEqualOrHigher(Version.v1_13_R1)) {
+            return id == null ? -1 : id;
+        }
+        return getLegacyId();
     }
 
     public Material getMaterial() {
-	return mat;
+        return mat;
     }
 
     public void updateMaterial() {
-	mat = null;
-	if (Version.isCurrentEqualOrHigher(Version.v1_13_R1)) {
-	    if (mat == null) {
-		for (Material one : Material.values()) {
-		    if (!one.name().replace("_", "").equalsIgnoreCase(this.name().replace("_", "")))
-			continue;
-		    mat = one;
-		    break;
-		}
-	    }
-	} else {
-	    if (Version.isCurrentEqualOrLower(Version.v1_12_R1) && this.equals(CMIMaterial.PODZOL)) {
-		mat = null;
-		return;
-	    }
-	    if (Version.isCurrentEqualOrLower(Version.v1_13_R2)) {
-		if (mat == null && this.getId() != null) {
-		    for (Material one : Material.class.getEnumConstants()) {
-			if (one.getId() != this.getId())
-			    continue;
-			mat = one;
-			break;
-		    }
-		}
-	    }
-	    if (mat == null) {
-		for (Material one : Material.class.getEnumConstants()) {
-		    if (!one.name().replace("LEGACY_", "").replace("_", "").equalsIgnoreCase(this.name().replace("_", "")))
-			continue;
-		    mat = one;
-		    break;
-		}
-	    }
-	    if (mat == null) {
-		for (Material one : Material.class.getEnumConstants()) {
-		    if (!one.name().replace("LEGACY_", "").replace("_", "").equalsIgnoreCase(this.getName().replace(" ", "")))
-			continue;
-		    mat = one;
-		    break;
-		}
-	    }
-	    if (mat == null && !this.getLegacyNames().isEmpty()) {
-		main: for (Material one : Material.class.getEnumConstants()) {
-		    for (String oneL : this.getLegacyNames()) {
-			if (!one.name().replace("LEGACY_", "").replace("_", "").equalsIgnoreCase(oneL.replace(" ", "").replace("_", "")))
-			    continue main;
-		    }
-		    mat = one;
-		    break;
-		}
-	    }
-	}
+        mat = null;
+        if (Version.isCurrentEqualOrHigher(Version.v1_13_R1)) {
+            if (mat == null) {
+                for (Material one : Material.values()) {
+                    if (!one.name().replace("_", "").equalsIgnoreCase(this.name().replace("_", "")))
+                        continue;
+                    mat = one;
+                    break;
+                }
+            }
+        } else {
+            if (Version.isCurrentEqualOrLower(Version.v1_12_R1) && this.equals(CMIMaterial.PODZOL)) {
+                mat = null;
+                return;
+            }
+            if (Version.isCurrentEqualOrLower(Version.v1_13_R2)) {
+                if (mat == null && this.getId() != null) {
+                    for (Material one : Material.class.getEnumConstants()) {
+                        if (one.getId() != this.getId())
+                            continue;
+                        mat = one;
+                        break;
+                    }
+                }
+            }
+            if (mat == null) {
+                for (Material one : Material.class.getEnumConstants()) {
+                    if (!one.name().replace("LEGACY_", "").replace("_", "").equalsIgnoreCase(this.name().replace("_", "")))
+                        continue;
+                    mat = one;
+                    break;
+                }
+            }
+            if (mat == null) {
+                for (Material one : Material.class.getEnumConstants()) {
+                    if (!one.name().replace("LEGACY_", "").replace("_", "").equalsIgnoreCase(this.getName().replace(" ", "")))
+                        continue;
+                    mat = one;
+                    break;
+                }
+            }
+            if (mat == null && !this.getLegacyNames().isEmpty()) {
+                main: for (Material one : Material.class.getEnumConstants()) {
+                    for (String oneL : this.getLegacyNames()) {
+                        if (!one.name().replace("LEGACY_", "").replace("_", "").equalsIgnoreCase(oneL.replace(" ", "").replace("_", "")))
+                            continue main;
+                    }
+                    mat = one;
+                    break;
+                }
+            }
+        }
     }
 
     public ItemStack newItemStack() {
-	return newItemStack(1);
+        return newItemStack(1);
     }
 
     public ItemStack newItemStack(int amount) {
 //	if (mat == null) {
 //	    updateMaterial();
 //	}
-	if (mat == null) {
-	    return new ItemStack(Material.STONE);
-	}
+        if (mat == null) {
+            return new ItemStack(Material.STONE);
+        }
 
-	try {
-	    if (!mat.isItem())
-		return new ItemStack(Material.STONE);
-	} catch (Throwable e) {
-	}
+        try {
+            if (!mat.isItem())
+                return new ItemStack(Material.STONE);
+        } catch (Throwable e) {
+        }
 
-	if (Version.isCurrentEqualOrHigher(Version.v1_13_R1)) {
-	    ItemStack stack = new ItemStack(mat);
-	    stack.setAmount(amount);
-	    return stack;
-	}
-	ItemStack stack = new ItemStack(mat, 1, (short) this.getLegacyData());
-	stack.setAmount(amount);
-	return stack;
+        if (Version.isCurrentEqualOrHigher(Version.v1_13_R1)) {
+            ItemStack stack = new ItemStack(mat);
+            stack.setAmount(amount);
+            return stack;
+        }
+        ItemStack stack = new ItemStack(mat, 1, (short) this.getLegacyData());
+        stack.setAmount(amount);
+        return stack;
     }
 
     public CMIItemStack newCMIItemStack() {
-	return newCMIItemStack(1);
+        return newCMIItemStack(1);
     }
 
     public CMIItemStack newCMIItemStack(int amount) {
 //	if (mat == null) {
 //	    updateMaterial();
 //	}
-	if (mat == null) {
-	    return new CMIItemStack(CMIMaterial.STONE);
-	}
-	if (Version.isCurrentEqualOrHigher(Version.v1_13_R1)) {
-	    CMIItemStack stack = new CMIItemStack(mat);
-	    stack.setAmount(amount);
-	    return stack;
-	}
-	ItemStack stack = new ItemStack(mat, 1, (short) this.getLegacyData());
+        if (mat == null) {
+            return new CMIItemStack(CMIMaterial.STONE);
+        }
+        if (Version.isCurrentEqualOrHigher(Version.v1_13_R1)) {
+            CMIItemStack stack = new CMIItemStack(mat);
+            stack.setAmount(amount);
+            return stack;
+        }
+        ItemStack stack = new ItemStack(mat, 1, (short) this.getLegacyData());
 
-	stack.setAmount(amount);
-	return new CMIItemStack(stack);
+        stack.setAmount(amount);
+        return new CMIItemStack(stack);
     }
 
     @Deprecated
     public short getData() {
-	if (Version.isCurrentEqualOrHigher(Version.v1_13_R1)) {
-	    return 0;
-	}
-	return getLegacyData();
+        if (Version.isCurrentEqualOrHigher(Version.v1_13_R1)) {
+            return 0;
+        }
+        return getLegacyData();
     }
 
     @Deprecated
     public short getLegacyData() {
-	return legacyData == null ? 0 : legacyData.shortValue();
+        return legacyData == null ? 0 : legacyData.shortValue();
     }
 
     public static CMIMaterial getRandom(CMIMaterial mat) {
 
-	List<CMIMaterial> ls = new ArrayList<CMIMaterial>();
+        List<CMIMaterial> ls = new ArrayList<CMIMaterial>();
 
-	for (CMIMaterial one : CMIMaterial.values()) {
-	    if (one.getLegacyId() == null)
-		continue;
-	    if (one.getLegacyId() != mat.getLegacyId())
-		continue;
-	    ls.add(one);
-	}
+        for (CMIMaterial one : CMIMaterial.values()) {
+            if (one.getLegacyId() == null)
+                continue;
+            if (one.getLegacyId() != mat.getLegacyId())
+                continue;
+            ls.add(one);
+        }
 
-	if (ls.isEmpty() || ls.size() == 1) {
-	    String part = mat.name;
-	    if (part.contains("_"))
-		part = part.split("_")[part.split("[_]").length - 1];
-	    for (CMIMaterial one : CMIMaterial.values()) {
-		if (!one.name().endsWith(part))
-		    continue;
-		ls.add(one);
-	    }
-	}
+        if (ls.isEmpty() || ls.size() == 1) {
+            String part = mat.name;
+            if (part.contains("_"))
+                part = part.split("_")[part.split("[_]").length - 1];
+            for (CMIMaterial one : CMIMaterial.values()) {
+                if (!one.name().endsWith(part))
+                    continue;
+                ls.add(one);
+            }
+        }
 
-	Collections.shuffle(ls);
+        Collections.shuffle(ls);
 
-	return ls.isEmpty() ? CMIMaterial.NONE : ls.get(0);
+        return ls.isEmpty() ? CMIMaterial.NONE : ls.get(0);
     }
 
     public CMIMaterial getByColorId(int id) {
-	return getByColorId(this, id);
+        return getByColorId(this, id);
     }
 
     public static CMIMaterial getByColorId(CMIMaterial mat, int id) {
-	if (mat == null)
-	    return CMIMaterial.NONE;
-	for (CMIMaterial one : CMIMaterial.values()) {
-	    if (one.getLegacyId() == null)
-		continue;
-	    if (one.getLegacyId() != mat.getLegacyId())
-		continue;
-	    if (one.getLegacyData() == id)
-		return one;
-	}
+        if (mat == null)
+            return CMIMaterial.NONE;
+        for (CMIMaterial one : CMIMaterial.values()) {
+            if (one.getLegacyId() == null)
+                continue;
+            if (one.getLegacyId() != mat.getLegacyId())
+                continue;
+            if (one.getLegacyData() == id)
+                return one;
+        }
 
-	return mat;
+        return mat;
     }
 
     public static CMIMaterial get(String id) {
 
-	if (id == null)
-	    return CMIMaterial.NONE;
-	Integer ids = null;
-	Integer data = null;
-	id = id.replaceAll("_| |minecraft:", "").toLowerCase();
+        if (id == null)
+            return CMIMaterial.NONE;
+        Integer ids = null;
+        Integer data = null;
+        id = id.replaceAll("_| |minecraft:", "").toLowerCase();
 
-	String[] split = id.split(":", 2);
-	if (Version.isCurrentEqualOrLower(Version.v1_12_R1)) {
-	    if (split.length > 1) {
+        String[] split = id.split(":", 2);
+        if (Version.isCurrentEqualOrLower(Version.v1_12_R1)) {
+            if (split.length > 1) {
 
-		try {
-		    ids = Integer.parseInt(split[0]);
-		    if (ids <= 0)
-			return CMIMaterial.NONE;
-		    return get(ids, Integer.parseInt(split[1]));
-		} catch (Exception ex) {
-		}
+                try {
+                    ids = Integer.parseInt(split[0]);
+                    if (ids <= 0)
+                        return CMIMaterial.NONE;
+                    return get(ids, Integer.parseInt(split[1]));
+                } catch (Exception ex) {
+                }
 
-		try {
-		    data = Integer.parseInt(split[1]);
-		    id = split[0];
-		    CMIMaterial mat = ItemManager.byName.get(id + ":" + data);
-		    if (mat != null) {
-			return mat;
-		    }
-		    CMIMaterial mat1 = ItemManager.byName.get(id);
-		    if (mat1 != null && mat1.getLegacyId() > 0) {
-			mat = get(mat1.getLegacyId(), data);
-			if (mat != null) {
-			    return mat;
-			}
-		    }
-		} catch (Exception ex) {
-		}
-	    }
-	}
+                try {
+                    data = Integer.parseInt(split[1]);
+                    id = split[0];
+                    CMIMaterial mat = ItemManager.byName.get(id + ":" + data);
+                    if (mat != null) {
+                        return mat;
+                    }
+                    CMIMaterial mat1 = ItemManager.byName.get(id);
+                    if (mat1 != null && mat1.getLegacyId() > 0) {
+                        mat = get(mat1.getLegacyId(), data);
+                        if (mat != null) {
+                            return mat;
+                        }
+                    }
+                } catch (Exception ex) {
+                }
+            }
+        }
 
-	CMIMaterial mat = ItemManager.byName.get(id);
+        CMIMaterial mat = ItemManager.byName.get(id);
 
-	if (mat != null) {
-	    return mat;
-	}
+        if (mat != null) {
+            return mat;
+        }
 
-	try {
-	    mat = ItemManager.byId.get(Integer.parseInt(id));
-	    if (mat != null) {
-		return mat;
-	    }
-	} catch (Exception ex) {
-	}
+        try {
+            mat = ItemManager.byId.get(Integer.parseInt(id));
+            if (mat != null) {
+                return mat;
+            }
+        } catch (Exception ex) {
+        }
 
-	if (id.contains(":")) {
-	    mat = ItemManager.byName.get(id.split(":")[0]);
-	    if (mat != null) {
-		return mat;
-	    }
-	}
+        if (id.contains(":")) {
+            mat = ItemManager.byName.get(id.split(":")[0]);
+            if (mat != null) {
+                return mat;
+            }
+        }
 
-	return CMIMaterial.NONE;
+        return CMIMaterial.NONE;
     }
 
     public static CMIMaterial get(Material mat) {
-	if (mat == null)
-	    return CMIMaterial.NONE;
-	CMIMaterial m = ItemManager.byRealMaterial.get(mat);
-	if (m != null)
-	    return m;
-	return get(mat.toString());
+        if (mat == null)
+            return CMIMaterial.NONE;
+        CMIMaterial m = ItemManager.byRealMaterial.get(mat);
+        if (m != null)
+            return m;
+        return get(mat.toString());
     }
 
     public static CMIMaterial get(int id) {
-	for (CMIMaterial one : CMIMaterial.values()) {
-	    if (one.getMaterial() != null && one.getId() == id) {
-		return one;
-	    }
-	}
-	for (CMIMaterial one : CMIMaterial.values()) {
-	    if (one.getLegacyId() == id) {
-		return one;
-	    }
-	}
-	return CMIMaterial.NONE;
+        for (CMIMaterial one : CMIMaterial.values()) {
+            if (one.getMaterial() != null && one.getId() == id) {
+                return one;
+            }
+        }
+        for (CMIMaterial one : CMIMaterial.values()) {
+            if (one.getLegacyId() == id) {
+                return one;
+            }
+        }
+        return CMIMaterial.NONE;
     }
 
     public static CMIMaterial get(ItemStack item) {
-	if (item == null)
-	    return CMIMaterial.NONE;
-	CMIMaterial mat = null;
-	if (Version.isCurrentEqualOrLower(Version.v1_13_R2)) {
+        if (item == null)
+            return CMIMaterial.NONE;
+        CMIMaterial mat = null;
+        if (Version.isCurrentEqualOrLower(Version.v1_13_R2)) {
 
-	    mat = Version.isCurrentEqualOrHigher(Version.v1_13_R1) ? get(item.getType()) : get(item.getType().getId(), item.getData().getData());
-	    if (mat == null) {
-		mat = ItemManager.byName.get(item.getType().toString().toLowerCase().replace("_", ""));
-	    }
-	} else {
-	    mat = ItemManager.byRealMaterial.get(item.getType());
-	}
+            mat = Version.isCurrentEqualOrHigher(Version.v1_13_R1) ? get(item.getType()) : get(item.getType().getId(), item.getData().getData());
+            if (mat == null) {
+                mat = ItemManager.byName.get(item.getType().toString().toLowerCase().replace("_", ""));
+            }
+        } else {
+            mat = ItemManager.byRealMaterial.get(item.getType());
+        }
 
-	return mat == null ? CMIMaterial.NONE : mat;
+        return mat == null ? CMIMaterial.NONE : mat;
     }
 
     public static CMIMaterial get(Block block) {
-	if (block == null)
-	    return CMIMaterial.NONE;
+        if (block == null)
+            return CMIMaterial.NONE;
 
-	try {
-	    if (Bukkit.getWorld(block.getWorld().getUID()) == null)
-		return CMIMaterial.NONE;
-	} catch (Throwable e) {
-	    e.printStackTrace();
-	}
+        try {
+            if (Bukkit.getWorld(block.getWorld().getUID()) == null)
+                return CMIMaterial.NONE;
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
 
-	if (Version.isCurrentEqualOrHigher(Version.v1_14_R1)) {
-	    CMIMaterial res = ItemManager.byRealMaterial.get(block.getType());
-	    return res == null ? CMIMaterial.NONE : res;
-	}
+        if (Version.isCurrentEqualOrHigher(Version.v1_14_R1)) {
+            CMIMaterial res = ItemManager.byRealMaterial.get(block.getType());
+            return res == null ? CMIMaterial.NONE : res;
+        }
 
-	byte data = Version.isCurrentEqualOrLower(Version.v1_13_R1) ? block.getData() : 0;
-	if (block.getState() instanceof Skull) {
-	    Skull skull = (Skull) block.getState();
-	    data = (byte) skull.getSkullType().ordinal();
-	}
+        byte data = Version.isCurrentEqualOrLower(Version.v1_13_R1) ? block.getData() : 0;
+        if (block.getState() instanceof Skull) {
+            Skull skull = (Skull) block.getState();
+            data = (byte) skull.getSkullType().ordinal();
+        }
 
-	CMIMaterial mat = null;
+        CMIMaterial mat = null;
 
-	if (Version.isCurrentEqualOrHigher(Version.v1_14_R1)) {
-	    mat = ItemManager.byRealMaterial.get(block.getType());
-	}
+        if (Version.isCurrentEqualOrHigher(Version.v1_14_R1)) {
+            mat = ItemManager.byRealMaterial.get(block.getType());
+        }
 
-	if (mat == null) {
-	    mat = ItemManager.byName.get(block.getType().toString().replace("_", "").toLowerCase());
-	}
+        if (mat == null) {
+            mat = ItemManager.byName.get(block.getType().toString().replace("_", "").toLowerCase());
+        }
 
-	if (mat == null && Version.isCurrentEqualOrLower(Version.v1_13_R2)) {
-	    mat = get(block.getType().getId(), Version.isCurrentEqualOrHigher(Version.v1_13_R1) ? 0 : data);
-	}
-	return mat == null ? CMIMaterial.NONE : mat;
+        if (mat == null && Version.isCurrentEqualOrLower(Version.v1_13_R2)) {
+            mat = get(block.getType().getId(), Version.isCurrentEqualOrHigher(Version.v1_13_R1) ? 0 : data);
+        }
+        return mat == null ? CMIMaterial.NONE : mat;
     }
 
     @Deprecated
     public static CMIMaterial get(int id, int data) {
-	CMIMaterial mat = ItemManager.byName.get(id + ":" + data);
-	if (mat != null) {
-	    return mat;
-	}
-	mat = ItemManager.byId.get(id);
-	return mat == null ? CMIMaterial.NONE : mat;
+        CMIMaterial mat = ItemManager.byName.get(id + ":" + data);
+        if (mat != null) {
+            return mat;
+        }
+        mat = ItemManager.byId.get(id);
+        return mat == null ? CMIMaterial.NONE : mat;
     }
 
     @Deprecated
     public static CMIMaterial getLegacy(int id) {
-	CMIMaterial mat = ItemManager.byId.get(id);
-	if (mat != null)
-	    return mat;
-	return CMIMaterial.NONE;
+        CMIMaterial mat = ItemManager.byId.get(id);
+        if (mat != null)
+            return mat;
+        return CMIMaterial.NONE;
     }
 
     public short getMaxDurability() {
-	return this.getMaterial() == null ? 0 : this.getMaterial().getMaxDurability();
+        return this.getMaterial() == null ? 0 : this.getMaterial().getMaxDurability();
     }
 
     public boolean isBlock() {
-	return getMaterial() != null && getMaterial().isBlock();
+        return getMaterial() != null && getMaterial().isBlock();
     }
 
     public boolean isEquipment() {
-	return getMaxDurability() > 16;
+        return getMaxDurability() > 16;
     }
 
     public boolean isSolid() {
-	return getMaterial() != null && getMaterial().isSolid();
+        return getMaterial() != null && getMaterial().isSolid();
     }
 
     public static boolean isMonsterEgg(Material mat) {
-	CMIMaterial m = CMIMaterial.get(mat);
-	if (m == null)
-	    return false;
-	return m.isMonsterEgg();
+        CMIMaterial m = CMIMaterial.get(mat);
+        if (m == null)
+            return false;
+        return m.isMonsterEgg();
+    }
+
+    public static boolean isHoe(Material mat) {
+        CMIMaterial m = CMIMaterial.get(mat);
+        if (m == null)
+            return false;
+        return m.isHoe();
+    }
+
+    public boolean isHoe() {
+        switch (this) {
+        case DIAMOND_HOE, GOLDEN_HOE, IRON_HOE, STONE_HOE, WOODEN_HOE, NETHERITE_HOE:
+            return true;
+        default:
+            break;
+        }
+        return false;
     }
 
     public boolean isMonsterEgg() {
-	switch (this) {
-	case ELDER_GUARDIAN_SPAWN_EGG:
-	case WITHER_SKELETON_SPAWN_EGG:
-	case STRAY_SPAWN_EGG:
-	case HUSK_SPAWN_EGG:
-	case ZOMBIE_VILLAGER_SPAWN_EGG:
-	case SKELETON_HORSE_SPAWN_EGG:
-	case ZOMBIE_HORSE_SPAWN_EGG:
-	case DONKEY_SPAWN_EGG:
-	case MULE_SPAWN_EGG:
-	case EVOKER_SPAWN_EGG:
-	case VEX_SPAWN_EGG:
-	case VINDICATOR_SPAWN_EGG:
-	case CREEPER_SPAWN_EGG:
-	case SKELETON_SPAWN_EGG:
-	case SPIDER_SPAWN_EGG:
-	case ZOMBIE_SPAWN_EGG:
-	case SLIME_SPAWN_EGG:
-	case GHAST_SPAWN_EGG:
-	case ZOMBIE_PIGMAN_SPAWN_EGG:
-	case ENDERMAN_SPAWN_EGG:
-	case CAVE_SPIDER_SPAWN_EGG:
-	case SILVERFISH_SPAWN_EGG:
-	case BLAZE_SPAWN_EGG:
-	case MAGMA_CUBE_SPAWN_EGG:
-	case BAT_SPAWN_EGG:
-	case WITCH_SPAWN_EGG:
-	case ENDERMITE_SPAWN_EGG:
-	case GUARDIAN_SPAWN_EGG:
-	case SHULKER_SPAWN_EGG:
-	case PIG_SPAWN_EGG:
-	case SHEEP_SPAWN_EGG:
-	case COW_SPAWN_EGG:
-	case CHICKEN_SPAWN_EGG:
-	case SQUID_SPAWN_EGG:
-	case WOLF_SPAWN_EGG:
-	case MOOSHROOM_SPAWN_EGG:
-	case OCELOT_SPAWN_EGG:
-	case HORSE_SPAWN_EGG:
-	case RABBIT_SPAWN_EGG:
-	case POLAR_BEAR_SPAWN_EGG:
-	case LLAMA_SPAWN_EGG:
-	case PARROT_SPAWN_EGG:
-	case VILLAGER_SPAWN_EGG:
-	case COD_SPAWN_EGG:
-	case DOLPHIN_SPAWN_EGG:
-	case DRAGON_EGG:
-	case DROWNED_SPAWN_EGG:
-	case PHANTOM_SPAWN_EGG:
-	case PUFFERFISH_SPAWN_EGG:
-	case SALMON_SPAWN_EGG:
-	case TROPICAL_FISH_SPAWN_EGG:
-	case TURTLE_SPAWN_EGG:
+        switch (this) {
+        case ELDER_GUARDIAN_SPAWN_EGG:
+        case WITHER_SKELETON_SPAWN_EGG:
+        case STRAY_SPAWN_EGG:
+        case HUSK_SPAWN_EGG:
+        case ZOMBIE_VILLAGER_SPAWN_EGG:
+        case SKELETON_HORSE_SPAWN_EGG:
+        case ZOMBIE_HORSE_SPAWN_EGG:
+        case DONKEY_SPAWN_EGG:
+        case MULE_SPAWN_EGG:
+        case EVOKER_SPAWN_EGG:
+        case VEX_SPAWN_EGG:
+        case VINDICATOR_SPAWN_EGG:
+        case CREEPER_SPAWN_EGG:
+        case SKELETON_SPAWN_EGG:
+        case SPIDER_SPAWN_EGG:
+        case ZOMBIE_SPAWN_EGG:
+        case SLIME_SPAWN_EGG:
+        case GHAST_SPAWN_EGG:
+        case ZOMBIE_PIGMAN_SPAWN_EGG:
+        case ENDERMAN_SPAWN_EGG:
+        case CAVE_SPIDER_SPAWN_EGG:
+        case SILVERFISH_SPAWN_EGG:
+        case BLAZE_SPAWN_EGG:
+        case MAGMA_CUBE_SPAWN_EGG:
+        case BAT_SPAWN_EGG:
+        case WITCH_SPAWN_EGG:
+        case ENDERMITE_SPAWN_EGG:
+        case GUARDIAN_SPAWN_EGG:
+        case SHULKER_SPAWN_EGG:
+        case PIG_SPAWN_EGG:
+        case SHEEP_SPAWN_EGG:
+        case COW_SPAWN_EGG:
+        case CHICKEN_SPAWN_EGG:
+        case SQUID_SPAWN_EGG:
+        case WOLF_SPAWN_EGG:
+        case MOOSHROOM_SPAWN_EGG:
+        case OCELOT_SPAWN_EGG:
+        case HORSE_SPAWN_EGG:
+        case RABBIT_SPAWN_EGG:
+        case POLAR_BEAR_SPAWN_EGG:
+        case LLAMA_SPAWN_EGG:
+        case PARROT_SPAWN_EGG:
+        case VILLAGER_SPAWN_EGG:
+        case COD_SPAWN_EGG:
+        case DOLPHIN_SPAWN_EGG:
+        case DRAGON_EGG:
+        case DROWNED_SPAWN_EGG:
+        case PHANTOM_SPAWN_EGG:
+        case PUFFERFISH_SPAWN_EGG:
+        case SALMON_SPAWN_EGG:
+        case TROPICAL_FISH_SPAWN_EGG:
+        case TURTLE_SPAWN_EGG:
 
-	    // 1.14
-	case CAT_SPAWN_EGG:
-	case FOX_SPAWN_EGG:
-	case PANDA_SPAWN_EGG:
-	case PILLAGER_SPAWN_EGG:
-	case RAVAGER_SPAWN_EGG:
-	case TRADER_LLAMA_SPAWN_EGG:
-	case WANDERING_TRADER_SPAWN_EGG:
+            // 1.14
+        case CAT_SPAWN_EGG:
+        case FOX_SPAWN_EGG:
+        case PANDA_SPAWN_EGG:
+        case PILLAGER_SPAWN_EGG:
+        case RAVAGER_SPAWN_EGG:
+        case TRADER_LLAMA_SPAWN_EGG:
+        case WANDERING_TRADER_SPAWN_EGG:
 
-	    // 1.15
-	case BEE_SPAWN_EGG:
+            // 1.15
+        case BEE_SPAWN_EGG:
 
-	case HOGLIN_SPAWN_EGG:
-	case PIGLIN_SPAWN_EGG:
-	case STRIDER_SPAWN_EGG:
-	case ZOGLIN_SPAWN_EGG:
-	case ZOMBIFIED_PIGLIN_SPAWN_EGG:
+        case HOGLIN_SPAWN_EGG:
+        case PIGLIN_SPAWN_EGG:
+        case STRIDER_SPAWN_EGG:
+        case ZOGLIN_SPAWN_EGG:
+        case ZOMBIFIED_PIGLIN_SPAWN_EGG:
 
-	    // 1.17
-	case AXOLOTL_SPAWN_EGG:
-	case GLOW_SQUID_SPAWN_EGG:
-	case GOAT_SPAWN_EGG:
+            // 1.17
+        case AXOLOTL_SPAWN_EGG:
+        case GLOW_SQUID_SPAWN_EGG:
+        case GOAT_SPAWN_EGG:
 
-	case WARDEN_SPAWN_EGG:
-	case TADPOLE_SPAWN_EGG:
-	case ALLAY_SPAWN_EGG:
-	case FROG_SPAWN_EGG:
-	    return true;
-	default:
-	    break;
-	}
-	return false;
+        case WARDEN_SPAWN_EGG:
+        case TADPOLE_SPAWN_EGG:
+        case ALLAY_SPAWN_EGG:
+        case FROG_SPAWN_EGG:
+            return true;
+        default:
+            break;
+        }
+        return false;
     }
 
     public static boolean isBed(Material mat) {
-	CMIMaterial m = CMIMaterial.get(mat);
-	if (m == null)
-	    return false;
-	return m.isBed();
+        CMIMaterial m = CMIMaterial.get(mat);
+        if (m == null)
+            return false;
+        return m.isBed();
     }
 
     public boolean isBed() {
-	switch (this) {
-	case WHITE_BED:
-	case ORANGE_BED:
-	case MAGENTA_BED:
-	case LIGHT_BLUE_BED:
-	case YELLOW_BED:
-	case LIME_BED:
-	case PINK_BED:
-	case GRAY_BED:
-	case LIGHT_GRAY_BED:
-	case CYAN_BED:
-	case PURPLE_BED:
-	case BLUE_BED:
-	case BROWN_BED:
-	case GREEN_BED:
-	case RED_BED:
-	case BLACK_BED:
-	case LEGACY_BED_BLOCK:
-	    return true;
-	default:
-	    break;
-	}
-	return false;
+        switch (this) {
+        case WHITE_BED:
+        case ORANGE_BED:
+        case MAGENTA_BED:
+        case LIGHT_BLUE_BED:
+        case YELLOW_BED:
+        case LIME_BED:
+        case PINK_BED:
+        case GRAY_BED:
+        case LIGHT_GRAY_BED:
+        case CYAN_BED:
+        case PURPLE_BED:
+        case BLUE_BED:
+        case BROWN_BED:
+        case GREEN_BED:
+        case RED_BED:
+        case BLACK_BED:
+        case LEGACY_BED_BLOCK:
+            return true;
+        default:
+            break;
+        }
+        return false;
     }
 
     public static boolean isStairs(Material mat) {
-	CMIMaterial m = CMIMaterial.get(mat);
-	if (m == null)
-	    return false;
-	return m.isStairs();
+        CMIMaterial m = CMIMaterial.get(mat);
+        if (m == null)
+            return false;
+        return m.isStairs();
     }
 
     public boolean isStairs() {
-	switch (this) {
-	case ACACIA_STAIRS:
-	case BIRCH_STAIRS:
-	case BRICK_STAIRS:
-	case COBBLESTONE_STAIRS:
-	case DARK_OAK_STAIRS:
-	case DARK_PRISMARINE_STAIRS:
-	case JUNGLE_STAIRS:
-	case NETHER_BRICK_STAIRS:
-	case OAK_STAIRS:
-	case PRISMARINE_BRICK_STAIRS:
-	case PRISMARINE_STAIRS:
-	case PURPUR_STAIRS:
-	case QUARTZ_STAIRS:
-	case RED_SANDSTONE_STAIRS:
-	case SANDSTONE_STAIRS:
-	case SPRUCE_STAIRS:
-	case STONE_BRICK_STAIRS:
+        switch (this) {
+        case ACACIA_STAIRS:
+        case BIRCH_STAIRS:
+        case BRICK_STAIRS:
+        case COBBLESTONE_STAIRS:
+        case DARK_OAK_STAIRS:
+        case DARK_PRISMARINE_STAIRS:
+        case JUNGLE_STAIRS:
+        case NETHER_BRICK_STAIRS:
+        case OAK_STAIRS:
+        case PRISMARINE_BRICK_STAIRS:
+        case PRISMARINE_STAIRS:
+        case PURPUR_STAIRS:
+        case QUARTZ_STAIRS:
+        case RED_SANDSTONE_STAIRS:
+        case SANDSTONE_STAIRS:
+        case SPRUCE_STAIRS:
+        case STONE_BRICK_STAIRS:
 
-	case ANDESITE_STAIRS:
-	case DIORITE_STAIRS:
-	case END_STONE_BRICK_STAIRS:
-	case GRANITE_STAIRS:
-	case MOSSY_COBBLESTONE_STAIRS:
-	case MOSSY_STONE_BRICK_STAIRS:
-	case POLISHED_ANDESITE_STAIRS:
-	case POLISHED_DIORITE_STAIRS:
-	case POLISHED_GRANITE_STAIRS:
-	case RED_NETHER_BRICK_STAIRS:
-	case SMOOTH_QUARTZ_STAIRS:
-	case SMOOTH_RED_SANDSTONE_STAIRS:
-	case SMOOTH_SANDSTONE_STAIRS:
-	case STONE_STAIRS:
+        case ANDESITE_STAIRS:
+        case DIORITE_STAIRS:
+        case END_STONE_BRICK_STAIRS:
+        case GRANITE_STAIRS:
+        case MOSSY_COBBLESTONE_STAIRS:
+        case MOSSY_STONE_BRICK_STAIRS:
+        case POLISHED_ANDESITE_STAIRS:
+        case POLISHED_DIORITE_STAIRS:
+        case POLISHED_GRANITE_STAIRS:
+        case RED_NETHER_BRICK_STAIRS:
+        case SMOOTH_QUARTZ_STAIRS:
+        case SMOOTH_RED_SANDSTONE_STAIRS:
+        case SMOOTH_SANDSTONE_STAIRS:
+        case STONE_STAIRS:
 
-	case BLACKSTONE_STAIRS:
-	case CRIMSON_STAIRS:
-	case POLISHED_BLACKSTONE_BRICK_STAIRS:
-	case POLISHED_BLACKSTONE_STAIRS:
-	case WARPED_STAIRS:
+        case BLACKSTONE_STAIRS:
+        case CRIMSON_STAIRS:
+        case POLISHED_BLACKSTONE_BRICK_STAIRS:
+        case POLISHED_BLACKSTONE_STAIRS:
+        case WARPED_STAIRS:
 
-	case COBBLED_DEEPSLATE_STAIRS:
-	case CUT_COPPER_STAIRS:
-	case DEEPSLATE_BRICK_STAIRS:
-	case DEEPSLATE_TILE_STAIRS:
-	case EXPOSED_CUT_COPPER_STAIRS:
-	case OXIDIZED_CUT_COPPER_STAIRS:
-	case POLISHED_DEEPSLATE_STAIRS:
-	case WAXED_CUT_COPPER_STAIRS:
-	case WAXED_EXPOSED_CUT_COPPER_STAIRS:
-	case WAXED_OXIDIZED_CUT_COPPER_STAIRS:
-	case WAXED_WEATHERED_CUT_COPPER_STAIRS:
-	case WEATHERED_CUT_COPPER_STAIRS:
+        case COBBLED_DEEPSLATE_STAIRS:
+        case CUT_COPPER_STAIRS:
+        case DEEPSLATE_BRICK_STAIRS:
+        case DEEPSLATE_TILE_STAIRS:
+        case EXPOSED_CUT_COPPER_STAIRS:
+        case OXIDIZED_CUT_COPPER_STAIRS:
+        case POLISHED_DEEPSLATE_STAIRS:
+        case WAXED_CUT_COPPER_STAIRS:
+        case WAXED_EXPOSED_CUT_COPPER_STAIRS:
+        case WAXED_OXIDIZED_CUT_COPPER_STAIRS:
+        case WAXED_WEATHERED_CUT_COPPER_STAIRS:
+        case WEATHERED_CUT_COPPER_STAIRS:
 
-	case MANGROVE_STAIRS:
-	case MUD_BRICK_STAIRS:
+        case MANGROVE_STAIRS:
+        case MUD_BRICK_STAIRS:
 
-	    return true;
-	default:
-	    break;
-	}
-	return false;
+            return true;
+        default:
+            break;
+        }
+        return false;
     }
 
     public static boolean isPotion(Material mat) {
-	CMIMaterial m = CMIMaterial.get(mat);
-	if (m == null)
-	    return false;
-	return m.isPotion();
+        CMIMaterial m = CMIMaterial.get(mat);
+        if (m == null)
+            return false;
+        return m.isPotion();
     }
 
     public boolean isPotion() {
-	switch (this) {
-	case POTION:
-	case LINGERING_POTION:
-	case SPLASH_POTION:
-	    return true;
-	default:
-	    break;
-	}
-	return false;
+        switch (this) {
+        case POTION:
+        case LINGERING_POTION:
+        case SPLASH_POTION:
+            return true;
+        default:
+            break;
+        }
+        return false;
     }
 
     public static boolean isBoat(Material mat) {
-	CMIMaterial m = CMIMaterial.get(mat);
-	if (m == null)
-	    return false;
-	return m.isBoat();
+        CMIMaterial m = CMIMaterial.get(mat);
+        if (m == null)
+            return false;
+        return m.isBoat();
     }
 
     public boolean isBoat() {
-	switch (this) {
-	case OAK_BOAT:
-	case ACACIA_BOAT:
-	case BIRCH_BOAT:
-	case DARK_OAK_BOAT:
-	case JUNGLE_BOAT:
-	case SPRUCE_BOAT:
+        switch (this) {
+        case OAK_BOAT:
+        case ACACIA_BOAT:
+        case BIRCH_BOAT:
+        case DARK_OAK_BOAT:
+        case JUNGLE_BOAT:
+        case SPRUCE_BOAT:
 
-	case OAK_CHEST_BOAT:
-	case SPRUCE_CHEST_BOAT:
-	case ACACIA_CHEST_BOAT:
-	case BIRCH_CHEST_BOAT:
-	case DARK_OAK_CHEST_BOAT:
-	case JUNGLE_CHEST_BOAT:
-	case MANGROVE_BOAT:
-	case MANGROVE_CHEST_BOAT:
+        case OAK_CHEST_BOAT:
+        case SPRUCE_CHEST_BOAT:
+        case ACACIA_CHEST_BOAT:
+        case BIRCH_CHEST_BOAT:
+        case DARK_OAK_CHEST_BOAT:
+        case JUNGLE_CHEST_BOAT:
+        case MANGROVE_BOAT:
+        case MANGROVE_CHEST_BOAT:
 
-	    return true;
-	default:
-	    break;
-	}
-	return false;
+            return true;
+        default:
+            break;
+        }
+        return false;
     }
 
     public static boolean isChestBoat(Material mat) {
-	CMIMaterial m = CMIMaterial.get(mat);
-	if (m == null)
-	    return false;
-	return m.isChestBoat();
+        CMIMaterial m = CMIMaterial.get(mat);
+        if (m == null)
+            return false;
+        return m.isChestBoat();
     }
 
     public boolean isChestBoat() {
-	switch (this) {
-	case OAK_CHEST_BOAT:
-	case SPRUCE_CHEST_BOAT:
-	case ACACIA_CHEST_BOAT:
-	case BIRCH_CHEST_BOAT:
-	case DARK_OAK_CHEST_BOAT:
-	case JUNGLE_CHEST_BOAT:
-	case MANGROVE_CHEST_BOAT:
-	    return true;
-	default:
-	    break;
-	}
-	return false;
+        switch (this) {
+        case OAK_CHEST_BOAT:
+        case SPRUCE_CHEST_BOAT:
+        case ACACIA_CHEST_BOAT:
+        case BIRCH_CHEST_BOAT:
+        case DARK_OAK_CHEST_BOAT:
+        case JUNGLE_CHEST_BOAT:
+        case MANGROVE_CHEST_BOAT:
+            return true;
+        default:
+            break;
+        }
+        return false;
     }
 
     public static boolean isSapling(Material mat) {
-	CMIMaterial m = CMIMaterial.get(mat);
-	if (m == null)
-	    return false;
-	return m.isSapling();
+        CMIMaterial m = CMIMaterial.get(mat);
+        if (m == null)
+            return false;
+        return m.isSapling();
     }
 
     public boolean isSapling() {
-	switch (this) {
-	case OAK_SAPLING:
-	case SPRUCE_SAPLING:
-	case BIRCH_SAPLING:
-	case JUNGLE_SAPLING:
-	case ACACIA_SAPLING:
-	case DARK_OAK_SAPLING:
-	    return true;
-	default:
-	    break;
-	}
-	return false;
+        switch (this) {
+        case OAK_SAPLING:
+        case SPRUCE_SAPLING:
+        case BIRCH_SAPLING:
+        case JUNGLE_SAPLING:
+        case ACACIA_SAPLING:
+        case DARK_OAK_SAPLING:
+            return true;
+        default:
+            break;
+        }
+        return false;
     }
 
     public static boolean isButton(Material mat) {
-	CMIMaterial m = CMIMaterial.get(mat);
-	if (m == null)
-	    return false;
-	return m.isButton();
+        CMIMaterial m = CMIMaterial.get(mat);
+        if (m == null)
+            return false;
+        return m.isButton();
     }
 
     public boolean isButton() {
-	switch (this) {
-	case ACACIA_BUTTON:
-	case BIRCH_BUTTON:
-	case DARK_OAK_BUTTON:
-	case JUNGLE_BUTTON:
-	case OAK_BUTTON:
-	case SPRUCE_BUTTON:
-	case STONE_BUTTON:
-	case POLISHED_BLACKSTONE_BUTTON:
-	case WARPED_BUTTON:
+        switch (this) {
+        case ACACIA_BUTTON:
+        case BIRCH_BUTTON:
+        case DARK_OAK_BUTTON:
+        case JUNGLE_BUTTON:
+        case OAK_BUTTON:
+        case SPRUCE_BUTTON:
+        case STONE_BUTTON:
+        case POLISHED_BLACKSTONE_BUTTON:
+        case WARPED_BUTTON:
 
-	case MANGROVE_BUTTON:
-	    return true;
-	default:
-	    break;
-	}
-	return false;
+        case MANGROVE_BUTTON:
+            return true;
+        default:
+            break;
+        }
+        return false;
     }
 
     public static boolean isWater(Material mat) {
-	CMIMaterial m = CMIMaterial.get(mat);
-	if (m == null)
-	    return false;
-	return m.isWater();
+        CMIMaterial m = CMIMaterial.get(mat);
+        if (m == null)
+            return false;
+        return m.isWater();
     }
 
     public boolean isWater() {
-	switch (this) {
-	case WATER:
-	case LEGACY_STATIONARY_WATER:
-	    return true;
-	default:
-	    break;
-	}
-	return false;
+        switch (this) {
+        case WATER:
+        case LEGACY_STATIONARY_WATER:
+            return true;
+        default:
+            break;
+        }
+        return false;
     }
 
     public static boolean isLava(Material mat) {
-	CMIMaterial m = CMIMaterial.get(mat);
-	if (m == null)
-	    return false;
-	return m.isLava();
+        CMIMaterial m = CMIMaterial.get(mat);
+        if (m == null)
+            return false;
+        return m.isLava();
     }
 
     public boolean isLava() {
-	switch (this) {
-	case LAVA:
-	case LEGACY_STATIONARY_LAVA:
-	    return true;
-	default:
-	    break;
-	}
-	return false;
+        switch (this) {
+        case LAVA:
+        case LEGACY_STATIONARY_LAVA:
+            return true;
+        default:
+            break;
+        }
+        return false;
     }
 
     public static boolean isPlate(Material mat) {
-	CMIMaterial m = CMIMaterial.get(mat);
-	if (m == null)
-	    return false;
-	return m.isPlate();
+        CMIMaterial m = CMIMaterial.get(mat);
+        if (m == null)
+            return false;
+        return m.isPlate();
     }
 
     public boolean isPlate() {
-	switch (this) {
-	case ACACIA_PRESSURE_PLATE:
-	case BIRCH_PRESSURE_PLATE:
-	case DARK_OAK_PRESSURE_PLATE:
-	case HEAVY_WEIGHTED_PRESSURE_PLATE:
-	case JUNGLE_PRESSURE_PLATE:
-	case LIGHT_WEIGHTED_PRESSURE_PLATE:
-	case OAK_PRESSURE_PLATE:
-	case SPRUCE_PRESSURE_PLATE:
-	case STONE_PRESSURE_PLATE:
-	case CRIMSON_PRESSURE_PLATE:
-	case POLISHED_BLACKSTONE_PRESSURE_PLATE:
-	case WARPED_PRESSURE_PLATE:
+        switch (this) {
+        case ACACIA_PRESSURE_PLATE:
+        case BIRCH_PRESSURE_PLATE:
+        case DARK_OAK_PRESSURE_PLATE:
+        case HEAVY_WEIGHTED_PRESSURE_PLATE:
+        case JUNGLE_PRESSURE_PLATE:
+        case LIGHT_WEIGHTED_PRESSURE_PLATE:
+        case OAK_PRESSURE_PLATE:
+        case SPRUCE_PRESSURE_PLATE:
+        case STONE_PRESSURE_PLATE:
+        case CRIMSON_PRESSURE_PLATE:
+        case POLISHED_BLACKSTONE_PRESSURE_PLATE:
+        case WARPED_PRESSURE_PLATE:
 
-	case MANGROVE_PRESSURE_PLATE:
+        case MANGROVE_PRESSURE_PLATE:
 
-	    return true;
-	default:
-	    break;
-	}
-	return false;
+            return true;
+        default:
+            break;
+        }
+        return false;
     }
 
     public static boolean isWool(Material mat) {
-	CMIMaterial m = CMIMaterial.get(mat);
-	if (m == null)
-	    return false;
-	return m.isWool();
+        CMIMaterial m = CMIMaterial.get(mat);
+        if (m == null)
+            return false;
+        return m.isWool();
     }
 
     public boolean isWool() {
-	switch (this) {
-	case BLACK_WOOL:
-	case BLUE_WOOL:
-	case BROWN_WOOL:
-	case CYAN_WOOL:
-	case GRAY_WOOL:
-	case GREEN_WOOL:
-	case LIGHT_BLUE_WOOL:
-	case LIGHT_GRAY_WOOL:
-	case LIME_WOOL:
-	case MAGENTA_WOOL:
-	case ORANGE_WOOL:
-	case PINK_WOOL:
-	case PURPLE_WOOL:
-	case RED_WOOL:
-	case WHITE_WOOL:
-	case YELLOW_WOOL:
-	    return true;
-	default:
-	    break;
-	}
-	return false;
+        switch (this) {
+        case BLACK_WOOL:
+        case BLUE_WOOL:
+        case BROWN_WOOL:
+        case CYAN_WOOL:
+        case GRAY_WOOL:
+        case GREEN_WOOL:
+        case LIGHT_BLUE_WOOL:
+        case LIGHT_GRAY_WOOL:
+        case LIME_WOOL:
+        case MAGENTA_WOOL:
+        case ORANGE_WOOL:
+        case PINK_WOOL:
+        case PURPLE_WOOL:
+        case RED_WOOL:
+        case WHITE_WOOL:
+        case YELLOW_WOOL:
+            return true;
+        default:
+            break;
+        }
+        return false;
     }
 
     public static boolean isCarpet(Material mat) {
-	CMIMaterial m = CMIMaterial.get(mat);
-	if (m == null)
-	    return false;
-	return m.isCarpet();
+        CMIMaterial m = CMIMaterial.get(mat);
+        if (m == null)
+            return false;
+        return m.isCarpet();
     }
 
     public boolean isCarpet() {
-	switch (this) {
-	case BLACK_CARPET:
-	case BLUE_CARPET:
-	case BROWN_CARPET:
-	case CYAN_CARPET:
-	case GRAY_CARPET:
-	case GREEN_CARPET:
-	case LIGHT_BLUE_CARPET:
-	case LIGHT_GRAY_CARPET:
-	case LIME_CARPET:
-	case MAGENTA_CARPET:
-	case ORANGE_CARPET:
-	case PINK_CARPET:
-	case PURPLE_CARPET:
-	case RED_CARPET:
-	case WHITE_CARPET:
-	case YELLOW_CARPET:
-	    return true;
-	default:
-	    break;
-	}
-	return false;
+        switch (this) {
+        case BLACK_CARPET:
+        case BLUE_CARPET:
+        case BROWN_CARPET:
+        case CYAN_CARPET:
+        case GRAY_CARPET:
+        case GREEN_CARPET:
+        case LIGHT_BLUE_CARPET:
+        case LIGHT_GRAY_CARPET:
+        case LIME_CARPET:
+        case MAGENTA_CARPET:
+        case ORANGE_CARPET:
+        case PINK_CARPET:
+        case PURPLE_CARPET:
+        case RED_CARPET:
+        case WHITE_CARPET:
+        case YELLOW_CARPET:
+            return true;
+        default:
+            break;
+        }
+        return false;
     }
 
     public static boolean isShulkerBox(Material mat) {
-	CMIMaterial m = CMIMaterial.get(mat);
-	if (m == null)
-	    return false;
-	return m.isShulkerBox();
+        CMIMaterial m = CMIMaterial.get(mat);
+        if (m == null)
+            return false;
+        return m.isShulkerBox();
     }
 
     public boolean isShulkerBox() {
-	switch (this) {
-	case BLACK_SHULKER_BOX:
-	case BLUE_SHULKER_BOX:
-	case BROWN_SHULKER_BOX:
-	case CYAN_SHULKER_BOX:
-	case GRAY_SHULKER_BOX:
-	case GREEN_SHULKER_BOX:
-	case LIGHT_BLUE_SHULKER_BOX:
-	case LIGHT_GRAY_SHULKER_BOX:
-	case LIME_SHULKER_BOX:
-	case MAGENTA_SHULKER_BOX:
-	case ORANGE_SHULKER_BOX:
-	case PINK_SHULKER_BOX:
-	case PURPLE_SHULKER_BOX:
-	case RED_SHULKER_BOX:
-	case WHITE_SHULKER_BOX:
-	case YELLOW_SHULKER_BOX:
-	case SHULKER_BOX:
-	    return true;
-	default:
-	    break;
-	}
-	return false;
+        switch (this) {
+        case BLACK_SHULKER_BOX:
+        case BLUE_SHULKER_BOX:
+        case BROWN_SHULKER_BOX:
+        case CYAN_SHULKER_BOX:
+        case GRAY_SHULKER_BOX:
+        case GREEN_SHULKER_BOX:
+        case LIGHT_BLUE_SHULKER_BOX:
+        case LIGHT_GRAY_SHULKER_BOX:
+        case LIME_SHULKER_BOX:
+        case MAGENTA_SHULKER_BOX:
+        case ORANGE_SHULKER_BOX:
+        case PINK_SHULKER_BOX:
+        case PURPLE_SHULKER_BOX:
+        case RED_SHULKER_BOX:
+        case WHITE_SHULKER_BOX:
+        case YELLOW_SHULKER_BOX:
+        case SHULKER_BOX:
+            return true;
+        default:
+            break;
+        }
+        return false;
     }
 
     public static boolean isLeatherArmor(Material mat) {
-	CMIMaterial m = CMIMaterial.get(mat);
-	if (m == null)
-	    return false;
-	return m.isLeatherArmor();
+        CMIMaterial m = CMIMaterial.get(mat);
+        if (m == null)
+            return false;
+        return m.isLeatherArmor();
     }
 
     public boolean isLeatherArmor() {
-	switch (this) {
-	case LEATHER_BOOTS:
-	case LEATHER_CHESTPLATE:
-	case LEATHER_HELMET:
-	case LEATHER_LEGGINGS:
-	    return true;
-	default:
-	    break;
-	}
-	return false;
+        switch (this) {
+        case LEATHER_BOOTS:
+        case LEATHER_CHESTPLATE:
+        case LEATHER_HELMET:
+        case LEATHER_LEGGINGS:
+            return true;
+        default:
+            break;
+        }
+        return false;
     }
 
     public static boolean isArmor(Material mat) {
-	CMIMaterial m = CMIMaterial.get(mat);
-	if (m == null)
-	    return false;
-	return m.isArmor();
+        CMIMaterial m = CMIMaterial.get(mat);
+        if (m == null)
+            return false;
+        return m.isArmor();
     }
 
     public boolean isArmor() {
-	return isHelmet() || isLeggings() || isChestplate() || isBoots() || isShield();
+        return isHelmet() || isLeggings() || isChestplate() || isBoots() || isShield();
     }
 
     public static boolean isHelmet(Material mat) {
-	CMIMaterial m = CMIMaterial.get(mat);
-	if (m == null)
-	    return false;
-	return m.isHelmet();
+        CMIMaterial m = CMIMaterial.get(mat);
+        if (m == null)
+            return false;
+        return m.isHelmet();
     }
 
     public boolean isHelmet() {
-	switch (this) {
-	case NETHERITE_HELMET:
-	case CHAINMAIL_HELMET:
-	case DIAMOND_HELMET:
-	case GOLDEN_HELMET:
-	case IRON_HELMET:
-	case LEATHER_HELMET:
-	case TURTLE_HELMET:
-	    return true;
-	default:
-	    break;
-	}
-	return false;
+        switch (this) {
+        case NETHERITE_HELMET:
+        case CHAINMAIL_HELMET:
+        case DIAMOND_HELMET:
+        case GOLDEN_HELMET:
+        case IRON_HELMET:
+        case LEATHER_HELMET:
+        case TURTLE_HELMET:
+            return true;
+        default:
+            break;
+        }
+        return false;
     }
 
     public static boolean isLeggings(Material mat) {
-	CMIMaterial m = CMIMaterial.get(mat);
-	if (m == null)
-	    return false;
-	return m.isLeggings();
+        CMIMaterial m = CMIMaterial.get(mat);
+        if (m == null)
+            return false;
+        return m.isLeggings();
     }
 
     public boolean isLeggings() {
-	switch (this) {
-	case NETHERITE_LEGGINGS:
-	case CHAINMAIL_LEGGINGS:
-	case DIAMOND_LEGGINGS:
-	case GOLDEN_LEGGINGS:
-	case IRON_LEGGINGS:
-	case LEATHER_LEGGINGS:
-	    return true;
-	default:
-	    break;
-	}
-	return false;
+        switch (this) {
+        case NETHERITE_LEGGINGS:
+        case CHAINMAIL_LEGGINGS:
+        case DIAMOND_LEGGINGS:
+        case GOLDEN_LEGGINGS:
+        case IRON_LEGGINGS:
+        case LEATHER_LEGGINGS:
+            return true;
+        default:
+            break;
+        }
+        return false;
     }
 
     public static boolean isChestplate(Material mat) {
-	CMIMaterial m = CMIMaterial.get(mat);
-	if (m == null)
-	    return false;
-	return m.isChestplate();
+        CMIMaterial m = CMIMaterial.get(mat);
+        if (m == null)
+            return false;
+        return m.isChestplate();
     }
 
     public boolean isChestplate() {
-	switch (this) {
-	case NETHERITE_CHESTPLATE:
-	case CHAINMAIL_CHESTPLATE:
-	case DIAMOND_CHESTPLATE:
-	case GOLDEN_CHESTPLATE:
-	case IRON_CHESTPLATE:
-	case LEATHER_CHESTPLATE:
-	    return true;
-	default:
-	    break;
-	}
-	return false;
+        switch (this) {
+        case NETHERITE_CHESTPLATE:
+        case CHAINMAIL_CHESTPLATE:
+        case DIAMOND_CHESTPLATE:
+        case GOLDEN_CHESTPLATE:
+        case IRON_CHESTPLATE:
+        case LEATHER_CHESTPLATE:
+            return true;
+        default:
+            break;
+        }
+        return false;
     }
 
     public static boolean isBoots(Material mat) {
-	CMIMaterial m = CMIMaterial.get(mat);
-	if (m == null)
-	    return false;
-	return m.isBoots();
+        CMIMaterial m = CMIMaterial.get(mat);
+        if (m == null)
+            return false;
+        return m.isBoots();
     }
 
     public boolean isBoots() {
-	switch (this) {
-	case NETHERITE_BOOTS:
-	case CHAINMAIL_BOOTS:
-	case DIAMOND_BOOTS:
-	case GOLDEN_BOOTS:
-	case IRON_BOOTS:
-	case LEATHER_BOOTS:
-	    return true;
-	default:
-	    break;
-	}
-	return false;
+        switch (this) {
+        case NETHERITE_BOOTS:
+        case CHAINMAIL_BOOTS:
+        case DIAMOND_BOOTS:
+        case GOLDEN_BOOTS:
+        case IRON_BOOTS:
+        case LEATHER_BOOTS:
+            return true;
+        default:
+            break;
+        }
+        return false;
     }
 
     public static boolean isShield(Material mat) {
-	CMIMaterial m = CMIMaterial.get(mat);
-	if (m == null)
-	    return false;
-	return m.isShield();
+        CMIMaterial m = CMIMaterial.get(mat);
+        if (m == null)
+            return false;
+        return m.isShield();
     }
 
     public boolean isShield() {
-	switch (this) {
-	case SHIELD:
-	    return true;
-	default:
-	    break;
-	}
-	return false;
+        switch (this) {
+        case SHIELD:
+            return true;
+        default:
+            break;
+        }
+        return false;
     }
 
     public static boolean isWeapon(Material mat) {
-	CMIMaterial m = CMIMaterial.get(mat);
-	if (m == null)
-	    return false;
-	return m.isWeapon();
+        CMIMaterial m = CMIMaterial.get(mat);
+        if (m == null)
+            return false;
+        return m.isWeapon();
     }
 
     public boolean isWeapon() {
-	switch (this) {
-	case DIAMOND_SWORD:
-	case IRON_SWORD:
-	case GOLDEN_SWORD:
-	case STONE_SWORD:
-	case WOODEN_SWORD:
-	case BOW:
-	case CROSSBOW:
-	case TRIDENT:
-	case NETHERITE_SWORD:
-	    return true;
-	default:
-	    break;
-	}
-	return false;
+        switch (this) {
+        case DIAMOND_SWORD:
+        case IRON_SWORD:
+        case GOLDEN_SWORD:
+        case STONE_SWORD:
+        case WOODEN_SWORD:
+        case BOW:
+        case CROSSBOW:
+        case TRIDENT:
+        case NETHERITE_SWORD:
+            return true;
+        default:
+            break;
+        }
+        return false;
     }
 
     public static boolean isTool(Material mat) {
-	CMIMaterial m = CMIMaterial.get(mat);
-	if (m == null)
-	    return false;
-	return m.isTool();
+        CMIMaterial m = CMIMaterial.get(mat);
+        if (m == null)
+            return false;
+        return m.isTool();
     }
 
     public boolean isTool() {
-	switch (this) {
-	case NETHERITE_PICKAXE:
-	case DIAMOND_PICKAXE:
-	case GOLDEN_PICKAXE:
-	case IRON_PICKAXE:
-	case STONE_PICKAXE:
-	case WOODEN_PICKAXE:
+        switch (this) {
+        case NETHERITE_PICKAXE:
+        case DIAMOND_PICKAXE:
+        case GOLDEN_PICKAXE:
+        case IRON_PICKAXE:
+        case STONE_PICKAXE:
+        case WOODEN_PICKAXE:
 
-	case NETHERITE_SHOVEL:
-	case DIAMOND_SHOVEL:
-	case GOLDEN_SHOVEL:
-	case IRON_SHOVEL:
-	case STONE_SHOVEL:
-	case WOODEN_SHOVEL:
+        case NETHERITE_SHOVEL:
+        case DIAMOND_SHOVEL:
+        case GOLDEN_SHOVEL:
+        case IRON_SHOVEL:
+        case STONE_SHOVEL:
+        case WOODEN_SHOVEL:
 
-	case NETHERITE_AXE:
-	case DIAMOND_AXE:
-	case GOLDEN_AXE:
-	case IRON_AXE:
-	case STONE_AXE:
-	case WOODEN_AXE:
+        case NETHERITE_AXE:
+        case DIAMOND_AXE:
+        case GOLDEN_AXE:
+        case IRON_AXE:
+        case STONE_AXE:
+        case WOODEN_AXE:
 
-	case NETHERITE_HOE:
-	case DIAMOND_HOE:
-	case GOLDEN_HOE:
-	case IRON_HOE:
-	case STONE_HOE:
-	case WOODEN_HOE:
+        case NETHERITE_HOE:
+        case DIAMOND_HOE:
+        case GOLDEN_HOE:
+        case IRON_HOE:
+        case STONE_HOE:
+        case WOODEN_HOE:
 
-	case SHEARS:
-	case FISHING_ROD:
+        case SHEARS:
+        case FISHING_ROD:
 
-	case GOAT_HORN:
-	    return true;
-	default:
-	    break;
-	}
-	return false;
+        case GOAT_HORN:
+            return true;
+        default:
+            break;
+        }
+        return false;
     }
 
     public static boolean isPickaxe(Material mat) {
-	CMIMaterial m = CMIMaterial.get(mat);
-	if (m == null)
-	    return false;
-	return m.isPickaxe();
+        CMIMaterial m = CMIMaterial.get(mat);
+        if (m == null)
+            return false;
+        return m.isPickaxe();
     }
 
     public boolean isPickaxe() {
-	switch (this) {
-	case NETHERITE_PICKAXE:
-	case DIAMOND_PICKAXE:
-	case GOLDEN_PICKAXE:
-	case IRON_PICKAXE:
-	case STONE_PICKAXE:
-	case WOODEN_PICKAXE:
-	    return true;
-	default:
-	    break;
-	}
-	return false;
+        switch (this) {
+        case NETHERITE_PICKAXE:
+        case DIAMOND_PICKAXE:
+        case GOLDEN_PICKAXE:
+        case IRON_PICKAXE:
+        case STONE_PICKAXE:
+        case WOODEN_PICKAXE:
+            return true;
+        default:
+            break;
+        }
+        return false;
     }
 
     public static boolean isValidItem(Material mat) {
-	CMIMaterial m = CMIMaterial.get(mat);
-	if (m == null)
-	    return false;
-	return m.isValidItem();
+        CMIMaterial m = CMIMaterial.get(mat);
+        if (m == null)
+            return false;
+        return m.isValidItem();
     }
 
     public boolean isValidItem() {
-	return !this.equals(CMIMaterial.NONE) && !this.isAir() && this.getMaterial() != null;
+        return !this.equals(CMIMaterial.NONE) && !this.isAir() && this.getMaterial() != null;
     }
 
     public static boolean isValidAsItemStack(Material mat) {
-	CMIMaterial m = CMIMaterial.get(mat);
-	if (m == null)
-	    return false;
-	return m.isValidItem();
+        CMIMaterial m = CMIMaterial.get(mat);
+        if (m == null)
+            return false;
+        return m.isValidItem();
     }
 
     public boolean isValidAsItemStack() {
 
-	ItemStack item = newItemStack();
-	if (item == null || getMaterial() == null)
-	    return false;
+        ItemStack item = newItemStack();
+        if (item == null || getMaterial() == null)
+            return false;
 
-	try {
-	    if (!getMaterial().isItem())
-		return false;
-	} catch (Throwable e) {
-	}
+        try {
+            if (!getMaterial().isItem())
+                return false;
+        } catch (Throwable e) {
+        }
 
-	return isValidItem();
+        return isValidItem();
     }
 
     public boolean isNone() {
-	return this.equals(CMIMaterial.NONE);
+        return this.equals(CMIMaterial.NONE);
     }
 
     public static boolean isAir(Material mat) {
-	CMIMaterial m = CMIMaterial.get(mat);
-	if (m == null)
-	    return false;
-	return m.isAir();
+        CMIMaterial m = CMIMaterial.get(mat);
+        if (m == null)
+            return false;
+        return m.isAir();
     }
 
     public boolean isAir() {
-	switch (this) {
-	case AIR:
-	case CAVE_AIR:
-	case VOID_AIR:
-	    return true;
-	default:
-	    break;
-	}
-	return false;
+        switch (this) {
+        case AIR:
+        case CAVE_AIR:
+        case VOID_AIR:
+            return true;
+        default:
+            break;
+        }
+        return false;
     }
 
     public static boolean isPotted(Material mat) {
-	CMIMaterial m = CMIMaterial.get(mat);
-	if (m == null)
-	    return false;
-	return m.isPotted();
+        CMIMaterial m = CMIMaterial.get(mat);
+        if (m == null)
+            return false;
+        return m.isPotted();
     }
 
     public boolean isPotted() {
-	switch (this) {
-	case POTTED_ACACIA_SAPLING:
-	case POTTED_ALLIUM:
-	case POTTED_AZURE_BLUET:
-	case POTTED_BIRCH_SAPLING:
-	case POTTED_BLUE_ORCHID:
-	case POTTED_BROWN_MUSHROOM:
-	case POTTED_CACTUS:
-	case POTTED_DANDELION:
-	case POTTED_DARK_OAK_SAPLING:
-	case POTTED_DEAD_BUSH:
-	case POTTED_FERN:
-	case POTTED_JUNGLE_SAPLING:
-	case POTTED_OAK_SAPLING:
-	case POTTED_ORANGE_TULIP:
-	case POTTED_OXEYE_DAISY:
-	case POTTED_PINK_TULIP:
-	case POTTED_POPPY:
-	case POTTED_RED_MUSHROOM:
-	case POTTED_RED_TULIP:
-	case POTTED_SPRUCE_SAPLING:
-	case POTTED_WHITE_TULIP:
-	case POTTED_BAMBOO:
-	case POTTED_CORNFLOWER:
-	case POTTED_LILY_OF_THE_VALLEY:
-	case POTTED_WITHER_ROSE:
-	    // 1.17
-	case POTTED_AZALEA_BUSH:
-	case POTTED_FLOWERING_AZALEA_BUSH:
+        switch (this) {
+        case POTTED_ACACIA_SAPLING:
+        case POTTED_ALLIUM:
+        case POTTED_AZURE_BLUET:
+        case POTTED_BIRCH_SAPLING:
+        case POTTED_BLUE_ORCHID:
+        case POTTED_BROWN_MUSHROOM:
+        case POTTED_CACTUS:
+        case POTTED_DANDELION:
+        case POTTED_DARK_OAK_SAPLING:
+        case POTTED_DEAD_BUSH:
+        case POTTED_FERN:
+        case POTTED_JUNGLE_SAPLING:
+        case POTTED_OAK_SAPLING:
+        case POTTED_ORANGE_TULIP:
+        case POTTED_OXEYE_DAISY:
+        case POTTED_PINK_TULIP:
+        case POTTED_POPPY:
+        case POTTED_RED_MUSHROOM:
+        case POTTED_RED_TULIP:
+        case POTTED_SPRUCE_SAPLING:
+        case POTTED_WHITE_TULIP:
+        case POTTED_BAMBOO:
+        case POTTED_CORNFLOWER:
+        case POTTED_LILY_OF_THE_VALLEY:
+        case POTTED_WITHER_ROSE:
+            // 1.17
+        case POTTED_AZALEA_BUSH:
+        case POTTED_FLOWERING_AZALEA_BUSH:
 
-	case POTTED_MANGROVE_PROPAGULE:
-	    return true;
-	default:
-	    break;
-	}
-	return false;
+        case POTTED_MANGROVE_PROPAGULE:
+            return true;
+        default:
+            break;
+        }
+        return false;
     }
 
     public static boolean isAnvil(Material mat) {
-	CMIMaterial m = CMIMaterial.get(mat);
-	if (m == null)
-	    return false;
-	return m.isAnvil();
+        CMIMaterial m = CMIMaterial.get(mat);
+        if (m == null)
+            return false;
+        return m.isAnvil();
     }
 
     public boolean isAnvil() {
-	switch (this) {
-	case ANVIL:
-	case CHIPPED_ANVIL:
-	case DAMAGED_ANVIL:
-	    return true;
-	default:
-	    break;
-	}
-	return false;
+        switch (this) {
+        case ANVIL:
+        case CHIPPED_ANVIL:
+        case DAMAGED_ANVIL:
+            return true;
+        default:
+            break;
+        }
+        return false;
     }
 
     public static boolean isDoor(Material mat) {
-	CMIMaterial m = CMIMaterial.get(mat);
-	if (m == null)
-	    return false;
-	return m.isDoor();
+        CMIMaterial m = CMIMaterial.get(mat);
+        if (m == null)
+            return false;
+        return m.isDoor();
     }
 
     public boolean isDoor() {
-	switch (this) {
-	case OAK_DOOR:
-	case IRON_DOOR:
+        switch (this) {
+        case OAK_DOOR:
+        case IRON_DOOR:
 
-	case LEGACY_SPRUCE_DOOR:
-	case LEGACY_BIRCH_DOOR:
-	case LEGACY_JUNGLE_DOOR:
-	case LEGACY_ACACIA_DOOR:
-	case LEGACY_DARK_OAK_DOOR:
-	case LEGACY_WOODEN_DOOR_BLOCK:
+        case LEGACY_SPRUCE_DOOR:
+        case LEGACY_BIRCH_DOOR:
+        case LEGACY_JUNGLE_DOOR:
+        case LEGACY_ACACIA_DOOR:
+        case LEGACY_DARK_OAK_DOOR:
+        case LEGACY_WOODEN_DOOR_BLOCK:
 
 //	    case SPRUCE_DOOR_ITEM:
 //	    case BIRCH_DOOR_ITEM:
@@ -2685,372 +2702,372 @@ public enum CMIMaterial {
 //	    case ACACIA_DOOR_ITEM:
 //	    case DARK_OAK_DOOR_ITEM:
 //	    case WOODEN_DOOR:
-	case ACACIA_DOOR:
-	case BIRCH_DOOR:
-	case DARK_OAK_DOOR:
+        case ACACIA_DOOR:
+        case BIRCH_DOOR:
+        case DARK_OAK_DOOR:
 //	    case IRON_DOOR_BLOCK:
-	case JUNGLE_DOOR:
-	case SPRUCE_DOOR:
-	case CRIMSON_DOOR:
-	case WARPED_DOOR:
+        case JUNGLE_DOOR:
+        case SPRUCE_DOOR:
+        case CRIMSON_DOOR:
+        case WARPED_DOOR:
 
-	case MANGROVE_DOOR:
-	    return true;
-	default:
-	    break;
-	}
-	return false;
+        case MANGROVE_DOOR:
+            return true;
+        default:
+            break;
+        }
+        return false;
     }
 
     public static boolean isGate(Material mat) {
-	CMIMaterial m = CMIMaterial.get(mat);
-	if (m == null)
-	    return false;
-	return m.isGate();
+        CMIMaterial m = CMIMaterial.get(mat);
+        if (m == null)
+            return false;
+        return m.isGate();
     }
 
     public boolean isGate() {
-	switch (this) {
-	case ACACIA_FENCE_GATE:
-	case BIRCH_FENCE_GATE:
-	case DARK_OAK_FENCE_GATE:
-	case END_GATEWAY:
-	case JUNGLE_FENCE_GATE:
-	case OAK_FENCE_GATE:
-	case SPRUCE_FENCE_GATE:
-	case CRIMSON_FENCE_GATE:
-	case WARPED_FENCE_GATE:
+        switch (this) {
+        case ACACIA_FENCE_GATE:
+        case BIRCH_FENCE_GATE:
+        case DARK_OAK_FENCE_GATE:
+        case END_GATEWAY:
+        case JUNGLE_FENCE_GATE:
+        case OAK_FENCE_GATE:
+        case SPRUCE_FENCE_GATE:
+        case CRIMSON_FENCE_GATE:
+        case WARPED_FENCE_GATE:
 
-	case MANGROVE_FENCE_GATE:
-	    return true;
-	default:
-	    break;
-	}
-	return false;
+        case MANGROVE_FENCE_GATE:
+            return true;
+        default:
+            break;
+        }
+        return false;
     }
 
     public static boolean isFence(Material mat) {
-	CMIMaterial m = CMIMaterial.get(mat);
-	if (m == null)
-	    return false;
-	return m.isFence();
+        CMIMaterial m = CMIMaterial.get(mat);
+        if (m == null)
+            return false;
+        return m.isFence();
     }
 
     public boolean isFence() {
-	switch (this) {
-	case ACACIA_FENCE:
-	case BIRCH_FENCE:
-	case DARK_OAK_FENCE:
-	case JUNGLE_FENCE:
-	case NETHER_BRICK_FENCE:
-	case OAK_FENCE:
-	case SPRUCE_FENCE:
+        switch (this) {
+        case ACACIA_FENCE:
+        case BIRCH_FENCE:
+        case DARK_OAK_FENCE:
+        case JUNGLE_FENCE:
+        case NETHER_BRICK_FENCE:
+        case OAK_FENCE:
+        case SPRUCE_FENCE:
 
-	case CRIMSON_FENCE:
-	case WARPED_FENCE:
+        case CRIMSON_FENCE:
+        case WARPED_FENCE:
 
-	case MANGROVE_FENCE:
-	    return true;
-	default:
-	    break;
-	}
-	return false;
+        case MANGROVE_FENCE:
+            return true;
+        default:
+            break;
+        }
+        return false;
     }
 
     public static boolean isRail(Material mat) {
-	CMIMaterial m = CMIMaterial.get(mat);
-	if (m == null)
-	    return false;
-	return m.isRail();
+        CMIMaterial m = CMIMaterial.get(mat);
+        if (m == null)
+            return false;
+        return m.isRail();
     }
 
     public boolean isRail() {
-	switch (this) {
-	case POWERED_RAIL:
-	case RAIL:
-	case ACTIVATOR_RAIL:
-	case DETECTOR_RAIL:
-	    return true;
-	default:
-	    break;
-	}
-	return false;
+        switch (this) {
+        case POWERED_RAIL:
+        case RAIL:
+        case ACTIVATOR_RAIL:
+        case DETECTOR_RAIL:
+            return true;
+        default:
+            break;
+        }
+        return false;
     }
 
     public static boolean isGlassPane(Material mat) {
-	CMIMaterial m = CMIMaterial.get(mat);
-	if (m == null)
-	    return false;
-	return m.isGlassPane();
+        CMIMaterial m = CMIMaterial.get(mat);
+        if (m == null)
+            return false;
+        return m.isGlassPane();
     }
 
     public boolean isGlassPane() {
-	switch (this) {
-	case BLACK_STAINED_GLASS_PANE:
-	case BLUE_STAINED_GLASS_PANE:
-	case BROWN_STAINED_GLASS_PANE:
-	case CYAN_STAINED_GLASS_PANE:
-	case GRAY_STAINED_GLASS_PANE:
-	case GREEN_STAINED_GLASS_PANE:
-	case LIGHT_BLUE_STAINED_GLASS_PANE:
-	case LIGHT_GRAY_STAINED_GLASS_PANE:
-	case LIME_STAINED_GLASS_PANE:
-	case MAGENTA_STAINED_GLASS_PANE:
-	case ORANGE_STAINED_GLASS_PANE:
-	case PINK_STAINED_GLASS_PANE:
-	case PURPLE_STAINED_GLASS_PANE:
-	case RED_STAINED_GLASS_PANE:
-	case WHITE_STAINED_GLASS_PANE:
-	case YELLOW_STAINED_GLASS_PANE:
-	case GLASS_PANE:
-	    return true;
-	default:
-	    break;
-	}
-	return false;
+        switch (this) {
+        case BLACK_STAINED_GLASS_PANE:
+        case BLUE_STAINED_GLASS_PANE:
+        case BROWN_STAINED_GLASS_PANE:
+        case CYAN_STAINED_GLASS_PANE:
+        case GRAY_STAINED_GLASS_PANE:
+        case GREEN_STAINED_GLASS_PANE:
+        case LIGHT_BLUE_STAINED_GLASS_PANE:
+        case LIGHT_GRAY_STAINED_GLASS_PANE:
+        case LIME_STAINED_GLASS_PANE:
+        case MAGENTA_STAINED_GLASS_PANE:
+        case ORANGE_STAINED_GLASS_PANE:
+        case PINK_STAINED_GLASS_PANE:
+        case PURPLE_STAINED_GLASS_PANE:
+        case RED_STAINED_GLASS_PANE:
+        case WHITE_STAINED_GLASS_PANE:
+        case YELLOW_STAINED_GLASS_PANE:
+        case GLASS_PANE:
+            return true;
+        default:
+            break;
+        }
+        return false;
     }
 
     public static boolean isWallSign(Material mat) {
-	CMIMaterial m = get(mat);
-	return m != null && m.isWallSign();
+        CMIMaterial m = get(mat);
+        return m != null && m.isWallSign();
     }
 
     public boolean isWallSign() {
-	switch (this) {
-	case WALL_SIGN:
-	case ACACIA_WALL_SIGN:
-	case BIRCH_WALL_SIGN:
-	case DARK_OAK_WALL_SIGN:
-	case JUNGLE_WALL_SIGN:
-	case OAK_WALL_SIGN:
-	case SPRUCE_WALL_SIGN:
-	case CRIMSON_WALL_SIGN:
-	case WARPED_WALL_SIGN:
+        switch (this) {
+        case WALL_SIGN:
+        case ACACIA_WALL_SIGN:
+        case BIRCH_WALL_SIGN:
+        case DARK_OAK_WALL_SIGN:
+        case JUNGLE_WALL_SIGN:
+        case OAK_WALL_SIGN:
+        case SPRUCE_WALL_SIGN:
+        case CRIMSON_WALL_SIGN:
+        case WARPED_WALL_SIGN:
 
-	case MANGROVE_WALL_SIGN:
-	    return true;
-	default:
-	    break;
-	}
-	return false;
+        case MANGROVE_WALL_SIGN:
+            return true;
+        default:
+            break;
+        }
+        return false;
     }
 
     public static boolean isSign(Material mat) {
-	CMIMaterial m = CMIMaterial.get(mat);
-	if (m == null)
-	    return false;
-	return m.isSign();
+        CMIMaterial m = CMIMaterial.get(mat);
+        if (m == null)
+            return false;
+        return m.isSign();
     }
 
     public boolean isSign() {
-	switch (this) {
-	case SIGN:
-	case WALL_SIGN:
-	case LEGACY_SIGN_POST:
+        switch (this) {
+        case SIGN:
+        case WALL_SIGN:
+        case LEGACY_SIGN_POST:
 
-	case ACACIA_SIGN:
-	case ACACIA_WALL_SIGN:
+        case ACACIA_SIGN:
+        case ACACIA_WALL_SIGN:
 
-	case BIRCH_SIGN:
-	case BIRCH_WALL_SIGN:
+        case BIRCH_SIGN:
+        case BIRCH_WALL_SIGN:
 
-	case DARK_OAK_SIGN:
-	case DARK_OAK_WALL_SIGN:
+        case DARK_OAK_SIGN:
+        case DARK_OAK_WALL_SIGN:
 
-	case JUNGLE_SIGN:
-	case JUNGLE_WALL_SIGN:
+        case JUNGLE_SIGN:
+        case JUNGLE_WALL_SIGN:
 
-	case OAK_SIGN:
-	case OAK_WALL_SIGN:
+        case OAK_SIGN:
+        case OAK_WALL_SIGN:
 
-	case SPRUCE_SIGN:
-	case SPRUCE_WALL_SIGN:
+        case SPRUCE_SIGN:
+        case SPRUCE_WALL_SIGN:
 
-	case CRIMSON_SIGN:
-	case CRIMSON_WALL_SIGN:
+        case CRIMSON_SIGN:
+        case CRIMSON_WALL_SIGN:
 
-	case WARPED_SIGN:
-	case WARPED_WALL_SIGN:
+        case WARPED_SIGN:
+        case WARPED_WALL_SIGN:
 
-	case MANGROVE_SIGN:
+        case MANGROVE_SIGN:
 
-	    return true;
-	default:
-	    break;
-	}
-	return false;
+            return true;
+        default:
+            break;
+        }
+        return false;
     }
 
     public static boolean isWall(Material mat) {
-	CMIMaterial m = CMIMaterial.get(mat);
-	if (m == null)
-	    return false;
-	return m.isWall();
+        CMIMaterial m = CMIMaterial.get(mat);
+        if (m == null)
+            return false;
+        return m.isWall();
     }
 
     public boolean isWall() {
-	switch (this) {
-	case COBBLESTONE_WALL:
-	case MOSSY_COBBLESTONE_WALL:
+        switch (this) {
+        case COBBLESTONE_WALL:
+        case MOSSY_COBBLESTONE_WALL:
 
-	case ANDESITE_WALL:
-	case BRICK_WALL:
-	case DIORITE_WALL:
-	case END_STONE_BRICK_WALL:
-	case GRANITE_WALL:
-	case MOSSY_STONE_BRICK_WALL:
-	case NETHER_BRICK_WALL:
-	case PRISMARINE_WALL:
-	case RED_NETHER_BRICK_WALL:
-	case RED_SANDSTONE_WALL:
-	case SANDSTONE_WALL:
-	case STONE_BRICK_WALL:
+        case ANDESITE_WALL:
+        case BRICK_WALL:
+        case DIORITE_WALL:
+        case END_STONE_BRICK_WALL:
+        case GRANITE_WALL:
+        case MOSSY_STONE_BRICK_WALL:
+        case NETHER_BRICK_WALL:
+        case PRISMARINE_WALL:
+        case RED_NETHER_BRICK_WALL:
+        case RED_SANDSTONE_WALL:
+        case SANDSTONE_WALL:
+        case STONE_BRICK_WALL:
 
-	    // 1.17
-	case COBBLED_DEEPSLATE_WALL:
-	case DEEPSLATE_BRICK_WALL:
-	case DEEPSLATE_TILE_WALL:
-	case POLISHED_DEEPSLATE_WALL:
+            // 1.17
+        case COBBLED_DEEPSLATE_WALL:
+        case DEEPSLATE_BRICK_WALL:
+        case DEEPSLATE_TILE_WALL:
+        case POLISHED_DEEPSLATE_WALL:
 
-	case MUD_BRICK_WALL:
-	    return true;
-	default:
-	    break;
-	}
-	return false;
+        case MUD_BRICK_WALL:
+            return true;
+        default:
+            break;
+        }
+        return false;
     }
 
     public static boolean isTrapDoor(Material mat) {
-	CMIMaterial m = CMIMaterial.get(mat);
-	if (m == null)
-	    return false;
-	return m.isTrapDoor();
+        CMIMaterial m = CMIMaterial.get(mat);
+        if (m == null)
+            return false;
+        return m.isTrapDoor();
     }
 
     public boolean isTrapDoor() {
-	switch (this) {
-	case ACACIA_TRAPDOOR:
-	case BIRCH_TRAPDOOR:
-	case DARK_OAK_TRAPDOOR:
-	case IRON_TRAPDOOR:
-	case JUNGLE_TRAPDOOR:
-	case OAK_TRAPDOOR:
-	case SPRUCE_TRAPDOOR:
-	case CRIMSON_TRAPDOOR:
-	case WARPED_TRAPDOOR:
+        switch (this) {
+        case ACACIA_TRAPDOOR:
+        case BIRCH_TRAPDOOR:
+        case DARK_OAK_TRAPDOOR:
+        case IRON_TRAPDOOR:
+        case JUNGLE_TRAPDOOR:
+        case OAK_TRAPDOOR:
+        case SPRUCE_TRAPDOOR:
+        case CRIMSON_TRAPDOOR:
+        case WARPED_TRAPDOOR:
 
-	case MANGROVE_TRAPDOOR:
-	    return true;
-	default:
-	    break;
-	}
-	return false;
+        case MANGROVE_TRAPDOOR:
+            return true;
+        default:
+            break;
+        }
+        return false;
     }
 
     public static boolean isSkull(Material mat) {
-	CMIMaterial m = CMIMaterial.get(mat);
-	if (m == null)
-	    return false;
-	return m.isSkull();
+        CMIMaterial m = CMIMaterial.get(mat);
+        if (m == null)
+            return false;
+        return m.isSkull();
     }
 
     public boolean isSkull() {
-	switch (this) {
-	case SKELETON_SKULL:
-	case WITHER_SKELETON_SKULL:
-	case SKELETON_WALL_SKULL:
-	case WITHER_SKELETON_WALL_SKULL:
-	case PLAYER_HEAD:
-	case CREEPER_HEAD:
-	case DRAGON_HEAD:
-	case ZOMBIE_HEAD:
-	case LEGACY_SKULL:
-	    return true;
-	default:
-	    break;
-	}
-	return false;
+        switch (this) {
+        case SKELETON_SKULL:
+        case WITHER_SKELETON_SKULL:
+        case SKELETON_WALL_SKULL:
+        case WITHER_SKELETON_WALL_SKULL:
+        case PLAYER_HEAD:
+        case CREEPER_HEAD:
+        case DRAGON_HEAD:
+        case ZOMBIE_HEAD:
+        case LEGACY_SKULL:
+            return true;
+        default:
+            break;
+        }
+        return false;
     }
 
     public static boolean isPlayerHead(Material mat) {
-	CMIMaterial m = CMIMaterial.get(mat);
-	if (m == null)
-	    return false;
-	return m.isPlayerHead();
+        CMIMaterial m = CMIMaterial.get(mat);
+        if (m == null)
+            return false;
+        return m.isPlayerHead();
     }
 
     public boolean isPlayerHead() {
-	switch (this) {
-	case PLAYER_HEAD:
-	case LEGACY_SKULL:
-	case PLAYER_WALL_HEAD:
-	    return true;
-	default:
-	    break;
-	}
-	return false;
+        switch (this) {
+        case PLAYER_HEAD:
+        case LEGACY_SKULL:
+        case PLAYER_WALL_HEAD:
+            return true;
+        default:
+            break;
+        }
+        return false;
     }
 
     public static boolean isDye(Material mat) {
-	CMIMaterial m = CMIMaterial.get(mat);
-	if (m == null)
-	    return false;
-	return m.isDye();
+        CMIMaterial m = CMIMaterial.get(mat);
+        if (m == null)
+            return false;
+        return m.isDye();
     }
 
     public boolean isDye() {
-	switch (this) {
-	case INK_SAC:
-	case ROSE_RED:
-	case CACTUS_GREEN:
-	case COCOA_BEANS:
-	case LAPIS_LAZULI:
-	case PURPLE_DYE:
-	case CYAN_DYE:
-	case LIGHT_GRAY_DYE:
-	case GRAY_DYE:
-	case PINK_DYE:
-	case LIME_DYE:
-	case DANDELION_YELLOW:
-	case LIGHT_BLUE_DYE:
-	case MAGENTA_DYE:
-	case ORANGE_DYE:
-	case BONE_MEAL:
+        switch (this) {
+        case INK_SAC:
+        case ROSE_RED:
+        case CACTUS_GREEN:
+        case COCOA_BEANS:
+        case LAPIS_LAZULI:
+        case PURPLE_DYE:
+        case CYAN_DYE:
+        case LIGHT_GRAY_DYE:
+        case GRAY_DYE:
+        case PINK_DYE:
+        case LIME_DYE:
+        case DANDELION_YELLOW:
+        case LIGHT_BLUE_DYE:
+        case MAGENTA_DYE:
+        case ORANGE_DYE:
+        case BONE_MEAL:
 
-	case BLACK_DYE:
-	case BLUE_DYE:
-	case BROWN_DYE:
-	case GREEN_DYE:
-	case RED_DYE:
-	case WHITE_DYE:
-	case YELLOW_DYE:
+        case BLACK_DYE:
+        case BLUE_DYE:
+        case BROWN_DYE:
+        case GREEN_DYE:
+        case RED_DYE:
+        case WHITE_DYE:
+        case YELLOW_DYE:
 
-	case GLOW_INK_SAC:
+        case GLOW_INK_SAC:
 
-	    return true;
-	default:
-	    break;
-	}
-	return false;
+            return true;
+        default:
+            break;
+        }
+        return false;
     }
 
     public static boolean isSlab(Material mat) {
-	CMIMaterial m = CMIMaterial.get(mat);
-	if (m == null)
-	    return false;
-	return m.isSlab();
+        CMIMaterial m = CMIMaterial.get(mat);
+        if (m == null)
+            return false;
+        return m.isSlab();
     }
 
     public boolean isSlab() {
-	switch (this) {
-	case ACACIA_SLAB:
-	case DARK_OAK_SLAB:
+        switch (this) {
+        case ACACIA_SLAB:
+        case DARK_OAK_SLAB:
 //	    case DOUBLE_STONE_SLAB2:
 //	    case PURPUR_DOUBLE_SLAB:
-	case BIRCH_SLAB:
-	case BRICK_SLAB:
-	case COBBLESTONE_SLAB:
-	case DARK_PRISMARINE_SLAB:
+        case BIRCH_SLAB:
+        case BRICK_SLAB:
+        case COBBLESTONE_SLAB:
+        case DARK_PRISMARINE_SLAB:
 //	    case DOUBLE_STONE_SLAB:
 //	    case DOUBLE_SANDSTONE_SLAB:
 //	    case DOUBLE_WOODEN_SLAB:
@@ -3059,417 +3076,417 @@ public enum CMIMaterial {
 //	    case DOUBLE_STONE_BRICK_SLAB:
 //	    case DOUBLE_NETHER_BRICK_SLAB:
 //	    case DOUBLE_QUARTZ_SLAB:
-	case JUNGLE_SLAB:
-	case NETHER_BRICK_SLAB:
-	case OAK_SLAB:
-	case PETRIFIED_OAK_SLAB:
-	case PRISMARINE_BRICK_SLAB:
-	case PRISMARINE_SLAB:
-	case PURPUR_SLAB:
-	case QUARTZ_SLAB:
-	case RED_SANDSTONE_SLAB:
-	case SANDSTONE_SLAB:
-	case SPRUCE_SLAB:
-	case STONE_BRICK_SLAB:
-	case STONE_SLAB:
+        case JUNGLE_SLAB:
+        case NETHER_BRICK_SLAB:
+        case OAK_SLAB:
+        case PETRIFIED_OAK_SLAB:
+        case PRISMARINE_BRICK_SLAB:
+        case PRISMARINE_SLAB:
+        case PURPUR_SLAB:
+        case QUARTZ_SLAB:
+        case RED_SANDSTONE_SLAB:
+        case SANDSTONE_SLAB:
+        case SPRUCE_SLAB:
+        case STONE_BRICK_SLAB:
+        case STONE_SLAB:
 
-	case ANDESITE_SLAB:
-	case CUT_RED_SANDSTONE_SLAB:
-	case CUT_SANDSTONE_SLAB:
-	case DIORITE_SLAB:
-	case END_STONE_BRICK_SLAB:
-	case GRANITE_SLAB:
-	case MOSSY_COBBLESTONE_SLAB:
-	case MOSSY_STONE_BRICK_SLAB:
-	case POLISHED_ANDESITE_SLAB:
-	case POLISHED_DIORITE_SLAB:
-	case POLISHED_GRANITE_SLAB:
-	case RED_NETHER_BRICK_SLAB:
-	case SMOOTH_QUARTZ_SLAB:
-	case SMOOTH_RED_SANDSTONE_SLAB:
-	case SMOOTH_SANDSTONE_SLAB:
-	case SMOOTH_STONE_SLAB:
+        case ANDESITE_SLAB:
+        case CUT_RED_SANDSTONE_SLAB:
+        case CUT_SANDSTONE_SLAB:
+        case DIORITE_SLAB:
+        case END_STONE_BRICK_SLAB:
+        case GRANITE_SLAB:
+        case MOSSY_COBBLESTONE_SLAB:
+        case MOSSY_STONE_BRICK_SLAB:
+        case POLISHED_ANDESITE_SLAB:
+        case POLISHED_DIORITE_SLAB:
+        case POLISHED_GRANITE_SLAB:
+        case RED_NETHER_BRICK_SLAB:
+        case SMOOTH_QUARTZ_SLAB:
+        case SMOOTH_RED_SANDSTONE_SLAB:
+        case SMOOTH_SANDSTONE_SLAB:
+        case SMOOTH_STONE_SLAB:
 
-	case BLACKSTONE_SLAB:
-	case CRIMSON_SLAB:
-	case POLISHED_BLACKSTONE_BRICK_SLAB:
-	case POLISHED_BLACKSTONE_SLAB:
-	case WARPED_SLAB:
+        case BLACKSTONE_SLAB:
+        case CRIMSON_SLAB:
+        case POLISHED_BLACKSTONE_BRICK_SLAB:
+        case POLISHED_BLACKSTONE_SLAB:
+        case WARPED_SLAB:
 
-	    // 1.17
-	case COBBLED_DEEPSLATE_SLAB:
-	case CUT_COPPER_SLAB:
-	case DEEPSLATE_BRICK_SLAB:
-	case DEEPSLATE_TILE_SLAB:
-	case EXPOSED_CUT_COPPER_SLAB:
-	case OXIDIZED_CUT_COPPER_SLAB:
-	case POLISHED_DEEPSLATE_SLAB:
-	case WAXED_CUT_COPPER_SLAB:
-	case WAXED_EXPOSED_CUT_COPPER_SLAB:
-	case WAXED_OXIDIZED_CUT_COPPER_SLAB:
-	case WAXED_WEATHERED_CUT_COPPER_SLAB:
-	case WEATHERED_CUT_COPPER_SLAB:
+            // 1.17
+        case COBBLED_DEEPSLATE_SLAB:
+        case CUT_COPPER_SLAB:
+        case DEEPSLATE_BRICK_SLAB:
+        case DEEPSLATE_TILE_SLAB:
+        case EXPOSED_CUT_COPPER_SLAB:
+        case OXIDIZED_CUT_COPPER_SLAB:
+        case POLISHED_DEEPSLATE_SLAB:
+        case WAXED_CUT_COPPER_SLAB:
+        case WAXED_EXPOSED_CUT_COPPER_SLAB:
+        case WAXED_OXIDIZED_CUT_COPPER_SLAB:
+        case WAXED_WEATHERED_CUT_COPPER_SLAB:
+        case WEATHERED_CUT_COPPER_SLAB:
 
-	case MANGROVE_SLAB:
-	case MUD_BRICK_SLAB:
-	    return true;
-	default:
-	    break;
-	}
-	return false;
+        case MANGROVE_SLAB:
+        case MUD_BRICK_SLAB:
+            return true;
+        default:
+            break;
+        }
+        return false;
     }
 
     public static boolean isCopperBlock(Material mat) {
-	CMIMaterial m = CMIMaterial.get(mat);
-	if (m == null)
-	    return false;
-	return m.isCopperBlock();
+        CMIMaterial m = CMIMaterial.get(mat);
+        if (m == null)
+            return false;
+        return m.isCopperBlock();
     }
 
     public boolean isCopperBlock() {
-	if (!this.toString().contains("COPPER"))
-	    return false;
-	switch (this) {
-	case COPPER_BLOCK:
-	case CUT_COPPER:
-	case CUT_COPPER_SLAB:
-	case CUT_COPPER_STAIRS:
-	case EXPOSED_COPPER:
-	case EXPOSED_CUT_COPPER:
-	case EXPOSED_CUT_COPPER_SLAB:
-	case EXPOSED_CUT_COPPER_STAIRS:
-	case OXIDIZED_COPPER:
-	case OXIDIZED_CUT_COPPER:
-	case OXIDIZED_CUT_COPPER_SLAB:
-	case OXIDIZED_CUT_COPPER_STAIRS:
-	case WAXED_COPPER_BLOCK:
-	case WAXED_CUT_COPPER:
-	case WAXED_CUT_COPPER_SLAB:
-	case WAXED_CUT_COPPER_STAIRS:
-	case WAXED_EXPOSED_COPPER:
-	case WAXED_EXPOSED_CUT_COPPER:
-	case WAXED_EXPOSED_CUT_COPPER_SLAB:
-	case WAXED_EXPOSED_CUT_COPPER_STAIRS:
-	case WAXED_OXIDIZED_COPPER:
-	case WAXED_OXIDIZED_CUT_COPPER:
-	case WAXED_OXIDIZED_CUT_COPPER_SLAB:
-	case WAXED_OXIDIZED_CUT_COPPER_STAIRS:
-	case WAXED_WEATHERED_COPPER:
-	case WAXED_WEATHERED_CUT_COPPER:
-	case WAXED_WEATHERED_CUT_COPPER_SLAB:
-	case WAXED_WEATHERED_CUT_COPPER_STAIRS:
-	case WEATHERED_COPPER:
-	case WEATHERED_CUT_COPPER:
-	case WEATHERED_CUT_COPPER_SLAB:
-	case WEATHERED_CUT_COPPER_STAIRS:
-	    return true;
-	default:
-	    break;
-	}
-	return false;
+        if (!this.toString().contains("COPPER"))
+            return false;
+        switch (this) {
+        case COPPER_BLOCK:
+        case CUT_COPPER:
+        case CUT_COPPER_SLAB:
+        case CUT_COPPER_STAIRS:
+        case EXPOSED_COPPER:
+        case EXPOSED_CUT_COPPER:
+        case EXPOSED_CUT_COPPER_SLAB:
+        case EXPOSED_CUT_COPPER_STAIRS:
+        case OXIDIZED_COPPER:
+        case OXIDIZED_CUT_COPPER:
+        case OXIDIZED_CUT_COPPER_SLAB:
+        case OXIDIZED_CUT_COPPER_STAIRS:
+        case WAXED_COPPER_BLOCK:
+        case WAXED_CUT_COPPER:
+        case WAXED_CUT_COPPER_SLAB:
+        case WAXED_CUT_COPPER_STAIRS:
+        case WAXED_EXPOSED_COPPER:
+        case WAXED_EXPOSED_CUT_COPPER:
+        case WAXED_EXPOSED_CUT_COPPER_SLAB:
+        case WAXED_EXPOSED_CUT_COPPER_STAIRS:
+        case WAXED_OXIDIZED_COPPER:
+        case WAXED_OXIDIZED_CUT_COPPER:
+        case WAXED_OXIDIZED_CUT_COPPER_SLAB:
+        case WAXED_OXIDIZED_CUT_COPPER_STAIRS:
+        case WAXED_WEATHERED_COPPER:
+        case WAXED_WEATHERED_CUT_COPPER:
+        case WAXED_WEATHERED_CUT_COPPER_SLAB:
+        case WAXED_WEATHERED_CUT_COPPER_STAIRS:
+        case WEATHERED_COPPER:
+        case WEATHERED_CUT_COPPER:
+        case WEATHERED_CUT_COPPER_SLAB:
+        case WEATHERED_CUT_COPPER_STAIRS:
+            return true;
+        default:
+            break;
+        }
+        return false;
     }
 
     public static boolean isWaxedCopper(Material mat) {
-	CMIMaterial m = CMIMaterial.get(mat);
-	if (m == null)
-	    return false;
-	return m.isWaxedCopper();
+        CMIMaterial m = CMIMaterial.get(mat);
+        if (m == null)
+            return false;
+        return m.isWaxedCopper();
     }
 
     public boolean isWaxedCopper() {
-	if (!this.toString().contains("COPPER"))
-	    return false;
-	switch (this) {
-	case WAXED_COPPER_BLOCK:
-	case WAXED_CUT_COPPER:
-	case WAXED_CUT_COPPER_SLAB:
-	case WAXED_CUT_COPPER_STAIRS:
-	case WAXED_EXPOSED_COPPER:
-	case WAXED_EXPOSED_CUT_COPPER:
-	case WAXED_EXPOSED_CUT_COPPER_SLAB:
-	case WAXED_EXPOSED_CUT_COPPER_STAIRS:
-	case WAXED_OXIDIZED_COPPER:
-	case WAXED_OXIDIZED_CUT_COPPER:
-	case WAXED_OXIDIZED_CUT_COPPER_SLAB:
-	case WAXED_OXIDIZED_CUT_COPPER_STAIRS:
-	case WAXED_WEATHERED_COPPER:
-	case WAXED_WEATHERED_CUT_COPPER:
-	case WAXED_WEATHERED_CUT_COPPER_SLAB:
-	case WAXED_WEATHERED_CUT_COPPER_STAIRS:
-	    return true;
-	default:
-	    break;
-	}
-	return false;
+        if (!this.toString().contains("COPPER"))
+            return false;
+        switch (this) {
+        case WAXED_COPPER_BLOCK:
+        case WAXED_CUT_COPPER:
+        case WAXED_CUT_COPPER_SLAB:
+        case WAXED_CUT_COPPER_STAIRS:
+        case WAXED_EXPOSED_COPPER:
+        case WAXED_EXPOSED_CUT_COPPER:
+        case WAXED_EXPOSED_CUT_COPPER_SLAB:
+        case WAXED_EXPOSED_CUT_COPPER_STAIRS:
+        case WAXED_OXIDIZED_COPPER:
+        case WAXED_OXIDIZED_CUT_COPPER:
+        case WAXED_OXIDIZED_CUT_COPPER_SLAB:
+        case WAXED_OXIDIZED_CUT_COPPER_STAIRS:
+        case WAXED_WEATHERED_COPPER:
+        case WAXED_WEATHERED_CUT_COPPER:
+        case WAXED_WEATHERED_CUT_COPPER_SLAB:
+        case WAXED_WEATHERED_CUT_COPPER_STAIRS:
+            return true;
+        default:
+            break;
+        }
+        return false;
     }
 
     public static int getCopperStage(Material mat) {
-	CMIMaterial m = CMIMaterial.get(mat);
-	if (m == null)
-	    return 0;
-	return m.getCopperStage();
+        CMIMaterial m = CMIMaterial.get(mat);
+        if (m == null)
+            return 0;
+        return m.getCopperStage();
     }
 
     public int getCopperStage() {
-	if (!this.toString().contains("COPPER"))
-	    return 0;
-	switch (this) {
-	case COPPER_BLOCK:
-	case CUT_COPPER:
-	case CUT_COPPER_SLAB:
-	case CUT_COPPER_STAIRS:
-	case WAXED_COPPER_BLOCK:
-	case WAXED_CUT_COPPER:
-	case WAXED_CUT_COPPER_SLAB:
-	case WAXED_CUT_COPPER_STAIRS:
-	    return 1;
-	case EXPOSED_COPPER:
-	case EXPOSED_CUT_COPPER:
-	case EXPOSED_CUT_COPPER_SLAB:
-	case EXPOSED_CUT_COPPER_STAIRS:
-	case WAXED_EXPOSED_COPPER:
-	case WAXED_EXPOSED_CUT_COPPER:
-	case WAXED_EXPOSED_CUT_COPPER_SLAB:
-	case WAXED_EXPOSED_CUT_COPPER_STAIRS:
-	    return 2;
-	case WEATHERED_COPPER:
-	case WEATHERED_CUT_COPPER:
-	case WEATHERED_CUT_COPPER_SLAB:
-	case WEATHERED_CUT_COPPER_STAIRS:
-	case WAXED_WEATHERED_COPPER:
-	case WAXED_WEATHERED_CUT_COPPER:
-	case WAXED_WEATHERED_CUT_COPPER_SLAB:
-	case WAXED_WEATHERED_CUT_COPPER_STAIRS:
-	    return 3;
-	case OXIDIZED_COPPER:
-	case OXIDIZED_CUT_COPPER:
-	case OXIDIZED_CUT_COPPER_SLAB:
-	case OXIDIZED_CUT_COPPER_STAIRS:
-	case WAXED_OXIDIZED_COPPER:
-	case WAXED_OXIDIZED_CUT_COPPER:
-	case WAXED_OXIDIZED_CUT_COPPER_SLAB:
-	case WAXED_OXIDIZED_CUT_COPPER_STAIRS:
-	    return 4;
-	default:
-	    break;
-	}
-	return 0;
+        if (!this.toString().contains("COPPER"))
+            return 0;
+        switch (this) {
+        case COPPER_BLOCK:
+        case CUT_COPPER:
+        case CUT_COPPER_SLAB:
+        case CUT_COPPER_STAIRS:
+        case WAXED_COPPER_BLOCK:
+        case WAXED_CUT_COPPER:
+        case WAXED_CUT_COPPER_SLAB:
+        case WAXED_CUT_COPPER_STAIRS:
+            return 1;
+        case EXPOSED_COPPER:
+        case EXPOSED_CUT_COPPER:
+        case EXPOSED_CUT_COPPER_SLAB:
+        case EXPOSED_CUT_COPPER_STAIRS:
+        case WAXED_EXPOSED_COPPER:
+        case WAXED_EXPOSED_CUT_COPPER:
+        case WAXED_EXPOSED_CUT_COPPER_SLAB:
+        case WAXED_EXPOSED_CUT_COPPER_STAIRS:
+            return 2;
+        case WEATHERED_COPPER:
+        case WEATHERED_CUT_COPPER:
+        case WEATHERED_CUT_COPPER_SLAB:
+        case WEATHERED_CUT_COPPER_STAIRS:
+        case WAXED_WEATHERED_COPPER:
+        case WAXED_WEATHERED_CUT_COPPER:
+        case WAXED_WEATHERED_CUT_COPPER_SLAB:
+        case WAXED_WEATHERED_CUT_COPPER_STAIRS:
+            return 3;
+        case OXIDIZED_COPPER:
+        case OXIDIZED_CUT_COPPER:
+        case OXIDIZED_CUT_COPPER_SLAB:
+        case OXIDIZED_CUT_COPPER_STAIRS:
+        case WAXED_OXIDIZED_COPPER:
+        case WAXED_OXIDIZED_CUT_COPPER:
+        case WAXED_OXIDIZED_CUT_COPPER_SLAB:
+        case WAXED_OXIDIZED_CUT_COPPER_STAIRS:
+            return 4;
+        default:
+            break;
+        }
+        return 0;
     }
 
     public static boolean isDoublePlant(Material mat) {
-	CMIMaterial m = CMIMaterial.get(mat);
-	if (m == null)
-	    return false;
-	return m.isDoublePlant();
+        CMIMaterial m = CMIMaterial.get(mat);
+        if (m == null)
+            return false;
+        return m.isDoublePlant();
     }
 
     public boolean isDoublePlant() {
 
-	switch (this) {
-	case LILAC:
-	case SUNFLOWER:
-	case ROSE_BUSH:
-	case PEONY:
-	    return true;
-	default:
-	    break;
-	}
-	return false;
+        switch (this) {
+        case LILAC:
+        case SUNFLOWER:
+        case ROSE_BUSH:
+        case PEONY:
+            return true;
+        default:
+            break;
+        }
+        return false;
     }
 
     public static SlabType getSlabType(Block block) {
-	if (!isSlab(block.getType()))
-	    return SlabType.NOTSLAB;
+        if (!isSlab(block.getType()))
+            return SlabType.NOTSLAB;
 
-	if (Version.isCurrentEqualOrHigher(Version.v1_13_R1)) {
-	    if (block.getBlockData() instanceof org.bukkit.block.data.type.Slab) {
-		org.bukkit.block.data.type.Slab slab = (org.bukkit.block.data.type.Slab) block.getBlockData();
-		switch (slab.getType().toString()) {
-		case "TOP":
-		    return SlabType.TOP;
-		case "BOTTOM":
-		    return SlabType.BOTTOM;
-		case "DOUBLE":
-		    return SlabType.DOUBLE;
-		}
+        if (Version.isCurrentEqualOrHigher(Version.v1_13_R1)) {
+            if (block.getBlockData() instanceof org.bukkit.block.data.type.Slab) {
+                org.bukkit.block.data.type.Slab slab = (org.bukkit.block.data.type.Slab) block.getBlockData();
+                switch (slab.getType().toString()) {
+                case "TOP":
+                    return SlabType.TOP;
+                case "BOTTOM":
+                    return SlabType.BOTTOM;
+                case "DOUBLE":
+                    return SlabType.DOUBLE;
+                }
 
-	    }
-	    return SlabType.NOTSLAB;
-	}
-	if (block.getType().name().contains("STEP")) {
-	    switch (CMIMaterial.get(block).getLegacyId()) {
-	    case 44:
-		switch (block.getData()) {
-		case 0:
-		case 1:
-		case 2:
-		case 3:
-		case 4:
-		case 5:
-		case 6:
-		case 7:
-		    return SlabType.BOTTOM;
-		default:
-		    return SlabType.DOUBLE;
-		}
-	    case 126:
-		switch (block.getData()) {
-		case 0:
-		case 1:
-		case 2:
-		case 3:
-		case 4:
-		case 5:
-		    return SlabType.BOTTOM;
-		default:
-		    return SlabType.DOUBLE;
-		}
-	    case 182:
-		switch (block.getData()) {
-		case 0:
-		    return SlabType.BOTTOM;
-		default:
-		    return SlabType.DOUBLE;
-		}
-	    case 205:
-		switch (block.getData()) {
-		case 0:
-		    return SlabType.BOTTOM;
-		default:
-		    return SlabType.DOUBLE;
-		}
-	    }
-	}
+            }
+            return SlabType.NOTSLAB;
+        }
+        if (block.getType().name().contains("STEP")) {
+            switch (CMIMaterial.get(block).getLegacyId()) {
+            case 44:
+                switch (block.getData()) {
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                case 6:
+                case 7:
+                    return SlabType.BOTTOM;
+                default:
+                    return SlabType.DOUBLE;
+                }
+            case 126:
+                switch (block.getData()) {
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                    return SlabType.BOTTOM;
+                default:
+                    return SlabType.DOUBLE;
+                }
+            case 182:
+                switch (block.getData()) {
+                case 0:
+                    return SlabType.BOTTOM;
+                default:
+                    return SlabType.DOUBLE;
+                }
+            case 205:
+                switch (block.getData()) {
+                case 0:
+                    return SlabType.BOTTOM;
+                default:
+                    return SlabType.DOUBLE;
+                }
+            }
+        }
 
-	return SlabType.NOTSLAB;
+        return SlabType.NOTSLAB;
     }
 
     public boolean isCanHavePotionType() {
-	return isPotion() || this == CMIMaterial.TIPPED_ARROW;
+        return isPotion() || this == CMIMaterial.TIPPED_ARROW;
     }
 
     public static String getGeneralMaterialName(String fullName) {
-	String newName = fullName.toUpperCase();
-	if (newName.startsWith("STRIPPED")) {
-	    return newName.replaceFirst("_[^_]+", "");
-	}
+        String newName = fullName.toUpperCase();
+        if (newName.startsWith("STRIPPED")) {
+            return newName.replaceFirst("_[^_]+", "");
+        }
 
-	if (newName.matches("^(DARK|LIGHT).+")) {
-	    return newName.replaceFirst(".+?_.+?_", "");
-	}
+        if (newName.matches("^(DARK|LIGHT).+")) {
+            return newName.replaceFirst(".+?_.+?_", "");
+        }
 
-	if (newName.matches("^(WHITE|ORANGE|MAGENTA|YELLOW|LIME|PINK|GRAY|CYAN|PURPLE|BLUE|BROWN|GREEN|RED|BLACK|" +
-	    "OAK|SPRUCE|BIRCH|JUNGLE|ACACIA).+")) {
-	    return newName.replaceFirst(".+?_", "");
-	}
+        if (newName.matches("^(WHITE|ORANGE|MAGENTA|YELLOW|LIME|PINK|GRAY|CYAN|PURPLE|BLUE|BROWN|GREEN|RED|BLACK|" +
+            "OAK|SPRUCE|BIRCH|JUNGLE|ACACIA).+")) {
+            return newName.replaceFirst(".+?_", "");
+        }
 
-	if (newName.matches("(?i)^(WHITE|ORANGE|MAGENTA|YELLOW|LIME|PINK|GRAY|CYAN|PURPLE|BLUE|BROWN|GREEN|RED|BLACK|" +
-	    "LIGHT_GRAY|LIGHT_BLUE)$")) {
-	    return "color";
-	}
+        if (newName.matches("(?i)^(WHITE|ORANGE|MAGENTA|YELLOW|LIME|PINK|GRAY|CYAN|PURPLE|BLUE|BROWN|GREEN|RED|BLACK|" +
+            "LIGHT_GRAY|LIGHT_BLUE)$")) {
+            return "color";
+        }
 
-	return fullName;
+        return fullName;
     }
 
     @Deprecated
     public static byte getBlockData(Block block) {
-	return getBlockAge(block);
+        return getBlockAge(block);
     }
 
     public static byte getBlockAge(Block block) {
-	if (Version.isCurrentEqualOrHigher(Version.v1_13_R1)) {
-	    if (block.getState().getBlockData() instanceof org.bukkit.block.data.Ageable) {
-		org.bukkit.block.data.Ageable age = (org.bukkit.block.data.Ageable) block.getState().getBlockData();
-		return (byte) age.getAge();
-	    }
-	    return 0;
-	}
+        if (Version.isCurrentEqualOrHigher(Version.v1_13_R1)) {
+            if (block.getState().getBlockData() instanceof org.bukkit.block.data.Ageable) {
+                org.bukkit.block.data.Ageable age = (org.bukkit.block.data.Ageable) block.getState().getBlockData();
+                return (byte) age.getAge();
+            }
+            return 0;
+        }
 
-	byte data = block.getData();
-	if (block.getType() == CMIMaterial.COCOA.getMaterial())
-	    switch (data) {
-	    case 0:
-	    case 1:
-	    case 2:
-	    case 3:
-		data = 0;
-		break;
-	    case 4:
-	    case 5:
-	    case 6:
-	    case 7:
-		data = 1;
-		break;
-	    case 8:
-	    case 9:
-	    case 10:
-	    case 11:
-		data = 2;
-		break;
-	    default:
-		break;
-	    }
-	return data;
+        byte data = block.getData();
+        if (block.getType() == CMIMaterial.COCOA.getMaterial())
+            switch (data) {
+            case 0:
+            case 1:
+            case 2:
+            case 3:
+                data = 0;
+                break;
+            case 4:
+            case 5:
+            case 6:
+            case 7:
+                data = 1;
+                break;
+            case 8:
+            case 9:
+            case 10:
+            case 11:
+                data = 2;
+                break;
+            default:
+                break;
+            }
+        return data;
     }
 
     public boolean equals(Material mat) {
-	if (getMaterial() == null) {
-	    return false;
-	}
-	return this.getMaterial().equals(mat);
+        if (getMaterial() == null) {
+            return false;
+        }
+        return this.getMaterial().equals(mat);
     }
 
     public List<String> getLegacyNames() {
-	if (legacyName == null)
-	    legacyName = new ArrayList<String>();
-	return legacyName;
+        if (legacyName == null)
+            legacyName = new ArrayList<String>();
+        return legacyName;
     }
 
     public void addLegacyName(String legacyName) {
-	if (legacyName == null)
-	    this.legacyName = new ArrayList<String>();
-	this.legacyName.add(legacyName);
+        if (legacyName == null)
+            this.legacyName = new ArrayList<String>();
+        this.legacyName.add(legacyName);
     }
 
     public String getBukkitName() {
-	if (bukkitName == null)
-	    bukkitName = getMaterial() == null ? "N/A" : getMaterial().name();
-	return bukkitName;
+        if (bukkitName == null)
+            bukkitName = getMaterial() == null ? "N/A" : getMaterial().name();
+        return bukkitName;
     }
 
     public void setBukkitName(String bukkitName) {
-	this.bukkitName = bukkitName;
+        this.bukkitName = bukkitName;
     }
 
     public String getMojangName() {
-	if (mojangName == null)
-	    mojangName = CMILib.getInstance().getReflectionManager().getItemMinecraftName(this.newItemStack());
-	return mojangName;
+        if (mojangName == null)
+            mojangName = CMILib.getInstance().getReflectionManager().getItemMinecraftName(this.newItemStack());
+        return mojangName;
     }
 
     public void setMojangName(String mojangName) {
-	this.mojangName = mojangName;
+        this.mojangName = mojangName;
     }
 
     public Set<CMIMC> getCriteria() {
-	return criteria;
+        return criteria;
     }
 
     public boolean containsCriteria(CMIMC criteria) {
-	if (this.criteria == null || criteria == null)
-	    return false;
-	return this.criteria.contains(criteria);
+        if (this.criteria == null || criteria == null)
+            return false;
+        return this.criteria.contains(criteria);
     }
 
     public boolean isLegacy() {
-	return legacy;
+        return legacy;
     }
 
     public String getTranslatedName() {
-	return translatedName != null ? translatedName : this.getName();
+        return translatedName != null ? translatedName : this.getName();
     }
 
     public void setTranslatedName(String translatedName) {
-	this.translatedName = translatedName;
+        this.translatedName = translatedName;
     }
 }
