@@ -6,9 +6,7 @@ This plugin helper, or **library**, is a handy tool that allows us to easily man
 
 This reduces the overall size of other plugins, and makes updating and maintaining plugins much easier and more consistent.
 
-## Required Dependancy
-
-All current versions of the Zrips made plugins require this library to operate.
+**NOTE:** This library is required by ALL Zrips' plugins.
 
 ## Releases / Downloads
 
