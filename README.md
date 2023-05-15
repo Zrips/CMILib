@@ -2,9 +2,9 @@
 
 ## Introduction
 
-The plugin helper, or **library**, is a handy tool that helps us easily manage common phrases, hex colors, and more. Instead of each plugin having its own code for these features, the plugin helper allows multiple all the Zrips made plugins to share the same code. 
+This plugin helper, or **library**, is a handy tool that allows us to easily manage common phrases, hex colours and more. Instead of each plugin having to write its own code for these features, this library allows them to share this functionality, as well as providing an API for other developers to extend their own plugin features. 
 
-This reduces the overall size of our plugins and makes updating and maintaining these plugins a lot simpler and more consistent.
+This reduces the overall size of other plugins, and makes updating and maintaining plugins much easier and more consistent.
 
 ## Required Dependancy
 
