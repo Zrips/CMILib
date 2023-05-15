@@ -40,9 +40,11 @@ At this stage, you should run another `/stop` to add the plugins that depend on 
 - [TradeMe](https://www.spigotmc.org/resources/trademe-with-api-to-create-custom-trades-1-7-10-1-19-x.7544/) version 6.1.0.0 and up
 - [Recount](https://www.spigotmc.org/resources/recount.3962/) version 3.5.0 and up
 
-## Bugs and Suggestions
+## Contributing
 
-You're free to clone and make a pull request to offer bug fixes and/or code suggestions. If you don't know how you can report bugs and suggestions as an issue (if no existing one exists yet) under the Issues tab here on Github.
+You're free to clone and make a pull request to offer bug fixes and/or suggestions.
+
+You can also report bugs and/or make suggestions in the form of an Issue, but please check if what you're submitting isn't a duplicate.
 
 ## Support
 
