@@ -48,6 +48,6 @@ You can also report bugs and/or make suggestions in the form of an Issue, but pl
 
 ## Support
 
-You can request support from other Community Members on the [Zrips Community Discord](https://discord.gg/dDMamN4).
+Before asking questions, please make sure to read our [Frequently Asked Questions](https://www.zrips.net/cmilib/faq/).
 
-Please do check [the FAQ page](https://www.zrips.net/cmilib/faq/) out first, before asking questions
+You can request support and discuss issues with Community Members on the [Zrips Community Discord](https://discord.gg/dDMamN4).
