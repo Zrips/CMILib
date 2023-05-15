@@ -28,6 +28,14 @@ If you're working on translations, please make sure to send a pull request to th
 
 At this stage, you should run another `/stop` to add the plugins that depend on this library and proceed with their setup as required.
 
+## Support
+
+If you have encountered an issue with this Library, please check the Contributing section below for information on how to report it.
+
+Before asking questions, please make sure to read our [Frequently Asked Questions](https://www.zrips.net/cmilib/faq/).
+
+You can also request support and discuss issues with Community Members on the [Zrips Community Discord](https://discord.gg/dDMamN4).
+
 ## Plugins Using This Library
 
 - [CMI](https://www.spigotmc.org/resources/cmi-298-commands-insane-kits-portals-essentials-economy-mysql-sqlite-much-more.3742/) version 9.x and up
@@ -45,9 +53,3 @@ At this stage, you should run another `/stop` to add the plugins that depend on 
 You're free to clone and make a pull request to offer bug fixes and/or suggestions.
 
 You can also report bugs and/or make suggestions in the form of an Issue, but please check if what you're submitting isn't a duplicate.
-
-## Support
-
-Before asking questions, please make sure to read our [Frequently Asked Questions](https://www.zrips.net/cmilib/faq/).
-
-You can request support and discuss issues with Community Members on the [Zrips Community Discord](https://discord.gg/dDMamN4).
