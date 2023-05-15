@@ -29,15 +29,16 @@ It's heavily recommended to always keep this library up to date. You can downloa
 
 ## Installation Instructions
 
-You can `/stop`, and back-up your server first,
+**As with all plugin changes, make sure to `/stop` your server and make a full backup first.**
 
-Download the latest version of the CMILib .jar file, and drop it in the `~/plugins/` directory.
+Download the latest version of the library from a release website mentioned, and place it in your server's `plugins/` directory.
 
-Include any Zrips plugin in the `~/plugins/` directory as well.
+To avoid conflicts, it is recommended to load this library without the plugins that depend on it first, this will ensure that any issues that arise aren't related to the library itself but rather with the dependent plugin, you should then report it to it's developer so they update it to match the library changes.
 
-And then you can start the server back up.
+Your Server should start with no issues. After the first startup, a new folder called `CMILib` will be created in your server's `plugins/` folder. This folder contains the library's configuration files. You can edit these files to your liking, but it's not required.
+If you're working on translations, please make sure to send a pull request to this repository.
 
-After the first time running, if it's `Done!` and there have been no issues, you can stop and start it one more time. You can use this downtime to review plugin configurations.
+At this stage, you should run another `/stop` to add the plugins that depend on this library and proceed with their setup as required.
 
 ## Bugs and Suggestions
 
