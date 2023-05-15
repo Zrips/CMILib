@@ -8,12 +8,12 @@ This reduces the overall size of other plugins, and makes updating and maintaini
 
 **NOTE:** This library is required by ALL Zrips' plugins.
 
-## Releases / Downloads
+## Library Updates
 
-It's recommended to always keep the CMILib .jar file up to date (as well as all Zrips plugins). You can download the latest release from these urls:
+It's heavily recommended to always keep this library up to date. You can download the latest builds from:
 
-- https://www.zrips.net/cmilib/
-- https://www.spigotmc.org/resources/87610/
+- [Developer's Official Website](https://www.zrips.net/cmilib/)
+- [Spigot Releases](https://www.spigotmc.org/resources/87610/)
 
 ## Plugins using this library
 
