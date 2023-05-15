@@ -15,17 +15,17 @@ It's heavily recommended to always keep this library up to date. You can downloa
 - [Developer's Official Website](https://www.zrips.net/cmilib/)
 - [Spigot Releases](https://www.spigotmc.org/resources/87610/)
 
-## Plugins using this library
+## Plugins Using This Library
 
-- CMI as of 9.x version
-- Residence as of 5.x version
-- MobFarmManager as of 2.x version
-- SelectionVisualizer as of 3.0.4.0 version
-- TryMe as of 7.x version
-- BottledExp as of 3.x version
-- JobsReborn as of 5.x version
-- TradeMe as of 6.1.0.0 version
-- Recount as of 3.5.0 version
+- [CMI](https://www.spigotmc.org/resources/cmi-298-commands-insane-kits-portals-essentials-economy-mysql-sqlite-much-more.3742/) version 9.x and up
+- [Residence](https://www.spigotmc.org/resources/residence-1-7-10-up-to-1-19.11480/) version 5.x and up
+- [MobFarmManager](https://www.spigotmc.org/resources/mob-farm-manager-supports-1-7-10-up-to-1-19-hopper-support.15127/) version 2.x and up
+- [SelectionVisualizer](https://www.spigotmc.org/resources/selection-visualizer.22631/) version 3.0.4.0 and up
+- [TryMe](https://www.spigotmc.org/resources/tryme.3330/) version 7.x and up
+- [BottledExp](https://www.spigotmc.org/resources/bottledexp.2815/) version 3.x and up
+- [JobsReborn](https://www.spigotmc.org/resources/jobs-reborn.4216/) version 5.x and up
+- [TradeMe](https://www.spigotmc.org/resources/trademe-with-api-to-create-custom-trades-1-7-10-1-19-x.7544/) version 6.1.0.0 and up
+- [Recount](https://www.spigotmc.org/resources/recount.3962/) version 3.5.0 and up
 
 ## Installation Instructions
 
