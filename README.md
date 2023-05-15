@@ -44,6 +44,8 @@ You can also report bugs and/or make suggestions in the form of a [New Issue](ht
 
 ## Plugins Using This Library
 
+Have you developed a plugin that uses this library? Let us know and we'll add it to the list!
+
 - [CMI](https://www.spigotmc.org/resources/cmi-298-commands-insane-kits-portals-essentials-economy-mysql-sqlite-much-more.3742/) version 9.x and up
 - [Residence](https://www.spigotmc.org/resources/residence-1-7-10-up-to-1-19.11480/) version 5.x and up
 - [MobFarmManager](https://www.spigotmc.org/resources/mob-farm-manager-supports-1-7-10-up-to-1-19-hopper-support.15127/) version 2.x and up
