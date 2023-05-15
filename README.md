@@ -21,7 +21,7 @@ It's heavily recommended to always keep this library up to date. You can downloa
 
 Download the latest version of the library from a release website mentioned in the [Library Releases Section](#library-releases-and-updates), and place it in your server's `plugins/` directory.
 
-To avoid conflicts, it is recommended to load this library without the plugins that depend on it first, this will ensure that any issues that arise aren't related to the library itself but rather with the dependent plugin, you should then report it to it's developer so they update it to match the library changes.
+To avoid conflicts, it is recommended to load this library without the plugins that depend on it first, this will ensure that any issues that arise aren't related to the library itself but rather with the dependent plugin, you should then report it to its developer so they update it to match the library changes.
 
 Your Server should start with no issues. After the first startup, a new folder called `CMILib` will be created in your server's `plugins/` folder. This folder contains the library's configuration files. You can edit these files to your liking, but it's not required.
 If you're working on translations, please make sure to send a pull request to this repository.
@@ -36,6 +36,12 @@ Before asking questions, please make sure to read our [Frequently Asked Question
 
 You can also request support and discuss issues with Community Members on the [Zrips Community Discord](https://discord.gg/dDMamN4).
 
+## Contributing
+
+You're free to clone and make a pull request to offer bug fixes and/or suggestions.
+
+You can also report bugs and/or make suggestions in the form of a [New Issue](https://github.com/Zrips/CMILib/issues/new), but **please** check if what you're submitting isn't a duplicate within the [Issues Tab](https://github.com/Zrips/CMILib/issues) or hasn't been already addressed in a [Pull Request](https://github.com/Zrips/CMILib/pulls).
+
 ## Plugins Using This Library
 
 - [CMI](https://www.spigotmc.org/resources/cmi-298-commands-insane-kits-portals-essentials-economy-mysql-sqlite-much-more.3742/) version 9.x and up
@@ -47,9 +53,3 @@ You can also request support and discuss issues with Community Members on the [Z
 - [JobsReborn](https://www.spigotmc.org/resources/jobs-reborn.4216/) version 5.x and up
 - [TradeMe](https://www.spigotmc.org/resources/trademe-with-api-to-create-custom-trades-1-7-10-1-19-x.7544/) version 6.1.0.0 and up
 - [Recount](https://www.spigotmc.org/resources/recount.3962/) version 3.5.0 and up
-
-## Contributing
-
-You're free to clone and make a pull request to offer bug fixes and/or suggestions.
-
-You can also report bugs and/or make suggestions in the form of a [New Issue](https://github.com/Zrips/CMILib/issues/new), but **please** check if what you're submitting isn't a duplicate within the [Issues Tab](https://github.com/Zrips/CMILib/issues) or hasn't been already addressed in a [Pull Request](https://github.com/Zrips/CMILib/pulls).
