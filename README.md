@@ -38,7 +38,7 @@ You can also request support and discuss issues with Community Members on the [Z
 
 ## Contributing
 
-You're free to clone and make a pull request to offer bug fixes and/or suggestions.
+You're free to clone this repository and make a pull request to offer bug fixes and/or suggestions.
 
 You can also report bugs and/or make suggestions in the form of a [New Issue](https://github.com/Zrips/CMILib/issues/new), but **please** check if what you're submitting isn't a duplicate within the [Issues Tab](https://github.com/Zrips/CMILib/issues) or hasn't been already addressed in a [Pull Request](https://github.com/Zrips/CMILib/pulls).
 
