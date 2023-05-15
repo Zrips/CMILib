@@ -42,16 +42,19 @@ You're free to clone this repository and make a pull request to offer bug fixes 
 
 You can also report bugs and/or make suggestions in the form of a [New Issue](https://github.com/Zrips/CMILib/issues/new), but **please** check if what you're submitting isn't a duplicate within the [Issues Tab](https://github.com/Zrips/CMILib/issues) or hasn't been already addressed in a [Pull Request](https://github.com/Zrips/CMILib/pulls).
 
-## Plugins Using This Library
+## Plugins That Require This Library
 
 Have you developed a plugin that uses this library? Let us know and we'll add it to the list!
 
-- [BottledExp by Zrips](https://www.spigotmc.org/resources/bottledexp.2815/) version 3.x and up
-- [CMI by Zrips](https://www.spigotmc.org/resources/cmi-298-commands-insane-kits-portals-essentials-economy-mysql-sqlite-much-more.3742/) version 9.x and up
-- [JobsReborn by Zrips](https://www.spigotmc.org/resources/jobs-reborn.4216/) version 5.x and up
-- [MobFarmManager by Zrips](https://www.spigotmc.org/resources/mob-farm-manager-supports-1-7-10-up-to-1-19-hopper-support.15127/) version 2.x and up
-- [Recount by Zrips](https://www.spigotmc.org/resources/recount.3962/) version 3.5.0 and up
-- [Residence by Zrips](https://www.spigotmc.org/resources/residence-1-7-10-up-to-1-19.11480/) version 5.x and up
-- [SelectionVisualizer by Zrips](https://www.spigotmc.org/resources/selection-visualizer.22631/) version 3.0.4.0 and up
-- [TradeMe by Zrips](https://www.spigotmc.org/resources/trademe-with-api-to-create-custom-trades-1-7-10-1-19-x.7544/) version 6.1.0.0 and up
-- [TryMe by Zrips](https://www.spigotmc.org/resources/tryme.3330/) version 7.x and up
+|                                                          Plugin Name                                                           | From Version | Up To Version |                          Plugin Author                           |
+|:------------------------------------------------------------------------------------------------------------------------------:|:------------:|:-------------:|:----------------------------------------------------------------:|
+|                               [BottledExp](https://www.spigotmc.org/resources/bottledexp.2815/)                                |     3.x      |    latest     | [Zrips](https://www.spigotmc.org/resources/authors/zrips.24572/) |
+| [CMI](https://www.spigotmc.org/resources/cmi-298-commands-insane-kits-portals-essentials-economy-mysql-sqlite-much-more.3742/) |     9.X      |    latest     | [Zrips](https://www.spigotmc.org/resources/authors/zrips.24572/) |
+|                               [JobsReborn](https://www.spigotmc.org/resources/jobs-reborn.4216/)                               |     5.X      |    latest     | [Zrips](https://www.spigotmc.org/resources/authors/zrips.24572/) |
+|     [MobFarmManager](https://www.spigotmc.org/resources/mob-farm-manager-supports-1-7-10-up-to-1-19-hopper-support.15127/)     |     2.X      |    latest     | [Zrips](https://www.spigotmc.org/resources/authors/zrips.24572/) |
+|                                  [Recount](https://www.spigotmc.org/resources/recount.3962/)                                   |    3.5.X     |    latest     | [Zrips](https://www.spigotmc.org/resources/authors/zrips.24572/) |
+|                       [Residence](https://www.spigotmc.org/resources/residence-1-7-10-up-to-1-19.11480/)                       |     5.X      |    latest     | [Zrips](https://www.spigotmc.org/resources/authors/zrips.24572/) |
+|                     [SelectionVisualizer](https://www.spigotmc.org/resources/selection-visualizer.22631/)                      |   3.0.4.X    |    latest     | [Zrips](https://www.spigotmc.org/resources/authors/zrips.24572/) |
+|           [TradeMe](https://www.spigotmc.org/resources/trademe-with-api-to-create-custom-trades-1-7-10-1-19-x.7544/)           |    6.1.X     |    latest     | [Zrips](https://www.spigotmc.org/resources/authors/zrips.24572/) |
+|                                    [TryMe](https://www.spigotmc.org/resources/tryme.3330/)                                     |     7.X      |    latest     | [Zrips](https://www.spigotmc.org/resources/authors/zrips.24572/) |
+
