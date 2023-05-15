@@ -46,7 +46,9 @@ You can also report bugs and/or make suggestions in the form of a [New Issue](ht
 
 Have you developed a plugin that uses this library? Let us know and we'll add it to the list!
 
-|                                                          Plugin Name                                                           | From Version | Up To Version |                          Plugin Author                           |
+Note: Clicking on a link will open it on this page due a Markdown limitation. To open it in a new tab, right click and select "Open in new tab".
+
+|                                                   Plugin Name (Spigot Link)                                                    | From Version | Up To Version |                          Plugin Author                           |
 |:------------------------------------------------------------------------------------------------------------------------------:|:------------:|:-------------:|:----------------------------------------------------------------:|
 |                               [BottledExp](https://www.spigotmc.org/resources/bottledexp.2815/)                                |     3.x      |    latest     | [Zrips](https://www.spigotmc.org/resources/authors/zrips.24572/) |
 | [CMI](https://www.spigotmc.org/resources/cmi-298-commands-insane-kits-portals-essentials-economy-mysql-sqlite-much-more.3742/) |     9.X      |    latest     | [Zrips](https://www.spigotmc.org/resources/authors/zrips.24572/) |
