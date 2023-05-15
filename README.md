@@ -8,7 +8,7 @@ This reduces the overall size of other plugins, and makes updating and maintaini
 
 **NOTE:** This library is required by ALL Zrips' plugins.
 
-## Library Updates
+## Library Releases and Updates
 
 It's heavily recommended to always keep this library up to date. You can download the latest builds from:
 
@@ -19,7 +19,7 @@ It's heavily recommended to always keep this library up to date. You can downloa
 
 **As with all plugin changes, make sure to `/stop` your server and make a full backup first.**
 
-Download the latest version of the library from a release website mentioned, and place it in your server's `plugins/` directory.
+Download the latest version of the library from a release website mentioned in the [Library Releases Section](#library-releases-and-updates), and place it in your server's `plugins/` directory.
 
 To avoid conflicts, it is recommended to load this library without the plugins that depend on it first, this will ensure that any issues that arise aren't related to the library itself but rather with the dependent plugin, you should then report it to it's developer so they update it to match the library changes.
 
@@ -30,7 +30,7 @@ At this stage, you should run another `/stop` to add the plugins that depend on 
 
 ## Support
 
-If you have encountered an issue with this Library, please check the Contributing section below for information on how to report it.
+If you have encountered an issue with this Library, please check the [Contributing Section](#contributing) below for information on how to report it.
 
 Before asking questions, please make sure to read our [Frequently Asked Questions](https://www.zrips.net/cmilib/faq/).
 
@@ -52,4 +52,4 @@ You can also request support and discuss issues with Community Members on the [Z
 
 You're free to clone and make a pull request to offer bug fixes and/or suggestions.
 
-You can also report bugs and/or make suggestions in the form of an Issue, but please check if what you're submitting isn't a duplicate.
+You can also report bugs and/or make suggestions in the form of a [New Issue](https://github.com/Zrips/CMILib/issues/new), but **please** check if what you're submitting isn't a duplicate within the [Issues Tab](https://github.com/Zrips/CMILib/issues) or hasn't been already addressed in a [Pull Request](https://github.com/Zrips/CMILib/pulls).
