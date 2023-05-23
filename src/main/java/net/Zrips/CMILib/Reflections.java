@@ -1813,6 +1813,8 @@ public class Reflections {
                     LootPredicateManager = net.minecraft.server.MinecraftServer.getServer().getClass().getMethod("aG").invoke(net.minecraft.server.MinecraftServer.getServer());
                 else if (Version.isCurrentEqualOrLower(Version.v1_19_R1))
                     LootPredicateManager = net.minecraft.server.MinecraftServer.getServer().getClass().getMethod("aI").invoke(net.minecraft.server.MinecraftServer.getServer());
+                else if (Version.isCurrentEqualOrLower(Version.v1_19_R2))
+                    LootPredicateManager = net.minecraft.server.MinecraftServer.getServer().getClass().getMethod("aH").invoke(net.minecraft.server.MinecraftServer.getServer());
                 else
                     LootPredicateManager = net.minecraft.server.MinecraftServer.getServer().aI();
 
