@@ -1814,7 +1814,7 @@ public class Reflections {
                 else if (Version.isCurrentEqualOrLower(Version.v1_19_R1))
                     LootPredicateManager = net.minecraft.server.MinecraftServer.getServer().getClass().getMethod("aI").invoke(net.minecraft.server.MinecraftServer.getServer());
                 else
-                    LootPredicateManager = net.minecraft.server.MinecraftServer.getServer().aH();
+                    LootPredicateManager = net.minecraft.server.MinecraftServer.getServer().aI();
 
                 net.minecraft.advancements.critereon.LootDeserializationContext LDC = new net.minecraft.advancements.critereon.LootDeserializationContext(
                     (net.minecraft.resources.MinecraftKey) minecraftkey, (net.minecraft.world.level.storage.loot.LootPredicateManager) LootPredicateManager);

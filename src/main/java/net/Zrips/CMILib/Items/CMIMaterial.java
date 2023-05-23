@@ -1836,7 +1836,12 @@ public enum CMIMaterial {
 
     public boolean isHoe() {
         switch (this) {
-        case DIAMOND_HOE, GOLDEN_HOE, IRON_HOE, STONE_HOE, WOODEN_HOE, NETHERITE_HOE:
+        case DIAMOND_HOE:
+        case GOLDEN_HOE:
+        case IRON_HOE:
+        case STONE_HOE:
+        case WOODEN_HOE:
+        case NETHERITE_HOE:
             return true;
         default:
             break;
