@@ -5,10 +5,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import com.Zrips.CMI.CMI;
-import com.Zrips.CMI.Modules.Advancements.AdvancementManager;
 
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Reflections;
+import net.Zrips.CMILib.ActionBar.CMIActionBar;
+import net.Zrips.CMILib.Advancements.AdvancementManager;
+import net.Zrips.CMILib.Advancements.AdvancementManager.FrameType;
 import net.Zrips.CMILib.BossBar.BossBarInfo;
 import net.Zrips.CMILib.Container.CMICommandSender;
 import net.Zrips.CMILib.Container.CMIServerProperties;
@@ -17,6 +19,7 @@ import net.Zrips.CMILib.Items.CMIMaterial;
 import net.Zrips.CMILib.Messages.CMIMessages;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.RawMessages.RawMessage;
+import net.Zrips.CMILib.TitleMessages.CMITitleMessage;
 import net.Zrips.CMILib.commands.CAnnotation;
 import net.Zrips.CMILib.commands.Cmd;
 
@@ -45,6 +48,7 @@ public class compatibility implements Cmd {
         CMINBT.isNBTSimilar(CMIMaterial.STONE.newItemStack(), CMIMaterial.STONE.newItemStack());
 
         CMINBT.HideFlag(CMIMaterial.STONE.newItemStack(), 2);
+
         Player player = Bukkit.getOnlinePlayers().iterator().next();
         ref.getProfile(player);
         ref.getCraftPlayer(player);
@@ -80,11 +84,23 @@ public class compatibility implements Cmd {
         if (!nbt.getString("stringTest").equals("test"))
             CMIMessages.consoleMessage("Error stringTest");
 
+        
+        CMINBT blockNBT = new CMINBT(player.getLocation().clone().add(0, -1, 0).getBlock());
+        
+        CMINBT entityNBT = new CMINBT(player);
+                
         nbt.getKeys();
 
-        AdvancementManager.sendToast(player, "Test");
-        
-        CMI.getInstance().getReflectionManager().changePlayerLimit(Bukkit.getMaxPlayers());
+        AdvancementManager.sendToast(player, "Test", CMIMaterial.ACACIA_BOAT.newCMIItemStack(), FrameType.CHALLENGE);
+
+        CMITitleMessage.send(player, "Title", "SubTitle");
+        CMIActionBar.send(player, "Action bar Test");
+
+        try {
+            CMI.getInstance().getReflectionManager().changePlayerLimit(Bukkit.getMaxPlayers());
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
 
         plugin.getBossBarManager().Show(new BossBarInfo(player, "Compatibility"));
 

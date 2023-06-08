@@ -210,6 +210,11 @@ public class CMINBT {
             getTypeIdName = "b";
         }
 
+        if (Version.isCurrentEqualOrHigher(Version.v1_20_R1)) {
+            asStringName = "m_";
+            getTagName = "v";
+        }
+
         try {
             met_getString = nbtTagCompound.getMethod(getStringName, String.class);
             met_getInt = nbtTagCompound.getMethod(getIntName, String.class);
@@ -347,6 +352,7 @@ public class CMINBT {
         try {
             return (Boolean) met_getBoolean.invoke(tag, path);
         } catch (Exception e) {
+            e.printStackTrace();
         }
         return null;
     }
@@ -905,14 +911,14 @@ public class CMINBT {
                     }
                 }
             } catch (Throwable e) {
-//		e.printStackTrace();
+                e.printStackTrace();
             }
             return false;
         }
         try {
-            return tag != null && (Boolean) tag.getClass().getMethod(hasKeyName, String.class).invoke(tag, key);
+            return tag != null && (Boolean) (tag.getClass().getMethod(hasKeyName, String.class).invoke(tag, key));
         } catch (Throwable e) {
-//	    e.printStackTrace();
+            e.printStackTrace();
         }
         return false;
     }
@@ -981,7 +987,7 @@ public class CMINBT {
         if (entity == null)
             return null;
         try {
-            Object tag = nbtTagCompound.newInstance();
+            Object tag = nbtTagCompound.getDeclaredConstructor().newInstance();
             Object nmsStack = getEntityHandle(entity);
             Method methTag = nmsStack.getClass().getMethod(saveName, nbtTagCompound);
             tag = methTag.invoke(nmsStack, tag);
@@ -1003,7 +1009,7 @@ public class CMINBT {
             Method methTag = nmsStack.getClass().getMethod(getTagName);
             Object tag = methTag.invoke(nmsStack);
             if (tag == null)
-                tag = nbtTagCompound.newInstance();
+                tag = nbtTagCompound.getDeclaredConstructor().newInstance();
 
             return tag;
         } catch (Exception e) {
@@ -1040,11 +1046,6 @@ public class CMINBT {
             case v1_13_R2:
                 ff = "aa_";
                 break;
-            case v1_14_R1:
-            case v1_15_R1:
-            default:
-                ff = "b";
-                break;
             case v1_17_R1:
             case v1_18_R1:
                 ff = "Z_";
@@ -1059,10 +1060,18 @@ public class CMINBT {
                     ff = "aa_";
                 break;
             case v1_19_R2:
-                    ff = "ad_";
+                ff = "ad_";
                 break;
             case v1_19_R3:
-                    ff = "aq_";                 
+                ff = "aq_";
+                break;
+            case v1_20_R1:
+                ff = "ao_";
+                break;
+            case v1_14_R1:
+            case v1_15_R1:
+            default:
+                ff = "b";
                 break;
             }
 

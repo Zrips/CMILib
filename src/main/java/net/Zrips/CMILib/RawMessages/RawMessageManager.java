@@ -99,8 +99,21 @@ public class RawMessageManager {
 
     static {
         Version version = Version.getCurrent();
+        if (Version.isCurrentEqualOrHigher(Version.v1_20_R1)) {
+            try {
+                getHandle = Class.forName("org.bukkit.craftbukkit." + version + ".entity.CraftPlayer").getMethod("getHandle");
+                packetType = net.minecraft.network.protocol.game.ClientboundSystemChatPacket.class;
+                nmsIChatBaseComponent = Class.forName("net.minecraft.network.chat.IChatBaseComponent");
+                nmsChatSerializer = Class.forName("net.minecraft.network.chat.IChatBaseComponent$ChatSerializer");
+                playerConnection = Class.forName("net.minecraft.server.level.EntityPlayer").getField("c");
+                sendPacket = Class.forName("net.minecraft.server.network.PlayerConnection").getMethod("a", net.minecraft.network.protocol.Packet.class);
 
-        if (Version.isCurrentEqualOrHigher(Version.v1_19_R1)) {
+                constructor = packetType.getConstructor(nmsIChatBaseComponent, boolean.class);
+
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+        } else if (Version.isCurrentEqualOrHigher(Version.v1_19_R1)) {
             try {
                 getHandle = Class.forName("org.bukkit.craftbukkit." + version + ".entity.CraftPlayer").getMethod("getHandle");
                 packetType = net.minecraft.network.protocol.game.ClientboundSystemChatPacket.class;
@@ -203,7 +216,9 @@ public class RawMessageManager {
 //		    serialized = method.invoke(null, CMILib.getInstance().getPlaceholderAPIManager().updatePlaceHolders(receivingPacket, json));
 //		}
 
-                if (Version.isCurrentEqualOrHigher(Version.v1_19_R1)) {
+                if (Version.isCurrentEqualOrHigher(Version.v1_20_R1)) {
+                    packet = constructor.newInstance(serialized, false);
+                } else if (Version.isCurrentEqualOrHigher(Version.v1_19_R1)) {
                     if (Version.isCurrentSubEqual(0))
                         packet = constructor.newInstance(serialized, 1);
                     else

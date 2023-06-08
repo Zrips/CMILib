@@ -35,7 +35,18 @@ public class CMIActionBar {
     private static Constructor<?> constructor;
 
     static {
-        if (Version.isCurrentEqualOrHigher(Version.v1_19_R1)) {
+        if (Version.isCurrentEqualOrHigher(Version.v1_20_R1)) {
+            try {
+                packetType = net.minecraft.network.protocol.game.ClientboundSystemChatPacket.class;
+                nmsIChatBaseComponent = Class.forName("net.minecraft.network.chat.IChatBaseComponent");
+                nmsChatSerializer = Class.forName("net.minecraft.network.chat.IChatBaseComponent$ChatSerializer");
+                playerConnection = Class.forName("net.minecraft.server.level.EntityPlayer").getField("c");
+                sendPacket = Class.forName("net.minecraft.server.network.PlayerConnection").getMethod("a", net.minecraft.network.protocol.Packet.class);
+                getHandle = Class.forName("org.bukkit.craftbukkit." + Version.getCurrent() + ".entity.CraftPlayer").getMethod("getHandle");
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+        } else if (Version.isCurrentEqualOrHigher(Version.v1_19_R1)) {
             try {
                 packetType = net.minecraft.network.protocol.game.ClientboundSystemChatPacket.class;
                 nmsIChatBaseComponent = Class.forName("net.minecraft.network.chat.IChatBaseComponent");
@@ -87,11 +98,13 @@ public class CMIActionBar {
         }
 
         try {
-            if (Version.isCurrentEqualOrHigher(Version.v1_19_R1)) {                
+            if (Version.isCurrentEqualOrHigher(Version.v1_20_R1)) {
+                constructor = packetType.getConstructor(nmsIChatBaseComponent, boolean.class);
+            } else if (Version.isCurrentEqualOrHigher(Version.v1_19_R1)) {
                 if (Version.isCurrentSubEqual(0))
                     constructor = packetType.getConstructor(nmsIChatBaseComponent, int.class);
                 else
-                    constructor = packetType.getConstructor(nmsIChatBaseComponent, boolean.class);                
+                    constructor = packetType.getConstructor(nmsIChatBaseComponent, boolean.class);
             } else if (Version.isCurrentHigher(Version.v1_15_R1)) {
                 constructor = packetType.getConstructor(nmsIChatBaseComponent, sub, UUID.class);
             } else if (Version.isCurrentHigher(Version.v1_11_R1)) {
@@ -171,7 +184,9 @@ public class CMIActionBar {
                 if (player == null)
                     continue;
 
-                if (Version.isCurrentEqualOrHigher(Version.v1_19_R1)) {
+                if (Version.isCurrentEqualOrHigher(Version.v1_20_R1)) {
+                    p = constructor.newInstance(serialized, true);
+                } else if (Version.isCurrentEqualOrHigher(Version.v1_19_R1)) {
                     if (Version.isCurrentSubEqual(0))
                         p = constructor.newInstance(serialized, 2);
                     else

@@ -701,7 +701,9 @@ public class Reflections {
         Object connection = null;
         try {
             Object handle = getPlayerHandle(player);
-            if (Version.isCurrentEqualOrHigher(Version.v1_17_R1))
+            if (Version.isCurrentEqualOrHigher(Version.v1_20_R1))
+                connection = handle.getClass().getField("c").get(handle);
+            else if (Version.isCurrentEqualOrHigher(Version.v1_17_R1))
                 connection = handle.getClass().getField("b").get(handle);
             else
                 connection = handle.getClass().getField("playerConnection").get(handle);
@@ -1791,8 +1793,37 @@ public class Reflections {
         }
 
         NamespacedKey key = ad.getId();
+        if (Version.isCurrentEqualOrHigher(Version.v1_20_R1)) {
 
-        if (Version.isCurrentEqualOrHigher(Version.v1_18_R1)) {
+            if (Bukkit.getAdvancement(key) != null) {
+                return;
+            }
+
+            try {
+                net.minecraft.resources.MinecraftKey minecraftkey = (net.minecraft.resources.MinecraftKey) CraftNamespacedKey.getMethod("toMinecraft", NamespacedKey.class).invoke(CraftNamespacedKey, key);
+                Object fieldB = AdvancementDataWorld.getField("b").get(AdvancementDataWorld);
+                Object jsonelement = fieldB.getClass().getMethod("fromJson", String.class, Class.class).invoke(fieldB, advancement, JsonElement.class);
+                Object jsonobject = ChatDeserializer.getMethod("m", JsonElement.class, String.class).invoke(ChatDeserializer, jsonelement, "advancement");
+                Method meth = SerializedAdvancement.getMethod("a", jsonobject.getClass(), LootDeserializationContext);
+
+                Object LootPredicateManager = null;
+
+                LootPredicateManager = net.minecraft.server.MinecraftServer.getServer().aH();
+
+                net.minecraft.advancements.critereon.LootDeserializationContext LDC = new net.minecraft.advancements.critereon.LootDeserializationContext(
+                    minecraftkey, (net.minecraft.world.level.storage.loot.LootDataManager) LootPredicateManager);
+                net.minecraft.advancements.Advancement.SerializedAdvancement nms = (net.minecraft.advancements.Advancement.SerializedAdvancement) meth.invoke(SerializedAdvancement, jsonobject,
+                    LDC);
+
+                if (nms != null) {
+                    //getAdvancementData
+                    net.minecraft.server.MinecraftServer.getServer().az().c.a(Maps.newHashMap(Collections.singletonMap(minecraftkey, nms)));
+                }
+
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+        } else if (Version.isCurrentEqualOrHigher(Version.v1_18_R1)) {
 
             if (Bukkit.getAdvancement(key) != null) {
                 return;
@@ -1815,11 +1846,16 @@ public class Reflections {
                     LootPredicateManager = net.minecraft.server.MinecraftServer.getServer().getClass().getMethod("aI").invoke(net.minecraft.server.MinecraftServer.getServer());
                 else if (Version.isCurrentEqualOrLower(Version.v1_19_R2))
                     LootPredicateManager = net.minecraft.server.MinecraftServer.getServer().getClass().getMethod("aH").invoke(net.minecraft.server.MinecraftServer.getServer());
-                else
-                    LootPredicateManager = net.minecraft.server.MinecraftServer.getServer().aI();
+                else if (Version.isCurrentEqualOrLower(Version.v1_19_R3))
+                    LootPredicateManager = net.minecraft.server.MinecraftServer.getServer().getClass().getMethod("aI").invoke(net.minecraft.server.MinecraftServer.getServer());
 
-                net.minecraft.advancements.critereon.LootDeserializationContext LDC = new net.minecraft.advancements.critereon.LootDeserializationContext(
-                    (net.minecraft.resources.MinecraftKey) minecraftkey, (net.minecraft.world.level.storage.loot.LootPredicateManager) LootPredicateManager);
+                Constructor<net.minecraft.advancements.critereon.LootDeserializationContext> constructor = net.minecraft.advancements.critereon.LootDeserializationContext.class.getConstructor(
+                    net.minecraft.resources.MinecraftKey.class, LootPredicateManager.getClass());
+
+                net.minecraft.advancements.critereon.LootDeserializationContext LDC = constructor.newInstance(minecraftkey, LootPredicateManager);
+
+//                net.minecraft.advancements.critereon.LootDeserializationContext LDC = new net.minecraft.advancements.critereon.LootDeserializationContext(
+//                    (net.minecraft.resources.MinecraftKey) minecraftkey, (net.minecraft.world.level.storage.loot.LootPredicateManager) LootPredicateManager);
                 net.minecraft.advancements.Advancement.SerializedAdvancement nms = (net.minecraft.advancements.Advancement.SerializedAdvancement) meth.invoke(SerializedAdvancement, jsonobject,
                     LDC);
 
@@ -1855,8 +1891,14 @@ public class Reflections {
                 Object jsonobject = ChatDeserializer.getMethod("m", JsonElement.class, String.class).invoke(ChatDeserializer, jsonelement, "advancement");
                 Method meth = SerializedAdvancement.getMethod("a", jsonobject.getClass(), LootDeserializationContext);
                 Object LootPredicateManager = net.minecraft.server.MinecraftServer.getServer().getClass().getMethod("getLootPredicateManager").invoke(net.minecraft.server.MinecraftServer.getServer());
-                net.minecraft.advancements.critereon.LootDeserializationContext LDC = new net.minecraft.advancements.critereon.LootDeserializationContext(
-                    (net.minecraft.resources.MinecraftKey) minecraftkey, (net.minecraft.world.level.storage.loot.LootPredicateManager) LootPredicateManager);
+
+                Constructor<net.minecraft.advancements.critereon.LootDeserializationContext> constructor = net.minecraft.advancements.critereon.LootDeserializationContext.class.getConstructor(
+                    net.minecraft.resources.MinecraftKey.class, LootPredicateManager.getClass());
+                net.minecraft.advancements.critereon.LootDeserializationContext LDC = constructor.newInstance(minecraftkey, LootPredicateManager);
+
+//                net.minecraft.advancements.critereon.LootDeserializationContext LDC = new net.minecraft.advancements.critereon.LootDeserializationContext(
+//                    (net.minecraft.resources.MinecraftKey) minecraftkey, (net.minecraft.world.level.storage.loot.LootPredicateManager) LootPredicateManager);
+
                 net.minecraft.advancements.Advancement.SerializedAdvancement nms = (net.minecraft.advancements.Advancement.SerializedAdvancement) meth.invoke(SerializedAdvancement, jsonobject, LDC);
                 Object data = net.minecraft.server.MinecraftServer.getServer().getClass().getMethod("getAdvancementData").invoke(net.minecraft.server.MinecraftServer.getServer());
                 net.minecraft.advancements.Advancements advanceents = (Advancements) data.getClass().getField("c").get(data);
