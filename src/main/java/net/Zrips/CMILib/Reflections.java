@@ -1241,8 +1241,19 @@ public class Reflections {
     }
 
     private Integer getActiveContainerId(Object entityplayer) {
-        try {
-            if (Version.isCurrentEqualOrHigher(Version.v1_19_R3)) {
+        try {          
+            if (Version.isCurrentEqualOrHigher(Version.v1_20_R1)) {
+                try {
+                    // EntityHuman -> Container
+                    Field field = entityplayer.getClass().getField("bR");
+                    Object container = this.CraftContainer.cast(field.get(entityplayer));
+                    Field field2 = container.getClass().getField("j");
+                    Object ids = field2.get(container);
+                    return (int) ids;
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
+            } else if (Version.isCurrentEqualOrHigher(Version.v1_19_R3)) {
                 try {
                     // EntityHuman -> Container
                     Field field = entityplayer.getClass().getField("bP");
