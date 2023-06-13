@@ -330,8 +330,10 @@ public class CMINBT {
         if (!this.hasNBT(path))
             return null;
         try {
+            CMIDebug.d("get byte");
             return (Byte) met_getByte.invoke(tag, path);
         } catch (Exception e) {
+            e.printStackTrace();
         }
         return null;
     }

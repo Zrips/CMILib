@@ -1943,13 +1943,6 @@ public enum CMIMaterial {
         return getMaterial() != null && getMaterial().isSolid();
     }
 
-    public static boolean isMonsterEgg(Material mat) {
-        CMIMaterial m = CMIMaterial.get(mat);
-        if (m == null)
-            return false;
-        return m.isMonsterEgg();
-    }
-
     public static boolean isHoe(Material mat) {
         CMIMaterial m = CMIMaterial.get(mat);
         if (m == null)
@@ -1970,6 +1963,13 @@ public enum CMIMaterial {
             break;
         }
         return false;
+    }
+
+    public static boolean isMonsterEgg(Material mat) {
+        CMIMaterial m = CMIMaterial.get(mat);
+        if (m == null)
+            return false;
+        return m.isMonsterEgg();
     }
 
     public boolean isMonsterEgg() {
@@ -2054,6 +2054,16 @@ public enum CMIMaterial {
         case TADPOLE_SPAWN_EGG:
         case ALLAY_SPAWN_EGG:
         case FROG_SPAWN_EGG:
+
+            //1.20
+        case CAMEL_SPAWN_EGG:
+        case ENDER_DRAGON_SPAWN_EGG:
+        case IRON_GOLEM_SPAWN_EGG:
+        case SNIFFER_EGG:
+        case SNIFFER_SPAWN_EGG:
+        case SNOW_GOLEM_SPAWN_EGG:
+        case WITHER_SPAWN_EGG:
+
             return true;
         default:
             break;
@@ -2158,6 +2168,10 @@ public enum CMIMaterial {
         case MANGROVE_STAIRS:
         case MUD_BRICK_STAIRS:
 
+        case BAMBOO_MOSAIC_STAIRS:
+        case BAMBOO_STAIRS:
+        case CHERRY_STAIRS:
+
             return true;
         default:
             break;
@@ -2208,6 +2222,11 @@ public enum CMIMaterial {
         case JUNGLE_CHEST_BOAT:
         case MANGROVE_BOAT:
         case MANGROVE_CHEST_BOAT:
+
+        case CHERRY_BOAT:
+        case CHERRY_CHEST_BOAT:
+        case BAMBOO_CHEST_RAFT:
+        case BAMBOO_RAFT:
 
             return true;
         default:
@@ -2281,6 +2300,10 @@ public enum CMIMaterial {
         case WARPED_BUTTON:
 
         case MANGROVE_BUTTON:
+
+        case BAMBOO_BUTTON:
+        case CHERRY_BUTTON:
+
             return true;
         default:
             break;
@@ -2348,6 +2371,8 @@ public enum CMIMaterial {
 
         case MANGROVE_PRESSURE_PLATE:
 
+        case BAMBOO_PRESSURE_PLATE:
+        case CHERRY_PRESSURE_PLATE:
             return true;
         default:
             break;
@@ -2779,6 +2804,44 @@ public enum CMIMaterial {
         case POTTED_FLOWERING_AZALEA_BUSH:
 
         case POTTED_MANGROVE_PROPAGULE:
+
+            // 1.20            
+        case POTTED_CHERRY_SAPLING:
+        case POTTED_TORCHFLOWER:
+
+            return true;
+        default:
+            break;
+        }
+        return false;
+    }
+
+    public static boolean isTemplate(Material mat) {
+        CMIMaterial m = CMIMaterial.get(mat);
+        if (m == null)
+            return false;
+        return m.isTemplate();
+    }
+
+    public boolean isTemplate() {
+        switch (this) {
+        case COAST_ARMOR_TRIM_SMITHING_TEMPLATE:
+        case DUNE_ARMOR_TRIM_SMITHING_TEMPLATE:
+        case EYE_ARMOR_TRIM_SMITHING_TEMPLATE:
+        case HOST_ARMOR_TRIM_SMITHING_TEMPLATE:
+        case NETHERITE_UPGRADE_SMITHING_TEMPLATE:
+        case RAISER_ARMOR_TRIM_SMITHING_TEMPLATE:
+        case RIB_ARMOR_TRIM_SMITHING_TEMPLATE:
+        case SHAPER_ARMOR_TRIM_SMITHING_TEMPLATE:
+        case SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE:
+        case SILENCE_ARMOR_TRIM_SMITHING_TEMPLATE:
+        case SNOUT_ARMOR_TRIM_SMITHING_TEMPLATE:
+        case SPIRE_ARMOR_TRIM_SMITHING_TEMPLATE:
+        case TIDE_ARMOR_TRIM_SMITHING_TEMPLATE:
+        case WARD_ARMOR_TRIM_SMITHING_TEMPLATE:
+        case VEX_ARMOR_TRIM_SMITHING_TEMPLATE:
+        case WAYFINDER_ARMOR_TRIM_SMITHING_TEMPLATE:
+        case WILD_ARMOR_TRIM_SMITHING_TEMPLATE:
             return true;
         default:
             break;
@@ -2840,6 +2903,10 @@ public enum CMIMaterial {
         case WARPED_DOOR:
 
         case MANGROVE_DOOR:
+
+        case BAMBOO_DOOR:
+        case CHERRY_DOOR:
+
             return true;
         default:
             break;
@@ -2867,6 +2934,9 @@ public enum CMIMaterial {
         case WARPED_FENCE_GATE:
 
         case MANGROVE_FENCE_GATE:
+
+        case BAMBOO_FENCE_GATE:
+        case CHERRY_FENCE_GATE:
             return true;
         default:
             break;
@@ -2895,6 +2965,9 @@ public enum CMIMaterial {
         case WARPED_FENCE:
 
         case MANGROVE_FENCE:
+
+        case BAMBOO_FENCE:
+        case CHERRY_FENCE:
             return true;
         default:
             break;
@@ -3019,6 +3092,32 @@ public enum CMIMaterial {
 
         case MANGROVE_SIGN:
 
+        case ACACIA_HANGING_SIGN:
+        case ACACIA_WALL_HANGING_SIGN:
+        case BAMBOO_SIGN:
+        case BAMBOO_WALL_HANGING_SIGN:
+        case BAMBOO_WALL_SIGN:
+        case BIRCH_HANGING_SIGN:
+        case BIRCH_WALL_HANGING_SIGN:
+        case CHERRY_HANGING_SIGN:
+        case CHERRY_SIGN:
+        case CHERRY_WALL_HANGING_SIGN:
+        case CHERRY_WALL_SIGN:
+        case CRIMSON_HANGING_SIGN:
+        case CRIMSON_WALL_HANGING_SIGN:
+        case DARK_OAK_HANGING_SIGN:
+        case DARK_OAK_WALL_HANGING_SIGN:
+        case JUNGLE_HANGING_SIGN:
+        case JUNGLE_WALL_HANGING_SIGN:
+        case MANGROVE_HANGING_SIGN:
+        case MANGROVE_WALL_HANGING_SIGN:
+        case OAK_HANGING_SIGN:
+        case OAK_WALL_HANGING_SIGN:
+        case SPRUCE_HANGING_SIGN:
+        case SPRUCE_WALL_HANGING_SIGN:
+        case WARPED_HANGING_SIGN:
+        case WARPED_WALL_HANGING_SIGN:
+
             return true;
         default:
             break;
@@ -3085,6 +3184,9 @@ public enum CMIMaterial {
         case WARPED_TRAPDOOR:
 
         case MANGROVE_TRAPDOOR:
+
+        case BAMBOO_TRAPDOOR:
+        case CHERRY_TRAPDOOR:
             return true;
         default:
             break;
@@ -3110,6 +3212,8 @@ public enum CMIMaterial {
         case DRAGON_HEAD:
         case ZOMBIE_HEAD:
         case LEGACY_SKULL:
+
+        case PIGLIN_HEAD:
             return true;
         default:
             break;
@@ -3257,6 +3361,11 @@ public enum CMIMaterial {
 
         case MANGROVE_SLAB:
         case MUD_BRICK_SLAB:
+
+            //1.20
+        case BAMBOO_MOSAIC_SLAB:
+        case BAMBOO_SLAB:
+        case CHERRY_SLAB:
             return true;
         default:
             break;
