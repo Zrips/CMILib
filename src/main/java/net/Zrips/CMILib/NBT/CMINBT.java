@@ -32,6 +32,7 @@ public class CMINBT {
     private static Method met_getDouble;
     private static Method met_getByteArray;
     private static Method met_getIntArray;
+    private static Method met_getLongArray;
     private static Method met_getList;
     private static Method met_get;
     private static Method met_remove;
@@ -47,6 +48,8 @@ public class CMINBT {
     private static Method met_setInt;
     private static Method met_setLong;
     private static Method met_setIntArray;
+    private static Method met_setByteArray;
+    private static Method met_setLongArray;
     private static Method met_set;
     private static Method met_add;
     private static Class<?> CraftItemStack;
@@ -68,6 +71,7 @@ public class CMINBT {
     private static String getListName = "getList";
     private static String getByteArrayName = "getByteArray";
     private static String getIntArrayName = "getIntArray";
+    private static String getLongArrayName = "getLongArray";
 
     private static String listGetName = "get";
 
@@ -79,6 +83,8 @@ public class CMINBT {
     private static String setLongName = "setLong";
     private static String setDoubleName = "setDouble";
     private static String setIntArrayName = "setIntArray";
+    private static String setByteArrayName = "setByteArray";
+    private static String setLongArrayName = "setLongArray";
 
     private static String setName = "set";
     private static String getName = "get";
@@ -152,6 +158,7 @@ public class CMINBT {
             getListName = "c";
             getByteArrayName = "m";
             getIntArrayName = "n";
+            getLongArrayName = "o";
 
             setBooleanName = "a";
             setByteName = "a";
@@ -161,6 +168,8 @@ public class CMINBT {
             setLongName = "a";
             setDoubleName = "a";
             setIntArrayName = "a";
+            setByteArrayName = "a";
+            setLongArrayName = "a";
 
             listGetName = "k";
 
@@ -229,6 +238,7 @@ public class CMINBT {
 
             met_getByteArray = nbtTagCompound.getMethod(getByteArrayName, String.class);
             met_getIntArray = nbtTagCompound.getMethod(getIntArrayName, String.class);
+            met_getLongArray = nbtTagCompound.getMethod(getLongArrayName, String.class);
 
             met_get = nbtTagCompound.getMethod(getName, String.class);
             met_remove = nbtTagCompound.getMethod(removeName, String.class);
@@ -246,6 +256,13 @@ public class CMINBT {
             met_setDouble = nbtTagCompound.getMethod(setDoubleName, String.class, double.class);
 
             met_setIntArray = nbtTagCompound.getMethod(setIntArrayName, String.class, int[].class);
+
+            try {
+                met_setByteArray = nbtTagCompound.getMethod(setByteArrayName, String.class, byte[].class);
+                met_setLongArray = nbtTagCompound.getMethod(setLongArrayName, String.class, long[].class);
+            } catch (Throwable ex) {
+                ex.printStackTrace();
+            }
 
             met_set = nbtTagCompound.getMethod(setName, String.class, NBTBase);
 
@@ -330,7 +347,6 @@ public class CMINBT {
         if (!this.hasNBT(path))
             return null;
         try {
-            CMIDebug.d("get byte");
             return (Byte) met_getByte.invoke(tag, path);
         } catch (Exception e) {
             e.printStackTrace();
@@ -407,6 +423,16 @@ public class CMINBT {
         } catch (Exception e) {
         }
         return new int[0];
+    }
+    
+    public long[] getLongArray(String path) {
+        if (!this.hasNBT(path))
+            return new long[0];
+        try {
+            return (long[]) met_getLongArray.invoke(tag, path);
+        } catch (Exception e) {
+        }
+        return new long[0];
     }
 
     public String getString(String path) {
@@ -710,6 +736,60 @@ public class CMINBT {
                 met_remove.invoke(tag, path);
             } else {
                 met_setIntArray.invoke(tag, path, value);
+            }
+        } catch (Throwable e) {
+            if (Version.isCurrentEqualOrHigher(Version.v1_7_R4))
+                e.printStackTrace();
+            return object;
+        }
+        switch (type) {
+        case custom:
+            return tag;
+        case block:
+            break;
+        case entity:
+            break;
+        case item:
+            return setTag((ItemStack) object, tag);
+        default:
+            break;
+        }
+        return object;
+    }
+
+    public Object setByteArray(String path, byte[] value) {
+        try {
+            if (value == null) {
+                met_remove.invoke(tag, path);
+            } else {
+                met_setByteArray.invoke(tag, path, value);
+            }
+        } catch (Throwable e) {
+            if (Version.isCurrentEqualOrHigher(Version.v1_7_R4))
+                e.printStackTrace();
+            return object;
+        }
+        switch (type) {
+        case custom:
+            return tag;
+        case block:
+            break;
+        case entity:
+            break;
+        case item:
+            return setTag((ItemStack) object, tag);
+        default:
+            break;
+        }
+        return object;
+    }
+
+    public Object setLongArray(String path, long[] value) {
+        try {
+            if (value == null) {
+                met_remove.invoke(tag, path);
+            } else {
+                met_setLongArray.invoke(tag, path, value);
             }
         } catch (Throwable e) {
             if (Version.isCurrentEqualOrHigher(Version.v1_7_R4))

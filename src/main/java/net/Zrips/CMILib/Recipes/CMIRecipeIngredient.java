@@ -37,7 +37,6 @@ public class CMIRecipeIngredient {
     }
 
     public Object generateChoice() {
-        CMIDebug.d(choice);
 	if (choice.equals(CMIRecipeChoice.byMaterial)) {
 	    return new org.bukkit.inventory.RecipeChoice.MaterialChoice(item.getType());
 	}
