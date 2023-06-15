@@ -116,8 +116,9 @@ public class CMIChatColor {
 
     public static final String hexColorRegex = "(\\" + colorCodePrefix + ")([0-9A-Fa-f]{6}|[0-9A-Fa-f]{3})(\\" + colorCodeSuffix + ")";
 
-    public static final String cleanHexColorRegex = "(?<!\\{|:\")#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})";
-    public static final Pattern cleanHexColorRegexPattern = Pattern.compile(cleanHexColorRegex);
+    public static final Pattern cleanOfficialColorRegexPattern = Pattern.compile("(?<!\\{|:\"|" + colorReplacerPlaceholder + ")#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})");
+
+    public static final Pattern cleanQuirkyHexColorRegexPattern = Pattern.compile("&#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})");
 
     public static final Pattern hexColorRegexPattern = Pattern.compile(hexColorRegex);
     public static final Pattern hexColorRegexPatternLast = Pattern.compile(hexColorRegex + "(?!.*\\{#)");
@@ -331,9 +332,38 @@ public class CMIChatColor {
             }
         }
 
-        if (CMILibConfig.AcceptSimplifiedHex && text.contains(hexSymbol)) {
-            Matcher match = cleanHexColorRegexPattern.matcher(text);
+        if (CMILibConfig.QuirkyHex && text.contains("&" + hexSymbol)) {
+            Matcher match = cleanQuirkyHexColorRegexPattern.matcher(text);
             while (match.find()) {
+                String string = match.group();
+                if (Version.isCurrentLower(Version.v1_16_R1)) {
+                    String copy = string;
+                    copy = copy.substring(2, copy.length());
+                    if (copy.length() == 3) {
+                        StringBuilder sb = new StringBuilder();
+                        for (int i = 0; i < copy.length(); i++)
+                            sb.append(copy.charAt(i) + "" + copy.charAt(i));
+                        copy = sb.toString();
+                    }
+                    copy = getClosestVanilla(copy);
+                    text = text.replace(string, copy);
+                } else {
+                    StringBuilder magic = new StringBuilder("§x");
+                    String shorten = string.substring(2, string.length());
+                    for (char c : shorten.toCharArray()) {
+                        magic.append('§').append(c);
+                        if (shorten.length() == 3)
+                            magic.append('§').append(c);
+                    }
+                    text = text.replace(string, magic.toString());
+                }
+            }
+        }
+
+        if (CMILibConfig.OfficialHex && text.contains(hexSymbol)) {
+            Matcher match = cleanOfficialColorRegexPattern.matcher(text);
+            while (match.find()) {
+                CMIDebug.d(text);
                 String string = match.group();
                 if (Version.isCurrentLower(Version.v1_16_R1)) {
                     String copy = string;

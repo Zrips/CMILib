@@ -45,7 +45,8 @@ public class CMILibConfig {
     public static boolean CommandSorting = true;
     public static boolean isSimilarCommandPrevention = false;
     public static boolean rmcConsoleLog = true;
-    public static boolean AcceptSimplifiedHex = true;
+    public static boolean OfficialHex = true;
+    public static boolean QuirkyHex = true;
     public static List<String> mysterySpawners;
 
     private CMIItemStack GUIEmptyField = null;
@@ -161,9 +162,13 @@ public class CMILibConfig {
         cfg.addComment("Images.EmptyFiller", "Symbol to be used to fill in empty image fields", "Color codes are supported here");
         CMIImage.imageEmptyFiller = CMIChatColor.translate(cfg.get("Images.EmptyFiller", "&7_|"));
 
-        cfg.addComment("Colors.AcceptSimplifiedHex", "When enabled plugin will try to detect simplified hex color codes like #f6f6f6 or #ff6 in adition to {#f6f6f6} and {#red}",
+        cfg.addComment("Colors.OfficialHex", "When enabled plugin will try to detect simplified hex color codes like #f6f6f6 or #ff6 in adition to {#f6f6f6} and {#red}",
             "Keep in mind that this adds extra checks and simplified format will not support gradients or named colors so you will still need to use more complex format for those");
-        AcceptSimplifiedHex = cfg.get("Colors.AcceptSimplifiedHex", false);
+        OfficialHex = cfg.get("Colors.OfficialHex", false);
+        
+        cfg.addComment("Colors.QuirkyHex", "When enabled plugin will try to detect quirky hex color codes like &#f6f6f6 or &#ff6 in adition to {#f6f6f6} and {#red}",
+            "Keep in mind that this adds extra checks and quirky format will not support gradients or named colors so you will still need to use more complex format for those");
+        QuirkyHex = cfg.get("Colors.QuirkyHex", false);
 
         cfg.save();
         return true;
