@@ -145,6 +145,11 @@ public class CMINBT {
             }
         }
 
+        
+        if (Version.isCurrentEqualOrHigher(Version.v1_16_R1)) {
+            setLongArrayName = "a";
+        }
+        
         if (Version.isCurrentEqualOrHigher(Version.v1_18_R1)) {
             getStringName = "l";
             setTagName = "c";
