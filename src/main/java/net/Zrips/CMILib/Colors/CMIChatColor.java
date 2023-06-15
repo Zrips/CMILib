@@ -17,6 +17,8 @@ import java.util.regex.Pattern;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 
+import net.Zrips.CMILib.CMILibConfig;
+import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Version.Version;
 
 public class CMIChatColor {
@@ -53,10 +55,13 @@ public class CMIChatColor {
     }
 
     public static final String colorReplacerPlaceholder = "\uFF06";
-    public static final String colorHexReplacerPlaceholder = "{" + colorReplacerPlaceholder + "#";
+
+    public static final String hexSymbol = "#";
+
+    public static final String colorHexReplacerPlaceholder = "{" + colorReplacerPlaceholder + hexSymbol;
 
     public static final String colorFontPrefix = "{@";
-    public static final String colorCodePrefix = "{#";
+    public static final String colorCodePrefix = "{" + hexSymbol;
     public static final String colorCodeSuffix = "}";
 
     private static String charEscape(String s) {
@@ -110,11 +115,15 @@ public class CMIChatColor {
     }
 
     public static final String hexColorRegex = "(\\" + colorCodePrefix + ")([0-9A-Fa-f]{6}|[0-9A-Fa-f]{3})(\\" + colorCodeSuffix + ")";
-    public static final Pattern hexColorRegexPattern = Pattern.compile(CMIChatColor.hexColorRegex);
-    public static final Pattern hexColorRegexPatternLast = Pattern.compile(CMIChatColor.hexColorRegex + "(?!.*\\{#)");
+
+    public static final String cleanHexColorRegex = "(?<!\\{|:\")#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})";
+    public static final Pattern cleanHexColorRegexPattern = Pattern.compile(cleanHexColorRegex);
+
+    public static final Pattern hexColorRegexPattern = Pattern.compile(hexColorRegex);
+    public static final Pattern hexColorRegexPatternLast = Pattern.compile(hexColorRegex + "(?!.*\\{#)");
     public static final Pattern hexDeColorNamePattern = Pattern.compile("((&|§)x)(((&|§)[0-9A-Fa-f]){6})");
     public static final String ColorNameRegex = "(\\" + colorCodePrefix + ")([a-zA-Z_]{3,})(\\" + colorCodeSuffix + ")";
-    public static final Pattern hexColorNamePattern = Pattern.compile(CMIChatColor.ColorNameRegex);
+    public static final Pattern hexColorNamePattern = Pattern.compile(ColorNameRegex);
     public static final Pattern hexColorNamePatternLast = Pattern.compile(ColorNameRegex + "(?!.*\\{#)");
 
     public static final String ColorFontRegex = "(\\" + colorFontPrefix + ")([a-zA-Z_]{3,})(\\" + colorCodeSuffix + ")";
@@ -123,12 +132,9 @@ public class CMIChatColor {
 
     public static final String hexColorDecolRegex = "(&x)(&[0-9A-Fa-f]){6}";
 
-    public static final Pattern postGradientPattern = Pattern.compile("(" + CMIChatColor.hexColorRegex + "|" + CMIChatColor.ColorNameRegex + ")" + "(.)" + "(" + CMIChatColor.hexColorRegex + "|"
-        + CMIChatColor.ColorNameRegex + ")");
-    public static final Pattern post2GradientPattern = Pattern.compile("(" + CMIChatColor.hexColorRegex + "|" + CMIChatColor.ColorNameRegex + ")" + "(.)" + "((" + CMIChatColor.hexColorRegex + "|"
-        + CMIChatColor.ColorNameRegex + ")" + "(.))+");
-    public static final Pattern fullPattern = Pattern.compile("(&[0123456789abcdefklmnorABCDEFKLMNOR])|" + CMIChatColor.hexColorRegex + "|" + CMIChatColor.ColorNameRegex + "|"
-        + CMIChatColor.ColorFontRegex);
+    public static final Pattern postGradientPattern = Pattern.compile("(" + hexColorRegex + "|" + ColorNameRegex + ")" + "(.)" + "(" + hexColorRegex + "|" + ColorNameRegex + ")");
+    public static final Pattern post2GradientPattern = Pattern.compile("(" + hexColorRegex + "|" + ColorNameRegex + ")" + "(.)" + "((" + hexColorRegex + "|" + ColorNameRegex + ")" + "(.))+");
+    public static final Pattern fullPattern = Pattern.compile("(&[0123456789abcdefklmnorABCDEFKLMNOR])|" + hexColorRegex + "|" + ColorNameRegex + "|" + ColorFontRegex);
 
     public static final Pattern formatPattern = Pattern.compile("(&[klmnorKLMNOR])");
 
@@ -286,7 +292,6 @@ public class CMIChatColor {
             Matcher match = hexColorRegexPattern.matcher(text);
             while (match.find()) {
                 String string = match.group();
-
                 if (Version.isCurrentLower(Version.v1_16_R1)) {
 
                     String copy = string;
@@ -323,6 +328,34 @@ public class CMIChatColor {
                     magic.append('§').append(c);
                 }
                 text = text.replace(nameMatch.group(), magic.toString());
+            }
+        }
+
+        if (CMILibConfig.AcceptSimplifiedHex && text.contains(hexSymbol)) {
+            Matcher match = cleanHexColorRegexPattern.matcher(text);
+            while (match.find()) {
+                String string = match.group();
+                if (Version.isCurrentLower(Version.v1_16_R1)) {
+                    String copy = string;
+                    copy = copy.substring(1, copy.length());
+                    if (copy.length() == 3) {
+                        StringBuilder sb = new StringBuilder();
+                        for (int i = 0; i < copy.length(); i++)
+                            sb.append(copy.charAt(i) + "" + copy.charAt(i));
+                        copy = sb.toString();
+                    }
+                    copy = getClosestVanilla(copy);
+                    text = text.replace(string, copy);
+                } else {
+                    StringBuilder magic = new StringBuilder("§x");
+                    String shorten = string.substring(1, string.length());
+                    for (char c : shorten.toCharArray()) {
+                        magic.append('§').append(c);
+                        if (shorten.length() == 3)
+                            magic.append('§').append(c);
+                    }
+                    text = text.replace(string, magic.toString());
+                }
             }
         }
 
