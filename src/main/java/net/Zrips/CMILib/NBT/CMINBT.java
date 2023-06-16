@@ -145,11 +145,10 @@ public class CMINBT {
             }
         }
 
-        
         if (Version.isCurrentEqualOrHigher(Version.v1_16_R1)) {
             setLongArrayName = "a";
         }
-        
+
         if (Version.isCurrentEqualOrHigher(Version.v1_18_R1)) {
             getStringName = "l";
             setTagName = "c";
@@ -243,7 +242,10 @@ public class CMINBT {
 
             met_getByteArray = nbtTagCompound.getMethod(getByteArrayName, String.class);
             met_getIntArray = nbtTagCompound.getMethod(getIntArrayName, String.class);
-            met_getLongArray = nbtTagCompound.getMethod(getLongArrayName, String.class);
+
+            if (Version.isCurrentEqualOrHigher(Version.v1_13_R1)) {
+                met_getLongArray = nbtTagCompound.getMethod(getLongArrayName, String.class);
+            }
 
             met_get = nbtTagCompound.getMethod(getName, String.class);
             met_remove = nbtTagCompound.getMethod(removeName, String.class);
@@ -429,10 +431,16 @@ public class CMINBT {
         }
         return new int[0];
     }
-    
+
     public long[] getLongArray(String path) {
         if (!this.hasNBT(path))
             return new long[0];
+        
+        
+        if (!Version.isCurrentEqualOrHigher(Version.v1_14_R1)) {            
+            return new long[0];
+        }
+        
         try {
             return (long[]) met_getLongArray.invoke(tag, path);
         } catch (Exception e) {

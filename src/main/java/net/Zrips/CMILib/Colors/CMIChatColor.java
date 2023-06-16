@@ -363,7 +363,6 @@ public class CMIChatColor {
         if (CMILibConfig.OfficialHex && text.contains(hexSymbol)) {
             Matcher match = cleanOfficialColorRegexPattern.matcher(text);
             while (match.find()) {
-                CMIDebug.d(text);
                 String string = match.group();
                 if (Version.isCurrentLower(Version.v1_16_R1)) {
                     String copy = string;
