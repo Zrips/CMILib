@@ -84,7 +84,7 @@ public class CMINBT {
     private static String setDoubleName = "setDouble";
     private static String setIntArrayName = "setIntArray";
     private static String setByteArrayName = "setByteArray";
-    private static String setLongArrayName = "setLongArray";
+    private static String setLongArrayName = "a";
 
     private static String setName = "set";
     private static String getName = "get";
@@ -145,10 +145,6 @@ public class CMINBT {
             }
         }
 
-        if (Version.isCurrentEqualOrHigher(Version.v1_16_R1)) {
-            setLongArrayName = "a";
-        }
-
         if (Version.isCurrentEqualOrHigher(Version.v1_18_R1)) {
             getStringName = "l";
             setTagName = "c";
@@ -173,7 +169,6 @@ public class CMINBT {
             setDoubleName = "a";
             setIntArrayName = "a";
             setByteArrayName = "a";
-            setLongArrayName = "a";
 
             listGetName = "k";
 
@@ -266,7 +261,8 @@ public class CMINBT {
 
             try {
                 met_setByteArray = nbtTagCompound.getMethod(setByteArrayName, String.class, byte[].class);
-                met_setLongArray = nbtTagCompound.getMethod(setLongArrayName, String.class, long[].class);
+                if (Version.isCurrentEqualOrHigher(Version.v1_13_R1))
+                    met_setLongArray = nbtTagCompound.getMethod(setLongArrayName, String.class, long[].class);
             } catch (Throwable ex) {
                 ex.printStackTrace();
             }
@@ -435,12 +431,11 @@ public class CMINBT {
     public long[] getLongArray(String path) {
         if (!this.hasNBT(path))
             return new long[0];
-        
-        
-        if (!Version.isCurrentEqualOrHigher(Version.v1_14_R1)) {            
+
+        if (!Version.isCurrentEqualOrHigher(Version.v1_13_R1)) {
             return new long[0];
         }
-        
+
         try {
             return (long[]) met_getLongArray.invoke(tag, path);
         } catch (Exception e) {
