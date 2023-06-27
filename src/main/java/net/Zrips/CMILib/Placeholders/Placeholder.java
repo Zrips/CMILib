@@ -248,6 +248,10 @@ public class Placeholder {
         CMI, PAPI, MVdW;
     }
 
+    private void reportIssue() {
+        CMIMessages.consoleMessage("&cPlaceholder got blocked due to security concerns (%checkitem%)");
+    }
+
     public CMIPlaceholderType getPlaceHolderType(Player player, String placeholder) {
         if (placeholder == null)
             return null;
@@ -262,8 +266,12 @@ public class Placeholder {
         if (plugin.isPlaceholderAPIEnabled()) {
             try {
                 if (placeholder.contains("%"))
-                    if (!placeholder.equals(me.clip.placeholderapi.PlaceholderAPI.setPlaceholders(player, placeholder)))
-                        return CMIPlaceholderType.PAPI;
+                    if (!placeholder.toLowerCase().contains("%checkitem")) {
+                        if (!placeholder.equals(me.clip.placeholderapi.PlaceholderAPI.setPlaceholders(player, placeholder)))
+                            return CMIPlaceholderType.PAPI;
+                    } else {
+                        reportIssue();
+                    }
             } catch (Throwable e) {
 
             }
@@ -285,7 +293,11 @@ public class Placeholder {
             try {
                 if (message.contains("%")) {
                     Player player = Bukkit.getPlayer(uuid);
-                    message = me.clip.placeholderapi.PlaceholderAPI.setPlaceholders(player, message);
+                    if (!message.toLowerCase().contains("%checkitem")) {
+                        message = me.clip.placeholderapi.PlaceholderAPI.setPlaceholders(player, message);
+                    } else {
+                        reportIssue();
+                    }
                 }
             } catch (Exception e) {
 
@@ -341,7 +353,11 @@ public class Placeholder {
         if (plugin.isPlaceholderAPIEnabled()) {
             try {
                 if (message.contains("%")) {
-                    message = me.clip.placeholderapi.PlaceholderAPI.setPlaceholders(player, message);
+                    if (!message.toLowerCase().contains("%checkitem")) {
+                        message = me.clip.placeholderapi.PlaceholderAPI.setPlaceholders(player, message);
+                    } else {
+                        reportIssue();
+                    }
                 }
             } catch (Throwable e) {
             }
@@ -370,7 +386,7 @@ public class Placeholder {
     }
 
     private String matchInception(UUID uuid, String message, int depth) {
-        
+
         if (message.contains("{")) {
             Matcher match = placeholderPatern2.matcher(message);
             int i = 0;
@@ -391,11 +407,15 @@ public class Placeholder {
                                 String group = match.group();
 
                                 if (!group.startsWith(CMIChatColor.colorCodePrefix)) {
-                                    String with = me.clip.placeholderapi.PlaceholderAPI.setPlaceholders(player, "%" + cmd + "%");
-                                    if (with == null)
-                                        with = "";
-                                    if (!with.equalsIgnoreCase("%" + cmd + "%")) {
-                                        message = message.replaceFirst(Pattern.quote(group), Matcher.quoteReplacement(with));
+                                    if (!cmd.toLowerCase().contains("checkitem")) {
+                                        String with = me.clip.placeholderapi.PlaceholderAPI.setPlaceholders(player, "%" + cmd + "%");
+                                        if (with == null)
+                                            with = "";
+                                        if (!with.equalsIgnoreCase("%" + cmd + "%")) {
+                                            message = message.replaceFirst(Pattern.quote(group), Matcher.quoteReplacement(with));
+                                        }
+                                    } else {
+                                        reportIssue();
                                     }
                                 }
                             } catch (Exception e) {
@@ -422,9 +442,9 @@ public class Placeholder {
             return null;
 
         if (CMILib.getInstance().isCmiPresent()) {
-            message = com.Zrips.CMI.CMI.getInstance().getPlaceholderAPIManager().translateOwnPlaceHolder(uuid, message); 
+            message = com.Zrips.CMI.CMI.getInstance().getPlaceholderAPIManager().translateOwnPlaceHolder(uuid, message);
         }
-        
+
         if (message.contains("{")) {
 
             // Duplicated code

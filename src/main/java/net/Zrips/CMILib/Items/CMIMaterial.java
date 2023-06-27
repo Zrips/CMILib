@@ -3068,56 +3068,59 @@ public enum CMIMaterial {
 
         case ACACIA_SIGN:
         case ACACIA_WALL_SIGN:
+        case ACACIA_HANGING_SIGN:
+        case ACACIA_WALL_HANGING_SIGN:
 
         case BIRCH_SIGN:
         case BIRCH_WALL_SIGN:
+        case BIRCH_HANGING_SIGN:
+        case BIRCH_WALL_HANGING_SIGN:
 
         case DARK_OAK_SIGN:
         case DARK_OAK_WALL_SIGN:
+        case DARK_OAK_HANGING_SIGN:
+        case DARK_OAK_WALL_HANGING_SIGN:
 
         case JUNGLE_SIGN:
         case JUNGLE_WALL_SIGN:
+        case JUNGLE_HANGING_SIGN:
+        case JUNGLE_WALL_HANGING_SIGN:
 
         case OAK_SIGN:
         case OAK_WALL_SIGN:
+        case OAK_HANGING_SIGN:
+        case OAK_WALL_HANGING_SIGN:
 
         case SPRUCE_SIGN:
         case SPRUCE_WALL_SIGN:
+        case SPRUCE_HANGING_SIGN:
+        case SPRUCE_WALL_HANGING_SIGN:
 
         case CRIMSON_SIGN:
         case CRIMSON_WALL_SIGN:
+        case CRIMSON_HANGING_SIGN:
+        case CRIMSON_WALL_HANGING_SIGN:
 
         case WARPED_SIGN:
         case WARPED_WALL_SIGN:
-
-        case MANGROVE_SIGN:
-
-        case ACACIA_HANGING_SIGN:
-        case ACACIA_WALL_HANGING_SIGN:
-        case BAMBOO_SIGN:
-        case BAMBOO_WALL_HANGING_SIGN:
-        case BAMBOO_WALL_SIGN:
-        case BIRCH_HANGING_SIGN:
-        case BIRCH_WALL_HANGING_SIGN:
-        case CHERRY_HANGING_SIGN:
-        case CHERRY_SIGN:
-        case CHERRY_WALL_HANGING_SIGN:
-        case CHERRY_WALL_SIGN:
-        case CRIMSON_HANGING_SIGN:
-        case CRIMSON_WALL_HANGING_SIGN:
-        case DARK_OAK_HANGING_SIGN:
-        case DARK_OAK_WALL_HANGING_SIGN:
-        case JUNGLE_HANGING_SIGN:
-        case JUNGLE_WALL_HANGING_SIGN:
-        case MANGROVE_HANGING_SIGN:
-        case MANGROVE_WALL_HANGING_SIGN:
-        case OAK_HANGING_SIGN:
-        case OAK_WALL_HANGING_SIGN:
-        case SPRUCE_HANGING_SIGN:
-        case SPRUCE_WALL_HANGING_SIGN:
         case WARPED_HANGING_SIGN:
         case WARPED_WALL_HANGING_SIGN:
 
+        case MANGROVE_SIGN:
+        case MANGROVE_WALL_SIGN:
+        case MANGROVE_HANGING_SIGN:
+        case MANGROVE_WALL_HANGING_SIGN:
+
+        case BAMBOO_SIGN:
+        case BAMBOO_WALL_SIGN:
+        case BAMBOO_HANGING_SIGN:
+        case BAMBOO_WALL_HANGING_SIGN:
+
+        case CHERRY_SIGN:
+        case CHERRY_WALL_SIGN:
+        case CHERRY_HANGING_SIGN:
+        case CHERRY_WALL_HANGING_SIGN:
+            
             return true;
         default:
             break;
