@@ -4,8 +4,7 @@ author: Zrips
 version: ${project.version}
 api-version: 1.13
 description: CMI library
-loadbefore: [CMI]
-softdepend: [CMI, Multiverse-Core, AdvancedMobArena, WorldEdit, WorldGuard, Vault, PermissionsEx, PowerfulPerms, bPermissions, GroupManagerX, zPermissions, LuckPerms, PlaceholderAPI, MultiWorld, My_Worlds, TheWorld, MVdWPlaceholderAPI, Citizens, ReWorld, BentoBox, Multiverse, JetsMinions, Slimefun, NoCheatPlus, PlayerWorlsPro]
+softdepend: [PlaceholderAPI, MVdWPlaceholderAPI]
 website: https://www.spigotmc.org/resources/cmilib.87610/
 commands:
   cmil:

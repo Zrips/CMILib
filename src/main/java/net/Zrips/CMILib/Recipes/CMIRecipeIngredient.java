@@ -2,6 +2,8 @@ package net.Zrips.CMILib.Recipes;
 
 import org.bukkit.inventory.ItemStack;
 
+import net.Zrips.CMILib.Logs.CMIDebug;
+
 public class CMIRecipeIngredient {
 
     private CMIRecipeChoice choice = CMIRecipeChoice.byMaterial;

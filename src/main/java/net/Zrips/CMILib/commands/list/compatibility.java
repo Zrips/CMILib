@@ -4,15 +4,22 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import com.Zrips.CMI.CMI;
+
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Reflections;
+import net.Zrips.CMILib.ActionBar.CMIActionBar;
+import net.Zrips.CMILib.Advancements.AdvancementManager;
+import net.Zrips.CMILib.Advancements.AdvancementManager.FrameType;
+import net.Zrips.CMILib.BossBar.BossBarInfo;
 import net.Zrips.CMILib.Container.CMICommandSender;
 import net.Zrips.CMILib.Container.CMIServerProperties;
 import net.Zrips.CMILib.FileHandler.ConfigReader;
 import net.Zrips.CMILib.Items.CMIMaterial;
-import net.Zrips.CMILib.Logs.CMIDebug;
+import net.Zrips.CMILib.Messages.CMIMessages;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.RawMessages.RawMessage;
+import net.Zrips.CMILib.TitleMessages.CMITitleMessage;
 import net.Zrips.CMILib.commands.CAnnotation;
 import net.Zrips.CMILib.commands.Cmd;
 
@@ -25,57 +32,82 @@ public class compatibility implements Cmd {
     @CAnnotation(info = "&eTest compatibility", regVar = { 0 }, consoleVar = { -666 }, hidden = true)
     public Boolean perform(CMILib plugin, CMICommandSender sender, String[] args) {
 
-	Reflections ref = plugin.getReflectionManager();
+        Reflections ref = plugin.getReflectionManager();
 
-	RawMessage raw = new RawMessage();
-	raw.addText("test");
-	ref.textToIChatBaseComponent(raw.getRaw());
+        RawMessage raw = new RawMessage();
+        raw.addText("test");
+        ref.textToIChatBaseComponent(raw.getRaw());
 
-	ref.getCurrentTick();
+        ref.getCurrentTick();
 
-	// Not working on 1.18
+        // Not working on 1.18
 //	ref.getItemInfo(1, "strength");
 
-	ref.setServerProperties(CMIServerProperties.motd, Bukkit.getServer().getMotd(), true);
+        ref.setServerProperties(CMIServerProperties.motd, Bukkit.getServer().getMotd(), true);
 
-	CMINBT.isNBTSimilar(CMIMaterial.STONE.newItemStack(), CMIMaterial.STONE.newItemStack());
+        CMINBT.isNBTSimilar(CMIMaterial.STONE.newItemStack(), CMIMaterial.STONE.newItemStack());
 
-	CMINBT.HideFlag(CMIMaterial.STONE.newItemStack(), 2);
-	Player player = Bukkit.getOnlinePlayers().iterator().next();
-	ref.getProfile(player);
-	ref.getCraftPlayer(player);
-	ref.getPlayerHandle(player);
-	ref.getPlayerConnection(player);
-	ref.getTileEntityAt(player.getLocation().clone().add(0, -1, 0));
+        CMINBT.HideFlag(CMIMaterial.STONE.newItemStack(), 2);
 
-	CMINBT.toJson(CMIMaterial.STONE.newItemStack());
+        Player player = Bukkit.getOnlinePlayers().iterator().next();
+        ref.getProfile(player);
+        ref.getCraftPlayer(player);
+        ref.getPlayerHandle(player);
+        ref.getPlayerConnection(player);
+        ref.getTileEntityAt(player.getLocation().clone().add(0, -1, 0));
 
-	CMINBT nbt = new CMINBT(CMIMaterial.DIAMOND_SWORD.newItemStack());
+        CMINBT.toJson(CMIMaterial.STONE.newItemStack());
 
-	nbt.setBoolean("boolTest", true);
-	nbt.getBoolean("boolTest");
+        CMINBT nbt = new CMINBT(CMIMaterial.DIAMOND_SWORD.newItemStack());
 
-	nbt.setByte("byteTest", (byte) 1);
-	nbt.getByte("byteTest");
+        nbt.setBoolean("boolTest", true);
+        if (!nbt.getBoolean("boolTest"))
+            CMIMessages.consoleMessage("Error boolTest");
 
-	nbt.setInt("intTest", 1);
-	nbt.getInt("intTest");
+        nbt.setByte("byteTest", (byte) 1);
+        if (nbt.getByte("byteTest") != 1)
+            CMIMessages.consoleMessage("Error byteTest");
 
-	nbt.setLong("longTest", 1L);
-	nbt.getLong("longTest");
+        nbt.setInt("intTest", 1);
+        if (nbt.getInt("intTest") != 1)
+            CMIMessages.consoleMessage("Error intTest");
 
-	nbt.setShort("shortTest", (short) 1);
-	nbt.getShort("shortTest");
+        nbt.setLong("longTest", 1L);
+        if (nbt.getLong("longTest") != 1)
+            CMIMessages.consoleMessage("Error longTest");
 
-	ItemStack item = (ItemStack) nbt.setString("stringTest", "test");
-	nbt.getString("stringTest");
-	
-	nbt.getKeys();
-	
-	// Check this
-	// ref.setSkullTexture(item, customProfileName, texture)	
-	// ref.updateTileEntity(loadValue, tag);
+        nbt.setShort("shortTest", (short) 1);
+        if (nbt.getShort("shortTest") != 1)
+            CMIMessages.consoleMessage("Error shortTest");
 
-	return true;
+        ItemStack item = (ItemStack) nbt.setString("stringTest", "test");
+        if (!nbt.getString("stringTest").equals("test"))
+            CMIMessages.consoleMessage("Error stringTest");
+
+        
+        CMINBT blockNBT = new CMINBT(player.getLocation().clone().add(0, -1, 0).getBlock());
+        
+        CMINBT entityNBT = new CMINBT(player);
+                
+        nbt.getKeys();
+
+        AdvancementManager.sendToast(player, "Test", CMIMaterial.ACACIA_BOAT.newCMIItemStack(), FrameType.CHALLENGE);
+
+        CMITitleMessage.send(player, "Title", "SubTitle");
+        CMIActionBar.send(player, "Action bar Test");
+
+        try {
+            CMI.getInstance().getReflectionManager().changePlayerLimit(Bukkit.getMaxPlayers());
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+
+        plugin.getBossBarManager().Show(new BossBarInfo(player, "Compatibility"));
+
+        // Check this
+        // ref.setSkullTexture(item, customProfileName, texture)	
+        // ref.updateTileEntity(loadValue, tag);
+
+        return true;
     }
 }
