@@ -57,7 +57,7 @@ info:
   prefix: '&c&lCMI&r &b>> '
   NoPermission: '&cУ вас нет разрешения!'
   CantHavePermission: '&cУ вас нет разрешения на это!'
-  WrongGroup: '&cYou are in wrong group for this!'
+  WrongGroup: '&cВы в неправильной для этого группе!'
   NoPlayerPermission: '&c[playerName] не имеет разрешения: [permission]'
   Ingame: '&cВы можете использовать это только в игре!'
   NoInformation: '&cИнформация не найдена!'
@@ -74,7 +74,7 @@ info:
   NoCommand: '&cКоманды с этим названием не существует!'
   NoCommandWhileSleeping: '&cCan''t perform commands while sleeping!'
   cantFindCommand: '&7Команда &c[%1]&7 не была найдена, возможно вы имели в виду &c[%2]&7?'
-  nolocation: '&4Can''t find suitable location'
+  nolocation: '&4Не удалось найти подходящую местность'
   PurgeNotEnabled: '&cФункция очистки не включена в конфигурации!'
   FeatureNotEnabled: '&cЭта функция не включена!'
   TeamManagementDisabled: '&7Эта функция будет иметь ограниченный функционал, в то
@@ -84,7 +84,7 @@ info:
   bungeeNoGo: '&cЭта функция не будет работать на серверах, связанных с bungee'
   clickToTeleport: '&fНажмите, чтобы телепортироваться'
   UseMaterial: '&cПожалуйста, используйте названия материалов!'
-  IncorrectMaterial: '&4Incorrect material name!'
+  IncorrectMaterial: '&4Некорректное название материала!'
   UseInteger: '&cПожалуйста, используйте числа!'
   UseBoolean: '&cПожалуйста, используйте значения True или False!'
   NoLessThan: '&cЧисло не может быть меньше чем [amount]!'
@@ -98,25 +98,25 @@ info:
   Cooldowns: '&7Эта команда перезаряжается, подождите &c[time]'
   specializedCooldowns: '&7Для этой команды действуют ограничения на использование,
     пожалуйста, подождите &c[time]'
-  specializedRunning: '&eCommand still running, please wait &6[time]'
+  specializedRunning: '&eКоманда всё ещё выполняется, пожалуйста, подождите &6[time]'
   CooldownOneTime: '&cЭту команду можно использовать только один раз!'
   WarmUp:
     canceled: '&cКоманда была отменена из-за вашего движения'
     counter: '!actionbar!&7--> &c[time] &7<--'
     DontMove: '!title!!subtitle!&cНе двигайся!'
     Boss:
-      DontMove: '&4Don''t move for &7[autoTimeLeft] &4seconds!'
-      WaitFor: '&4Wait for &7[autoTimeLeft] &4seconds!'
+      DontMove: '&4Не двигайтесь в течении &7[autoTimeLeft] &4секунд(ы)!'
+      WaitFor: '&4Подождите &7[autoTimeLeft] &4секунд(ы)!'
   Spawner: '&rСпавнер [type]'
-  FailedSpawnerMine: '!actionbar!&cFailed to mine spawner. &7[percent]% &cdrop chance'
-  ClickSpawner: '!actionbar!&7[percent]% &eDrop chance'
+  FailedSpawnerMine: '!actionbar!&cНе удалось добыть спавнер. &7[percent]% &cшанс дропа'
+  ClickSpawner: '!actionbar!&7[percent]% &eшанс дропа'
   Elevator:
     created: '&aТабличка-лифт успешно создана!'
   CantPlaceSpawner: '&7Не удалось разместить спавнер так близко к другому спавнеру.
     Минимальное расстояние: (&c[range]&7)'
   ChunksLoading: '&7Данные чанков мира все еще загружаются. Пожалуйста, подождите
     немного и попробуйте снова.'
-  ShulkerBox: Коробка шалкера
+  ShulkerBox: Шалкер
   CantUseNonEncrypted: '!actionbar!&cКоманды для этого предмета не зашифрованы. Не
     удалось использовать их!'
   CantDecode: '!actionbar!&cНе удалось декодировать сообщение/команду. Файл ключа
@@ -129,15 +129,15 @@ info:
   Save: '&7Сохранить'
   Delete: '&cУдалить'
   Click: '&7Клик'
-  Preview: '&ePreview'
+  Preview: '&eПредпросмотр'
   PasteOld: '&7Вставить старый текст'
   ClickToPaste: '&7Нажмите, чтобы вставить в чат'
   CantTeleportWorld: '&cВы не можете телепортироваться в этот мир'
-  CantTeleportNoWorld: '&cTarget world doesn''t exist. Teleportation canceled'
+  CantTeleportNoWorld: '&cЦель в мире не существует. Телепортация отменена'
   CantTeleport: '&cВы не можете телепортироваться, потому что у вас слишком много
     ограниченных предметов. Прокрутите эту строку, чтобы увидеть максимально допустимое
     количество предметов.'
-  ClickToConfirmDelete: '&eClick to confirm removal of &6[name]'
+  ClickToConfirmDelete: '&eНажмите, чтобы подтвердить удаление &6[name]'
   teleported: '&aВы были телепортированы.'
   BlackList: '&7[material] [amount] &cМаксимум: [max]'
   PlayerSpliter: '&7----- &c[playerDisplayName] &7-----'
@@ -154,20 +154,20 @@ info:
   noItem: '&cНе удалось найти предмет'
   dontHaveItem: '&7У вас нет &c[amount]x [itemName] &7в вашем инвентаре'
   wrongWorld: '&cНе удалось сделать это в этом мире'
-  wrongPortal: '&cYou are in incorrect area of effect'
+  wrongPortal: '&cВы в некорректной территории эффекта'
   differentWorld: '&cРазличные миры'
   HaveItem: '&7У вас есть &c[amount]x [itemName] &7в вашем инвентаре'
   ItemWillBreak: '!actionbar!&7Ваш предмет (&c[itemName]&7) скоро сломается! &7[current]&c/&7[max]'
   ArmorWillBreak: '!actionbar!&7Ваш предмет (&c[itemName]&7) скоро сломается! &7[current]&c/&7[max]'
-  cantDoInGamemode: '&eYou can''t do this in this game mode'
+  cantDoInGamemode: '&eВы не можете сделать этого в данном режиме игры'
   cantDoForPlayer: '&7Вы не можете сделать это игроку &c[playerDisplayName]'
   cantDoForYourSelf: '&7Вы не можете сделать это с собой'
   cantDetermineMobType: '&7Не удалось определить тип моба из &c[type] &7доступных'
   cantRename: '!actionbar!&4&nВы не можете переименовать предмет на это имя!'
-  confirmRedefine: '&eClick to confirm redefining'
-  cantEdit: '&eYou can''t edit this'
+  confirmRedefine: '&eНажмите, чтобы подтвердить переопределение'
+  cantEdit: '&eВы не можете редактировать это'
   wrongName: '&cНеправильное имя'
-  unknown: unknown
+  unknown: Неизвестно
   invalidName: '&cНеверное имя'
   alreadyexist: '&cЭто имя занято'
   dontexist: '&cНичего не найдено под этим именем'
@@ -180,7 +180,7 @@ info:
   sleepersRequired: '!toast! -t:goal -icon:clock &6&lВНИМАНИЕ: &f[sleeping] &7из &f[required]&7
     игроков требуется для ускорения ночного времени!'
   sunSpeedingTitle: '&7[hour]'
-  skippingNight: '!title!&7Skipping entire night'
+  skippingNight: '!title!&7Пропускаем целую ночь'
   sunSpeedingSubTitle: '&f[count]&7/&f[total] &7(&f[speed]X&7)'
   repairConfirm: '&7Нажмите, чтобы подтвердить починку предмета &c[items] &7за &c[cost]'
   bookDate: '&7Написано в &f[date]'
@@ -198,7 +198,7 @@ info:
   lookAtSign: '&7Посмотрите на табличку'
   lookAtBlock: '&7Посмотрите на блок'
   lookAtEntity: '&7Посмотрите на сущность'
-  noSpace: '&eNot enough free space'
+  noSpace: '&eНедостаточно свободного места'
   notOnGround: '&7Вы не можете выполнить это во время полета'
   # This line can have extra variables: [totalUsers] [onlinePlayers]
   FirstJoin: '&7Добро пожаловать &c[playerDisplayName] &7на наш сервер!'
@@ -207,24 +207,24 @@ info:
   deathlocation: '&7Вы умерли на координатах x:&c[x]&7, y:&c[y]&7, z:&c[z]&7 в мире
     &c[world]'
   book:
-    exploit: '&cYou cant create book with more than [amount] pages'
+    exploit: '&cВы не можете создать книгу с более, чем [amount] страниц'
   combat:
-    CantUseShulkerBox: '&cCan''t use shulker box while you are in combat with player.
-      Wait: [time]'
-    CantUseCommand: '!actionbar!&cCan''t use command while in combat mobe. Wait: [time]'
-    bossBarPvp: '&cCombat mode [autoTimeLeft]'
-    bossBarPve: '&2Combat mode [autoTimeLeft]'
+    CantUseShulkerBox: '&cНевозможно использовать шалкер, пока вы в бою с игроком.
+      Подождите: [time]'
+    CantUseCommand: '!actionbar!&cНевозможно использовать команду, пока вы в режиме боя. Подождите: [time]'
+    bossBarPvp: '&cРежим боя [autoTimeLeft]'
+    bossBarPve: '&2Режим боя [autoTimeLeft]'
   bungee:
     Online: '&aОнлайн'
-    Offline: '&cОффлайн'
+    Offline: '&cОфлайн'
     not: '&cСервер не подключен к BungeeCord'
     noserver: '&cНе удалось найти сервер с таким названием!'
     server: '&7Сервер: &c[name]'
   variables:
-    am: '&eAM'
-    pm: '&ePM'
+    am: '&eдо полурдня'
+    pm: '&eпосле полудня'
     Online: '&aОнлайн'
-    Offline: '&cОффлайн'
+    Offline: '&cОфлайн'
     TrueColor: '&2'
     FalseColor: '&4'
     'True': '&aДа'
@@ -243,7 +243,7 @@ info:
     warmup: '&7Эффект тотема: [time]'
     cantConsume: '&7Использование тотема невозможно из-за перезарядки'
   Inventory:
-    FullDrop: '&5Not all items fit in your inventory. They have been dropped on ground'
+    FullDrop: '&5Не все предметы вмещаются в ваш инвентарь. Они были выброшены на землю'
   InventorySave:
     info: '&0Информация: &8[playerDisplayName]'
     saved: '&c[time] &7Инвентарь сохранен с ID: &c[id]'
@@ -277,7 +277,7 @@ info:
   vanishSymbolOff: ''
   afkSymbolOn: '&8[&7AFK&8]&r'
   afkSymbolOff: ''
-  nextPageConsole: '&fFor next page perform &5[command]'
+  nextPageConsole: '&fДля следующей страницы выполнить &5[command]'
   prevPage: '&c[назад]'
   prevPageGui: '&7Предыдущая страница '
   prevPageClean: '&7Предыдущая '
@@ -293,15 +293,15 @@ info:
   pageCount: ' &8&l| &7[current]&8/&7[total] &8&l|'
   pageCountHover: '&7[totalEntries] записей'
   skullOwner: '!actionbar!&7Владелец:&r [playerName]'
-  beeinfo: '!actionbar!&7Honey level: &e[level]&7/&e[maxlevel] &7Bees inside: &e[count]&7/&e[maxcount]'
+  beeinfo: '!actionbar!&7Honey level: &e[level]&7/&e[maxlevel] &7Пчёл внутри: &e[count]&7/&e[maxcount]'
   circle: '&cКруг'
   square: '&5Площадь'
-  clear: '&7Clear'
+  clear: '&7Очистить'
   protectedArea: '&cДанная территория защищена. Не удалось сделать это здесь.'
   valueToLong: '&7Значение слишком высокое. Максимум: [max]'
   valueToShort: '&7Значение слишком низкое. Минимум: [min]'
   pvp:
-    noGodDamage: '!actionbar!&cYou can''t damage players while being immortal'
+    noGodDamage: '!actionbar!&cВы не можете наносить урон игрокам, пока остаётесь бессмертным'
   InvEmpty:
     armor: '&cВаши слоты брони должны быть пустыми!'
     hand: '&cВаша рука должна быть пустой!'
@@ -315,7 +315,7 @@ info:
     subinv: '&cВаш суб инвентарь должен быть пустым!'
     subinvslots: '&7Ваш суб инвентарь должен иметь как минимум &c[count] &7пустых
       слотов!'
-  pickIcon: '&8Pick icon'
+  pickIcon: '&8Выбрать иконку'
   DamageCause:
     block_explosion: Взрыв
     contact: Блокирование повреждений
@@ -532,7 +532,7 @@ info:
     damage_all:
     - Острота
     arrow_fire:
-    - Горящая_стрела
+    - Горящая стрела
     water_worker:
     - Подводник
     arrow_knockback:
@@ -540,9 +540,9 @@ info:
     loyalty:
     - Верность
     depth_strider:
-    - Подводная_ходьба
+    - Подводная ходьба
     vanishing_curse:
-    - Проклятие_утраты
+    - Проклятие утраты
     durability:
     - Прочность
     knockback:
@@ -550,7 +550,7 @@ info:
     luck:
     - Везучий рыбак
     binding_curse:
-    - Проклятие_несъёмности
+    - Проклятие несъёмности
     loot_bonus_blocks:
     - Удача
     protection_environmental:
@@ -566,33 +566,33 @@ info:
     loot_bonus_mobs:
     - Добыча
     piercing:
-    - Пронзающая_стрела
+    - Пронзающая стрела
     protection_explosions:
     - Взрывоустойчивость
     damage_undead:
-    - Небесная_кара
+    - Небесная кара
     multishot:
-    - MULTISHOT
+    - Мультивыстрел
     fire_aspect:
-    - Заговор_огня
+    - Заговор огня
     channeling:
     - Громовержец
     sweeping_edge:
-    - Разящий_клинок
+    - Разящий клинок
     thorns:
     - Шипы
     damage_arthropods:
-    - Бич_членистоногих
+    - Бич членистоногих
     oxygen:
-    - Подводное_дыхание
+    - Подводное дыхание
     riptide:
     - Тягун
     silk_touch:
-    - Шёлковое_касание
+    - Шёлковое касание
     quick_charge:
-    - Быстрая_перезарядка
+    - Быстрая перезарядка
     protection_projectile:
-    - Защита_от_снарядов
+    - Защита от снарядов
     impaling:
     - Пронзатель
     protection_fall:
@@ -607,65 +607,65 @@ info:
     slow:
     - Замедление
     fast_digging:
-    - Fast digging
+    - Спешка
     slow_digging:
-    - Slow digging
+    - Усталость
     increase_damage:
-    - Increase damage
+    - Увеличение урона
     heal:
-    - Heal
+    - Исцеление
     harm:
-    - Harm
+    - Вред
     jump:
-    - Jump
+    - Прыжок
     confusion:
-    - Confusion
+    - Замешательство
     regeneration:
-    - Regeneration
+    - Регенерация
     damage_resistance:
-    - Damage resistance
+    - Сопротивление урону
     fire_resistance:
-    - Fire resistance
+    - Сопротивление огню
     water_breathing:
-    - Water breathing
+    - Подводное дыхание
     invisibility:
-    - Invisibility
+    - Невидимость
     blindness:
-    - Blindness
+    - Слепота
     night_vision:
-    - Night vision
+    - Ночное зрение
     hunger:
-    - Hunger
+    - Голос
     weakness:
-    - Weakness
+    - Слабость
     poison:
-    - Poison
+    - Отравление
     wither:
-    - Wither
+    - Иссушение
     health_boost:
-    - Health boost
+    - Увеличение здоровья
     absorption:
-    - Absorption
+    - Прилив сил
     saturation:
-    - Saturation
+    - Насыщение
     glowing:
-    - Glowing
+    - Свечение
     levitation:
-    - Levitation
+    - Левитация
     luck:
-    - Luck
+    - Удача
     unluck:
-    - Unluck
+    - Неудача
     slow_falling:
-    - Slow falling
+    - Медленное падение
     conduit_power:
-    - Conduit power
+    - Мощность проводника
     dolphins_grace:
-    - Dolphins grace
+    - Грация дельфина
     bad_omen:
-    - Bad omen
+    - Плохой знак
     hero_of_the_village:
-    - Hero of the village
+    - Герой деревни
 direction:
   n: Север
   ne: Северо-Восток
@@ -690,7 +690,7 @@ modify:
   addSymbol: '&a[+]'
   addSymbolHover: '&aДобавить новый'
   cancelSymbol: ' &7&l[X]'
-  cancelSymbolHover: '&aCancel'
+  cancelSymbolHover: '&aОтменить'
   acceptSymbol: ' &a&l[✓]'
   acceptSymbolHover: '&aПринять'
   denySymbol: ' &4&l[✘]'
@@ -711,7 +711,7 @@ modify:
   listNumbering: '&e[number]. '
   listAlign: '&80'
   ChangeHover: '&7Нажмите, чтобы изменить'
-  ChangeCommands: '&eCommands'
+  ChangeCommands: '&eКоманды'
   enabledColor: '&6'
   disabledColor: '&7'
   commandTitle: ' &7--- &c[name] &7---'
@@ -725,7 +725,7 @@ modify:
     живаютсяспециальные команды. Больше информации на \n&7https://www.zrips.net/cmi/commands/specialized/"
   commandEditInfo: '&7Нажмите, чтобы вставить старый текст. Введите &ccancel&7, чтобы
     отменить действие. Введите &cremove&7, чтобы убрать строку'
-  listLimit: '&eList can''t be bigger than &6[amount] &eentries'
+  listLimit: '&eСписок не может иметь более, чем &6[amount] &eзаписей'
   commandEditInfoHover: '&7Нажмите, чтобы вставить старый текст'
 warp:
   list: '&7[pos]. &c[warpName] &f- &7[worldName] ([x]:[y]:[z])'
@@ -773,15 +773,15 @@ econ:
   disabled: '&cНевозможно использовать эту команду, ибо поддержка экономики отключена'
   noMoney: '&cУ вас не достаточно денег'
   charged: '!actionbar!&fCharged: &6[amount]'
-  notEnoughMoney: '&cYou dont have enough money. Required (&6[amount]&c)'
+  notEnoughMoney: '&cУ вас не хватает денег. Требуется: &6[amount]&c'
   tooMuchMoney: '&cУ вас слишком много денег'
-  commandCost: '&7This command cost is &6[cost] &7repeat it or click here to confirm'
+  commandCost: '&7Стоимость данной команды - &6[cost]. &7Повторите выполнение или нажмите здесь, чтобы подтвердить'
 Elytra:
   Speed: '&7Скорость: &c[speed]&7км/ч'
   SpeedBoost: ' &a+ '
   SpeedSuperBoost: ' &a+ '
   CanUse: '&cУ вас нет разрешения, чтобы одеть элитры!'
-  CantGlide: '&cCan''t use elytra here!'
+  CantGlide: '&cЗдесь невозможно использовать элитры!'
   Charging: '&7Заряд: &c[percentage]%'
 Selection:
   SelectPoints: '&cВыделите две точки с помощью инструмента выделения: &c[tool]'
@@ -793,7 +793,7 @@ Selection:
 NetherPortal:
   ToHigh: '&7Портал слишком большой, максимальная высота &c[max]&7!'
   ToWide: '&7Портал слишком широкий, максимальная ширина &c[max]&7!'
-  Creation: '!actionbar!&7Created [height]x[width] nether portal!'
+  Creation: '!actionbar!&7Создан [height]x[width] портал в ад!'
   Disabled: '&cСоздание портала отключено!'
 Location:
   Title: '&8Расположение игрока'
@@ -807,13 +807,13 @@ Location:
   Z: '&7Z: &c[z]'
   Pitch: '&7Высота: &c[pitch]'
   Yaw: '&7Азимут: &c[yaw]'
-Locations: '&7Locations: '
+Locations: '&7Местности: '
 Ender:
   Title: '&7Открыть сундук эндера'
 Chat:
   localPrefix: '&c[ʟ] &r'
   shoutPrefix: '&e[ɢ] &r'
-  LocalNoOne: '!actionbar!&cNobody hear you, write ! before message for global chat'
+  LocalNoOne: '!actionbar!&cНикто тебя не услышал. Напишите ! перед сообщением, чтобы написать в глобальный чат'
   shoutDeduction: '!actionbar!&c[amount] &7снято за сообщение, отправленное в глобальный
     чат'
   # Use \n to add new line

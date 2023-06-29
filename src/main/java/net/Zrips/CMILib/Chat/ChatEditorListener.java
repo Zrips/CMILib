@@ -37,5 +37,6 @@ public class ChatEditorListener implements Listener {
 	    }
 	});
 	event.setCancelled(true);
+	event.getRecipients().clear();
     }
 }
