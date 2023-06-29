@@ -45,15 +45,16 @@ public class SkinManager {
 
 	ConfigReader cfg = plugin.getConfigManager().getConfigFile();
 
-	cfg.addComment("Skins.SkinUpdateTimer", "Defines time in minutes how offten we want to update skin information from online Mojang servers",
+	cfg.addComment("Skins.SkinUpdateTimer", "Defines time in minutes how often we want to update skin information from online Mojang servers",
 	    "Keep in mind that your server can only send 1 request every minute, so keep it at a decent amount, hour or more",
 	    "So if you have this set to 1 hour, then player skin information will be updated if player old skin information is older then 1 hour",
 	    "This only triggers when player joins server or changes skin manually");
 	SkinUpdateTimer = cfg.get("Skins.SkinUpdateTimer", 1320);
 	SkinUpdateTimer = SkinUpdateTimer < 5 ? 5 : SkinUpdateTimer;
 
-	cfg.addComment("Skins.SkinRequestFrequency", "Defines time in minutes how offten we want to send requests to Mojang servers",
-	    "This is to limit amount of requests in specific time to avoid cluter with possible requests");
+	cfg.addComment("Skins.SkinRequestFrequency", "Defines time in minutes how often we want to send requests to Mojang servers",
+	    "This is to limit amount of requests in specific time to avoid clutter with possible requests");
+
 	SkinRequestFrequency = cfg.get("Skins.SkinRequestFrequency", 10);
 	SkinRequestFrequency = SkinRequestFrequency < 1 ? 1 : SkinRequestFrequency;
     }
