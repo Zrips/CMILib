@@ -15,6 +15,7 @@ import org.bukkit.inventory.ItemStack;
 
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Container.CMIText;
+import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Version.Version;
 
 public enum CMIMaterial {
@@ -133,7 +134,7 @@ public enum CMIMaterial {
     BUBBLE_CORAL_BLOCK(),
     BUBBLE_CORAL_FAN(),
     BUBBLE_CORAL_WALL_FAN(),
-    BUCKET(325),
+    BUCKET(325, CMIMC.TOOL),
     CACTUS(81),
     CACTUS_GREEN(351, 2, CMIMC.DYE),
     CAKE(354),
@@ -1275,7 +1276,7 @@ public enum CMIMaterial {
     ECHO_SHARD(),
     FROGSPAWN(),
     FROG_SPAWN_EGG(CMIMC.SPAWNEGG),
-    GOAT_HORN(CMIMC.TOOL),
+    GOAT_HORN(),
     JUNGLE_CHEST_BOAT(CMIMC.BOAT, CMIMC.CHESTBOAT),
     MANGROVE_BOAT(CMIMC.BOAT),
     MANGROVE_BUTTON(CMIMC.BUTTON),
@@ -1350,7 +1351,7 @@ public enum CMIMaterial {
     BIRCH_WALL_HANGING_SIGN(CMIMC.SIGN, CMIMC.WALLSIGN),
     BLADE_POTTERY_SHERD(),
     BREWER_POTTERY_SHERD(),
-    BRUSH(),
+    BRUSH(CMIMC.TOOL),
     BURN_POTTERY_SHERD(),
     CALIBRATED_SCULK_SENSOR(),
     CAMEL_SPAWN_EGG(CMIMC.SPAWNEGG),
@@ -1482,11 +1483,11 @@ public enum CMIMaterial {
     LEGACY_ACACIA_DOOR(196, "Acacia Door Block", CMIMC.DOOR),
     LEGACY_DARK_OAK_DOOR(197, "Dark Oak Door Block", CMIMC.DOOR),
     LEGACY_GLOWING_REDSTONE_ORE(74, "Glowing Redstone Ore"),
-    LEGACY_BREWING_STAND(117, null, "Brewing Stand Block"),
+    LEGACY_BREWING_STAND(117, "Brewing Stand Block"),
 //	LEGACY_PURPUR_DOUBLE_SLAB(204, null, null, "LEGACY_PURPUR_DOUBLE_SLAB", ""),
 //	LEGACY_COMMAND_REPEATING(210, null, null, "LEGACY_COMMAND_REPEATING", ""),
 //	LEGACY_COMMAND_CHAIN(211, null, null, "LEGACY_COMMAND_CHAIN", ""),
-    LEGACY_WHEAT(59, 0, "Wheat Block");
+    LEGACY_WHEAT(59, "Wheat Block");
 
     private int legacyId = -1;
     private short legacyData = 0;
