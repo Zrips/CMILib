@@ -2,6 +2,7 @@ package net.Zrips.CMILib.Items;
 
 public enum CMIMC {
 
-    seeThrow, stars, slab, door, carpet, wool, monsteregg, tool, weapon, armor, trapdoor, fence, fencegate, pressureplate, skull, spawner, shulkerbox, air, potted, anvil
+    SEETHROW, STAIRS, SIGN, WALLSIGN, SPAWNEGG, EGG, SLAB, DOOR, CARPET, WOOL, MONSTEREGG, TOOL, WEAPON, ARMOR, TRAPDOOR, FENCE, FENCEGATE, PRESSUREPLATE, SKULL, SPAWNER, SHULKERBOX, AIR, POTTED, ANVIL,
+    WALL, COPPER, WAXED, GLASSPANE, DYE, PLAYERHEAD, MONSTERHEAD, RAIL, BOAT, CHESTBOAT, SAPLING, BUTTON, HOE, BED, POTION, LEATHER, HELMET, LEGGINGS, CHESTPLATE, BOOTS, PICKAXE, SHOVEL, AXE, TEMPLATE, DOUBLEPLANT
 
 }
