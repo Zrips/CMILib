@@ -186,6 +186,39 @@ public class CMILib extends JavaPlugin {
         }
     }
 
+    public void defaultItemLocaleDownloader() {
+        try {
+            List<String> lang = Arrays.asList("ES");
+            String lr = null;
+
+            for (String one : lang) {
+                File file = new File(getDataFolder() + File.separator + "Translations" + File.separator + "Items", "items_" + one + ".yml");
+                if (!file.isFile()) {
+                    lr = one;
+                }
+            }
+
+            final String flr = lr;
+
+            for (String one : lang) {
+                File file = new File(getDataFolder() + File.separator + "Translations" + File.separator + "Items", "items_" + one + ".yml");
+                if (!file.isFile()) {
+                    FileDownloader downloader = new FileDownloader() {
+                        @Override
+                        public void afterDownload() {
+                            CMIMessages.consoleMessage("Downloaded items_" + one + ".yml file");
+                            if (flr != null && one.equalsIgnoreCase(flr))
+                                getConfigManager().reloadLanguage();
+                        }
+                    };
+                    downloader.downloadUsingStream("https://raw.githubusercontent.com/Zrips/CMILib/master/Translations/Items/items_" + one + ".yml", file.getPath(), true);
+                }
+            }
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void onEnable() {
         instance = this;
@@ -196,6 +229,7 @@ public class CMILib extends JavaPlugin {
         PluginManager pm = getServer().getPluginManager();
 
         defaultLocaleDownloader();
+        defaultItemLocaleDownloader();
 
         if (CMILibConfig.autoUpdate && CMILibConfig.autoFileRemoval)
             cleanOldFiles();
