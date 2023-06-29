@@ -39,6 +39,7 @@ public class CTextEditorListener implements Listener {
 	}
 	ListEditor.removeChatEditor(player);
 	event.setCancelled(true);
+	event.getRecipients().clear();
     }
 
     @EventHandler(priority = EventPriority.LOWEST)

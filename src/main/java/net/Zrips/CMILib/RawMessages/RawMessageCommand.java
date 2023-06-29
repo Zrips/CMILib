@@ -57,8 +57,8 @@ public class RawMessageCommand {
 	return uuid;
     }
 
-    public void setOriginalCommand(String command) {
-	this.command = command;
+    public void setOriginalCommand(String command) {        
+	this.command = command.replace("  ", " ");
     }
 
     public String getOriginalCommand() {

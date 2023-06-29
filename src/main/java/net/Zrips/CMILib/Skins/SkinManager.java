@@ -54,6 +54,7 @@ public class SkinManager {
 
 	cfg.addComment("Skins.SkinRequestFrequency", "Defines time in minutes how often we want to send requests to Mojang servers",
 	    "This is to limit amount of requests in specific time to avoid clutter with possible requests");
+
 	SkinRequestFrequency = cfg.get("Skins.SkinRequestFrequency", 10);
 	SkinRequestFrequency = SkinRequestFrequency < 1 ? 1 : SkinRequestFrequency;
     }
