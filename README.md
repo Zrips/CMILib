@@ -2,51 +2,61 @@
 
 ## Introduction
 
-The plugin helper, or **library**, is a handy tool that helps us easily manage common phrases, hex colors, and more. Instead of each plugin having its own code for these features, the plugin helper allows multiple all the Zrips made plugins to share the same code. 
+This plugin helper, or **library**, is a handy tool that allows us to easily manage common phrases, hex colours and more. Instead of each plugin having to write its own code for these features, this library allows them to share this functionality, as well as providing an API for other developers to extend their own plugin features. 
 
-This reduces the overall size of our plugins and makes updating and maintaining these plugins a lot simpler and more consistent.
+This reduces the overall size of other plugins, and makes updating and maintaining plugins much easier and more consistent.
 
-## Required Dependancy
+**NOTE:** This library is required by ALL Zrips' plugins.
 
-All current versions of the Zrips made plugins require this library to operate.
+## Library Releases and Updates
 
-## Releases / Downloads
+It's heavily recommended to always keep this library up to date. You can download the latest builds from:
 
-It's recommended to always keep the CMILib .jar file up to date (as well as all Zrips plugins). You can download the latest release from these urls:
-
-- https://www.zrips.net/cmilib/
-- https://www.spigotmc.org/resources/87610/
-
-## Plugins using this library
-
-- CMI as of 9.x version
-- Residence as of 5.x version
-- MobFarmManager as of 2.x version
-- SelectionVisualizer as of 3.0.4.0 version
-- TryMe as of 7.x version
-- BottledExp as of 3.x version
-- JobsReborn as of 5.x version
-- TradeMe as of 6.1.0.0 version
-- Recount as of 3.5.0 version
+- [Developer's Official Website](https://www.zrips.net/cmilib/)
+- [Spigot Releases](https://www.spigotmc.org/resources/87610/)
 
 ## Installation Instructions
 
-You can `/stop`, and back-up your server first,
+**As with all plugin changes, make sure to `/stop` your server and make a full backup first.**
 
-Download the latest version of the CMILib .jar file, and drop it in the `~/plugins/` directory.
+Download the latest version of the library from a release website mentioned in the [Library Releases Section](#library-releases-and-updates), and place it in your server's `plugins/` directory.
 
-Include any Zrips plugin in the `~/plugins/` directory as well.
+To avoid conflicts, it is recommended to load this library without the plugins that depend on it first, this will ensure that any issues that arise aren't related to the library itself but rather with the dependent plugin, you should then report it to its developer so they update it to match the library changes.
 
-And then you can start the server back up.
+Your Server should start with no issues. After the first startup, a new folder called `CMILib` will be created in your server's `plugins/` folder. This folder contains the library's configuration files. You can edit these files to your liking, but it's not required.
+If you're working on translations, please make sure to send a pull request to this repository.
 
-After the first time running, if it's `Done!` and there have been no issues, you can stop and start it one more time. You can use this downtime to review plugin configurations.
-
-## Bugs and Suggestions
-
-You're free to clone and make a pull request to offer bug fixes and/or code suggestions. If you don't know how you can report bugs and suggestions as an issue (if no existing one exists yet) under the Issues tab here on Github.
+At this stage, you should run another `/stop` to add the plugins that depend on this library and proceed with their setup as required.
 
 ## Support
 
-You can request support from other Community Members on the [Zrips Community Discord](https://discord.gg/dDMamN4).
+If you have encountered an issue with this Library, please check the [Contributing Section](#contributing) below for information on how to report it.
 
-Please do check [the FAQ page](https://www.zrips.net/cmilib/faq/) out first, before asking questions
+Before asking questions, please make sure to read our [Frequently Asked Questions](https://www.zrips.net/cmilib/faq/).
+
+You can also request support and discuss issues with Community Members on the [Zrips Community Discord](https://discord.gg/dDMamN4).
+
+## Contributing
+
+You're free to clone this repository and make a pull request to offer bug fixes and/or suggestions.
+
+You can also report bugs and/or make suggestions in the form of a [New Issue](https://github.com/Zrips/CMILib/issues/new), but **please** check if what you're submitting isn't a duplicate within the [Issues Tab](https://github.com/Zrips/CMILib/issues) or hasn't been already addressed in a [Pull Request](https://github.com/Zrips/CMILib/pulls).
+
+## Plugins That Require This Library
+
+Have you developed a plugin that uses this library? Let us know and we'll add it to the list!
+
+Note: Clicking on a link will open it on this page due a Markdown limitation. To open it in a new tab, right click and select "Open in new tab".
+
+|                                                   Plugin Name (Spigot Link)                                                    | From Version | Up To Version |                          Plugin Author                           |
+|:------------------------------------------------------------------------------------------------------------------------------:|:------------:|:-------------:|:----------------------------------------------------------------:|
+|                               [BottledExp](https://www.spigotmc.org/resources/bottledexp.2815/)                                |     3.x      |    latest     | [Zrips](https://www.spigotmc.org/resources/authors/zrips.24572/) |
+| [CMI](https://www.spigotmc.org/resources/cmi-298-commands-insane-kits-portals-essentials-economy-mysql-sqlite-much-more.3742/) |     9.X      |    latest     | [Zrips](https://www.spigotmc.org/resources/authors/zrips.24572/) |
+|                               [JobsReborn](https://www.spigotmc.org/resources/jobs-reborn.4216/)                               |     5.X      |    latest     | [Zrips](https://www.spigotmc.org/resources/authors/zrips.24572/) |
+|     [MobFarmManager](https://www.spigotmc.org/resources/mob-farm-manager-supports-1-7-10-up-to-1-19-hopper-support.15127/)     |     2.X      |    latest     | [Zrips](https://www.spigotmc.org/resources/authors/zrips.24572/) |
+|                                  [Recount](https://www.spigotmc.org/resources/recount.3962/)                                   |    3.5.X     |    latest     | [Zrips](https://www.spigotmc.org/resources/authors/zrips.24572/) |
+|                       [Residence](https://www.spigotmc.org/resources/residence-1-7-10-up-to-1-19.11480/)                       |     5.X      |    latest     | [Zrips](https://www.spigotmc.org/resources/authors/zrips.24572/) |
+|                     [SelectionVisualizer](https://www.spigotmc.org/resources/selection-visualizer.22631/)                      |   3.0.4.X    |    latest     | [Zrips](https://www.spigotmc.org/resources/authors/zrips.24572/) |
+|           [TradeMe](https://www.spigotmc.org/resources/trademe-with-api-to-create-custom-trades-1-7-10-1-19-x.7544/)           |    6.1.X     |    latest     | [Zrips](https://www.spigotmc.org/resources/authors/zrips.24572/) |
+|                                    [TryMe](https://www.spigotmc.org/resources/tryme.3330/)                                     |     7.X      |    latest     | [Zrips](https://www.spigotmc.org/resources/authors/zrips.24572/) |
+
