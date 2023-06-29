@@ -18,81 +18,81 @@ import java.util.List;
  */
 public class FileDownloader {
 
-	/**
-	 * Stores all valid file extensions that can be downloaded.
-	 */
-	@NotNull
-	static final List<String> VALID_TYPES = new ArrayList<>(Arrays.asList("dat", "yml", "txt", "jar"));
+    /**
+     * Stores all valid file extensions that can be downloaded.
+     */
+    @NotNull
+    static final List<String> VALID_TYPES = new ArrayList<>(Arrays.asList("yml", "txt", "jar"));
 
-	/**
-	 * Downloads a file from the internet using a {@link BufferedInputStream}.
-	 *
-	 * @param urlString the URL of the file to download.
-	 * @param fileName  the path to save the downloaded file to, as well as the name.
-	 * @param inform    should the console be informed when the file is being downloaded?
-	 */
-	public void downloadUsingStream(@NotNull final String urlString, @NotNull final String fileName, final boolean inform) {
-		try {
-			if (!VALID_TYPES.contains(fileName.split("\\.")[fileName.split("\\.").length - 1].toLowerCase()))
-				return;
-		} catch (final Exception e) {
-			return;
-		}
+    /**
+     * Downloads a file from the internet using a {@link BufferedInputStream}.
+     *
+     * @param urlString the URL of the file to download.
+     * @param fileName  the path to save the downloaded file to, as well as the name.
+     * @param inform    should the console be informed when the file is being downloaded?
+     */
+    public void downloadUsingStream(@NotNull final String urlString, @NotNull final String fileName, final boolean inform) {
+        try {
+            if (!VALID_TYPES.contains(fileName.split("\\.")[fileName.split("\\.").length - 1].toLowerCase()))
+                return;
+        } catch (final Exception e) {
+            return;
+        }
 
-		Bukkit.getScheduler().runTaskAsynchronously(CMILib.getInstance(), () -> {
-			final URL url;
-			BufferedInputStream bufferedInputStream = null;
-			FileOutputStream fileOutputStream = null;
+        Bukkit.getScheduler().runTaskAsynchronously(CMILib.getInstance(), () -> {
+            final URL url;
+            BufferedInputStream bufferedInputStream = null;
+            FileOutputStream fileOutputStream = null;
 
-			try {
-				url = new URL(urlString);
-				bufferedInputStream = new BufferedInputStream(url.openStream());
-				fileOutputStream = new FileOutputStream(fileName);
-				final byte[] buffer = new byte[1024];
-				int count;
+            try {
+                url = new URL(urlString);
+                bufferedInputStream = new BufferedInputStream(url.openStream());
+                fileOutputStream = new FileOutputStream(fileName);
+                final byte[] buffer = new byte[1024];
+                int count;
 
-				while ((count = bufferedInputStream.read(buffer, 0, 1024)) != -1)
-					fileOutputStream.write(buffer, 0, count);
+                while ((count = bufferedInputStream.read(buffer, 0, 1024)) != -1)
+                    fileOutputStream.write(buffer, 0, count);
 
-				fileOutputStream.close();
-				bufferedInputStream.close();
-				Bukkit.getScheduler().runTask(CMILib.getInstance(), FileDownloader.this::afterDownload);
-			} catch (final Throwable e) {
-				final File file = new File(fileName);
+                fileOutputStream.close();
+                bufferedInputStream.close();
+                Bukkit.getScheduler().runTask(CMILib.getInstance(), FileDownloader.this::afterDownload);
+            } catch (final Throwable e) {
+                final File file = new File(fileName);
 
-				if (inform) {
-					CMIMessages.consoleMessage("Failed to download file '" + urlString + "' to folder '" + file.getParent() + File.separator + "'.");
-					CMIMessages.consoleMessage("You can do it manually, try again later or simply ignore it.");
-				}
+                if (inform) {
+                    CMIMessages.consoleMessage("Failed to download file '" + urlString + "' to folder '" + file.getParent() + File.separator + "'.");
+                    CMIMessages.consoleMessage("You can do it manually, try again later or simply ignore it.");
+                }
 
-				FileDownloader.this.failedDownload();
-			} finally {
-				if (fileOutputStream != null)
-					try {
-						fileOutputStream.close();
-					} catch (final IOException e) {
-						e.printStackTrace();
-					}
+                FileDownloader.this.failedDownload();
+            } finally {
+                if (fileOutputStream != null)
+                    try {
+                        fileOutputStream.close();
+                    } catch (final IOException e) {
+                        e.printStackTrace();
+                    }
 
-				if (bufferedInputStream != null)
-					try {
-						bufferedInputStream.close();
-					} catch (final IOException e) {
-						e.printStackTrace();
-					}
-			}
-		});
-	}
+                if (bufferedInputStream != null)
+                    try {
+                        bufferedInputStream.close();
+                    } catch (final IOException e) {
+                        e.printStackTrace();
+                    }
+            }
+        });
+    }
 
-	/**
-	 * Called when a download is successful.
-	 */
-	public void afterDownload() {
-	}
+    /**
+     * Called when a download is successful.
+     */
+    public void afterDownload() {
+    }
 
-	/**
-	 * Called when a download fails.
-	 */
-	public void failedDownload() {
-	}
+    /**
+     * Called when a download fails.
+     */
+    public void failedDownload() {
+    }
 }
