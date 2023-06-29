@@ -43,7 +43,6 @@ import net.Zrips.CMILib.Container.LeatherAnimationType;
 import net.Zrips.CMILib.Enchants.CMIEnchantment;
 import net.Zrips.CMILib.Entities.CMIEntity;
 import net.Zrips.CMILib.Entities.CMIEntityType;
-import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.Recipes.CMIRecipe;
 import net.Zrips.CMILib.Recipes.CMIRecipeIngredient;
@@ -361,10 +360,14 @@ public class CMIItemStack {
                 this.item = this.item == null ? new ItemStack(this.getType()) : this.item;
                 this.item.setAmount(this.getAmount());
                 if (this.getType().equals(CMIMaterial.SPAWNER.getMaterial())) {
-                    if (this.getEntityType() != null)
+                    if (this.getEntityType() != null) {
                         item = CMIEntity.setEntityType(item, this.getEntityType());
-                    else
-                        item = CMIEntity.setEntityType(item, CMIEntityType.getById(data == 0 ? (short) 90 : data).getType());
+                    } else {
+                        // As of 1.19 we should return empty spawner if type not set
+                        if (Version.isCurrentEqualOrLower(Version.v1_19_R2)) {
+                            item = CMIEntity.setEntityType(item, CMIEntityType.getById(data == 0 ? (short) 90 : data).getType());
+                        }
+                    }
                 }
             } else {
                 this.item = new ItemStack(this.getType(), this.amount == 0 ? 1 : this.amount, data);
@@ -374,6 +377,7 @@ public class CMIItemStack {
 
     @SuppressWarnings("deprecation")
     public ItemStack getItemStack() {
+
         if (item == null) {
 
             try {
@@ -402,10 +406,12 @@ public class CMIItemStack {
                 if (data == 0)
                     data = 90;
                 CMIEntityType type = this.entityType;
-                if (type == null)
+                if (type == null && Version.isCurrentEqualOrLower(Version.v1_19_R2)) {
                     type = CMIEntityType.getById(data);
-                if (type != null)
+                }
+                if (type != null) {
                     this.item = CMIEntity.setEntityType(this.item, type.getType());
+                }
             }
             if (this.durability > 0) {
                 if (Version.isCurrentEqualOrHigher(Version.v1_13_R1)) {
@@ -586,15 +592,24 @@ public class CMIItemStack {
     }
 
     public EntityType getEntityType() {
+
         if (this.getItemStack() == null)
             return null;
 
-        if (this.entityType != null)
+        if (this.entityType != null) {
             return this.entityType.getType();
+        }
 
         ItemStack is = this.getItemStack().clone();
 
         if (Version.isCurrentEqualOrHigher(Version.v1_8_R1) && is.getItemMeta() instanceof org.bukkit.inventory.meta.BlockStateMeta) {
+
+            if (Version.isCurrentEqualOrHigher(Version.v1_19_R3)) {
+                CMINBT nbt = new CMINBT(is);
+                if (!nbt.hasNBT("BlockEntityTag"))
+                    return null;
+            }
+
             org.bukkit.inventory.meta.BlockStateMeta bsm = (org.bukkit.inventory.meta.BlockStateMeta) is.getItemMeta();
             if (bsm.getBlockState() instanceof CreatureSpawner) {
                 CreatureSpawner bs = (CreatureSpawner) bsm.getBlockState();

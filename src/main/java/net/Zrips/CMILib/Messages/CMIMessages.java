@@ -13,7 +13,6 @@ import net.Zrips.CMILib.CMILibConfig;
 import net.Zrips.CMILib.Colors.CMIChatColor;
 import net.Zrips.CMILib.Container.CMICommandSender;
 import net.Zrips.CMILib.Locale.LC;
-import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Permissions.CMILPerm;
 
 public class CMIMessages {
@@ -103,10 +102,12 @@ public class CMIMessages {
     }
 
     public static void sendMessage(Object sender, String msg, boolean updateSnd, boolean translateColors, boolean translatePlaceholders) {
+        
         if (sender == null)
             return;
         if (msg == null || msg.isEmpty())
             return;
+                
         msg = CMILib.getInstance().getLM().filterNewLine(msg);
 
         CMIMultiMessage multi = new CMIMultiMessage(msg);
@@ -173,12 +174,14 @@ public class CMIMessages {
         return i;
     }
 
-    public static void consoleMessage(String message) {
+    public static void consoleMessage(String message) {    
+        if (message == null || message.isEmpty())
+            return;
         Bukkit.getConsoleSender().sendMessage(CMIChatColor.translate(message));
     }
 
-    public static void sendMessage(CommandSender sender, String message) {
-        sender.sendMessage(CMIChatColor.translate(message));
+    public static void sendMessage(CommandSender sender, String message) {           
+        sendMessage(sender, message, true, true, true);
     }
 
     public static String getMsg(LC lc, Object... variables) {

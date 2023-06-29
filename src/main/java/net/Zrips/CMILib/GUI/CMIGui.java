@@ -225,6 +225,17 @@ public class CMIGui {
         return buttons;
     }
 
+    public CMIGuiButton getButton(int slot) {
+
+        CMIGuiButton b = getButtons().get(slot);
+        if (b != null)
+            return b;
+
+        // Missing code to check for slot limits and creation of new button
+        
+        return null;
+    }
+
     public CMIGui replaceButton(CMIGuiButton button) {
         button.updateLooks();
         if (button.getSlot() != null)

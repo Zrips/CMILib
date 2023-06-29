@@ -32,6 +32,7 @@ public class CMINBT {
     private static Method met_getDouble;
     private static Method met_getByteArray;
     private static Method met_getIntArray;
+    private static Method met_getLongArray;
     private static Method met_getList;
     private static Method met_get;
     private static Method met_remove;
@@ -47,6 +48,8 @@ public class CMINBT {
     private static Method met_setInt;
     private static Method met_setLong;
     private static Method met_setIntArray;
+    private static Method met_setByteArray;
+    private static Method met_setLongArray;
     private static Method met_set;
     private static Method met_add;
     private static Class<?> CraftItemStack;
@@ -68,6 +71,7 @@ public class CMINBT {
     private static String getListName = "getList";
     private static String getByteArrayName = "getByteArray";
     private static String getIntArrayName = "getIntArray";
+    private static String getLongArrayName = "getLongArray";
 
     private static String listGetName = "get";
 
@@ -79,6 +83,8 @@ public class CMINBT {
     private static String setLongName = "setLong";
     private static String setDoubleName = "setDouble";
     private static String setIntArrayName = "setIntArray";
+    private static String setByteArrayName = "setByteArray";
+    private static String setLongArrayName = "a";
 
     private static String setName = "set";
     private static String getName = "get";
@@ -152,6 +158,7 @@ public class CMINBT {
             getListName = "c";
             getByteArrayName = "m";
             getIntArrayName = "n";
+            getLongArrayName = "o";
 
             setBooleanName = "a";
             setByteName = "a";
@@ -161,6 +168,7 @@ public class CMINBT {
             setLongName = "a";
             setDoubleName = "a";
             setIntArrayName = "a";
+            setByteArrayName = "a";
 
             listGetName = "k";
 
@@ -210,6 +218,11 @@ public class CMINBT {
             getTypeIdName = "b";
         }
 
+        if (Version.isCurrentEqualOrHigher(Version.v1_20_R1)) {
+            asStringName = "m_";
+            getTagName = "v";
+        }
+
         try {
             met_getString = nbtTagCompound.getMethod(getStringName, String.class);
             met_getInt = nbtTagCompound.getMethod(getIntName, String.class);
@@ -224,6 +237,10 @@ public class CMINBT {
 
             met_getByteArray = nbtTagCompound.getMethod(getByteArrayName, String.class);
             met_getIntArray = nbtTagCompound.getMethod(getIntArrayName, String.class);
+
+            if (Version.isCurrentEqualOrHigher(Version.v1_13_R1)) {
+                met_getLongArray = nbtTagCompound.getMethod(getLongArrayName, String.class);
+            }
 
             met_get = nbtTagCompound.getMethod(getName, String.class);
             met_remove = nbtTagCompound.getMethod(removeName, String.class);
@@ -241,6 +258,14 @@ public class CMINBT {
             met_setDouble = nbtTagCompound.getMethod(setDoubleName, String.class, double.class);
 
             met_setIntArray = nbtTagCompound.getMethod(setIntArrayName, String.class, int[].class);
+
+            try {
+                met_setByteArray = nbtTagCompound.getMethod(setByteArrayName, String.class, byte[].class);
+                if (Version.isCurrentEqualOrHigher(Version.v1_13_R1))
+                    met_setLongArray = nbtTagCompound.getMethod(setLongArrayName, String.class, long[].class);
+            } catch (Throwable ex) {
+                ex.printStackTrace();
+            }
 
             met_set = nbtTagCompound.getMethod(setName, String.class, NBTBase);
 
@@ -327,6 +352,7 @@ public class CMINBT {
         try {
             return (Byte) met_getByte.invoke(tag, path);
         } catch (Exception e) {
+            e.printStackTrace();
         }
         return null;
     }
@@ -347,6 +373,7 @@ public class CMINBT {
         try {
             return (Boolean) met_getBoolean.invoke(tag, path);
         } catch (Exception e) {
+            e.printStackTrace();
         }
         return null;
     }
@@ -399,6 +426,21 @@ public class CMINBT {
         } catch (Exception e) {
         }
         return new int[0];
+    }
+
+    public long[] getLongArray(String path) {
+        if (!this.hasNBT(path))
+            return new long[0];
+
+        if (!Version.isCurrentEqualOrHigher(Version.v1_13_R1)) {
+            return new long[0];
+        }
+
+        try {
+            return (long[]) met_getLongArray.invoke(tag, path);
+        } catch (Exception e) {
+        }
+        return new long[0];
     }
 
     public String getString(String path) {
@@ -723,6 +765,60 @@ public class CMINBT {
         return object;
     }
 
+    public Object setByteArray(String path, byte[] value) {
+        try {
+            if (value == null) {
+                met_remove.invoke(tag, path);
+            } else {
+                met_setByteArray.invoke(tag, path, value);
+            }
+        } catch (Throwable e) {
+            if (Version.isCurrentEqualOrHigher(Version.v1_7_R4))
+                e.printStackTrace();
+            return object;
+        }
+        switch (type) {
+        case custom:
+            return tag;
+        case block:
+            break;
+        case entity:
+            break;
+        case item:
+            return setTag((ItemStack) object, tag);
+        default:
+            break;
+        }
+        return object;
+    }
+
+    public Object setLongArray(String path, long[] value) {
+        try {
+            if (value == null) {
+                met_remove.invoke(tag, path);
+            } else {
+                met_setLongArray.invoke(tag, path, value);
+            }
+        } catch (Throwable e) {
+            if (Version.isCurrentEqualOrHigher(Version.v1_7_R4))
+                e.printStackTrace();
+            return object;
+        }
+        switch (type) {
+        case custom:
+            return tag;
+        case block:
+            break;
+        case entity:
+            break;
+        case item:
+            return setTag((ItemStack) object, tag);
+        default:
+            break;
+        }
+        return object;
+    }
+
     public Object setLong(String path, Long value) {
         switch (type) {
         case custom:
@@ -905,14 +1001,14 @@ public class CMINBT {
                     }
                 }
             } catch (Throwable e) {
-//		e.printStackTrace();
+                e.printStackTrace();
             }
             return false;
         }
         try {
-            return tag != null && (Boolean) tag.getClass().getMethod(hasKeyName, String.class).invoke(tag, key);
+            return tag != null && (Boolean) (tag.getClass().getMethod(hasKeyName, String.class).invoke(tag, key));
         } catch (Throwable e) {
-//	    e.printStackTrace();
+            e.printStackTrace();
         }
         return false;
     }
@@ -981,7 +1077,7 @@ public class CMINBT {
         if (entity == null)
             return null;
         try {
-            Object tag = nbtTagCompound.newInstance();
+            Object tag = nbtTagCompound.getDeclaredConstructor().newInstance();
             Object nmsStack = getEntityHandle(entity);
             Method methTag = nmsStack.getClass().getMethod(saveName, nbtTagCompound);
             tag = methTag.invoke(nmsStack, tag);
@@ -1003,7 +1099,7 @@ public class CMINBT {
             Method methTag = nmsStack.getClass().getMethod(getTagName);
             Object tag = methTag.invoke(nmsStack);
             if (tag == null)
-                tag = nbtTagCompound.newInstance();
+                tag = nbtTagCompound.getDeclaredConstructor().newInstance();
 
             return tag;
         } catch (Exception e) {
@@ -1040,11 +1136,6 @@ public class CMINBT {
             case v1_13_R2:
                 ff = "aa_";
                 break;
-            case v1_14_R1:
-            case v1_15_R1:
-            default:
-                ff = "b";
-                break;
             case v1_17_R1:
             case v1_18_R1:
                 ff = "Z_";
@@ -1059,10 +1150,18 @@ public class CMINBT {
                     ff = "aa_";
                 break;
             case v1_19_R2:
-                    ff = "ad_";
+                ff = "ad_";
                 break;
             case v1_19_R3:
-                    ff = "aq_";                 
+                ff = "aq_";
+                break;
+            case v1_20_R1:
+                ff = "ao_";
+                break;
+            case v1_14_R1:
+            case v1_15_R1:
+            default:
+                ff = "b";
                 break;
             }
 

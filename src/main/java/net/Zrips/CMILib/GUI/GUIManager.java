@@ -401,7 +401,8 @@ public class GUIManager {
                         item = (ItemStack) new CMINBT(item).setString(CMIGUIIcon, LIProtection);
                     }
 
-                    GuiInv.setItem(one.getKey(), item);
+                    if (one.getKey() < GuiInv.getSize())
+                        GuiInv.setItem(one.getKey(), item);
                 } catch (Throwable e) {
                     e.printStackTrace();
                     break;
