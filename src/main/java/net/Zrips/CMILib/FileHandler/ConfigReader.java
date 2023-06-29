@@ -20,7 +20,6 @@ import org.bukkit.plugin.Plugin;
 import com.google.common.io.Files;
 
 import net.Zrips.CMILib.CMILib;
-import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Messages.CMIMessages;
 import net.Zrips.CMILib.Version.Version;
 
