@@ -79,6 +79,7 @@ public class CMILibConfig {
     }
 
     public boolean load(boolean isReload) {
+      
         try {
             cfg = new ConfigReader(this.plugin, "config.yml");
         } catch (Exception e) {
@@ -153,11 +154,11 @@ public class CMILibConfig {
         cfg.addComment("Spawners.mysterySpawners", "List of spawners to pick from while using spawner:random variable");
         mysterySpawners = cfg.get("Spawners.mysterySpawners", Arrays.asList("skeleton", "zombie", "silverfish", "panda", "fox"));
 
-        cfg.addComment("RMCCommands.ConsoleLog", "When enabled we will include when possible a command to indicate which was performed while using rmc commands");
+        cfg.addComment("RMCCommands.ConsoleLog", "When enabled we will (where possible) include which command was performed when using rmc commands");
         rmcConsoleLog = cfg.get("RMCCommands.ConsoleLog", true);
 
         cfg.addComment("Images.Filler", "Symbol to be used to create image fields", "Color codes are NOT supported here",
-            "This will take full effect after server restart due to some images being already cached");
+	          "This will take full effect after server restart due to some images being already cached");
         CMIImage.imageFiller = CMIChatColor.stripColor(cfg.get("Images.Filler", "⬛"));
         cfg.addComment("Images.EmptyFiller", "Symbol to be used to fill in empty image fields", "Color codes are supported here");
         CMIImage.imageEmptyFiller = CMIChatColor.translate(cfg.get("Images.EmptyFiller", "&7_|"));
@@ -172,6 +173,7 @@ public class CMILibConfig {
 
         cfg.save();
         return true;
+      
     }
 
     // Language file
@@ -180,60 +182,61 @@ public class CMILibConfig {
     }
 
     List<String> CommentList = new ArrayList<String>(Arrays.asList(
-        "Full color code support and some variables",
-        "Keep in mind that variables wont work for some lines, when it will for anothers :)",
-        "Just keep them where there are now and everything will be ok :)",
-        "Some lines can have global variables set. For player who will be effected. In example /heal Zrips then Zrips data will be used",
-        "[serverName] to show server name",
-        "[playerName] to show target player name",
-        "[playerDisplayName] to show target player display name",
-        "[lvl] to show target player level",
-        "[exp] to show target player total exp",
-        "[hp] to show target player health",
-        "[maxHp] to show target player max health",
-        "[hunger] to show target player hunger level",
-        "[gameMode] to show target player gamemode",
-        "[prefix] to show target player prefix if possible",
-        "[suffix] to show target player suffix if possible",
-        "Sender is console or player who performs command. In example Zrips performs /heal Zhax then Zrips data will be used",
-        "[senderName] to show Sender player name",
-        "[senderDisplayName] to show Sender player display name",
-        "[senderLvl] to show Sender player level",
-        "[senderExp] to show Sender player total exp",
-        "[senderHp] to show Sender player health",
-        "[senderMaxHp] to show Sender player max health",
-        "[senderHunger] to show Sender player hunger level",
-        "[senderGameMode] to show Sender player gamemode",
-        "[senderPrefix] to show Sender player prefix if possible",
-        "[senderSuffix] to show Sender player suffix if possible",
-        "Source is player which is being used for extra info. In example Zrips performs /tp Zhax Zrips then Zhax data will be used as its location is being taken for new player location",
-        "[sourceName] to show source player name",
-        "[sourceDisplayName] to show source player display name",
-        "[sourceLvl] to show source player level",
-        "[sourceExp] to show source player total exp",
-        "[sourceHp] to show source player health",
-        "[sourceMaxHp] to show source player max health",
-        "[sourceHunger] to show source player hunger level",
-        "[sourceGameMode] to show source player gamemode",
-        "[sourcePrefix] to show source player prefix if possible",
-        "[sourceSuffix] to show source player suffix if possible",
-        "***********************************************",
-        "Some lines supports option to send them to custom places, like action bar, title, sub title or even create JSON/clickable messages",
-        "If line starts with !toast! then player will get toast message (advancement popup, only 1.12 and up). Some extra variables can be used to define type and icon. example: !toast! -t:goal -icon:paper Hello world!",
-        "If line starts with !actionbar! then player will get action bar message defined after this variable",
-        "If line starts with !actionbar:[seconds]! then player will get action bar message for defined amount of time",
-        "If line starts with !broadcast! then everyone will receive message. You can add extra !toast! !actionbar! or !title! to send message for everyone to specific place, in example !broadcast!!title!",
-        "If line starts with !customtext:[cTextName]! then custom text will be taken by name provided and shown for player. In case its used after !broadcast! then everyone who is online will get this custom text message",
-        "If line starts with !title! then player will get title message defined after this variable, in addition it can contain !subtitle! which will add subtitle message",
-        "If line starts with !bosbar:[name]-[timer]! then player will get bossbar message defined after this variable, in addition you can define how long this message will be visible. You need to define bossbar name which can be anything you want, but lines with same name will override each other to prevent stacking",
-        "To include clickable messages: <T>Text</T><H>Hover text</H><C>command</C><SC>Suggested text</SC>",
-        "<T> and </T> required, other is optional",
-        "Use /n to break line",
-        "To have more than one JSON message use <Next>",
-        "<C> performs command as a player who clicked",
-        "<CC> performs command from console once",
-        "<CCI> performs command from console every time player clicks text",
-        "<URL> includes url"));
+      
+	"The phrases support full color (hex) code, and some variables.",
+	"Keep in mind that some variables will not work for certain lines.",
+	"Just keep them where there are now and everything will be okay :)",
+	"Some lines can have global variables set. For the player who will be affected. For example /heal Zrips then Zrips data will be used as variable",
+	"[serverName] to show server name",
+	"[playerName] to show target player name",
+	"[playerDisplayName] to show target player display name",
+	"[lvl] to show target player level",
+	"[exp] to show target player total exp",
+	"[hp] to show target player health",
+	"[maxHp] to show target player max health",
+	"[hunger] to show target player hunger level",
+	"[gameMode] to show target player gamemode",
+	"[prefix] to show target player prefix if possible",
+	"[suffix] to show target player suffix if possible",
+	"Sender is console or player who performs the command. For example Zrips performs /heal Zhax then Zrips data will be used",
+	"[senderName] to show Sender player name",
+	"[senderDisplayName] to show Sender player display name",
+	"[senderLvl] to show Sender player level",
+	"[senderExp] to show Sender player total exp",
+	"[senderHp] to show Sender player health",
+	"[senderMaxHp] to show Sender player max health",
+	"[senderHunger] to show Sender player hunger level",
+	"[senderGameMode] to show Sender player gamemode",
+	"[senderPrefix] to show Sender player prefix if possible",
+	"[senderSuffix] to show Sender player suffix if possible",
+	"Source is player which is being used for extra info. For example Zrips performs /tp Zhax Zrips then Zhax data will be used as its location is being taken for new player location",
+	"[sourceName] to show source player name",
+	"[sourceDisplayName] to show source player display name",
+	"[sourceLvl] to show source player level",
+	"[sourceExp] to show source player total exp",
+	"[sourceHp] to show source player health",
+	"[sourceMaxHp] to show source player max health",
+	"[sourceHunger] to show source player hunger level",
+	"[sourceGameMode] to show source player gamemode",
+	"[sourcePrefix] to show source player prefix if possible",
+	"[sourceSuffix] to show source player suffix if possible",
+	"***********************************************",
+	"Some lines support the option to send them to custom places, like action bar, title, sub-title, or even create JSON/clickable messages",
+	"If the line starts with !toast! then player will get toast message (advancement popup, only 1.12 and up). Some extra variables can be used to define type and icon. example: !toast! -t:goal -icon:paper Hello world!",
+	"If the line starts with !actionbar! then player will get action bar message defined after this variable",
+	"If the line starts with !actionbar:[seconds]! then player will get action bar message for a defined amount of time",
+	"If the line starts with !broadcast! then everyone will receive message. You can add extra !toast! !actionbar! or !title! to send message for everyone to specific place, in example !broadcast!!title!",
+	"If the line starts with !customtext:[cTextName]! then custom text will be taken by name provided and shown for player. In case it is used after !broadcast! then everyone who is online will get this custom text message",
+	"If the line starts with !title! then player will get title message defined after this variable, in addition it can contain !subtitle! which will add subtitle message",
+	"If the line starts with !bossbar:[name]-[timer]! then player will get bossbar message defined after this variable, in addition you can define how long this message will be visible. You need to define bossbar name which can be anything you want, but lines with same name will override each other to prevent stacking",
+	"To include clickable messages: <T>Text</T><H>Hover text</H><C>command</C><SC>Suggested text</SC>",
+	"<T> and </T> required, other is optional",
+	"Use /n to break line",
+	"To have more than one JSON message use <Next>",
+	"<C> performs command as a player who clicked",
+	"<CC> performs command from console once",
+	"<CCI> performs command from console every time player clicks text",
+	"<URL> includes url"));
 
     public boolean reloadLanguage() {
         boolean langLoaded = LoadLang("EN", true);
