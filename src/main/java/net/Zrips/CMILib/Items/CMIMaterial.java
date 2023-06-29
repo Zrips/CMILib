@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -2497,25 +2498,32 @@ public enum CMIMaterial {
         return isPotion() || this == CMIMaterial.TIPPED_ARROW;
     }
 
+    public static final Pattern STRIPPED_REPLACE = Pattern.compile("_[^_]+");
+    public static final Pattern DARK_LIGHT_MATCH = Pattern.compile("^(DARK|LIGHT).+");
+    public static final Pattern DARK_LIGHT_REPLACE = Pattern.compile(".+?_.+?_");
+    public static final Pattern WOOD_MATCH = Pattern.compile("^(WHITE|ORANGE|MAGENTA|YELLOW|LIME|PINK|GRAY|CYAN|PURPLE|BLUE|BROWN|GREEN|RED|BLACK|OAK|SPRUCE|BIRCH|JUNGLE|ACACIA).+");
+    public static final Pattern WOOD_REPLACE = Pattern.compile(".+?_");
+    public static final Pattern COLOR_MATCH = Pattern.compile("(?i)^(WHITE|ORANGE|MAGENTA|YELLOW|LIME|PINK|GRAY|CYAN|PURPLE|BLUE|BROWN|GREEN|RED|BLACK|LIGHT_GRAY|LIGHT_BLUE)$");
+
     public static String getGeneralMaterialName(String fullName) {
+      
         String newName = fullName.toUpperCase();
         if (newName.startsWith("STRIPPED")) {
-            return newName.replaceFirst("_[^_]+", "");
+            return STRIPPED_REPLACE.matcher(newName).replaceFirst("");
         }
 
-        if (newName.matches("^(DARK|LIGHT).+")) {
-            return newName.replaceFirst(".+?_.+?_", "");
+        if (DARK_LIGHT_MATCH.matcher(newName).matches()) {
+              return DARK_LIGHT_REPLACE.matcher(newName).replaceFirst("");
         }
 
-        if (newName.matches("^(WHITE|ORANGE|MAGENTA|YELLOW|LIME|PINK|GRAY|CYAN|PURPLE|BLUE|BROWN|GREEN|RED|BLACK|" +
-            "OAK|SPRUCE|BIRCH|JUNGLE|ACACIA).+")) {
-            return newName.replaceFirst(".+?_", "");
+        if (WOOD_MATCH.matcher(newName).matches()) {
+            return WOOD_REPLACE.matcher(newName).replaceFirst("");
         }
 
-        if (newName.matches("(?i)^(WHITE|ORANGE|MAGENTA|YELLOW|LIME|PINK|GRAY|CYAN|PURPLE|BLUE|BROWN|GREEN|RED|BLACK|" +
-            "LIGHT_GRAY|LIGHT_BLUE)$")) {
+        if (COLOR_MATCH.matcher(newName).matches()) {
             return "color";
         }
+
 
         return fullName;
     }
