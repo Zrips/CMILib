@@ -1,149 +1,502 @@
 package net.Zrips.CMILib.NBT;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
+import net.Zrips.CMILib.CMILib;
+import net.Zrips.CMILib.Entities.CMIEntityType;
+import net.Zrips.CMILib.Items.CMIMaterial;
+import net.Zrips.CMILib.Version.Version;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import net.Zrips.CMILib.CMILib;
-import net.Zrips.CMILib.Entities.CMIEntityType;
-import net.Zrips.CMILib.Items.CMIMaterial;
-import net.Zrips.CMILib.Logs.CMIDebug;
-import net.Zrips.CMILib.Version.Version;
+import java.lang.reflect.Method;
+import java.util.*;
 
 public class CMINBT {
 
-    private static Class<?> NBTBase;
-    private static Class<?> nbtTagCompound;
-    private static Class<?> nbtTagList;
-    private static Method met_getInt;
-    private static Method met_getByte;
-    private static Method met_getLong;
-    private static Method met_getBoolean;
-    private static Method met_getFloat;
-    private static Method met_getDouble;
-    private static Method met_getByteArray;
-    private static Method met_getIntArray;
-    private static Method met_getLongArray;
-    private static Method met_getList;
-    private static Method met_get;
-    private static Method met_remove;
-    private static Method met_getShort;
-    private static Method met_getString;
-    private static Method met_getCompound;
-    private static Method met_toString;
-    private static Method met_setBoolean;
-    private static Method met_setDouble;
-    private static Method met_setByte;
-    private static Method met_setShort;
-    private static Method met_setString;
-    private static Method met_setInt;
-    private static Method met_setLong;
-    private static Method met_setIntArray;
-    private static Method met_setByteArray;
-    private static Method met_setLongArray;
-    private static Method met_set;
-    private static Method met_add;
-    private static Class<?> CraftItemStack;
-    private static Class<?> IStack;
-    private static Class<?> CraftEntity;
-    private static Class<?> MojangsonParser;
+    /**
+     * The {@code NBTBase} {@link Class}, stored here for top performance.
+     */
+    @Nullable
+    private static Class<?> nbtBaseClass;
 
+    /**
+     * The {@code NBTTagCompound} {@link Class}, stored here for top performance.
+     */
+    @Nullable
+    private static Class<?> nbtTagCompoundClass;
+
+    /**
+     * The {@code NBTTagList} {@link Class}, stored here for top performance.
+     */
+    @Nullable
+    private static Class<?> nbtTagListClass;
+
+    /**
+     * The {@code getInt} {@link Method}, stored here for top performance.
+     */
+    @Nullable
+    private static Method getIntMethod;
+
+    /**
+     * The {@code getByte} {@link Method}, stored here for top performance.
+     */
+    @Nullable
+    private static Method getByteMethod;
+
+    /**
+     * The {@code getLong} {@link Method}, stored here for top performance.
+     */
+    @Nullable
+    private static Method getLongMethod;
+
+    /**
+     * The {@code getBoolean} {@link Method}, stored here for top performance.
+     */
+    @Nullable
+    private static Method getBooleanMethod;
+
+    /**
+     * The {@code getFloat} {@link Method}, stored here for top performance.
+     */
+    @Nullable
+    private static Method getFloatMethod;
+
+    /**
+     * The {@code getDouble} {@link Method}, stored here for top performance.
+     */
+    @Nullable
+    private static Method getDoubleMethod;
+
+    /**
+     * The {@code getByteArray} {@link Method}, stored here for top performance.
+     */
+    @Nullable
+    private static Method getByteArrayMethod;
+
+    /**
+     * The {@code getIntArray} {@link Method}, stored here for top performance.
+     */
+    @Nullable
+    private static Method getIntArrayMethod;
+
+    /**
+     * The {@code getLongArray} {@link Method}, stored here for top performance.
+     */
+    @Nullable
+    private static Method getLongArrayMethod;
+
+    /**
+     * The {@code getList} {@link Method}, stored here for top performance.
+     */
+    @Nullable
+    private static Method getListMethod;
+
+    /**
+     * The {@code get} {@link Method}, stored here for top performance.
+     */
+    @Nullable
+    private static Method getMethod;
+
+    /**
+     * The {@code remove} {@link Method}, stored here for top performance.
+     */
+    @Nullable
+    private static Method removeMethod;
+
+    /**
+     * The {@code getShort} {@link Method}, stored here for top performance.
+     */
+    @Nullable
+    private static Method getShortMethod;
+
+    /**
+     * The {@code getString} {@link Method}, stored here for top performance.
+     */
+    @Nullable
+    private static Method getStringMethod;
+
+    /**
+     * The {@code getCompound} {@link Method}, stored here for top performance.
+     */
+    @Nullable
+    private static Method getCompoundMethod;
+
+    /**
+     * The {@code toString} {@link Method}, stored here for top performance.
+     */
+    @Nullable
+    private static Method toStringMethod;
+
+    /**
+     * The {@code setBoolean} {@link Method}, stored here for top performance.
+     */
+    @Nullable
+    private static Method setBooleanMethod;
+
+    /**
+     * The {@code setDouble} {@link Method}, stored here for top performance.
+     */
+    @Nullable
+    private static Method setDoubleMethod;
+
+    /**
+     * The {@code setByte} {@link Method}, stored here for top performance.
+     */
+    @Nullable
+    private static Method setByteMethod;
+
+    /**
+     * The {@code setShort} {@link Method}, stored here for top performance.
+     */
+    @Nullable
+    private static Method setShortMethod;
+
+    /**
+     * The {@code setString} {@link Method}, stored here for top performance.
+     */
+    @Nullable
+    private static Method setStringMethod;
+
+    /**
+     * The {@code setInt} {@link Method}, stored here for top performance.
+     */
+    @Nullable
+    private static Method setIntMethod;
+
+    /**
+     * The {@code setLong} {@link Method}, stored here for top performance.
+     */
+    @Nullable
+    private static Method setLongMethod;
+
+    /**
+     * The {@code setIntArray} {@link Method}, stored here for top performance.
+     */
+    @Nullable
+    private static Method setIntArrayMethod;
+
+    /**
+     * The {@code setByteArray} {@link Method}, stored here for top performance.
+     */
+    @Nullable
+    private static Method setByteArrayMethod;
+
+    /**
+     * The {@code setLongArray} {@link Method}, stored here for top performance.
+     */
+    @Nullable
+    private static Method setLongArrayMethod;
+
+    /**
+     * The {@code set} {@link Method}, stored here for top performance.
+     */
+    @Nullable
+    private static Method setMethod;
+
+    /**
+     * The {@code add} {@link Method}, stored here for top performance.
+     */
+    @Nullable
+    private static Method addMethod;
+
+    /**
+     * The {@code CraftItemStack} {@link Class}, stored here for top performance.
+     */
+    @Nullable
+    private static Class<?> craftItemStackClass;
+
+    /**
+     * The {@code ItemStack} {@link Class}, stored here for top performance.
+     */
+    @Nullable
+    private static Class<?> itemStackClass;
+
+    /**
+     * The {@code CraftEntity} {@link Class}, stored here for top performance.
+     */
+    @Nullable
+    private static Class<?> craftEntityClass;
+
+    /**
+     * The {@code MojangsonParser} {@link Class}, stored here for top performance.
+     */
+    @Nullable
+    private static Class<?> mojangsonParserClass;
+
+    /**
+     * The getTag method name.
+     */
+    @NotNull
     private static String getTagName = "getTag";
+
+    /**
+     * The setTag method name.
+     */
+    @NotNull
     private static String setTagName = "setTag";
 
+    /**
+     * The getTag method name.
+     */
+    @NotNull
     private static String getStringName = "getString";
+
+    /**
+     * The getInt method name.
+     */
+    @NotNull
     private static String getIntName = "getInt";
+
+    /**
+     * The getByte method name.
+     */
+    @NotNull
     private static String getByteName = "getByte";
+
+    /**
+     * The getLong method name.
+     */
+    @NotNull
     private static String getLongName = "getLong";
+
+    /**
+     * The getBoolean method name.
+     */
+    @NotNull
     private static String getBooleanName = "getBoolean";
+
+    /**
+     * The getFloat method name.
+     */
+    @NotNull
     private static String getFloatName = "getFloat";
+
+    /**
+     * The getShort method name.
+     */
+    @NotNull
     private static String getShortName = "getShort";
+
+    /**
+     * The getDouble method name.
+     */
+    @NotNull
     private static String getDoubleName = "getDouble";
+
+    /**
+     * The getList method name.
+     */
+    @NotNull
     private static String getListName = "getList";
+
+    /**
+     * The getByteArray method name.
+     */
+    @NotNull
     private static String getByteArrayName = "getByteArray";
+
+    /**
+     * The getIntArray method name.
+     */
+    @NotNull
     private static String getIntArrayName = "getIntArray";
+
+    /**
+     * The getLongArray method name.
+     */
+    @NotNull
     private static String getLongArrayName = "getLongArray";
 
+    /**
+     * The get method name.
+     */
+    @NotNull
     private static String listGetName = "get";
 
+    /**
+     * The setBoolean method name.
+     */
+    @NotNull
     private static String setBooleanName = "setBoolean";
+
+    /**
+     * The setByte method name.
+     */
+    @NotNull
     private static String setByteName = "setByte";
+
+    /**
+     * The setShort method name.
+     */
+    @NotNull
     private static String setShortName = "setShort";
+
+    /**
+     * The setString method name.
+     */
+    @NotNull
     private static String setStringName = "setString";
+
+    /**
+     * The setInt method name.
+     */
+    @NotNull
     private static String setIntName = "setInt";
+
+    /**
+     * The setLong method name.
+     */
+    @NotNull
     private static String setLongName = "setLong";
+
+    /**
+     * The setDouble method name.
+     */
+    @NotNull
     private static String setDoubleName = "setDouble";
+
+    /**
+     * The setIntArray method name.
+     */
+    @NotNull
     private static String setIntArrayName = "setIntArray";
+
+    /**
+     * The setByteArray method name.
+     */
+    @NotNull
     private static String setByteArrayName = "setByteArray";
+
+    /**
+     * The setLongArray method name.
+     */
+    @NotNull
     private static String setLongArrayName = "a";
 
+    /**
+     * The set method name.
+     */
+    @NotNull
     private static String setName = "set";
+
+    /**
+     * The get method name.
+     */
+    @NotNull
     private static String getName = "get";
+
+    /**
+     * The remove method name.
+     */
+    @NotNull
     private static String removeName = "remove";
+
+    /**
+     * The getCompound method name.
+     */
+    @NotNull
     private static String getCompoundName = "getCompound";
+
+    /**
+     * The asString method name.
+     */
+    @NotNull
     private static String asStringName = "asString";
 
+    /**
+     * The save method name.
+     */
+    @NotNull
     private static String saveName = "save";
+
+    /**
+     * The parse method name.
+     */
+    @NotNull
     private static String parseName = "parse";
+
+    /**
+     * The save method name.
+     */
+    @NotNull
     private static String itemSaveName = "save";
 
+    /**
+     * The hasKey method name.
+     */
+    @NotNull
     private static String hasKeyName = "hasKey";
+
+    /**
+     * The getKeys method name.
+     */
+    @NotNull
     private static String getKeysName = "getKeys";
 
+    /**
+     * The getTypeId method name.
+     */
+    @NotNull
     private static String getTypeIdName = "getTypeId";
 
+    /**
+     * The add method name.
+     */
+    @NotNull
     private static String listAddMethod = "add";
 
     static {
-        if (Version.isCurrentEqualOrHigher(Version.v1_17_R1)) {
+        if (Version.isCurrentEqualOrHigher(Version.v1_17_R1))
             try {
-                NBTBase = net.minecraft.nbt.NBTBase.class;
-                nbtTagCompound = net.minecraft.nbt.NBTTagCompound.class;
-                nbtTagList = net.minecraft.nbt.NBTTagList.class;
-                CraftItemStack = getBukkitClass("inventory.CraftItemStack");
-                IStack = net.minecraft.world.item.ItemStack.class;
-                CraftEntity = getBukkitClass("entity.CraftEntity");
-                MojangsonParser = net.minecraft.nbt.MojangsonParser.class;
-            } catch (Throwable e) {
+                nbtBaseClass = net.minecraft.nbt.NBTBase.class;
+                nbtTagCompoundClass = net.minecraft.nbt.NBTTagCompound.class;
+                nbtTagListClass = net.minecraft.nbt.NBTTagList.class;
+                craftItemStackClass = getBukkitClass("inventory.CraftItemStack");
+                itemStackClass = net.minecraft.world.item.ItemStack.class;
+                craftEntityClass = getBukkitClass("entity.CraftEntity");
+                mojangsonParserClass = net.minecraft.nbt.MojangsonParser.class;
+            } catch (final Throwable e) {
                 e.printStackTrace();
             }
-        } else {
+        else {
             try {
-                NBTBase = getMinecraftClass("NBTBase");
-                nbtTagCompound = getMinecraftClass("NBTTagCompound");
-                nbtTagList = getMinecraftClass("NBTTagList");
-            } catch (Throwable e) {
+                nbtBaseClass = getMinecraftClass("NBTBase");
+                nbtTagCompoundClass = getMinecraftClass("NBTTagCompound");
+                nbtTagListClass = getMinecraftClass("NBTTagList");
+            } catch (final Throwable e) {
                 e.printStackTrace();
             }
+
             try {
-                CraftItemStack = getBukkitClass("inventory.CraftItemStack");
-            } catch (Throwable e) {
+                craftItemStackClass = getBukkitClass("inventory.CraftItemStack");
+            } catch (final Throwable e) {
                 e.printStackTrace();
             }
+
             try {
-                IStack = getMinecraftClass("ItemStack");
-            } catch (Throwable e) {
+                itemStackClass = getMinecraftClass("ItemStack");
+            } catch (final Throwable e) {
                 e.printStackTrace();
             }
+
             try {
-                CraftEntity = getBukkitClass("entity.CraftEntity");
-            } catch (Throwable e) {
+                craftEntityClass = getBukkitClass("entity.CraftEntity");
+            } catch (final Throwable e) {
                 e.printStackTrace();
             }
+
             try {
-                MojangsonParser = getMinecraftClass("MojangsonParser");
-            } catch (Throwable e) {
+                mojangsonParserClass = getMinecraftClass("MojangsonParser");
+            } catch (final Throwable e) {
             }
         }
+
+        if (Version.isCurrentEqualOrHigher(Version.v1_16_R1))
+            setLongArrayName = "a";
 
         if (Version.isCurrentEqualOrHigher(Version.v1_18_R1)) {
             getStringName = "l";
@@ -186,26 +539,21 @@ public class CMINBT {
             itemSaveName = "b";
 
             getTypeIdName = "a";
-
         }
 
-        if (Version.isCurrentEqualOrHigher(Version.v1_14_R1)) {
+        if (Version.isCurrentEqualOrHigher(Version.v1_14_R1))
             listAddMethod = "b";
-        } else if (Version.isCurrentEqualOrHigher(Version.v1_13_R1)) {
+        else if (Version.isCurrentEqualOrHigher(Version.v1_13_R1))
             listAddMethod = "add";
-        }
 
-        if (Version.isCurrentEqual(Version.v1_18_R1)) {
+        if (Version.isCurrentEqual(Version.v1_18_R1))
             getTagName = "s";
-        }
 
-        if (Version.isCurrentEqualOrHigher(Version.v1_18_R2)) {
+        if (Version.isCurrentEqualOrHigher(Version.v1_18_R2))
             getTagName = "t";
-        }
 
-        if (Version.isCurrentEqualOrHigher(Version.v1_19_R1)) {
+        if (Version.isCurrentEqualOrHigher(Version.v1_19_R1))
             getTagName = "u";
-        }
 
         if (Version.isCurrentEqualOrLower(Version.v1_12_R1)) {
             asStringName = "toString";
@@ -224,1144 +572,1590 @@ public class CMINBT {
         }
 
         try {
-            met_getString = nbtTagCompound.getMethod(getStringName, String.class);
-            met_getInt = nbtTagCompound.getMethod(getIntName, String.class);
-            met_getByte = nbtTagCompound.getMethod(getByteName, String.class);
-            met_getLong = nbtTagCompound.getMethod(getLongName, String.class);
-            met_getBoolean = nbtTagCompound.getMethod(getBooleanName, String.class);
-            met_getFloat = nbtTagCompound.getMethod(getFloatName, String.class);
-            met_getShort = nbtTagCompound.getMethod(getShortName, String.class);
-            met_getDouble = nbtTagCompound.getMethod(getDoubleName, String.class);
+            getStringMethod = nbtTagCompoundClass.getMethod(getStringName, String.class);
+            getIntMethod = nbtTagCompoundClass.getMethod(getIntName, String.class);
+            getByteMethod = nbtTagCompoundClass.getMethod(getByteName, String.class);
+            getLongMethod = nbtTagCompoundClass.getMethod(getLongName, String.class);
+            getBooleanMethod = nbtTagCompoundClass.getMethod(getBooleanName, String.class);
+            getFloatMethod = nbtTagCompoundClass.getMethod(getFloatName, String.class);
+            getShortMethod = nbtTagCompoundClass.getMethod(getShortName, String.class);
+            getDoubleMethod = nbtTagCompoundClass.getMethod(getDoubleName, String.class);
 
-            met_getList = nbtTagCompound.getMethod(getListName, String.class, int.class);
+            getListMethod = nbtTagCompoundClass.getMethod(getListName, String.class, int.class);
 
-            met_getByteArray = nbtTagCompound.getMethod(getByteArrayName, String.class);
-            met_getIntArray = nbtTagCompound.getMethod(getIntArrayName, String.class);
+            getByteArrayMethod = nbtTagCompoundClass.getMethod(getByteArrayName, String.class);
+            getIntArrayMethod = nbtTagCompoundClass.getMethod(getIntArrayName, String.class);
 
-            if (Version.isCurrentEqualOrHigher(Version.v1_13_R1)) {
-                met_getLongArray = nbtTagCompound.getMethod(getLongArrayName, String.class);
-            }
+            if (Version.isCurrentEqualOrHigher(Version.v1_13_R1))
+                getLongArrayMethod = nbtTagCompoundClass.getMethod(getLongArrayName, String.class);
 
-            met_get = nbtTagCompound.getMethod(getName, String.class);
-            met_remove = nbtTagCompound.getMethod(removeName, String.class);
+            getMethod = nbtTagCompoundClass.getMethod(getName, String.class);
+            removeMethod = nbtTagCompoundClass.getMethod(removeName, String.class);
 
-            met_getCompound = nbtTagCompound.getMethod(getCompoundName, String.class);
+            getCompoundMethod = nbtTagCompoundClass.getMethod(getCompoundName, String.class);
 
-            met_toString = nbtTagCompound.getMethod(asStringName);
+            toStringMethod = nbtTagCompoundClass.getMethod(asStringName);
 
-            met_setBoolean = nbtTagCompound.getMethod(setBooleanName, String.class, boolean.class);
-            met_setByte = nbtTagCompound.getMethod(setByteName, String.class, byte.class);
-            met_setShort = nbtTagCompound.getMethod(setShortName, String.class, short.class);
-            met_setString = nbtTagCompound.getMethod(setStringName, String.class, String.class);
-            met_setInt = nbtTagCompound.getMethod(setIntName, String.class, int.class);
-            met_setLong = nbtTagCompound.getMethod(setLongName, String.class, long.class);
-            met_setDouble = nbtTagCompound.getMethod(setDoubleName, String.class, double.class);
+            setBooleanMethod = nbtTagCompoundClass.getMethod(setBooleanName, String.class, boolean.class);
+            setByteMethod = nbtTagCompoundClass.getMethod(setByteName, String.class, byte.class);
+            setShortMethod = nbtTagCompoundClass.getMethod(setShortName, String.class, short.class);
+            setStringMethod = nbtTagCompoundClass.getMethod(setStringName, String.class, String.class);
+            setIntMethod = nbtTagCompoundClass.getMethod(setIntName, String.class, int.class);
+            setLongMethod = nbtTagCompoundClass.getMethod(setLongName, String.class, long.class);
+            setDoubleMethod = nbtTagCompoundClass.getMethod(setDoubleName, String.class, double.class);
 
-            met_setIntArray = nbtTagCompound.getMethod(setIntArrayName, String.class, int[].class);
+            setIntArrayMethod = nbtTagCompoundClass.getMethod(setIntArrayName, String.class, int[].class);
 
             try {
-                met_setByteArray = nbtTagCompound.getMethod(setByteArrayName, String.class, byte[].class);
+                setByteArrayMethod = nbtTagCompoundClass.getMethod(setByteArrayName, String.class, byte[].class);
+
                 if (Version.isCurrentEqualOrHigher(Version.v1_13_R1))
-                    met_setLongArray = nbtTagCompound.getMethod(setLongArrayName, String.class, long[].class);
-            } catch (Throwable ex) {
+                    setLongArrayMethod = nbtTagCompoundClass.getMethod(setLongArrayName, String.class, long[].class);
+            } catch (final Throwable ex) {
                 ex.printStackTrace();
             }
 
-            met_set = nbtTagCompound.getMethod(setName, String.class, NBTBase);
+            setMethod = nbtTagCompoundClass.getMethod(setName, String.class, nbtBaseClass);
 
-            // Will fail on 1.7.10 servers
+            // This will fail on 1.7.10 servers.
             try {
-                met_add = nbtTagList.getMethod(listAddMethod, int.class, NBTBase);
-            } catch (Throwable e) {
-
+                addMethod = nbtTagListClass.getMethod(listAddMethod, int.class, nbtBaseClass);
+            } catch (final Throwable e) {
             }
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             e.printStackTrace();
         }
-
     }
 
-    Object tag;
+    /**
+     * The NBT tag {@link Object} associated with this instance.
+     */
+    @Nullable
+    final Object tag;
+
+    /**
+     * The {@link Object} associated with this instance.
+     */
+    @Nullable
     Object object;
 
-    private nmbtType type;
+    /**
+     * The type of NBT associated with this instance.
+     */
+    @NotNull
+    private final nmbtType type;
 
+    /**
+     * Represents the different types of NBT.
+     */
     public enum nmbtType {
-        item, block, entity, custom;
+        /**
+         * Represents the NBT on an {@link ItemStack}.
+         */
+        item,
+
+        /**
+         * Represents the NBT on a {@link Block}.
+         */
+        block,
+
+        /**
+         * Represents the NBT on an {@link Entity}.
+         */
+        entity,
+
+        /**
+         * Represents a custom NBT type.
+         */
+        custom
     }
 
-    static {
-
+    /**
+     * Creates a new NBT object with the given compound.
+     *
+     * @param nbtTagCompound the compound to associate with this instance.
+     */
+    public CMINBT(@Nullable final Object nbtTagCompound) {
+        this.tag = nbtTagCompound;
+        this.type = nmbtType.custom;
     }
 
-    public CMINBT(Object nbtTagCompound) {
-        tag = nbtTagCompound;
-        type = nmbtType.custom;
+    /**
+     * Creates a new NBT object from the given {@link ItemStack}.
+     *
+     * @param item the {@link ItemStack} to extract the NBT data from.
+     */
+    public CMINBT(@Nullable final ItemStack item) {
+        this.object = item;
+        this.tag = getNbt(item);
+        this.type = nmbtType.item;
     }
 
-    public CMINBT(ItemStack item) {
-        object = item;
-        tag = getNbt(item);
-        type = nmbtType.item;
+    /**
+     * Creates a new NBT object from the given {@link Block}.
+     *
+     * @param block the {@link Block} to extract the NBT data from.
+     */
+    public CMINBT(@Nullable final Block block) {
+        this.tag = getNbt(block);
+        this.object = block;
+        this.type = nmbtType.block;
     }
 
-    public CMINBT(Block block) {
-        tag = getNbt(block);
-        object = block;
-        type = nmbtType.block;
+    /**
+     * Creates a new NBT object from the given {@link Entity}.
+     *
+     * @param entity the {@link Entity} to extract the NBT data from.
+     */
+    public CMINBT(@Nullable final Entity entity) {
+        this.tag = getNbt(entity);
+        this.object = entity;
+        this.type = nmbtType.entity;
     }
 
-    public CMINBT(Entity entity) {
-        tag = getNbt(entity);
-        object = entity;
-        type = nmbtType.entity;
-    }
-
-    public Integer getInt(String path) {
-
+    /**
+     * Returns an {@link Integer} from the specified NBT path.
+     *
+     * @param path the path to the NBT data.
+     * @return the {@link Integer} from the NBT path, or {@code null} if the path is not found.
+     */
+    @Nullable
+    public Integer getInt(@NotNull final String path) {
         if (!this.hasNBT(path))
             return null;
-        try {
 
-            if (tag != null && path.contains(".")) {
-                List<String> keys = new ArrayList<String>();
-                keys.addAll(Arrays.asList(path.split("\\.")));
+        try {
+            if (this.tag != null && path.contains(".")) {
+                final List<String> keys = new ArrayList<>(Arrays.asList(path.split("\\.")));
+
                 try {
-                    Object nbtbase = met_get.invoke(tag, keys.get(0));
-                    for (int i = 1; i < keys.size(); i++) {
-                        if (i + 1 < keys.size()) {
-                            nbtbase = met_get.invoke(nbtbase, keys.get(i));
-                        } else {
-                            if (nbtbase == null)
-                                return (Integer) met_getInt.invoke(tag, path);
-                            return (Integer) met_getString.invoke(nbtbase, keys.get(i));
+                    Object nbtBase = getMethod.invoke(this.tag, keys.get(0));
+
+                    for (int i = 1; i < keys.size(); i++)
+                        if (i + 1 < keys.size())
+                            nbtBase = getMethod.invoke(nbtBase, keys.get(i));
+                        else {
+                            if (nbtBase == null)
+                                return (Integer) getIntMethod.invoke(this.tag, path);
+
+                            return (Integer) getStringMethod.invoke(nbtBase, keys.get(i));
                         }
-                    }
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                 }
             }
-            return (Integer) met_getInt.invoke(tag, path);
-        } catch (Exception e) {
+
+            return (Integer) getIntMethod.invoke(this.tag, path);
+        } catch (final Exception e) {
         }
+
         return null;
     }
 
-    public Byte getByte(String path) {
+    /**
+     * Returns a {@link Byte} from the specified NBT path.
+     *
+     * @param path the path to the NBT data.
+     * @return the {@link Byte} from the NBT path, or {@code null} if the path is not found.
+     */
+    @Nullable
+    public Byte getByte(@NotNull final String path) {
         if (!this.hasNBT(path))
             return null;
+
         try {
-            return (Byte) met_getByte.invoke(tag, path);
-        } catch (Exception e) {
+            return (Byte) getByteMethod.invoke(this.tag, path);
+        } catch (final Exception e) {
             e.printStackTrace();
         }
+
         return null;
     }
 
-    public Long getLong(String path) {
+    /**
+     * Returns a {@link Long} from the specified NBT path.
+     *
+     * @param path the path to the NBT data.
+     * @return the {@link Long} from the NBT path, or {@code null} if the path is not found.
+     */
+    @Nullable
+    public Long getLong(@NotNull final String path) {
         if (!this.hasNBT(path))
             return null;
+
         try {
-            return (Long) met_getLong.invoke(tag, path);
-        } catch (Exception e) {
+            return (Long) getLongMethod.invoke(this.tag, path);
+        } catch (final Exception e) {
         }
+
         return null;
     }
 
-    public Boolean getBoolean(String path) {
+    /**
+     * Returns a {@link Boolean} from the specified NBT path.
+     *
+     * @param path the path to the NBT data.
+     * @return the {@link Boolean} from the NBT path, or {@code null} if the path is not found.
+     */
+    @Nullable
+    public Boolean getBoolean(@NotNull final String path) {
         if (!this.hasNBT(path))
             return null;
+
         try {
-            return (Boolean) met_getBoolean.invoke(tag, path);
-        } catch (Exception e) {
+            return (Boolean) getBooleanMethod.invoke(this.tag, path);
+        } catch (final Exception e) {
             e.printStackTrace();
         }
+
         return null;
     }
 
-    public float getFloat(String path) {
+    /**
+     * Returns a float from the specified NBT path.
+     *
+     * @param path the path to the NBT data.
+     * @return the float from the NBT path, or {@code 0} if the path is not found.
+     */
+    public float getFloat(@NotNull final String path) {
         if (!this.hasNBT(path))
-            return 0.0F;
+            return 0F;
+
         try {
-            return (Float) met_getFloat.invoke(tag, path);
-        } catch (Exception e) {
+            return (Float) getFloatMethod.invoke(this.tag, path);
+        } catch (final Exception e) {
         }
-        return 0.0F;
+
+        return 0F;
     }
 
-    public Short getShort(String path) {
-        if (tag == null)
+    /**
+     * Returns a {@link Short} from the specified NBT path.
+     *
+     * @param path the path to the NBT data.
+     * @return the {@link Short} from the NBT path, or {@code null} if the path is not found.
+     */
+    @Nullable
+    public Short getShort(@NotNull final String path) {
+        if (this.tag == null)
             return null;
+
         try {
-            return (Short) met_getShort.invoke(tag, path);
-        } catch (Exception e) {
+            return (Short) getShortMethod.invoke(this.tag, path);
+        } catch (final Exception e) {
             return null;
         }
     }
 
-    public double getDouble(String path) {
+    /**
+     * Returns a double from the specified NBT path.
+     *
+     * @param path the path to the NBT data.
+     * @return the double from the NBT path, or {@code 0} if the path is not found.
+     */
+    public double getDouble(@NotNull final String path) {
         if (!this.hasNBT(path))
             return 0.0D;
         try {
-            return (Double) met_getDouble.invoke(tag, path);
-        } catch (Exception e) {
+            return (Double) getDoubleMethod.invoke(this.tag, path);
+        } catch (final Exception e) {
         }
         return 0.0D;
     }
 
-    public byte[] getByteArray(String path) {
+    /**
+     * Returns a byte array from the specified NBT path.
+     *
+     * @param path the path to the NBT data.
+     * @return the byte array from the NBT path, or an empty array if the path is not found.
+     */
+    public byte @NotNull [] getByteArray(@NotNull final String path) {
         if (!this.hasNBT(path))
             return new byte[0];
+
         try {
-            return (byte[]) met_getByteArray.invoke(tag, path);
-        } catch (Exception e) {
+            return (byte[]) getByteArrayMethod.invoke(this.tag, path);
+        } catch (final Exception e) {
         }
+
         return new byte[0];
     }
 
-    public int[] getIntArray(String path) {
+    /**
+     * Returns an integer array from the specified NBT path.
+     *
+     * @param path the path to the NBT data.
+     * @return the integer array from the NBT path, or an empty array if the path is not found.
+     */
+    public int @NotNull [] getIntArray(@NotNull final String path) {
         if (!this.hasNBT(path))
             return new int[0];
         try {
-            return (int[]) met_getIntArray.invoke(tag, path);
-        } catch (Exception e) {
+            return (int[]) getIntArrayMethod.invoke(this.tag, path);
+        } catch (final Exception e) {
         }
         return new int[0];
     }
 
-    public long[] getLongArray(String path) {
-        if (!this.hasNBT(path))
+    /**
+     * Returns a long array from the specified NBT path.
+     * <p>
+     * This method is for servers on 1.13 and newer.
+     *
+     * @param path the path to the NBT data.
+     * @return the long array from the NBT path, or an empty array if the path is not found.
+     */
+    public long @NotNull [] getLongArray(@NotNull final String path) {
+        if (!this.hasNBT(path) || !Version.isCurrentEqualOrHigher(Version.v1_13_R1))
             return new long[0];
-
-        if (!Version.isCurrentEqualOrHigher(Version.v1_13_R1)) {
-            return new long[0];
-        }
 
         try {
-            return (long[]) met_getLongArray.invoke(tag, path);
-        } catch (Exception e) {
+            return (long[]) getLongArrayMethod.invoke(this.tag, path);
+        } catch (final Exception e) {
         }
+
         return new long[0];
     }
 
-    public String getString(String path) {
-        if (tag == null)
+    /**
+     * Returns a {@link String} from the specified NBT path.
+     *
+     * @param path the path to the NBT data.
+     * @return the {@link String} from the NBT path, or {@code null} if the path is not found.
+     */
+    @Nullable
+    public String getString(@NotNull final String path) {
+        if (this.tag == null || !this.hasNBT(path))
             return null;
-        if (!this.hasNBT(path))
-            return null;
-        try {
 
-            if (tag != null && path.contains(".")) {
-                List<String> keys = new ArrayList<String>();
-                keys.addAll(Arrays.asList(path.split("\\.")));
+        try {
+            if (path.contains(".")) {
+                final List<String> keys = new ArrayList<>(Arrays.asList(path.split("\\.")));
+
                 try {
-                    Object nbtbase = met_get.invoke(tag, keys.get(0));
-                    for (int i = 1; i < keys.size(); i++) {
-                        if (i + 1 < keys.size()) {
-                            nbtbase = met_get.invoke(nbtbase, keys.get(i));
-                        } else {
-                            if (nbtbase == null)
-                                return (String) met_getString.invoke(tag, path);
-                            return (String) met_getString.invoke(nbtbase, keys.get(i));
+                    Object nbtBase = getMethod.invoke(this.tag, keys.get(0));
+
+                    for (int i = 1; i < keys.size(); i++)
+                        if (i + 1 < keys.size())
+                            nbtBase = getMethod.invoke(nbtBase, keys.get(i));
+                        else {
+                            if (nbtBase == null)
+                                return (String) getStringMethod.invoke(this.tag, path);
+
+                            return (String) getStringMethod.invoke(nbtBase, keys.get(i));
                         }
-                    }
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                 }
             }
 
-            return (String) met_getString.invoke(tag, path);
-        } catch (Exception e) {
+            return (String) getStringMethod.invoke(this.tag, path);
+        } catch (final Exception e) {
             return null;
         }
     }
 
-    public List<String> getList(String path) {
-        return getList(path, -1);
+    /**
+     * Returns a {@link String} {@link List} from the specified NBT path.
+     *
+     * @param path the path to the NBT data.
+     * @return the {@link String} {@link List} from the NBT path, or {@code null} if the path is not found.
+     */
+    @Nullable
+    public List<@NotNull String> getList(@NotNull final String path) {
+        return this.getList(path, -1);
     }
 
-    public List<String> getList(String path, int type) {
-
-        if (tag == null)
+    /**
+     * Returns a {@link String} {@link List} from the specified NBT path.
+     *
+     * @param path the path to the NBT data.
+     * @param type the type of the list elements. Use a negative value for automatic detection.
+     * @return the {@link String} {@link List} from the NBT path, or {@code null} if the path is not found.
+     */
+    @Nullable
+    public List<@NotNull String> getList(String path, final int type) {
+        if (this.tag == null || !this.hasNBT(path))
             return null;
 
-        if (!this.hasNBT(path))
-            return null;
+        final List<String> list = new ArrayList<>();
 
-        List<String> list = new ArrayList<String>();
         try {
+            Object tag = this.tag;
 
-            Object t = tag;
+            if (path.contains(".")) {
+                final List<String> keys = new ArrayList<>(Arrays.asList(path.split("\\.")));
 
-            if (t != null && path.contains(".")) {
-                List<String> keys = new ArrayList<String>();
-                keys.addAll(Arrays.asList(path.split("\\.")));
                 try {
-                    Object nbtbase = met_get.invoke(t, keys.get(0));
-                    for (int i = 1; i < keys.size(); i++) {
-                        if (i + 1 < keys.size()) {
-                            nbtbase = met_get.invoke(nbtbase, keys.get(i));
-                        } else {
-                            t = nbtbase;
+                    Object nbtBase = getMethod.invoke(tag, keys.get(0));
+
+                    for (int i = 1; i < keys.size(); i++)
+                        if (i + 1 < keys.size())
+                            nbtBase = getMethod.invoke(nbtBase, keys.get(i));
+                        else {
+                            tag = nbtBase;
+
                             path = keys.get(i);
                             break;
                         }
-                    }
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                 }
             }
 
-            if (t == null)
+            if (tag == null)
                 return list;
 
-            Object ls = met_getList.invoke(t, path, type < 0 ? 8 : type);
-            int size = (int) ls.getClass().getMethod("size").invoke(ls);
+            Object getListResult = getListMethod.invoke(tag, path, type < 0 ? 8 : type);
+            int size = (int) getListResult.getClass().getMethod("size").invoke(getListResult);
 
             if (size == 0 && type < 0) {
-                ls = met_getList.invoke(t, path, type < 0 ? 10 : 8);
-                size = (int) ls.getClass().getMethod("size").invoke(ls);
+                getListResult = getListMethod.invoke(tag, path, 10);
+                size = (int) getListResult.getClass().getMethod("size").invoke(getListResult);
             }
 
-            Method method = ls.getClass().getMethod(listGetName, int.class);
+            Method method = getListResult.getClass().getMethod(listGetName, int.class);
 
             if (Version.isCurrentEqualOrLower(Version.v1_12_R1)) {
-                method = ls.getClass().getMethod("getString", int.class);
+                method = getListResult.getClass().getMethod("getString", int.class);
+
                 for (int i = 0; i < size; i++) {
-                    Object ress = method.invoke(ls, i);
-                    String line = (String) ress;
+                    final Object result = method.invoke(getListResult, i);
+
+                    final String line = (String) result;
                     list.add(line);
                 }
-            } else {
-                for (int i = 0; i < size; i++) {
-                    list.add(met_toString.invoke(method.invoke(ls, i)).toString());
-                }
-            }
+            } else
+                for (int i = 0; i < size; i++)
+                    list.add(toStringMethod.invoke(method.invoke(getListResult, i)).toString());
+
             return list;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
+
             return null;
         }
     }
 
-    public Object getObjectList(String path, int type) {
-        if (tag == null)
-            return null;
-        if (!this.hasNBT(path))
+    /**
+     * Returns an {@link Object} {@link List} from the specified NBT path.
+     *
+     * @param path the path to the NBT data.
+     * @param type the type of the list elements. Use a negative value for automatic detection.
+     * @return the {@link Object} {@link List} from the NBT path, or {@code null} if the path is not found.
+     */
+    @Nullable
+    public Object getObjectList(@NotNull String path, final int type) {
+        if (this.tag == null || !this.hasNBT(path))
             return null;
 
         try {
+            Object tag = this.tag;
 
-            Object t = tag;
+            if (path.contains(".")) {
+                final List<String> keys = new ArrayList<>(Arrays.asList(path.split("\\.")));
 
-            if (t != null && path.contains(".")) {
-                List<String> keys = new ArrayList<String>();
-                keys.addAll(Arrays.asList(path.split("\\.")));
                 try {
-                    Object nbtbase = met_get.invoke(t, keys.get(0));
-                    for (int i = 1; i < keys.size(); i++) {
-                        if (i + 1 < keys.size()) {
-                            nbtbase = met_get.invoke(nbtbase, keys.get(i));
-                        } else {
-                            t = nbtbase;
+                    Object nbtBase = getMethod.invoke(tag, keys.get(0));
+
+                    for (int i = 1; i < keys.size(); i++)
+                        if (i + 1 < keys.size())
+                            nbtBase = getMethod.invoke(nbtBase, keys.get(i));
+                        else {
+                            tag = nbtBase;
+
                             path = keys.get(i);
                             break;
                         }
-                    }
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                 }
             }
 
-            if (t == null)
+            if (tag == null)
                 return null;
 
-            Object ls = met_getList.invoke(t, path, type < 0 ? 8 : type);
-            int size = (int) ls.getClass().getMethod("size").invoke(ls);
+            Object getListResult = getListMethod.invoke(tag, path, type < 0 ? 8 : type);
+            int size = (int) getListResult.getClass().getMethod("size").invoke(getListResult);
 
             if (size == 0 && type < 0) {
-                ls = met_getList.invoke(t, path, 10);
-                size = (int) ls.getClass().getMethod("size").invoke(ls);
+                getListResult = getListMethod.invoke(tag, path, 10);
+                size = (int) getListResult.getClass().getMethod("size").invoke(getListResult);
             }
 
-            return ls;
-        } catch (Exception e) {
+            return getListResult;
+        } catch (final Exception e) {
             e.printStackTrace();
+
             return null;
         }
     }
 
-    public Object setBoolean(String path, Boolean value) {
-        switch (type) {
-        case block:
-            break;
-        case entity:
-            break;
-        case item:
+    /**
+     * Sets a {@link Boolean} value at the specified NBT path.
+     *
+     * @param path  the path to the NBT data.
+     * @param value the {@link Boolean} value to be set.
+     * @return the updated {@link Object}.
+     */
+    @Nullable
+    public Object setBoolean(@NotNull final String path, @Nullable final Boolean value) {
+        if (this.type == nmbtType.item)
             try {
-                if (value == null) {
-                    met_remove.invoke(tag, path);
-                } else {
-                    met_setBoolean.invoke(tag, path, value);
-                }
-                return setTag((ItemStack) object, tag);
-            } catch (Throwable e) {
+                if (value == null)
+                    removeMethod.invoke(this.tag, path);
+                else
+                    setBooleanMethod.invoke(this.tag, path, value);
+
+                return setTag((ItemStack) this.object, this.tag);
+            } catch (final Throwable e) {
                 if (Version.isCurrentEqualOrHigher(Version.v1_7_R4))
                     e.printStackTrace();
-                return object;
+
+                return this.object;
             }
-        default:
-            break;
-        }
-        return object;
+
+        return this.object;
     }
 
-    public Object setByte(String path, Byte value) {
-        switch (type) {
-        case block:
-            break;
-        case entity:
-            break;
-        case item:
+    /**
+     * Sets a {@link Byte} value at the specified NBT path.
+     *
+     * @param path  the path to the NBT data.
+     * @param value the {@link Byte} value to be set.
+     * @return the updated {@link Object}.
+     */
+    @Nullable
+    public Object setByte(@NotNull final String path, @Nullable final Byte value) {
+        if (this.type == nmbtType.item)
             try {
-                if (value == null) {
-                    met_remove.invoke(tag, path);
-                } else {
-                    met_setByte.invoke(tag, path, value);
-                }
-                return setTag((ItemStack) object, tag);
-            } catch (Throwable e) {
+                if (value == null)
+                    removeMethod.invoke(this.tag, path);
+                else
+                    setByteMethod.invoke(this.tag, path, value);
+
+                return setTag((ItemStack) this.object, this.tag);
+            } catch (final Throwable e) {
                 if (Version.isCurrentEqualOrHigher(Version.v1_7_R4))
                     e.printStackTrace();
-                return object;
+
+                return this.object;
             }
-        default:
-            break;
-        }
-        return object;
+
+        return this.object;
     }
 
-    public Object setShort(String path, Short value) {
-        switch (type) {
-        case block:
-            break;
-        case entity:
-            break;
-        case item:
+    /**
+     * Sets a {@link Short} value at the specified NBT path.
+     *
+     * @param path  the path to the NBT data.
+     * @param value the {@link Short} value to be set.
+     * @return the updated {@link Object}.
+     */
+    @Nullable
+    public Object setShort(@NotNull final String path, @Nullable final Short value) {
+        if (this.type == nmbtType.item)
             try {
-                if (value == null) {
-                    met_remove.invoke(tag, path);
-                } else {
-                    met_setShort.invoke(tag, path, value);
-                }
-                return setTag((ItemStack) object, tag);
-            } catch (Throwable e) {
+                if (value == null)
+                    removeMethod.invoke(this.tag, path);
+                else
+                    setShortMethod.invoke(this.tag, path, value);
+
+                return setTag((ItemStack) this.object, this.tag);
+            } catch (final Throwable e) {
                 if (Version.isCurrentEqualOrHigher(Version.v1_7_R4))
                     e.printStackTrace();
-                return object;
+
+                return this.object;
             }
-        default:
-            break;
-        }
-        return object;
+
+        return this.object;
     }
 
-    public Object setString(String path, String value) {
+    /**
+     * Sets a {@link String} value at the specified NBT path.
+     *
+     * @param path  the path to the NBT data.
+     * @param value the {@link String} value to be set.
+     * @return the updated {@link Object}.
+     */
+    @Nullable
+    public Object setString(@NotNull final String path, @Nullable final String value) {
         try {
-
-            Object nbtbase = tag;
+            Object nbtBase = this.tag;
             String realPath = path;
 
-            if (tag != null && path.contains(".")) {
-                List<String> keys = new ArrayList<String>();
-                keys.addAll(Arrays.asList(path.split("\\.")));
+            if (this.tag != null && path.contains(".")) {
+                final List<String> keys = new ArrayList<>(Arrays.asList(path.split("\\.")));
+
                 try {
-                    nbtbase = met_get.invoke(tag, keys.get(0));
-                    for (int i = 1; i < keys.size(); i++) {
-                        if (i + 1 < keys.size()) {
-                            nbtbase = met_get.invoke(nbtbase, keys.get(i));
-                        } else {
+                    nbtBase = getMethod.invoke(this.tag, keys.get(0));
+
+                    for (int i = 1; i < keys.size(); i++)
+                        if (i + 1 < keys.size())
+                            nbtBase = getMethod.invoke(nbtBase, keys.get(i));
+                        else {
                             realPath = keys.get(i);
+
                             break;
                         }
-                    }
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                 }
             }
 
-            if (value == null) {
-                met_remove.invoke(nbtbase, realPath);
-            } else {
-                met_setString.invoke(nbtbase, realPath, value);
-            }
-        } catch (Throwable e) {
-//		if (Version.isCurrentEqualOrHigher(Version.v1_7_R4))
-//		    e.printStackTrace();
-            return object;
-        }
-        switch (type) {
-        case custom:
-            return tag;
-        case block:
-            break;
-        case entity:
-            break;
-        case item:
+            if (value == null)
+                removeMethod.invoke(nbtBase, realPath);
+            else
+                setStringMethod.invoke(nbtBase, realPath, value);
+        } catch (final Throwable e) {
+            //if (Version.isCurrentEqualOrHigher(Version.v1_7_R4))
+            //	e.printStackTrace();
 
-            return setTag((ItemStack) object, tag);
-        default:
-            break;
+            return this.object;
         }
-        return object;
+
+        switch (this.type) {
+            case custom:
+                return this.tag;
+            case item:
+                return setTag((ItemStack) this.object, this.tag);
+            default:
+                break;
+        }
+
+        return this.object;
     }
 
-    public Object setInt(String path, Integer value) {
+    /**
+     * Sets an {@link Integer} value at the specified NBT path.
+     *
+     * @param path  the path to the NBT data.
+     * @param value the {@link Integer} value to be set.
+     * @return the updated {@link Object}.
+     */
+    @Nullable
+    public Object setInt(@NotNull final String path, @Nullable final Integer value) {
         try {
-            if (value == null) {
-                met_remove.invoke(tag, path);
-            } else {
-                met_setInt.invoke(tag, path, value);
-            }
-        } catch (Throwable e) {
+            if (value == null)
+                removeMethod.invoke(this.tag, path);
+            else
+                setIntMethod.invoke(this.tag, path, value);
+        } catch (final Throwable e) {
             if (Version.isCurrentEqualOrHigher(Version.v1_7_R4))
                 e.printStackTrace();
-            return object;
+
+            return this.object;
         }
-        switch (type) {
-        case custom:
-            return tag;
-        case block:
-            break;
-        case entity:
-            break;
-        case item:
-            return setTag((ItemStack) object, tag);
-        default:
-            break;
+
+        switch (this.type) {
+            case custom:
+                return this.tag;
+            case item:
+                return setTag((ItemStack) this.object, this.tag);
+            default:
+                break;
         }
-        return object;
+
+        return this.object;
     }
 
-    public Object setIntArray(String path, int[] value) {
+    /**
+     * Sets an integer array value at the specified NBT path.
+     *
+     * @param path  the path to the NBT path.
+     * @param value the integer array value to be set.
+     * @return the updated {@link Object}.
+     */
+    @Nullable
+    public Object setIntArray(@NotNull final String path, final int @Nullable [] value) {
         try {
-            if (value == null) {
-                met_remove.invoke(tag, path);
-            } else {
-                met_setIntArray.invoke(tag, path, value);
-            }
-        } catch (Throwable e) {
+            if (value == null)
+                removeMethod.invoke(this.tag, path);
+            else
+                setIntArrayMethod.invoke(this.tag, path, value);
+        } catch (final Throwable e) {
             if (Version.isCurrentEqualOrHigher(Version.v1_7_R4))
                 e.printStackTrace();
-            return object;
+
+            return this.object;
         }
-        switch (type) {
-        case custom:
-            return tag;
-        case block:
-            break;
-        case entity:
-            break;
-        case item:
-            return setTag((ItemStack) object, tag);
-        default:
-            break;
+
+        switch (this.type) {
+            case custom:
+                return this.tag;
+            case item:
+                return setTag((ItemStack) this.object, this.tag);
+            default:
+                break;
         }
-        return object;
+
+        return this.object;
     }
 
-    public Object setByteArray(String path, byte[] value) {
+    /**
+     * Sets a byte array value at the specified NBT path.
+     *
+     * @param path  the path to the NBT path.
+     * @param value the byte array value to be set.
+     * @return the updated {@link Object}.
+     */
+    @Nullable
+    public Object setByteArray(@NotNull final String path, final byte @Nullable [] value) {
         try {
-            if (value == null) {
-                met_remove.invoke(tag, path);
-            } else {
-                met_setByteArray.invoke(tag, path, value);
-            }
-        } catch (Throwable e) {
+            if (value == null)
+                removeMethod.invoke(this.tag, path);
+            else
+                setByteArrayMethod.invoke(this.tag, path, value);
+        } catch (final Throwable e) {
             if (Version.isCurrentEqualOrHigher(Version.v1_7_R4))
                 e.printStackTrace();
-            return object;
+
+            return this.object;
         }
-        switch (type) {
-        case custom:
-            return tag;
-        case block:
-            break;
-        case entity:
-            break;
-        case item:
-            return setTag((ItemStack) object, tag);
-        default:
-            break;
+
+        switch (this.type) {
+            case custom:
+                return this.tag;
+            case item:
+                return setTag((ItemStack) this.object, this.tag);
+            default:
+                break;
         }
-        return object;
+
+        return this.object;
     }
 
-    public Object setLongArray(String path, long[] value) {
+    /**
+     * Sets a long array value at the specified NBT path.
+     *
+     * @param path  the path to the NBT path.
+     * @param value the long array value to be set.
+     * @return the updated {@link Object}.
+     */
+    @Nullable
+    public Object setLongArray(@NotNull final String path, final long @Nullable [] value) {
         try {
-            if (value == null) {
-                met_remove.invoke(tag, path);
-            } else {
-                met_setLongArray.invoke(tag, path, value);
-            }
-        } catch (Throwable e) {
+            if (value == null)
+                removeMethod.invoke(this.tag, path);
+            else
+                setLongArrayMethod.invoke(this.tag, path, value);
+        } catch (final Throwable e) {
             if (Version.isCurrentEqualOrHigher(Version.v1_7_R4))
                 e.printStackTrace();
-            return object;
+
+            return this.object;
         }
-        switch (type) {
-        case custom:
-            return tag;
-        case block:
-            break;
-        case entity:
-            break;
-        case item:
-            return setTag((ItemStack) object, tag);
-        default:
-            break;
+
+        switch (this.type) {
+            case custom:
+                return this.tag;
+            case item:
+                return setTag((ItemStack) this.object, this.tag);
+            default:
+                break;
         }
-        return object;
+
+        return this.object;
     }
 
-    public Object setLong(String path, Long value) {
-        switch (type) {
-        case custom:
-            try {
-                if (value == null) {
-                    met_remove.invoke(tag, path, value);
-                } else {
-                    met_setLong.invoke(tag, path, value);
+    /**
+     * Sets a {@link Long} value at the specified NBT path.
+     *
+     * @param path  the path to the NBT data.
+     * @param value the {@link Long} value to be set.
+     * @return the updated {@link Object}.
+     */
+    @Nullable
+    public Object setLong(@NotNull final String path, @Nullable final Long value) {
+        switch (this.type) {
+            case custom:
+                try {
+                    if (value == null)
+                        removeMethod.invoke(this.tag, path, null);
+                    else
+                        setLongMethod.invoke(this.tag, path, value);
+
+                    return this.tag;
+                } catch (final Throwable e) {
+                    if (Version.isCurrentEqualOrHigher(Version.v1_7_R4))
+                        e.printStackTrace();
+
+                    return this.object;
                 }
-                return tag;
-            } catch (Throwable e) {
-                if (Version.isCurrentEqualOrHigher(Version.v1_7_R4))
-                    e.printStackTrace();
-                return object;
-            }
-        case block:
-            break;
-        case entity:
-            break;
-        case item:
-            try {
-                if (value == null) {
-                    met_remove.invoke(tag, path, value);
-                } else {
-                    met_setLong.invoke(tag, path, value);
+            case item:
+                try {
+                    if (value == null)
+                        removeMethod.invoke(this.tag, path, value);
+                    else
+                        setLongMethod.invoke(this.tag, path, value);
+
+                    return setTag((ItemStack) this.object, this.tag);
+                } catch (final Throwable e) {
+                    if (Version.isCurrentEqualOrHigher(Version.v1_7_R4))
+                        e.printStackTrace();
+
+                    return this.object;
                 }
-                return setTag((ItemStack) object, tag);
-            } catch (Throwable e) {
-                if (Version.isCurrentEqualOrHigher(Version.v1_7_R4))
-                    e.printStackTrace();
-                return object;
-            }
-        default:
-            break;
+            default:
+                break;
         }
-        return object;
+
+        return this.object;
     }
 
-    public Object setDouble(String path, Double value) {
+    /**
+     * Sets a {@link Double} value at the given NBT path.
+     *
+     * @param path  the path to the NBT data.
+     * @param value the {@link Double} value to be set.
+     * @return the updated {@link Object}.
+     */
+    @Nullable
+    public Object setDouble(@NotNull final String path, @Nullable final Double value) {
         try {
-            if (value == null) {
-                met_remove.invoke(tag, path, value);
-            } else {
-                met_setDouble.invoke(tag, path, value);
-            }
-        } catch (Throwable e) {
+            if (value == null)
+                removeMethod.invoke(this.tag, path, null);
+            else
+                setDoubleMethod.invoke(this.tag, path, value);
+        } catch (final Throwable e) {
             if (Version.isCurrentEqualOrHigher(Version.v1_7_R4))
                 e.printStackTrace();
-            return object;
+
+            return this.object;
         }
 
-        switch (type) {
-        case custom:
-            return tag;
-        case block:
-            break;
-        case entity:
-            break;
-        case item:
-            return setTag((ItemStack) object, tag);
-        default:
-            break;
+        switch (this.type) {
+            case custom:
+                return this.tag;
+            case item:
+                return setTag((ItemStack) this.object, this.tag);
+            default:
+                break;
         }
-        return object;
+
+        return this.object;
     }
 
-    public Object remove(String path) {
-
+    /**
+     * Removes the NBT value at the specified path.
+     *
+     * @param path the path to the NBT data.
+     * @return the updated {@link Object}.
+     */
+    @Nullable
+    public Object remove(@NotNull final String path) {
         try {
-            met_remove.invoke(tag, path);
-        } catch (Throwable e) {
+            removeMethod.invoke(this.tag, path);
+        } catch (final Throwable e) {
             if (Version.isCurrentEqualOrHigher(Version.v1_7_R4))
                 e.printStackTrace();
-            return object;
+
+            return this.object;
         }
-        switch (type) {
-        case block:
-            break;
-        case entity:
-        case custom:
-            return tag;
-        case item:
-            return setTag((ItemStack) object, tag);
-        default:
-            break;
+
+        switch (this.type) {
+            case entity:
+            case custom:
+                return this.tag;
+            case item:
+                return setTag((ItemStack) this.object, this.tag);
+            default:
+                break;
         }
-        return object;
+
+        return this.object;
     }
 
-    public Object set(String path, Object nbtbase) {
-
+    /**
+     * Sets the NBT value at the specified path.
+     *
+     * @param path    the path to the NBT value.
+     * @param nbtBase the NBT value to be set.
+     * @return the updated {@link Object}.
+     */
+    @Nullable
+    public Object set(@NotNull final String path, @NotNull final Object nbtBase) {
         try {
-            met_set.invoke(tag, path, nbtbase);
-        } catch (Throwable e) {
+            setMethod.invoke(this.tag, path, nbtBase);
+        } catch (final Throwable e) {
             if (Version.isCurrentEqualOrHigher(Version.v1_7_R4))
                 e.printStackTrace();
         }
-        switch (type) {
-        case block:
-            break;
-        case entity:
-            break;
-        case custom:
-            return tag;
-        case item:
-            return setTag((ItemStack) object, tag);
+
+        switch (this.type) {
+            case block:
+            case entity:
+                break;
+            case custom:
+                return this.tag;
+            case item:
+                return setTag((ItemStack) this.object, this.tag);
         }
-        return object;
+
+        return this.object;
     }
-//    @Override
-//    public ItemStack setNBTList(ItemStack item, String name, List<String> list) {
-//	net.minecraft.server.v1_16_R3.ItemStack nmsIs = CraftItemStack.asNMSCopy(item);
-//	if (nmsIs == null)
-//	    return null;
-//	try {
-//	    NBTTagCompound tag = nmsIs.getTag();
-//	    if (tag == null)
-//		tag = new NBTTagCompound();
-//
-//	    NBTTagList tagList = new NBTTagList();
-//	    if (list != null)
-//		for (String one : list) {
-//		    tagList.add(NBTTagString.a(one));
-//		}
-//	    if (list == null)
-//		tag.remove(name);
-//	    else
-//		tag.set(name, tagList);
-//	    nmsIs.setTag(tag);
-//	    return CraftItemStack.asBukkitCopy(nmsIs);
-//	} catch (Exception e) {
-//	    e.printStackTrace();
-//	}
-//	return null;
-//    }
 
-//    public Object setList(String path, List<String> list) {
-//	switch (type) {
-//	case block:
-//	    break;
-//	case entity:
-//	    break;
-//	case item:
-//	    try {
-//		
-//		
-//		
-//		Method meth = tag.getClass().getMethod("setLong", String.class, long.class);
-//		meth.invoke(tag, path, value);
-//		return CMI.getInstance().getReflectionManager().setTag((ItemStack) object, tag);
-//	    } catch (Throwable e) {
-//		if (Version.isCurrentEqualOrHigher(Version.v1_7_R4))
-//		    e.printStackTrace();
-//		return object;
-//	    }
-//	default:
-//	    break;
-//	}
-//	return object;
-//    }
+	/*@Nullable
+	@Override
+	public ItemStack setNBTList(@NotNull final ItemStack item, @NotNull final String name, @Nullable final List<@NotNull String> list) {
+		final net.minecraft.server.v1_16_R3.ItemStack nmsItemStack = CraftItemStack.asNMSCopy(item);
 
+		if (nmsItemStack == null)
+			return null;
+
+		try {
+			NBTTagCompound tag = nmsItemStack.getTag();
+
+			if (tag == null)
+				tag = new NBTTagCompound();
+
+			final NBTTagList tagList = new NBTTagList();
+
+			if (list != null)
+				for (final String one : list)
+					tagList.add(NBTTagString.a(one));
+			if (list == null)
+				tag.remove(name);
+			else
+				tag.set(name, tagList);
+
+			nmsItemStack.setTag(tag);
+			return CraftItemStack.asBukkitCopy(nmsItemStack);
+		} catch (final Exception e) {
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
+	@Nullable
+	public Object setList(@NotNull final String path, @NotNull final List<@NotNull String> list) {
+		if (this.type == nmbtType.item)
+			try {
+				final Method method = this.tag.getClass().getMethod("setLong", String.class, long.class);
+
+				method.invoke(this.tag, path, value);
+				return CMI.getInstance().getReflectionManager().setTag((ItemStack) this.object, this.tag);
+			} catch (final Throwable e) {
+				if (Version.isCurrentEqualOrHigher(Version.v1_7_R4))
+					e.printStackTrace();
+
+				return this.object;
+			}
+
+		return this.object;
+	}*/
+
+    /**
+     * Checks if this object has NBT data.
+     *
+     * @return {@code true} if this object has NBT data, {@code false} otherwise.
+     */
     public boolean hasNBT() {
-        return tag != null;
+        return this.tag != null;
     }
 
-    public boolean hasNBT(String key) {
-        if (tag != null && key.contains(".")) {
-            List<String> keys = new ArrayList<String>();
-            keys.addAll(Arrays.asList(key.split("\\.")));
+    /**
+     * Checks if there is NBT data at the given key.
+     *
+     * @param key the key to check.
+     * @return {@code true} if the key has NBT data, {@code false} otherwise.
+     */
+    public boolean hasNBT(@NotNull final String key) {
+        if (this.tag != null && key.contains(".")) {
+            final List<String> keys = new ArrayList<>(Arrays.asList(key.split("\\.")));
+
             try {
-                Object nbtbase = met_get.invoke(tag, keys.get(0));
-                for (int i = 1; i < keys.size(); i++) {
-                    if (i + 1 < keys.size()) {
-                        nbtbase = met_get.invoke(nbtbase, keys.get(i));
-                    } else {
-                        if (nbtbase == null) {
-                            return (Boolean) tag.getClass().getMethod(hasKeyName, String.class).invoke(tag, key);
-                        }
-                        return (Boolean) nbtbase.getClass().getMethod(hasKeyName, String.class).invoke(nbtbase, keys.get(i));
+                Object nbtBase = getMethod.invoke(this.tag, keys.get(0));
+
+                for (int i = 1; i < keys.size(); i++)
+                    if (i + 1 < keys.size())
+                        nbtBase = getMethod.invoke(nbtBase, keys.get(i));
+                    else {
+                        if (nbtBase == null)
+                            return (Boolean) this.tag.getClass().getMethod(hasKeyName, String.class).invoke(this.tag, key);
+
+                        return (Boolean) nbtBase.getClass().getMethod(hasKeyName, String.class).invoke(nbtBase, keys.get(i));
                     }
-                }
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 e.printStackTrace();
             }
+
             return false;
         }
+
         try {
-            return tag != null && (Boolean) (tag.getClass().getMethod(hasKeyName, String.class).invoke(tag, key));
-        } catch (Throwable e) {
+            return this.tag != null && (Boolean) this.tag.getClass().getMethod(hasKeyName, String.class).invoke(this.tag, key);
+        } catch (final Throwable e) {
             e.printStackTrace();
         }
+
         return false;
     }
 
+    /**
+     * Returns the NBT tag associated with this instance.
+     *
+     * @return the NBT tag associated with this instance.
+     */
     public Object getNbt() {
-        return tag;
+        return this.tag;
     }
 
-    public Set<String> getKeys() {
-        Set<String> keys = new HashSet<String>();
-        if (!hasNBT())
+    /**
+     * Returns the keys representing this NBT tag compound.
+     *
+     * @return a {@link Set} of keys representing this NBT tag compound.
+     */
+    @NotNull
+    public Set<@NotNull String> getKeys() {
+        Set<String> keys = new HashSet<>();
+
+        if (!this.hasNBT())
             return keys;
 
         try {
-            keys = (Set<String>) getNbt().getClass().getMethod(getKeysName).invoke(getNbt());
-        } catch (Throwable e) {
+            keys = (Set<String>) this.getNbt().getClass().getMethod(getKeysName).invoke(this.getNbt());
+        } catch (final Throwable e) {
             e.printStackTrace();
         }
 
         return keys;
     }
 
-    public Object get(String path) {
+    /**
+     * Returns the value at the specified path.
+     *
+     * @param path the path to the NBT data.
+     * @return the value at the path, or {@code null} if the path is not found.
+     */
+    @Nullable
+    public Object get(@NotNull final String path) {
         try {
-            return met_get.invoke(getNbt(), path);
-        } catch (Throwable e) {
+            return getMethod.invoke(this.getNbt(), path);
+        } catch (final Throwable e) {
             e.printStackTrace();
         }
+
         return null;
     }
 
-    public Object getCompound(String path) {
+    /**
+     * Returns a compound from the specified NBT path.
+     *
+     * @param path the path to the NBT data.
+     * @return the compound from the path, or {@code null} if the path is not found.
+     */
+    @Nullable
+    public Object getCompound(@NotNull final String path) {
         try {
-            return met_getCompound.invoke(getNbt(), path);
-        } catch (Throwable e) {
+            return getCompoundMethod.invoke(this.getNbt(), path);
+        } catch (final Throwable e) {
             e.printStackTrace();
         }
+
         return null;
     }
 
+    /**
+     * Returns the type ID of this NBT tag.
+     *
+     * @return the type ID of this NBT tag, or {@code 0} if there isn't one.
+     */
     public byte getTypeId() {
         try {
-            return (byte) getNbt().getClass().getMethod(getTypeIdName).invoke(getNbt());
-        } catch (Throwable e) {
+            return (byte) this.getNbt().getClass().getMethod(getTypeIdName).invoke(this.getNbt());
+        } catch (final Throwable e) {
             e.printStackTrace();
         }
+
         return 0;
     }
 
-    public static ItemStack setTag(ItemStack item, Object tag) {
+    /**
+     * Sets the NBT tag for the given {@link ItemStack}.
+     *
+     * @param item the {@link ItemStack} to set the NBT tag for.
+     * @param tag  the NBT tag {@link Object} to set.
+     * @return the updated {@link ItemStack}.
+     */
+    @Nullable
+    public static ItemStack setTag(@Nullable final ItemStack item, @Nullable final Object tag) {
         try {
-            Object nmsStack = asNMSCopy(item);
-            if (nmsStack == null) {
+            final Object nmsItemStack = asNMSCopy(item);
+
+            if (nmsItemStack == null)
                 return null;
-            }
-            nmsStack.getClass().getMethod(setTagName, nbtTagCompound).invoke(nmsStack, tag);
-            return (ItemStack) asBukkitCopy(nmsStack);
-        } catch (Throwable e) {
+
+            nmsItemStack.getClass().getMethod(setTagName, nbtTagCompoundClass).invoke(nmsItemStack, tag);
+            return (ItemStack) asBukkitCopy(nmsItemStack);
+        } catch (final Throwable e) {
             if (Version.isCurrentEqualOrHigher(Version.v1_7_R4))
                 e.printStackTrace();
+
             return item;
         }
     }
 
-    public static Object getNbt(Entity entity) {
+    /**
+     * Returns the NBT tag for the given {@link Entity}.
+     *
+     * @param entity the {@link Entity} to retrieve the NBT tag of.
+     * @return the NBT tag {@link Object} associated with the {@link Entity}, or {@code null} if there is none.
+     */
+    @Nullable
+    public static Object getNbt(@Nullable final Entity entity) {
         if (entity == null)
             return null;
+
         try {
-            Object tag = nbtTagCompound.getDeclaredConstructor().newInstance();
-            Object nmsStack = getEntityHandle(entity);
-            Method methTag = nmsStack.getClass().getMethod(saveName, nbtTagCompound);
-            tag = methTag.invoke(nmsStack, tag);
+            Object tag = nbtTagCompoundClass.getDeclaredConstructor().newInstance();
+            final Object nmsEntity = getEntityHandle(entity);
+            final Method tagMethod = nmsEntity.getClass().getMethod(saveName, nbtTagCompoundClass);
+
+            tag = tagMethod.invoke(nmsEntity, tag);
             return tag;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             return null;
         }
     }
 
-    public static Object getNbt(ItemStack item) {
+    /**
+     * Returns the NBT tag for the given {@link ItemStack}.
+     *
+     * @param item the {@link ItemStack} to retrieve the NBT tag of.
+     * @return the NBT tag {@link Object} associated with the {@link ItemStack}, or {@code null} if there is none.
+     */
+    @Nullable
+    public static Object getNbt(@Nullable final ItemStack item) {
         if (item == null)
             return null;
-        try {
 
-            Object nmsStack = asNMSCopy(item);
-            if (nmsStack == null)
+        try {
+            final Object nmsItemStack = asNMSCopy(item);
+
+            if (nmsItemStack == null)
                 return null;
 
-            Method methTag = nmsStack.getClass().getMethod(getTagName);
-            Object tag = methTag.invoke(nmsStack);
+            final Method tagMethod = nmsItemStack.getClass().getMethod(getTagName);
+            Object tag = tagMethod.invoke(nmsItemStack);
+
             if (tag == null)
-                tag = nbtTagCompound.getDeclaredConstructor().newInstance();
+                tag = nbtTagCompoundClass.getDeclaredConstructor().newInstance();
 
             return tag;
-        } catch (Exception e) {
-//	    e.printStackTrace();
+        } catch (final Exception e) {
+            //e.printStackTrace();
+
             return null;
         }
     }
 
-    public static Object getNbt(Block block) {
+    /**
+     * Returns the NBT tag for the given {@link Block}.
+     *
+     * @param block the {@link Block} to retrieve the NBT tag of.
+     * @return the NBT tag {@link Object} associated with the {@link Block}, or {@code null} if there is none.
+     */
+    @Nullable
+    public static Object getNbt(@Nullable final Block block) {
         if (block == null)
             return false;
-        try {
 
-            Object tile = CMILib.getInstance().getReflectionManager().getTileEntityAt(block.getLocation());
+        try {
+            final Object tile = CMILib.getInstance().getReflectionManager().getTileEntityAt(block.getLocation());
 
             // TileEntity -> getUpdateTag
-            String ff = "d";
+            final String getUpdateTagName;
+
             switch (Version.getCurrent()) {
-            case v1_10_R1:
-            case v1_9_R1:
-            case v1_9_R2:
-            case v1_8_R1:
-            case v1_8_R3:
-            case v1_8_R2:
-            case v1_7_R1:
-            case v1_7_R2:
-            case v1_7_R3:
-            case v1_7_R4:
-            case v1_11_R1:
-            case v1_12_R1:
-                ff = "d";
-                break;
-            case v1_13_R1:
-            case v1_13_R2:
-                ff = "aa_";
-                break;
-            case v1_17_R1:
-            case v1_18_R1:
-                ff = "Z_";
-                break;
-            case v1_18_R2:
-                ff = "aa_";
-                break;
-            case v1_19_R1:
-                if (Version.isCurrentSubEqual(0))
-                    ff = "ab_";
-                else
-                    ff = "aa_";
-                break;
-            case v1_19_R2:
-                ff = "ad_";
-                break;
-            case v1_19_R3:
-                ff = "aq_";
-                break;
-            case v1_20_R1:
-                ff = "ao_";
-                break;
-            case v1_14_R1:
-            case v1_15_R1:
-            default:
-                ff = "b";
-                break;
+                case v1_7_R1:
+                case v1_7_R2:
+                case v1_7_R3:
+                case v1_7_R4:
+                case v1_8_R1:
+                case v1_8_R3:
+                case v1_8_R2:
+                case v1_9_R1:
+                case v1_9_R2:
+                case v1_10_R1:
+                case v1_11_R1:
+                case v1_12_R1:
+                    getUpdateTagName = "d";
+
+                    break;
+                case v1_13_R1:
+                case v1_13_R2:
+                case v1_18_R2:
+                    getUpdateTagName = "aa_";
+
+                    break;
+                case v1_17_R1:
+                case v1_18_R1:
+                    getUpdateTagName = "Z_";
+
+                    break;
+                case v1_19_R1:
+                    getUpdateTagName = Version.isCurrentSubEqual(0) ? "ab_" : "aa_";
+
+                    break;
+                case v1_19_R2:
+                    getUpdateTagName = "ad_";
+
+                    break;
+                case v1_19_R3:
+                    getUpdateTagName = "aq_";
+
+                    break;
+                case v1_20_R1:
+                    getUpdateTagName = "ao_";
+
+                    break;
+                case v1_14_R1:
+                case v1_15_R1:
+                default:
+                    getUpdateTagName = "b";
+
+                    break;
             }
 
             if (tile == null)
                 return null;
 
-            Method methTag = tile.getClass().getMethod(ff);
-            Object tag = methTag.invoke(tile);
-            return tag;
-        } catch (Exception e) {
+            final Method tagMethod = tile.getClass().getMethod(getUpdateTagName);
+            return tagMethod.invoke(tile);
+        } catch (final Exception e) {
             e.printStackTrace();
+
             return null;
         }
     }
 
-    private static Class<?> getBukkitClass(String nmsClassString) {
+    /**
+     * Returns a Bukkit {@link Class} corresponding to the given NMS class name.
+     * <p>
+     * The current version is automatically included.
+     *
+     * @param nmsClassString the NMS class name.
+     * @return the Bukkit {@link Class} corresponding to the NMS class, or {@code null} if the class is not found.
+     */
+    @Nullable
+    private static Class<?> getBukkitClass(@NotNull final String nmsClassString) {
         try {
             return Class.forName("org.bukkit.craftbukkit." + Version.getCurrent().toString() + "." + nmsClassString);
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             e.printStackTrace();
         }
+
         return null;
     }
 
-    private static Class<?> getMinecraftClass(String nmsClassString) {
+    /**
+     * Returns a Minecraft {@link Class} corresponding to the given NMS class name.
+     * <p>
+     * The current version is automatically included.
+     *
+     * @param nmsClassString the NMS class name.
+     * @return the Bukkit {@link Class} corresponding to the NMS class, or {@code null} if the class is not found.
+     */
+    @Nullable
+    private static Class<?> getMinecraftClass(@NotNull final String nmsClassString) {
         try {
             return Class.forName("net.minecraft.server." + Version.getCurrent().toString() + "." + nmsClassString);
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
         }
+        
         return null;
     }
 
-    public static Object asNMSCopy(ItemStack item) {
+    /**
+     * Converts the given Bukkit {@link ItemStack} into its corresponding NMS ItemStack representation.
+     *
+     * @param item the Bukkit {@link ItemStack} to convert.
+     * @return the NMS representation of the Bukkit {@link ItemStack}, or {@code null}.
+     */
+    @Nullable
+    public static Object asNMSCopy(@Nullable final ItemStack item) {
         try {
-            Method meth = CraftItemStack.getMethod("asNMSCopy", ItemStack.class);
-            return meth.invoke(CraftItemStack, item);
-        } catch (Exception e) {
+            final Method method = craftItemStackClass.getMethod("asNMSCopy", ItemStack.class);
+
+            return method.invoke(craftItemStackClass, item);
+        } catch (final Exception e) {
             return null;
         }
     }
 
-    public static Object asBukkitCopy(Object item) {
+    /**
+     * Converts the given NMS ItemStack into its corresponding Bukkit {@link ItemStack} representation.
+     *
+     * @param item the NMS ItemStack to convert.
+     * @return the Bukkit {@link ItemStack} representation of the NMS ItemStack, or {@code null}.
+     */
+    @Nullable
+    public static Object asBukkitCopy(@Nullable final Object item) {
         try {
-            Method meth = CraftItemStack.getMethod("asBukkitCopy", IStack);
-            return meth.invoke(CraftItemStack, item);
-        } catch (Exception e) {
+            final Method method = craftItemStackClass.getMethod("asBukkitCopy", itemStackClass);
+
+            return method.invoke(craftItemStackClass, item);
+        } catch (final Exception e) {
             e.printStackTrace();
+
             return null;
         }
     }
 
-    public static Object getEntityHandle(Entity ent) {
+    /**
+     * Returns the NMS handle {@link Object} for the given Bukkit {@link Entity}.
+     *
+     * @param entity the Bukkit {@link Entity} to retrieve the handle of.
+     * @return the NMS handle {@link Object} for the Bukkit {@link Entity}, or {@code null}.
+     */
+    @Nullable
+    public static Object getEntityHandle(@NotNull final Entity entity) {
         Object handle = null;
+
         try {
-            handle = CraftEntity.cast(ent).getClass().getMethod("getHandle").invoke(CraftEntity.cast(ent));
-        } catch (Exception e) {
+            handle = craftEntityClass.cast(entity).getClass().getMethod("getHandle").invoke(craftEntityClass.cast(entity));
+        } catch (final Exception e) {
             e.printStackTrace();
         }
+
         return handle;
     }
 
-    public static boolean isNBTSimilar(ItemStack is, ItemStack is2) {
+    /**
+     * Checks if two {@link ItemStack}s have similar NBT tags.
+     *
+     * @param firstItemStack  the first {@link ItemStack} to compare.
+     * @param secondItemStack the second {@link ItemStack} to compare.
+     * @return {@code true} if the two {@link ItemStack}s have similar NBT tags, {@code false} otherwise.
+     */
+    public static boolean isNBTSimilar(@Nullable final ItemStack firstItemStack, @Nullable final ItemStack secondItemStack) {
         try {
-            Object i1 = asNMSCopy(is);
-            Object i2 = asNMSCopy(is2);
-            Method meth = null;
-            if (Version.isCurrentEqualOrLower(Version.v1_17_R1))
-                meth = i1.getClass().getMethod("equals", IStack, IStack);
-            else {
-                // ItemStack -> tagMatches
-                meth = i1.getClass().getMethod("a", IStack, IStack);
-            }
+            final Object firstNMSItemStack = asNMSCopy(firstItemStack);
+            final Object secondNMSItemStack = asNMSCopy(secondItemStack);
 
-            return (boolean) meth.invoke(IStack, i1, i2);
-        } catch (Throwable e) {
+            final Method method;
+
+            // ItemStack -> tagMatches.
+            if (Version.isCurrentEqualOrLower(Version.v1_17_R1))
+                method = firstNMSItemStack.getClass().getMethod("equals", itemStackClass, itemStackClass);
+            else
+                method = firstNMSItemStack.getClass().getMethod("a", itemStackClass, itemStackClass);
+
+            return (boolean) method.invoke(itemStackClass, firstNMSItemStack, secondNMSItemStack);
+        } catch (final Throwable e) {
             e.printStackTrace();
         }
+
         return false;
     }
 
-    public static ItemStack HideFlag(ItemStack item, int state) {
-        Object nmsStack = asNMSCopy(item);
+    /**
+     * Hides or shows a specific flag on an {@link ItemStack}.
+     *
+     * @param item  the {@link ItemStack} to modify.
+     * @param state the state to set the flag to ({@code 0} to show, {@code 1} to hide).
+     * @return the updated {@link ItemStack}.
+     * @deprecated badly named, use {@link #hideFlag(ItemStack, int)} instead.
+     */
+    @Deprecated
+    @Nullable
+    public static ItemStack HideFlag(@NotNull final ItemStack item, final int state) {
+        return hideFlag(item, state);
+    }
+
+    /**
+     * Hides or shows a specific flag on an {@link ItemStack}.
+     *
+     * @param item  the {@link ItemStack} to modify.
+     * @param state the state to set the flag to ({@code 0} to show, {@code 1} to hide).
+     * @return the updated {@link ItemStack}.
+     */
+    @Nullable
+    public static ItemStack hideFlag(@NotNull final ItemStack item, final int state) {
+        final Object nmsItemStack = asNMSCopy(item);
+
         try {
-            Method methTag = nmsStack.getClass().getMethod(getTagName);
-            Object tag = methTag.invoke(nmsStack);
+            final Method tagMethod = nmsItemStack.getClass().getMethod(getTagName);
+            Object tag = tagMethod.invoke(nmsItemStack);
+
             if (tag == null)
-                tag = nbtTagCompound.newInstance();
-            met_setInt.invoke(tag, "HideFlags", state);
-            Method meth2 = nmsStack.getClass().getMethod(setTagName, nbtTagCompound);
-            meth2.invoke(nmsStack, tag);
-            return (ItemStack) asBukkitCopy(nmsStack);
-        } catch (Exception e) {
+                tag = nbtTagCompoundClass.newInstance();
+
+            setIntMethod.invoke(tag, "HideFlags", state);
+            final Method method = nmsItemStack.getClass().getMethod(setTagName, nbtTagCompoundClass);
+
+            method.invoke(nmsItemStack, tag);
+            return (ItemStack) asBukkitCopy(nmsItemStack);
+        } catch (final Exception e) {
             e.printStackTrace();
         }
+
         return item;
     }
 
-    public static ItemStack modifyItemStack(ItemStack stack, String arguments) {
-        Object nmsStack = asNMSCopy(stack);
+    /**
+     * Modifies an {@link ItemStack} based on the provided arguments using Mojangson syntax.
+     *
+     * @param item      the {@link ItemStack} to modify.
+     * @param arguments the Mojangson syntax {@link String} representing the modifications.
+     * @return the updated {@link ItemStack}.
+     */
+    @Nullable
+    public static ItemStack modifyItemStack(@Nullable final ItemStack item, @Nullable final String arguments) {
+        final Object nmsItemStack = asNMSCopy(item);
+
         try {
-            Object res = MojangsonParser.getMethod(parseName, String.class).invoke(MojangsonParser, arguments);
-            nmsStack.getClass().getMethod(setTagName, nbtTagCompound).invoke(nmsStack, res);
-            Object meta = CraftItemStack.getMethod("getItemMeta", IStack).invoke(CraftItemStack, nmsStack);
-            stack.setItemMeta((ItemMeta) meta);
-        } catch (Throwable e) {
+            final Object result = mojangsonParserClass.getMethod(parseName, String.class).invoke(mojangsonParserClass, arguments);
+            nmsItemStack.getClass().getMethod(setTagName, nbtTagCompoundClass).invoke(nmsItemStack, result);
+
+            final Object meta = craftItemStackClass.getMethod("getItemMeta", itemStackClass).invoke(craftItemStackClass, nmsItemStack);
+            item.setItemMeta((ItemMeta) meta);
+        } catch (final Throwable e) {
             e.printStackTrace();
         }
-        return stack;
+
+        return item;
     }
 
-    public static String toJson(ItemStack item) {
+    /**
+     * Converts an {@link ItemStack} into its JSON representation.
+     *
+     * @param item the {@link ItemStack} to convert.
+     * @return the JSON {@link String} representing the {@link ItemStack}.
+     */
+    @Nullable
+    public static String toJson(@Nullable final ItemStack item) {
         if (item == null)
             return null;
 
-        Object nmsStack = asNMSCopy(item);
+        final Object nmsStack = asNMSCopy(item);
 
         try {
-            Method meth = IStack.getMethod(itemSaveName, nbtTagCompound);
-            Object res = meth.invoke(nmsStack, nbtTagCompound.newInstance());
-            return res.toString();
-        } catch (Throwable e) {
+            final Method method = itemStackClass.getMethod(itemSaveName, nbtTagCompoundClass);
+            
+            final Object result = method.invoke(nmsStack, nbtTagCompoundClass.newInstance());
+            return result.toString();
+        } catch (final Throwable e) {
             e.printStackTrace();
         }
 
         return null;
     }
 
-    // For 1.13 and older servers
-    public static EntityType getEggType(ItemStack item) {
+    /**
+     * Returns the {@link EntityType} of the given {@link ItemStack}.
+     * <p>
+     * This method is for servers on 1.13 or older.
+     *
+     * @param item the {@link ItemStack} to check.
+     * @return the {@link EntityType} of the {@link ItemStack}, or {@code null} if the {@link ItemStack} is not a spawn
+     * egg.
+     */
+    @Nullable
+    public static EntityType getEggType(@NotNull final ItemStack item) {
         if (!CMIMaterial.isMonsterEgg(item.getType()))
             return null;
 
-        if (Version.isCurrentEqual(Version.v1_12_R1)) {
+        if (Version.isCurrentEqual(Version.v1_12_R1))
             try {
                 if (Version.isCurrentEqualOrLower(Version.v1_11_R1)) {
-                    CMIEntityType cmiType = CMIEntityType.getById(item.getData().getData());
+                    final CMIEntityType cmiType = CMIEntityType.getById(item.getData().getData());
+
                     if (cmiType != null)
                         return cmiType.getType();
                 }
-                Object tag = getNbt(item);
-                Object base = met_getCompound.invoke(tag, "EntityTag");
-                String type = (String) met_getString.invoke(base, "id");
+
+                final Object tag = getNbt(item);
+                final Object base = getCompoundMethod.invoke(tag, "EntityTag");
+
+                final String type = (String) getStringMethod.invoke(base, "id");
                 return EntityType.fromName(type.replace("minecraft:", "").toUpperCase());
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 return null;
             }
-        }
 
-        CMIEntityType type = CMIEntityType.getByName(item.getType().toString().replace("_SPAWN_EGG", ""));
+        final CMIEntityType type = CMIEntityType.getByName(item.getType().toString().replace("_SPAWN_EGG", ""));
         return type == null ? null : type.getType();
     }
 
-    // For 1.13 and older servers
-    public static ItemStack setEggType(ItemStack item, EntityType etype) {
-
+    /**
+     * Sets the {@link EntityType} of the given {@link ItemStack}.
+     * <p>
+     * This method is for servers on 1.13 and older.
+     *
+     * @param item the {@link ItemStack} to modify.
+     * @param type the {@link EntityType} to set.
+     * @return the updated {@link ItemStack}, or {@code null} if the {@link ItemStack} is not a spawn egg.
+     */
+    @Nullable
+    public static ItemStack setEggType(@NotNull final ItemStack item, @NotNull final EntityType type) {
         if (!item.getType().toString().contains("_EGG"))
             return null;
+        
         try {
-            Object tag = getNbt(item);
+            final Object finalTag = getNbt(item);
+            Object tag = getCompoundMethod.invoke(finalTag, "EntityTag");
 
-            Object ttag = met_getCompound.invoke(tag, "EntityTag");
+            if (tag == null)
+                tag = nbtTagCompoundClass.newInstance();
 
-            if (ttag == null)
-                ttag = nbtTagCompound.newInstance();
+            final CMIEntityType cmiType = CMIEntityType.getByType(type);
 
-            CMIEntityType ce = CMIEntityType.getByType(etype);
-            if (ce == null)
+            if (cmiType == null)
                 return item;
 
-            met_setString.invoke(ttag, "id", ce.getName());
-            met_set.invoke(tag, "EntityTag", ttag);
+            setStringMethod.invoke(tag, "id", cmiType.getName());
+            setMethod.invoke(finalTag, "EntityTag", tag);
 
-            setTag(item, tag);
+            setTag(item, finalTag);
             return (ItemStack) asBukkitCopy(asNMSCopy(item));
-        } catch (Exception e) {
-//	    e.printStackTrace();
+        } catch (final Exception e) {
+            //e.printStackTrace();
+
             return null;
         }
     }
 
-    public static Object newNBTTagList(int type) {
+    /**
+     * Creates a new NBT tag list with the given type.
+     *
+     * @param type the type of the list.
+     * @return the new NBT tag list, or {@code null}.
+     */
+    @Nullable
+    public static Object newNBTTagList(final int type) {
         try {
-            return nbtTagList.newInstance();
-        } catch (Throwable e) {
+            return nbtTagListClass.newInstance();
+        } catch (final Throwable e) {
             e.printStackTrace();
         }
+
         return null;
     }
 
-    public static void addToList(Object list, int size, Object data) {
-        if (met_add == null)
+    /**
+     * Adds an element to the specified NBT tag list.
+     *
+     * @param list the NBT tag list to add the element to.
+     * @param size the size of the NBT tag list.
+     * @param data the data to add to the NBT tag list.
+     */
+    public static void addToList(@NotNull final Object list, final int size, @NotNull final Object data) {
+        if (addMethod == null)
             return;
+
         try {
-            met_add.invoke(list, size, data);
-        } catch (Throwable e) {
+            addMethod.invoke(list, size, data);
+        } catch (final Throwable e) {
             e.printStackTrace();
         }
     }
 
+    /**
+     * Returns the type of NBT associated with this instance.
+     *
+     * @return the type of NBT associated with this instance.
+     */
+    @NotNull
     public nmbtType getType() {
-        return type;
+        return this.type;
     }
 }
