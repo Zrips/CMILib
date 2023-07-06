@@ -23,44 +23,46 @@ public enum CMIRecipeType {
     private boolean timeAndExp = false;
 
     CMIRecipeType(int minSlots, List<Integer> ingredientSlots) {
-	this.ingredientSlots = ingredientSlots;
-	this.minSlots = minSlots;
+        this.ingredientSlots = ingredientSlots;
+        this.minSlots = minSlots;
     }
 
     CMIRecipeType(int ingredientSlot, boolean timeAndExp) {
-	this.ingredientSlots.clear();
-	this.ingredientSlots.add(ingredientSlot);
-	this.timeAndExp = timeAndExp;
+        this.ingredientSlots.clear();
+        this.ingredientSlots.add(ingredientSlot);
+        this.timeAndExp = timeAndExp;
     }
 
     CMIRecipeType(int ingredientSlot) {
-	this.ingredientSlots.clear();
-	this.ingredientSlots.add(ingredientSlot);
+        this.ingredientSlots.clear();
+        this.ingredientSlots.add(ingredientSlot);
     }
 
     CMIRecipeType(List<Integer> ingredientSlots) {
-	this.ingredientSlots = ingredientSlots;
+        this.ingredientSlots = ingredientSlots;
     }
 
     public static CMIRecipeType getByName(String name) {
-	name = name.toLowerCase().endsWith("recipe") ? name.substring(0, name.length() - 6) : name;
-	name = name.toLowerCase().startsWith("craft") ? name.substring(5, name.length()) : name;
-	for (CMIRecipeType one : CMIRecipeType.values()) {
-	    if (one.name().equalsIgnoreCase(name))
-		return one;
-	}
-	return CMIRecipeType.Unknown;
+        name = name.toLowerCase();
+        name = name.endsWith("recipe") ? name.substring(0, name.length() - 6) : name;
+        name = name.startsWith("craft") ? name.substring(5, name.length()) : name;
+        name = name.endsWith("transform") ? name.substring(0, name.length() - 9) : name;
+        for (CMIRecipeType one : CMIRecipeType.values()) {
+            if (one.name().equalsIgnoreCase(name))
+                return one;
+        }
+        return CMIRecipeType.Unknown;
     }
 
     public List<Integer> getIngredientSlots() {
-	return ingredientSlots;
+        return ingredientSlots;
     }
 
     public int getMinSlots() {
-	return minSlots;
+        return minSlots;
     }
 
     public boolean isTimeAndExp() {
-	return timeAndExp;
+        return timeAndExp;
     }
 }

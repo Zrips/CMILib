@@ -490,9 +490,11 @@ public class CMIRecipe {
             }
             map.put(0, CMIri);
         } else {
-            switch (recipe.getClass().getSimpleName()) {
-            case "CraftBlastingRecipe":
-            case "BlastingRecipe":
+
+            CMIRecipeType recipeType = CMIRecipeType.getByName(recipe.getClass().getSimpleName());
+
+            switch (recipeType) {
+            case Blasting:
                 org.bukkit.inventory.BlastingRecipe brc = (org.bukkit.inventory.BlastingRecipe) recipe;
                 CMIRecipeIngredient CMIri = new CMIRecipeIngredient(brc.getInput());
 
@@ -502,8 +504,7 @@ public class CMIRecipe {
 
                 map.put(0, CMIri);
                 break;
-            case "CraftCampfireRecipe":
-            case "CampfireRecipe":
+            case Campfire:
                 org.bukkit.inventory.CampfireRecipe cfr = (org.bukkit.inventory.CampfireRecipe) recipe;
                 CMIri = new CMIRecipeIngredient(cfr.getInput());
 
@@ -513,8 +514,7 @@ public class CMIRecipe {
 
                 map.put(0, CMIri);
                 break;
-            case "CraftCookingRecipe":
-            case "CookingRecipe":
+            case Cooking:
                 org.bukkit.inventory.CookingRecipe cor = (org.bukkit.inventory.CookingRecipe) recipe;
                 CMIri = new CMIRecipeIngredient(cor.getInput());
 
@@ -523,8 +523,7 @@ public class CMIRecipe {
                 }
                 map.put(0, CMIri);
                 break;
-            case "CraftMerchantRecipe":
-            case "MerchantRecipe":
+            case Merchant:
                 org.bukkit.inventory.MerchantRecipe mer = (org.bukkit.inventory.MerchantRecipe) recipe;
 
                 for (int i = 0; i < mer.getIngredients().size(); i++) {
@@ -533,8 +532,7 @@ public class CMIRecipe {
                 }
 
                 break;
-            case "CraftSmokingRecipe":
-            case "SmokingRecipe":
+            case Smoking:
                 org.bukkit.inventory.SmokingRecipe smr = (org.bukkit.inventory.SmokingRecipe) recipe;
 
                 CMIri = new CMIRecipeIngredient(smr.getInput());
@@ -544,8 +542,7 @@ public class CMIRecipe {
                 }
                 map.put(0, CMIri);
                 break;
-            case "CraftStonecuttingRecipe":
-            case "StonecuttingRecipe":
+            case Stonecutting:
                 org.bukkit.inventory.StonecuttingRecipe str = (org.bukkit.inventory.StonecuttingRecipe) recipe;
                 CMIri = new CMIRecipeIngredient(str.getInput());
 
@@ -554,8 +551,7 @@ public class CMIRecipe {
                 }
                 map.put(0, CMIri);
                 break;
-            case "CraftSmithingRecipe":
-            case "SmithingRecipe":
+            case Smithing:
                 org.bukkit.inventory.SmithingRecipe smtr = (org.bukkit.inventory.SmithingRecipe) recipe;
 
                 CMIri = new CMIRecipeIngredient(smtr.getBase().getItemStack());
