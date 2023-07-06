@@ -253,7 +253,10 @@ public enum LC {
     Location_Y("&eY: &6[y]"),
     Location_Z("&eZ: &6[z]"),
     Location_Pitch("&ePitch: &6[pitch]"),
-    Location_Yaw("&eYaw: &6[yaw]");
+    Location_Yaw("&eYaw: &6[yaw]"),
+    
+    info_Spawner("&r[type] Spawner"),
+    ;
 
     private String text;
     private List<String> comments = new ArrayList<String>();

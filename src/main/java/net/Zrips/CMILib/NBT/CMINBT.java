@@ -990,6 +990,8 @@ public class CMINBT {
             keys.addAll(Arrays.asList(key.split("\\.")));
             try {
                 Object nbtbase = met_get.invoke(tag, keys.get(0));
+                if (nbtbase == null)
+                    return false;
                 for (int i = 1; i < keys.size(); i++) {
                     if (i + 1 < keys.size()) {
                         nbtbase = met_get.invoke(nbtbase, keys.get(i));

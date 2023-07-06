@@ -17,6 +17,7 @@ import org.bukkit.inventory.meta.BlockStateMeta;
 
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Container.CMIText;
+import net.Zrips.CMILib.Locale.LC;
 import net.Zrips.CMILib.Version.Version;
 
 public class CMIEntity {
@@ -93,10 +94,11 @@ public class CMIEntity {
 	    if (!Version.isCurrentEqualOrHigher(Version.v1_13_R1))
 		bs.setCreatureTypeByName(type.name());
 	    bsm.setBlockState(bs);
+
 	    String s = CMILib.getInstance().getLM().getMessage("info.EntityType." + type.toString().toLowerCase());
 	    String cap = type.name().toLowerCase().replace("_", " ").substring(0, 1).toUpperCase() + type.name().toLowerCase().replace("_", " ").substring(1);
 	    s = CMILib.getInstance().getLM().isString("info.EntityType." + type.toString().toLowerCase()) ? s : cap;
-	    bsm.setDisplayName(CMILib.getInstance().getLM().getMessage("info.Spawner", "[type]", s));
+	    bsm.setDisplayName(LC.info_Spawner.getLocale("[type]", s));
 	    is.setItemMeta(bsm);
 	} catch (Throwable e) {
 	    is.setDurability(type.getTypeId());
