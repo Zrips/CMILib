@@ -44,6 +44,7 @@ import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.RawMessages.RawMessage;
 import net.Zrips.CMILib.Version.Version;
+import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
 import net.minecraft.advancements.Advancements;
 
 public class Reflections {
@@ -1534,7 +1535,7 @@ public class Reflections {
 
             this.sendPlayerPacket(player, pack);
 
-            Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+            CMIScheduler.get().runTaskLater(() -> {
                 try {
                     this.sendPlayerPacket(player, pack);
                 } catch (Throwable e) {

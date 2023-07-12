@@ -26,6 +26,7 @@ import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.GUI.GUIManager.InvType;
 import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.NBT.CMINBT;
+import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
 
 public class GUIListener implements Listener {
     CMILib plugin;
@@ -145,7 +146,7 @@ public class GUIListener implements Listener {
         if (event.getAction().toString().equalsIgnoreCase("HOTBAR_SWAP") || event.getAction().toString().equalsIgnoreCase("HOTBAR_MOVE_AND_READD")) {
             ItemStack iioh = CMILib.getInstance().getReflectionManager().getItemInOffHand(player);
             event.setCancelled(true);
-            Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+            CMIScheduler.get().runTaskLater(() -> {
 
                 try {
                     player.getInventory().setItemInOffHand(iioh);
@@ -187,7 +188,7 @@ public class GUIListener implements Listener {
         if (!plugin.getGUIManager().canClick(player, buttons, event.getCursor())) {
             event.setCancelled(true);
             if (GUIManager.usePackets) {
-                Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+                CMIScheduler.get().runTaskLater(() -> {
                     player.setItemOnCursor(player.getItemOnCursor());
                 }, 1L);
             }
@@ -198,7 +199,7 @@ public class GUIListener implements Listener {
         if (plugin.getGUIManager().isLockedPart(player, buttons)) {
             event.setCancelled(true);
             if (GUIManager.usePackets) {
-                Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+                CMIScheduler.get().runTaskLater(() -> {
                     player.setItemOnCursor(player.getItemOnCursor());
                 }, 1L);
             }
@@ -207,7 +208,7 @@ public class GUIListener implements Listener {
         if (plugin.getGUIManager().isLockedPart(player, buttons, event.getCursor())) {
             event.setCancelled(true);
             if (GUIManager.usePackets) {
-                Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+                CMIScheduler.get().runTaskLater(() -> {
                     player.setItemOnCursor(player.getItemOnCursor());
                 }, 1L);
             }

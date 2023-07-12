@@ -49,7 +49,7 @@ public class CMIScoreboard {
         }
 
         if (timerMap.size() > 0) {
-            Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(CMILib.getInstance(), () -> {
+            CMIScheduler.get().runTaskLater(() -> {
                 runScheduler();
             }, 20L);
         }

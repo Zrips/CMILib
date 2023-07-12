@@ -24,10 +24,10 @@ public class CMINumber {
 
     public static final String toRoman(int number) {
         Integer l = map.floorKey(number);
-        
+
         if (l == null)
             return String.valueOf(number);
-        
+
         if (number == l) {
             return map.get(number);
         }
@@ -52,6 +52,10 @@ public class CMINumber {
     }
 
     public static int clamp(int number, int min, int max) {
+        return number < min ? min : number > max ? max : number;
+    }
+
+    public static long clamp(long number, long min, long max) {
         return number < min ? min : number > max ? max : number;
     }
 }

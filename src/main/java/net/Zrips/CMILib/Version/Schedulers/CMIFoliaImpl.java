@@ -10,6 +10,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import io.papermc.paper.threadedregions.scheduler.AsyncScheduler;
 import io.papermc.paper.threadedregions.scheduler.GlobalRegionScheduler;
 import net.Zrips.CMILib.CMILib;
+import net.Zrips.CMILib.Container.CMINumber;
 
 public class CMIFoliaImpl implements CMIBaseImpl {
     private final JavaPlugin plugin;
@@ -44,25 +45,29 @@ public class CMIFoliaImpl implements CMIBaseImpl {
         return future;
     }
 
+    private static long clamp(long delay) {
+        return CMINumber.clamp(delay, 1L, Math.abs(delay));
+    }
+
     @Override
     public CMITask runTaskLater(Runnable runnable, long delay) {
         return new CMIFoliaTask(this.globalRegionScheduler
-            .runDelayed(this.plugin, task -> runnable.run(), delay));
+            .runDelayed(this.plugin, task -> runnable.run(), clamp(delay)));
     }
 
     @Override
     public CMITask runLaterAsync(Runnable runnable, long delay) {
-        return new CMIFoliaTask(this.asyncScheduler.runDelayed(this.plugin, task -> runnable.run(), delay * 50L, TimeUnit.MILLISECONDS));
+        return new CMIFoliaTask(this.asyncScheduler.runDelayed(this.plugin, task -> runnable.run(), clamp(delay) * 50L, TimeUnit.MILLISECONDS));
     }
 
     @Override
     public CMITask scheduleSyncRepeatingTask(Runnable runnable, long delay, long period) {
-        return new CMIFoliaTask(this.globalRegionScheduler.runAtFixedRate(this.plugin, task -> runnable.run(), delay, period));
+        return new CMIFoliaTask(this.globalRegionScheduler.runAtFixedRate(this.plugin, task -> runnable.run(), clamp(delay), clamp(period)));
     }
 
     @Override
     public CMITask runTimerAsync(Runnable runnable, long delay, long period) {
-        return new CMIFoliaTask(this.asyncScheduler.runAtFixedRate(this.plugin, task -> runnable.run(), delay * 50L, period * 50L, TimeUnit.MILLISECONDS));
+        return new CMIFoliaTask(this.asyncScheduler.runAtFixedRate(this.plugin, task -> runnable.run(), clamp(delay) * 50L, clamp(period) * 50L, TimeUnit.MILLISECONDS));
     }
 
     @Override
@@ -77,12 +82,12 @@ public class CMIFoliaImpl implements CMIBaseImpl {
 
     @Override
     public CMITask runAtLocationLater(Location location, Runnable runnable, long delay) {
-        return new CMIFoliaTask(this.plugin.getServer().getRegionScheduler().runDelayed(this.plugin, location, task -> runnable.run(), delay));
+        return new CMIFoliaTask(this.plugin.getServer().getRegionScheduler().runDelayed(this.plugin, location, task -> runnable.run(),clamp(delay)));
     }
 
     @Override
     public CMITask runAtLocationTimer(Location location, Runnable runnable, long delay, long period) {
-        return new CMIFoliaTask(this.plugin.getServer().getRegionScheduler().runAtFixedRate(this.plugin, location, task -> runnable.run(), delay, period));
+        return new CMIFoliaTask(this.plugin.getServer().getRegionScheduler().runAtFixedRate(this.plugin, location, task -> runnable.run(), clamp(delay), clamp(period)));
     }
 
     @Override
@@ -114,11 +119,11 @@ public class CMIFoliaImpl implements CMIBaseImpl {
 
     @Override
     public CMITask runAtEntityLater(Entity entity, Runnable runnable, long delay) {
-        return new CMIFoliaTask(entity.getScheduler().runDelayed(this.plugin, task -> runnable.run(), null, delay));
+        return new CMIFoliaTask(entity.getScheduler().runDelayed(this.plugin, task -> runnable.run(), null, clamp(delay)));
     }
 
     @Override
     public CMITask runAtEntityTimer(Entity entity, Runnable runnable, long delay, long period) {
-        return new CMIFoliaTask(entity.getScheduler().runAtFixedRate(this.plugin, task -> runnable.run(), null, delay, period));
+        return new CMIFoliaTask(entity.getScheduler().runAtFixedRate(this.plugin, task -> runnable.run(), null, clamp(delay), clamp(period)));
     }
 }

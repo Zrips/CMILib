@@ -20,6 +20,7 @@ import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.Permissions.CMILPerm;
+import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
 import net.Zrips.CMILib.commands.CMICommand;
 
 public class GUIManager {
@@ -262,7 +263,7 @@ public class GUIManager {
             }
 
             if (canClick) {
-                Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+                CMIScheduler.get().runTaskLater(() -> {
                     for (GUIButtonCommand oneC : button.getCommands(clickType)) {
                         CMICommand.performCommand(player, oneC.getCommand(), oneC.getVis());
                     }
