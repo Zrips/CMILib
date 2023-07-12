@@ -25,9 +25,4 @@ public class CMIFoliaTask implements CMITask {
     public Plugin getPlugin() {
         return this.task.getOwningPlugin();
     }
-
-    @Override
-    public int getTaskId() {
-        return this.getTaskId();
-    }
 }

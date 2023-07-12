@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import org.bukkit.Bukkit;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
@@ -13,9 +12,9 @@ import org.bukkit.entity.Player;
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Colors.CMIChatColor;
 import net.Zrips.CMILib.Locale.Snd;
-import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Time.CMITimeManager;
 import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
+import net.Zrips.CMILib.Version.Schedulers.CMITask;
 
 public class BossBarInfo {
     private Player player;
@@ -26,8 +25,8 @@ public class BossBarInfo {
     private BossBar bar;
     private BarColor startingColor = null;
     private BarStyle style = null;
-    private Integer autoId = null;
-    private Integer id = null;
+    private CMITask autoScheduler = null;
+    private CMITask hideSheduler = null;
     private String nameOfBar;
     private String titleOfBar = "";
     private boolean withPlaceholder = false;
@@ -73,22 +72,22 @@ public class BossBarInfo {
         started = System.currentTimeMillis();
     }
 
-    public void setHideId(Integer id) {
+    public void setHideScheduler(CMITask cmiTask) {
         cancelHideScheduler();
-        this.id = id;
+        this.hideSheduler = cmiTask; 
     }
 
     public synchronized void cancelAutoScheduler() {
-        if (autoId != null) {
-            CMIScheduler.cancelTask(autoId);
-            autoId = null;
+        if (autoScheduler != null) {
+            autoScheduler.cancel();
+            autoScheduler = null;
         }
     }
 
     public synchronized void cancelHideScheduler() {
-        if (id != null) {
-            CMIScheduler.cancelTask(id);
-            id = null;
+        if (hideSheduler != null) {
+            hideSheduler.cancel();
+            hideSheduler = null;
         }
     }
 
@@ -242,8 +241,8 @@ public class BossBarInfo {
         this.player = player;
     }
 
-    public Integer getHideId() {
-        return id;
+    public CMITask getHideScheduler() {
+        return hideSheduler;
     }
 
     public Integer getAuto() {
@@ -255,12 +254,12 @@ public class BossBarInfo {
         this.auto = auto;
     }
 
-    public Integer getAutoId() {
-        return autoId;
+    public CMITask getAutoId() {
+        return autoScheduler;
     }
 
-    public void setAutoId(Integer autoId) {
-        this.autoId = autoId;
+    public void setAutoId(CMITask cmiTask) {
+        this.autoScheduler = cmiTask;
     }
 
     public List<String> getCommands() {

@@ -24,9 +24,4 @@ public class CMIBukkitTask implements CMITask {
     public Plugin getPlugin() {
         return this.task.getOwner();
     }
-
-    @Override
-    public int getTaskId() {
-        return this.task.getTaskId();
-    }
 }

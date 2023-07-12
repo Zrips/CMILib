@@ -223,7 +223,7 @@ public class CMIActionBar {
 
                 actionbarMap.put(player.getUniqueId(), old);
 
-                old.setId(CMIScheduler.get().runTimerAsync(new Runnable() {
+                old.setScheduler(CMIScheduler.get().runTimerAsync(new Runnable() {
                     @Override
                     public void run() {
                         repeatingActionBar old = actionbarMap.get(player.getUniqueId());
@@ -241,7 +241,7 @@ public class CMIActionBar {
                             e.printStackTrace();
                         }
                     }
-                }, 0L, 20L).getTaskId());
+                }, 0L, 20L));
 
             }
 

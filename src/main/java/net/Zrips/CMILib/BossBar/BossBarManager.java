@@ -14,7 +14,6 @@ import org.bukkit.entity.Player;
 
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Container.CommandType;
-import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Version.Version;
 import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
 import net.Zrips.CMILib.commands.CMICommand;
@@ -175,7 +174,7 @@ public class BossBarManager {
 
                     if (curP != null && curP + barInfo.getAdjustPerc() <= 0 && barInfo.getAdjustPerc() < 0 || curP != null && curP + barInfo.getAdjustPerc() >= 1 && barInfo.getAdjustPerc() > 0) {
 
-                        if (barInfo.getCommands() != null && barInfo.getHideId() == null) {
+                        if (barInfo.getCommands() != null && barInfo.getHideScheduler() == null) {
                             try {
                                 if (barInfo.getAdjustPerc() < 0)
                                     curP = 0D;
@@ -203,8 +202,8 @@ public class BossBarManager {
                             });
                         }
 
-                        if (barInfo.getHideId() == null)
-                            barInfo.setHideId(CMIScheduler.get().runTaskLater(new Runnable() {
+                        if (barInfo.getHideScheduler() == null)
+                            barInfo.setHideScheduler(CMIScheduler.get().runTaskLater(new Runnable() {
                                 @Override
                                 public void run() {
                                     CMIBossBarHideEvent ev = new CMIBossBarHideEvent(barInfo);
@@ -214,10 +213,10 @@ public class BossBarManager {
                                         barInfo.cancelAutoScheduler();
                                         removeGlobalBossbar(barInfo);
                                         barInfo.remove();
-                                        barInfo.setHideId(null);
+                                        barInfo.setHideScheduler(null);
                                     }
                                 }
-                            }, barInfo.getKeepFor()).getTaskId());
+                            }, barInfo.getKeepFor()));
 //			barInfo.cancelAutoScheduler();
 //			return;
 
@@ -255,8 +254,8 @@ public class BossBarManager {
                     e.printStackTrace();
                 }
 
-                if (!barInfo.stillRunning() && barInfo.getHideId() == null) {
-                    barInfo.setHideId(CMIScheduler.get().runTaskLater(new Runnable() {
+                if (!barInfo.stillRunning() && barInfo.getHideScheduler() == null) {
+                    barInfo.setHideScheduler(CMIScheduler.get().runTaskLater(new Runnable() {
                         @Override
                         public void run() {
                             CMIBossBarHideEvent ev = new CMIBossBarHideEvent(barInfo);
@@ -265,16 +264,16 @@ public class BossBarManager {
                                 barInfo.getBar().setVisible(false);
                                 removeGlobalBossbar(barInfo);
                                 barInfo.remove();
-                                barInfo.setHideId(null);
+                                barInfo.setHideScheduler(null);
                             }
                         }
-                    }, barInfo.getKeepFor()).getTaskId());
+                    }, barInfo.getKeepFor()));
 
 //		    barInfo.cancelAutoScheduler();
 //		    return;
                 }
             }
-        }, 0L, barInfo.getAuto()).getTaskId());
+        }, 0L, barInfo.getAuto()));
     }
 
     public void removeBossBar(Player player, String name) {
@@ -335,8 +334,8 @@ public class BossBarManager {
                 if (barInfo.getBar() != null)
                     old.setBar(barInfo.getBar());
 
-                if (barInfo.getHideId() != null)
-                    old.setHideId(barInfo.getHideId());
+                if (barInfo.getHideScheduler() != null)
+                    old.setHideScheduler(barInfo.getHideScheduler());
 
                 if (barInfo.getAuto() != null)
                     old.setAuto(barInfo.getAuto());

@@ -8,6 +8,4 @@ public interface CMITask {
     void cancel();
 
     Plugin getPlugin();
-    
-    int getTaskId();
 }

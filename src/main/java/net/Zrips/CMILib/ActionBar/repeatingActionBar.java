@@ -1,23 +1,23 @@
 package net.Zrips.CMILib.ActionBar;
 
-import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
+import net.Zrips.CMILib.Version.Schedulers.CMITask;
 
 public class repeatingActionBar {
 
-    private int id = -1;
+    private CMITask scheduler = null;
     private Long until = 0L;
 
-    public int getId() {
-	return id;
+    public CMITask getScheduler() {
+	return scheduler;
     }
 
     public void cancel() {
-	if (id > 0)
-	    CMIScheduler.cancelTask(id);
+	if (scheduler != null)
+	    scheduler.cancel();
     }
 
-    public void setId(int id) {
-	this.id = id;
+    public void setScheduler(CMITask cmiTask) {
+	this.scheduler = cmiTask;
     }
 
     public Long getUntil() {
