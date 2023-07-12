@@ -36,6 +36,7 @@ import net.Zrips.CMILib.FileHandler.ConfigReader;
 import net.Zrips.CMILib.Messages.CMIMessages;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.Version.Version;
+import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
 
 public class ItemManager {
 
@@ -312,7 +313,7 @@ public class ItemManager {
                                             ahead.setAsyncHead(true);
                                         }
 
-                                        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+                                        CMIScheduler.get().runTaskAsynchronously(() -> {
                                             OfflinePlayer offlineP = Bukkit.getOfflinePlayer(d);
                                             if (offlineP != null) {
                                                 ItemStack lskull = skull;
@@ -377,7 +378,7 @@ public class ItemManager {
                                             if (ahead != null) {
                                                 ahead.setAsyncHead(true);
                                             }
-                                            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+                                            CMIScheduler.get().runTaskAsynchronously(() -> {
                                                 OfflinePlayer offlineP = Bukkit.getOfflinePlayer(d);
 
                                                 if (offlineP != null) {

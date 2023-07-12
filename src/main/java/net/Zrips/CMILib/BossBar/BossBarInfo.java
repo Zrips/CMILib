@@ -15,6 +15,7 @@ import net.Zrips.CMILib.Colors.CMIChatColor;
 import net.Zrips.CMILib.Locale.Snd;
 import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Time.CMITimeManager;
+import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
 
 public class BossBarInfo {
     private Player player;
@@ -79,14 +80,14 @@ public class BossBarInfo {
 
     public synchronized void cancelAutoScheduler() {
         if (autoId != null) {
-            Bukkit.getScheduler().cancelTask(autoId);
+            CMIScheduler.cancelTask(autoId);
             autoId = null;
         }
     }
 
     public synchronized void cancelHideScheduler() {
         if (id != null) {
-            Bukkit.getScheduler().cancelTask(id);
+            CMIScheduler.cancelTask(id);
             id = null;
         }
     }

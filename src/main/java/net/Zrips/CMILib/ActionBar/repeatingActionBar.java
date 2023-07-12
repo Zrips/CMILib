@@ -1,6 +1,6 @@
 package net.Zrips.CMILib.ActionBar;
 
-import org.bukkit.Bukkit;
+import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
 
 public class repeatingActionBar {
 
@@ -13,7 +13,7 @@ public class repeatingActionBar {
 
     public void cancel() {
 	if (id > 0)
-	    Bukkit.getScheduler().cancelTask(id);
+	    CMIScheduler.cancelTask(id);
     }
 
     public void setId(int id) {

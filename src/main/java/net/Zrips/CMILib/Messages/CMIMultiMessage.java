@@ -23,6 +23,7 @@ import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.RawMessages.RawMessage;
 import net.Zrips.CMILib.TitleMessages.CMITitleMessage;
 import net.Zrips.CMILib.Version.Version;
+import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
 
 public class CMIMultiMessage {
 
@@ -189,7 +190,7 @@ public class CMIMultiMessage {
 	    break;
 	case json:
 	    RawMessage rm = RawMessage.translateRawMessage(sender, message);
-	    Bukkit.getScheduler().runTask(CMILib.getInstance(), () -> rm.show(sender));
+	    CMIScheduler.get().runTask(() -> rm.show(sender));
 	    break;
 	case timedActionBar:
 	    if (!(sender instanceof Player))

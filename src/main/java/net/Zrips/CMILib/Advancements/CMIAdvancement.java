@@ -18,6 +18,7 @@ import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Advancements.AdvancementManager.FrameType;
 import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Version.Version;
+import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
 
 public class CMIAdvancement {
 
@@ -166,13 +167,13 @@ public class CMIAdvancement {
 	return this.parent;
     }
 
-    public CMIAdvancement show(JavaPlugin plugin, final Player... players) {
+    public CMIAdvancement show(@Deprecated JavaPlugin plugin, final Player... players) {
 	if (Version.isCurrentEqualOrLower(Version.v1_15_R1))
 	    return this;
 	add();
 	grant(players);
 	final CMIAdvancement ad = this;
-	Bukkit.getScheduler().runTaskLater(plugin, new Runnable() {
+	CMIScheduler.get().runTaskLater(new Runnable() {
 	    @Override
 	    public void run() {
 		revoke(players);

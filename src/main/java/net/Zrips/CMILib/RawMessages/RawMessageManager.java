@@ -18,6 +18,7 @@ import org.bukkit.entity.Player;
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Messages.CMIMessages;
 import net.Zrips.CMILib.Version.Version;
+import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
 import net.Zrips.CMILib.commands.CommandsHandler;
 
 public class RawMessageManager {
@@ -238,7 +239,7 @@ public class RawMessageManager {
             } catch (Exception ex) {
                 ex.printStackTrace();
                 CMIMessages.consoleMessage("Failed to show json message with packets, using command approach");
-                Bukkit.getScheduler().runTask(CMILib.getInstance(), () -> {
+                CMIScheduler.get().runTask(() -> {
                     Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "minecraft:tellraw \"" + receivingPacket.getName() + "\" " + json);
                 });
             }

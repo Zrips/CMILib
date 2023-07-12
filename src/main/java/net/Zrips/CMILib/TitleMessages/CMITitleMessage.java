@@ -15,6 +15,7 @@ import net.Zrips.CMILib.Colors.CMIChatColor;
 import net.Zrips.CMILib.Container.CMICommandSender;
 import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Version.Version;
+import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
 
 public class CMITitleMessage {
     private static Method getHandle;
@@ -109,7 +110,7 @@ public class CMITitleMessage {
     public static void send(final Player receivingPacket, final Object title, final Object subtitle, final int fadeIn, final int keep, final int fadeOut) {
         if (receivingPacket == null)
             return;
-        Bukkit.getScheduler().runTaskAsynchronously(CMILib.getInstance(), new Runnable() {
+        CMIScheduler.get().runTaskAsynchronously(new Runnable() {
             @Override
             public void run() {
 

@@ -11,6 +11,7 @@ import org.bukkit.event.server.ServerCommandEvent;
 
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Locale.Snd;
+import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
 import net.Zrips.CMILib.commands.CommandsHandler;
 
 public class CTextEditorListener implements Listener {
@@ -30,7 +31,7 @@ public class CTextEditorListener implements Listener {
 	final String message = event.getMessage().endsWith("?") ? event.getMessage() + ListEditor.questionMarkReplacer : event.getMessage();
 
 	if (cmd != null) {
-	    Bukkit.getScheduler().runTask(plugin, new Runnable() {
+	    CMIScheduler.get().runTask(new Runnable() {
 		@Override
 		public void run() {
 		    player.performCommand(cmd + message);

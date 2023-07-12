@@ -25,6 +25,7 @@ import com.mojang.util.UUIDTypeAdapter;
 
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.FileHandler.ConfigReader;
+import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
 
 public class SkinManager {
     public HashMap<UUID, CMISkin> skinCacheByUUID = new HashMap<UUID, CMISkin>();
@@ -112,7 +113,7 @@ public class SkinManager {
 		    lastUpdateRequest = System.currentTimeMillis();
 		    skinCacheByUUID.put(uuid, cmiSkin);
 		    skinCacheByName.put(playerName, cmiSkin);
-		    Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+		    CMIScheduler.get().runTaskAsynchronously(new Runnable() {
 			@Override
 			public void run() {
 			    if (!saving)

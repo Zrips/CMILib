@@ -15,6 +15,7 @@ import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Colors.CMIChatColor;
 import net.Zrips.CMILib.Messages.CMIMessages;
 import net.Zrips.CMILib.RawMessages.RawMessage;
+import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
 
 public class CMIVersionChecker {
 
@@ -74,7 +75,7 @@ public class CMIVersionChecker {
     }
 
     public static void VersionCheck(final Player player, int resource, PluginDescriptionFile dec) {
-	Bukkit.getScheduler().runTaskAsynchronously(CMILib.getInstance(), () -> {
+	CMIScheduler.get().runTaskAsynchronously(() -> {
 	    String currentVersion = dec.getVersion();
 	    String newVersion = getOfficialVersion(resource, dec.getName());
 

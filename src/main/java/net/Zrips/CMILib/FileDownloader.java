@@ -1,6 +1,8 @@
 package net.Zrips.CMILib;
 
 import net.Zrips.CMILib.Messages.CMIMessages;
+import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
+
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
@@ -39,7 +41,7 @@ public class FileDownloader {
             return;
         }
 
-        Bukkit.getScheduler().runTaskAsynchronously(CMILib.getInstance(), () -> {
+        CMIScheduler.get().runTaskAsynchronously(() -> {
             final URL url;
             BufferedInputStream bufferedInputStream = null;
             FileOutputStream fileOutputStream = null;
@@ -56,7 +58,7 @@ public class FileDownloader {
 
                 fileOutputStream.close();
                 bufferedInputStream.close();
-                Bukkit.getScheduler().runTask(CMILib.getInstance(), FileDownloader.this::afterDownload);
+                CMIScheduler.get().runTask(FileDownloader.this::afterDownload);
             } catch (final Throwable e) {
                 final File file = new File(fileName);
 

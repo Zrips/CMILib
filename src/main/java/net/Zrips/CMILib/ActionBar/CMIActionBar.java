@@ -20,6 +20,7 @@ import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Messages.CMIMessages;
 import net.Zrips.CMILib.RawMessages.RawMessage;
 import net.Zrips.CMILib.Version.Version;
+import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
 
 public class CMIActionBar {
     private static Method getHandle;
@@ -151,7 +152,6 @@ public class CMIActionBar {
         send(receivingPacket, msg, 0);
     }
 
-    @SuppressWarnings("deprecation")
     public static void send(List<Player> receivingPacket, String msg, int keepFor) {
 
         if (receivingPacket == null)
@@ -204,9 +204,8 @@ public class CMIActionBar {
                 Object connection = playerConnection.get(cplayer);
 
                 Object packet = p;
-
                 if (keepFor < 1) {
-                    Bukkit.getScheduler().runTaskAsynchronously(CMILib.getInstance(), () -> {
+                    CMIScheduler.get().runTaskAsynchronously(() -> {
                         try {
                             sendPacket.invoke(connection, packet);
                         } catch (Throwable e) {
@@ -224,7 +223,7 @@ public class CMIActionBar {
 
                 actionbarMap.put(player.getUniqueId(), old);
 
-                old.setId(Bukkit.getScheduler().scheduleAsyncRepeatingTask(CMILib.getInstance(), new Runnable() {
+                old.setId(CMIScheduler.get().runTimerAsync(new Runnable() {
                     @Override
                     public void run() {
                         repeatingActionBar old = actionbarMap.get(player.getUniqueId());
@@ -242,7 +241,7 @@ public class CMIActionBar {
                             e.printStackTrace();
                         }
                     }
-                }, 0L, 20L));
+                }, 0L, 20L).getTaskId());
 
             }
 

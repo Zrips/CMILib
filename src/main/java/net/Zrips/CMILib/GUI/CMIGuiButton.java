@@ -24,6 +24,7 @@ import net.Zrips.CMILib.Items.CMIItemStack;
 import net.Zrips.CMILib.Items.CMIMaterial;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.Version.Version;
+import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
 
 public class CMIGuiButton {
 
@@ -153,17 +154,17 @@ public class CMIGuiButton {
 
     private void tasker() {
 	if (schedId != -1) {
-	    Bukkit.getScheduler().cancelTask(schedId);
+	   CMIScheduler.cancelTask(schedId);
 	    schedId = -1;
 	}
 	CMIGuiButton b = this;
-	schedId = Bukkit.getScheduler().scheduleSyncRepeatingTask(CMILib.getInstance(), new Runnable() {
+	schedId = CMIScheduler.get().scheduleSyncRepeatingTask(new Runnable() {
 	    @Override
 	    public void run() {
 		ticks++;
 		if (sgui != null && CMILib.getInstance().getGUIManager().getGui(sgui.getPlayer()) != sgui) {
 		    if (schedId != -1) {
-			Bukkit.getScheduler().cancelTask(schedId);
+			CMIScheduler.cancelTask(schedId);
 			schedId = -1;
 			return;
 		    }
@@ -173,7 +174,7 @@ public class CMIGuiButton {
 		if (sgui != null)
 		    sgui.updateButton(b);
 	    }
-	}, 20L, updateInterval);
+	}, 20L, updateInterval).getTaskId();
     }
 
     public void updateLooks() {
