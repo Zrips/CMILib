@@ -32,7 +32,6 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.jetbrains.annotations.Nullable;
 
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Attributes.AttSlot;
@@ -1122,33 +1121,7 @@ public class CMIItemStack {
                     }
                 }
                 if (Version.isCurrentEqualOrHigher(Version.v1_20_R1)) {
-                    Matcher mMatch = ptrim.matcher(one);
-                    if (mMatch.find()) {
-                        String f = one.substring(mMatch.group().length());
-                        try {
-
-                            String[] split = f.split(":");
-
-                            ItemMeta meta = cim.getItemStack().getItemMeta();
-
-                            if (meta instanceof org.bukkit.inventory.meta.ArmorMeta) {
-                                org.bukkit.inventory.meta.ArmorMeta ameta = (ArmorMeta) meta;
-
-                                org.bukkit.inventory.meta.trim.TrimMaterial trim = CMITrimMaterial.getByName(split[0]);
-                                org.bukkit.inventory.meta.trim.TrimPattern pattern = CMITrimPattern.getByName(split[1]);
-
-                                org.bukkit.inventory.meta.trim.ArmorTrim teim = new org.bukkit.inventory.meta.trim.ArmorTrim(trim, pattern);
-
-                                ameta.setTrim(teim);
-                                cim.getItemStack().setItemMeta(meta);
-                            }
-
-                        } catch (Throwable e) {
-                            e.printStackTrace();
-                        }
-
-                        continue;
-                    }
+                    applyTrim(cim, one);
                 }
                 Matcher mMatch = pspecial.matcher(one);
                 if (mMatch.find()) {
@@ -1163,6 +1136,32 @@ public class CMIItemStack {
         }
 
         return cim;
+    }
+
+    private static void applyTrim(CMIItemStack cim, String value) {
+        Matcher mMatch = ptrim.matcher(value);
+        if (mMatch.find()) {
+            String f = value.substring(mMatch.group().length());
+            try {
+
+                String[] split = f.split(":");
+
+                ItemMeta meta = cim.getItemStack().getItemMeta();
+
+                if (split.length == 2 && meta instanceof org.bukkit.inventory.meta.ArmorMeta) {
+                    org.bukkit.inventory.meta.ArmorMeta ameta = (ArmorMeta) meta;
+                    org.bukkit.inventory.meta.trim.TrimMaterial trim = CMITrimMaterial.getByName(split[0]);
+                    org.bukkit.inventory.meta.trim.TrimPattern pattern = CMITrimPattern.getByName(split[1]);
+                    if (trim != null && pattern != null) {
+                        org.bukkit.inventory.meta.trim.ArmorTrim teim = new org.bukkit.inventory.meta.trim.ArmorTrim(trim, pattern);
+                        ameta.setTrim(teim);
+                        cim.getItemStack().setItemMeta(meta);
+                    }
+                }
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public static String serialize(ItemStack item) {

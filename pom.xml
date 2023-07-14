@@ -4,7 +4,7 @@
 
 	<groupId>CMILib</groupId>
 	<artifactId>CMILib</artifactId>
-	<version>1.4.0.0</version>
+	<version>1.4.0.1</version>
 	<name>CMILib</name>
 	<url>http://maven.apache.org</url>
 	<packaging>jar</packaging>
