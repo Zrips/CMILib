@@ -23,6 +23,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
+import org.bukkit.inventory.meta.ArmorMeta;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
@@ -31,6 +32,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.jetbrains.annotations.Nullable;
 
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Attributes.AttSlot;
@@ -903,6 +905,7 @@ public class CMIItemStack {
     static Pattern pcolor = Pattern.compile("^(?i)(color|c)\\" + prefix);
     static Pattern pmodel = Pattern.compile("^(?i)(custommodel|cm)\\" + prefix);
     static Pattern pspecial = Pattern.compile("^(?i)(special|s)\\" + prefix);
+    static Pattern ptrim = Pattern.compile("^(?i)(trim|t)\\" + prefix);
 
     public static CMIItemStack deserialize(String input) {
         return deserialize(null, input);
@@ -1118,6 +1121,35 @@ public class CMIItemStack {
                         continue;
                     }
                 }
+                if (Version.isCurrentEqualOrHigher(Version.v1_20_R1)) {
+                    Matcher mMatch = ptrim.matcher(one);
+                    if (mMatch.find()) {
+                        String f = one.substring(mMatch.group().length());
+                        try {
+
+                            String[] split = f.split(":");
+
+                            ItemMeta meta = cim.getItemStack().getItemMeta();
+
+                            if (meta instanceof org.bukkit.inventory.meta.ArmorMeta) {
+                                org.bukkit.inventory.meta.ArmorMeta ameta = (ArmorMeta) meta;
+
+                                org.bukkit.inventory.meta.trim.TrimMaterial trim = CMITrimMaterial.getByName(split[0]);
+                                org.bukkit.inventory.meta.trim.TrimPattern pattern = CMITrimPattern.getByName(split[1]);
+
+                                org.bukkit.inventory.meta.trim.ArmorTrim teim = new org.bukkit.inventory.meta.trim.ArmorTrim(trim, pattern);
+
+                                ameta.setTrim(teim);
+                                cim.getItemStack().setItemMeta(meta);
+                            }
+
+                        } catch (Throwable e) {
+                            e.printStackTrace();
+                        }
+
+                        continue;
+                    }
+                }
                 Matcher mMatch = pspecial.matcher(one);
                 if (mMatch.find()) {
                     String f = one.substring(mMatch.group().length());
@@ -1212,7 +1244,18 @@ public class CMIItemStack {
                     e.printStackTrace();
                 }
             }
+        }
 
+        if (Version.isCurrentEqualOrHigher(Version.v1_20_R1)) {
+            if (meta instanceof org.bukkit.inventory.meta.ArmorMeta) {
+                org.bukkit.inventory.meta.ArmorMeta ameta = (ArmorMeta) meta;
+                if (ameta.hasTrim()) {
+                    org.bukkit.inventory.meta.trim.ArmorTrim trim = ameta.getTrim();
+                    str.append(";t" + prefix);
+                    str.append(trim.getMaterial().getKey().getKey().toLowerCase() + ":" + trim.getPattern().getKey().getKey().toLowerCase());
+                    str.append(suffix);
+                }
+            }
         }
 
         Map<Enchantment, Integer> enchants = item.getEnchantments();
