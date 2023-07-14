@@ -9,20 +9,22 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import io.papermc.paper.threadedregions.scheduler.AsyncScheduler;
 import io.papermc.paper.threadedregions.scheduler.GlobalRegionScheduler;
+import io.papermc.paper.threadedregions.scheduler.RegionScheduler;
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Container.CMINumber;
 
 public class CMIFoliaImpl implements CMIBaseImpl {
     private final JavaPlugin plugin;
 
+    private final RegionScheduler regionScheduler;
     private final GlobalRegionScheduler globalRegionScheduler;
-
     private final AsyncScheduler asyncScheduler;
 
     public CMIFoliaImpl(CMILib plugin) {
         this.plugin = plugin;
         this.globalRegionScheduler = this.plugin.getServer().getGlobalRegionScheduler();
         this.asyncScheduler = this.plugin.getServer().getAsyncScheduler();
+        this.regionScheduler = this.plugin.getServer().getRegionScheduler();
     }
 
     @Override
@@ -51,8 +53,7 @@ public class CMIFoliaImpl implements CMIBaseImpl {
 
     @Override
     public CMITask runTaskLater(Runnable runnable, long delay) {
-        return new CMIFoliaTask(this.globalRegionScheduler
-            .runDelayed(this.plugin, task -> runnable.run(), clamp(delay)));
+        return new CMIFoliaTask(this.globalRegionScheduler.runDelayed(this.plugin, task -> runnable.run(), clamp(delay)));
     }
 
     @Override
@@ -73,7 +74,7 @@ public class CMIFoliaImpl implements CMIBaseImpl {
     @Override
     public CompletableFuture<Void> runAtLocation(Location location, Runnable runnable) {
         CompletableFuture<Void> future = new CompletableFuture<>();
-        this.plugin.getServer().getRegionScheduler().execute(this.plugin, location, () -> {
+        this.regionScheduler.execute(this.plugin, location, () -> {
             runnable.run();
             future.complete(null);
         });
@@ -82,12 +83,12 @@ public class CMIFoliaImpl implements CMIBaseImpl {
 
     @Override
     public CMITask runAtLocationLater(Location location, Runnable runnable, long delay) {
-        return new CMIFoliaTask(this.plugin.getServer().getRegionScheduler().runDelayed(this.plugin, location, task -> runnable.run(),clamp(delay)));
+        return new CMIFoliaTask(regionScheduler.runDelayed(this.plugin, location, task -> runnable.run(), clamp(delay)));
     }
 
     @Override
     public CMITask runAtLocationTimer(Location location, Runnable runnable, long delay, long period) {
-        return new CMIFoliaTask(this.plugin.getServer().getRegionScheduler().runAtFixedRate(this.plugin, location, task -> runnable.run(), clamp(delay), clamp(period)));
+        return new CMIFoliaTask(regionScheduler.runAtFixedRate(this.plugin, location, task -> runnable.run(), clamp(delay), clamp(period)));
     }
 
     @Override

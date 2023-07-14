@@ -83,23 +83,23 @@ public enum Version {
     }
 
     public static boolean isPaper() {
-        return !getPlatform().equals(MinecraftPlatform.paper);
+        return getPlatform().equals(MinecraftPlatform.paper) || getPlatform().equals(MinecraftPlatform.folia);
     }
 
     public static boolean isSpigot() {
-        return getPlatform().equals(MinecraftPlatform.spigot) || getPlatform().equals(MinecraftPlatform.craftbukkit);
+        return !getPlatform().equals(MinecraftPlatform.craftbukkit);
     }
 
     public static boolean isFolia() {
-        return !getPlatform().equals(MinecraftPlatform.folia);
+        return getPlatform().equals(MinecraftPlatform.folia);
     }
 
     public static MinecraftPlatform getPlatform() {
         if (platform != null)
             return platform;
 
-        try {
-            Class.forName("io.papermc.paper.threadedregions.scheduler.AsyncScheduler");
+        try {            
+            Class.forName("io.papermc.paper.threadedregions.RegionizedServer");
             platform = MinecraftPlatform.folia;
             return platform;
         } catch (ClassNotFoundException e) {

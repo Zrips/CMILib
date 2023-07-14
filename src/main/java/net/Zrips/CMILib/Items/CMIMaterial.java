@@ -2319,7 +2319,16 @@ public enum CMIMaterial {
     }
 
     public boolean isSkull() {
-        return this.containsCriteria(CMIMC.SKULL) || this.containsCriteria(CMIMC.MONSTERHEAD) || isPlayerHead();
+        return  isMonsterHead() || isPlayerHead();
+    }
+
+    public static boolean isMonsterHead(Material mat) {
+        CMIMaterial m = CMIMaterial.get(mat);
+        return m == null ? false : m.isMonsterHead();
+    }
+
+    public boolean isMonsterHead() {
+        return this.containsCriteria(CMIMC.SKULL) ||this.containsCriteria(CMIMC.MONSTERHEAD);
     }
 
     public static boolean isPlayerHead(Material mat) {
@@ -2506,14 +2515,14 @@ public enum CMIMaterial {
     public static final Pattern COLOR_MATCH = Pattern.compile("(?i)^(WHITE|ORANGE|MAGENTA|YELLOW|LIME|PINK|GRAY|CYAN|PURPLE|BLUE|BROWN|GREEN|RED|BLACK|LIGHT_GRAY|LIGHT_BLUE)$");
 
     public static String getGeneralMaterialName(String fullName) {
-      
+
         String newName = fullName.toUpperCase();
         if (newName.startsWith("STRIPPED")) {
             return STRIPPED_REPLACE.matcher(newName).replaceFirst("");
         }
 
         if (DARK_LIGHT_MATCH.matcher(newName).matches()) {
-              return DARK_LIGHT_REPLACE.matcher(newName).replaceFirst("");
+            return DARK_LIGHT_REPLACE.matcher(newName).replaceFirst("");
         }
 
         if (WOOD_MATCH.matcher(newName).matches()) {
@@ -2523,7 +2532,6 @@ public enum CMIMaterial {
         if (COLOR_MATCH.matcher(newName).matches()) {
             return "color";
         }
-
 
         return fullName;
     }
