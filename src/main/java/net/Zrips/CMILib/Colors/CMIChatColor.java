@@ -926,7 +926,7 @@ public class CMIChatColor {
     }
 
     public String getCleanName() {
-        return name.replace("_", "");
+        return name == null ? getHex() : name.replace("_", "");
     }
 
     public static CMIChatColor getByCustomName(String name) {

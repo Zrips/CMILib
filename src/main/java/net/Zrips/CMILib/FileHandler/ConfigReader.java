@@ -394,6 +394,9 @@ public class ConfigReader extends YamlConfiguration {
 
     private static String convertUnicode(String st) {
         try {
+            if (st == null)
+                return st;
+            
             if (!st.contains("\\u"))
                 return st;
 
