@@ -90,6 +90,7 @@ public class ConfigReader extends YamlConfiguration {
         } finally {
             writer.close();
         }
+
     }
 
     private String insertComments(String yaml) {
@@ -396,7 +397,7 @@ public class ConfigReader extends YamlConfiguration {
         try {
             if (st == null)
                 return st;
-            
+
             if (!st.contains("\\u"))
                 return st;
 

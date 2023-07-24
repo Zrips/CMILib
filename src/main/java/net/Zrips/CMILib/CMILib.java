@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -157,7 +158,23 @@ public class CMILib extends JavaPlugin {
         try {
             List<String> lang = Arrays.asList("CN", "DE", "ES", "IT", "LT", "RU", "SK", "SL", "FR", "PL", "NO", "ZH", "TR", "CZ");
             String lr = null;
+            
+            boolean download = true;
+            try {
+                File f = new File(getDataFolder(), "config.yml");
 
+                if (f.isFile()) {
+                    YamlConfiguration conf = YamlConfiguration.loadConfiguration(f);
+                    download = conf.getBoolean("LanguageDownload", true);
+                }
+
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+
+            if (!download)
+                return;
+            
             for (String one : lang) {
                 File file = new File(getDataFolder() + File.separator + "Translations", "Locale_" + one + ".yml");
                 if (!file.isFile()) {
