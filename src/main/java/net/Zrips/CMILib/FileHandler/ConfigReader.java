@@ -143,8 +143,7 @@ public class ConfigReader extends YamlConfiguration {
                     commentedPath = false;
                     node = true;
 
-                    int index = 0;
-                    index = line.indexOf(": ");
+                    int index = line.indexOf(": ");
                     if (index < 0) {
                         index = line.length() - 1;
                     }

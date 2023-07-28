@@ -41,6 +41,7 @@ import net.Zrips.CMILib.Effects.CMIEffect;
 import net.Zrips.CMILib.Effects.CMIEffectManager.CMIParticleDataType;
 import net.Zrips.CMILib.Items.CMIMaterial;
 import net.Zrips.CMILib.Logs.CMIDebug;
+import net.Zrips.CMILib.Messages.CMIMessages;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.RawMessages.RawMessage;
 import net.Zrips.CMILib.Version.Version;
@@ -1243,80 +1244,34 @@ public class Reflections {
     }
 
     private Integer getActiveContainerId(Object entityplayer) {
-        try {          
-            if (Version.isCurrentEqualOrHigher(Version.v1_20_R1)) {
-                try {
-                    // EntityHuman -> Container
-                    Field field = entityplayer.getClass().getField("bR");
-                    Object container = this.CraftContainer.cast(field.get(entityplayer));
-                    Field field2 = container.getClass().getField("j");
-                    Object ids = field2.get(container);
-                    return (int) ids;
-                } catch (Throwable e) {
-                    e.printStackTrace();
-                }
-            } else if (Version.isCurrentEqualOrHigher(Version.v1_19_R3)) {
-                try {
-                    // EntityHuman -> Container
-                    Field field = entityplayer.getClass().getField("bP");
-                    Object container = this.CraftContainer.cast(field.get(entityplayer));
-                    Field field2 = container.getClass().getField("j");
-                    Object ids = field2.get(container);
-                    return (int) ids;
-                } catch (Throwable e) {
-                    e.printStackTrace();
-                }
-            } else if (Version.isCurrentEqualOrHigher(Version.v1_19_R1)) {
-                try {
-                    // EntityHuman -> Container
-                    Field field = entityplayer.getClass().getField("bU");
-                    Object container = this.CraftContainer.cast(field.get(entityplayer));
-                    Field field2 = container.getClass().getField("j");
-                    Object ids = field2.get(container);
-                    return (int) ids;
-                } catch (Throwable e) {
-                    e.printStackTrace();
-                }
-            } else if (Version.isCurrentEqualOrHigher(Version.v1_18_R2)) {
-                try {
-                    Field field = entityplayer.getClass().getField("bV");
-                    Object container = this.CraftContainer.cast(field.get(entityplayer));
-                    Field field2 = container.getClass().getField("j");
-                    Object ids = field2.get(container);
-                    return (int) ids;
-                } catch (Throwable e) {
-                    e.printStackTrace();
-                }
-            } else if (Version.isCurrentEqualOrHigher(Version.v1_18_R1)) {
-                try {
-                    Field field = entityplayer.getClass().getField("bW");
-                    Object container = this.CraftContainer.cast(field.get(entityplayer));
-                    Field field2 = container.getClass().getField("j");
-                    Object ids = field2.get(container);
-                    return (int) ids;
-                } catch (Throwable e) {
-                    e.printStackTrace();
-                }
-            } else if (Version.isCurrentEqualOrHigher(Version.v1_17_R1)) {
-                try {
-                    Field field = entityplayer.getClass().getField("bV");
-                    Object container = this.CraftContainer.cast(field.get(entityplayer));
-                    Field field2 = container.getClass().getField("j");
-                    Object ids = field2.get(container);
 
-                    return (int) ids;
-                } catch (Throwable e) {
-                    e.printStackTrace();
-                }
-            } else {
-                Field field = entityplayer.getClass().getField("activeContainer");
-                Object container = CraftContainer.cast(field.get(entityplayer));
-                Field field2 = container.getClass().getField("windowId");
-                Object ids = field2.get(container);
-                return (int) ids;
+        String activeContainer = "activeContainer";
+        String windowId = "windowId";
+
+        try {
+            if (Version.isCurrentEqualOrHigher(Version.v1_17_R1))
+                windowId = "j";
+
+            // EntityHuman -> Container
+            if (Version.isCurrentEqualOrHigher(Version.v1_20_R1)) {
+                activeContainer = "bR";
+            } else if (Version.isCurrentEqualOrHigher(Version.v1_19_R3)) {
+                activeContainer = "bP";
+            } else if (Version.isCurrentEqualOrHigher(Version.v1_19_R1)) {
+                activeContainer = "bU";
+            } else if (Version.isCurrentEqualOrHigher(Version.v1_18_R2)) {
+                activeContainer = "bV";
+            } else if (Version.isCurrentEqualOrHigher(Version.v1_18_R1)) {
+                activeContainer = "bW";
+            } else if (Version.isCurrentEqualOrHigher(Version.v1_17_R1)) {
+                activeContainer = "bV";
             }
+
+            Object container = CraftContainer.cast(entityplayer.getClass().getField(activeContainer).get(entityplayer));
+            return (int) container.getClass().getField(windowId).get(container);
         } catch (Throwable e) {
-            e.printStackTrace();
+            if (Version.isCurrentEqualOrHigher(Version.v1_17_R1))
+                e.printStackTrace();
         }
 
         return null;

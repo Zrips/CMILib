@@ -44,6 +44,7 @@ import net.Zrips.CMILib.Container.LeatherAnimationType;
 import net.Zrips.CMILib.Enchants.CMIEnchantment;
 import net.Zrips.CMILib.Entities.CMIEntity;
 import net.Zrips.CMILib.Entities.CMIEntityType;
+import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.Recipes.CMIRecipe;
 import net.Zrips.CMILib.Recipes.CMIRecipeIngredient;
@@ -902,7 +903,7 @@ public class CMIItemStack {
     static Pattern pattribute = Pattern.compile("^(?i)(attribute|a)\\" + prefix);
     static Pattern pflags = Pattern.compile("^(?i)(flags|f)\\" + prefix);
     static Pattern pcolor = Pattern.compile("^(?i)(color|c)\\" + prefix);
-    static Pattern pmodel = Pattern.compile("^(?i)(custommodel|cm)\\" + prefix);
+    static Pattern pmodel = Pattern.compile("^(?i)(custommodeldata|custommodel|cm)\\" + prefix);
     static Pattern pspecial = Pattern.compile("^(?i)(special|s)\\" + prefix);
     static Pattern ptrim = Pattern.compile("^(?i)(trim|t)\\" + prefix);
 
@@ -917,7 +918,15 @@ public class CMIItemStack {
 
         String itemName = input.contains(";") ? input.split(";", 2)[0] : input;
 
+        String tag = null;
+        if (itemName.endsWith("}") && itemName.contains("{")) {
+            tag = "{" + itemName.split("\\{", 2)[1];
+            itemName = itemName.split("\\{", 2)[0];
+        }
+
         String itemNameUpdated = itemName.contains("-") || itemName.toLowerCase().startsWith("head:") || itemName.toLowerCase().startsWith("player_head:") ? itemName : itemName.replace(":", "-");
+
+        CMIDebug.d(itemNameUpdated);
 
         CMIItemStack cim = CMILib.getInstance().getItemManager().getItem(itemNameUpdated);
 
@@ -1134,6 +1143,9 @@ public class CMIItemStack {
                 }
             }
         }
+
+        if (tag != null)
+            cim.setTag(CMIChatColor.translate(tag));
 
         return cim;
     }

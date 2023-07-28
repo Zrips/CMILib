@@ -182,6 +182,9 @@ public class CMIChatColor {
     }
 
     public CMIChatColor(String name, String hex) {
+        if (hex == null)
+            return;
+        
         if (hex.startsWith(colorCodePrefix))
             hex = hex.substring(colorCodePrefix.length());
         if (hex.endsWith(colorCodeSuffix))
@@ -878,6 +881,10 @@ public class CMIChatColor {
                 }
             }
         }
+
+        CMIChatColor hexColor = new CMIChatColor(text);
+        if (hexColor.getHex() != null)
+            return hexColor;
 
         return null;
     }
