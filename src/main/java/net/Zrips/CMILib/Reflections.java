@@ -40,8 +40,6 @@ import net.Zrips.CMILib.Container.CMIServerProperties;
 import net.Zrips.CMILib.Effects.CMIEffect;
 import net.Zrips.CMILib.Effects.CMIEffectManager.CMIParticleDataType;
 import net.Zrips.CMILib.Items.CMIMaterial;
-import net.Zrips.CMILib.Logs.CMIDebug;
-import net.Zrips.CMILib.Messages.CMIMessages;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.RawMessages.RawMessage;
 import net.Zrips.CMILib.Version.Version;
@@ -1816,6 +1814,9 @@ public class Reflections {
                     LootPredicateManager = net.minecraft.server.MinecraftServer.getServer().getClass().getMethod("aH").invoke(net.minecraft.server.MinecraftServer.getServer());
                 else if (Version.isCurrentEqualOrLower(Version.v1_19_R3))
                     LootPredicateManager = net.minecraft.server.MinecraftServer.getServer().getClass().getMethod("aI").invoke(net.minecraft.server.MinecraftServer.getServer());
+                
+                if (LootPredicateManager == null)
+                    return;
 
                 Constructor<net.minecraft.advancements.critereon.LootDeserializationContext> constructor = net.minecraft.advancements.critereon.LootDeserializationContext.class.getConstructor(
                     net.minecraft.resources.MinecraftKey.class, LootPredicateManager.getClass());

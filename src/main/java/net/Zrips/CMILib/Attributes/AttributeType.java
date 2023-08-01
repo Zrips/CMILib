@@ -1,5 +1,7 @@
 package net.Zrips.CMILib.Attributes;
 
+import net.Zrips.CMILib.Version.Version;
+
 public enum AttributeType {
     Armor("generic", "armor", 0),
     ArmorToughness("generic", "armor_Toughness", 0),
@@ -22,37 +24,38 @@ public enum AttributeType {
     private int action;
 
     private AttributeType(String preName, String name, int action) {
-	this.preName = preName;
-	this.name = name;
-	this.action = action;
+        this.preName = preName;
+        this.name = name;
+        this.action = action;
     }
 
     public String getPreName() {
-	return preName;
+        return preName;
     }
 
     public String getFullName() {
-	return preName + "." + name.replace("_", "");
+        return preName + "." + getName();
     }
 
     public String getName() {
-	return name.replace("_", "");
+        return Version.isCurrentEqualOrHigher(Version.v1_16_R1) ? name.toLowerCase() : name.replace("_", "");
     }
 
     public String getIdentificator() {
-	return preName.toUpperCase() + "_" + name.toUpperCase();
+        return preName.toUpperCase() + "_" + name.toUpperCase();
     }
 
     public static AttributeType get(String code) {
-	for (AttributeType e : AttributeType.values()) {
-	    if (code.equalsIgnoreCase(e.getName()))
-		return e;
-	}
-	return null;
+        code = code.replace("_", "");
+        for (AttributeType e : AttributeType.values()) {
+            if (code.equalsIgnoreCase(e.getName().replace("_", "")))
+                return e;
+        }
+        return null;
     }
 
     public int getAction() {
-	return action;
+        return action;
     }
 
 }

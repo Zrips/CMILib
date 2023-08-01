@@ -2319,7 +2319,7 @@ public enum CMIMaterial {
     }
 
     public boolean isSkull() {
-        return  isMonsterHead() || isPlayerHead();
+        return isMonsterHead() || isPlayerHead();
     }
 
     public static boolean isMonsterHead(Material mat) {
@@ -2328,7 +2328,7 @@ public enum CMIMaterial {
     }
 
     public boolean isMonsterHead() {
-        return this.containsCriteria(CMIMC.SKULL) ||this.containsCriteria(CMIMC.MONSTERHEAD);
+        return this.containsCriteria(CMIMC.SKULL) || this.containsCriteria(CMIMC.MONSTERHEAD);
     }
 
     public static boolean isPlayerHead(Material mat) {
