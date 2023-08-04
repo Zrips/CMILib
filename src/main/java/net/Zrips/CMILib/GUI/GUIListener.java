@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -24,7 +23,6 @@ import org.bukkit.inventory.ItemStack;
 
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.GUI.GUIManager.InvType;
-import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
 
@@ -79,7 +77,7 @@ public class GUIListener implements Listener {
         return true;
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onInventoryClickLog(final InventoryClickEvent event) {
 
         final Player player = (Player) event.getWhoClicked();
@@ -92,8 +90,13 @@ public class GUIListener implements Listener {
         if (!gui.isClickLogging())
             return;
 
+        if (gui.isAllowShift() && event.getAction().equals(InventoryAction.MOVE_TO_OTHER_INVENTORY) && (event.getClickedInventory() == null || event.getClickedInventory().getType().equals(
+            InventoryType.PLAYER)))
+            return;
+
         try {
-            gui.addClickLog(event.isCancelled(), event.getClick(), event.getAction(), event.getCurrentItem(), event.getCursor(), event.getSlot());
+            gui.addClickLog(event.getClickedInventory() == null ? null : event.getClickedInventory().getType(), event.isCancelled(), event.getClick(), event.getAction(), event.getCurrentItem(), event
+                .getCursor(), event.getSlot());
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -229,12 +232,24 @@ public class GUIListener implements Listener {
         }
 
         // From TradeMe plugin
-        if (gui.isAllowShift() && event.getAction().equals(InventoryAction.MOVE_TO_OTHER_INVENTORY) && event.getClickedInventory().getType().equals(InventoryType.PLAYER)) {
+        if (!event.isCancelled() &&
+            gui.isAllowShift() && event.getAction().equals(InventoryAction.MOVE_TO_OTHER_INVENTORY) && event.getClickedInventory().getType().equals(InventoryType.PLAYER)) {
+
             event.setCancelled(true);
             ItemStack item = event.getCurrentItem().clone();
             for (int i = 0; i < gui.getInvSize().getFields(); i++) {
                 CMIGuiButton b = gui.getButtons().get(i);
                 if ((b == null || !b.isLocked() && b.getItem() == null) && gui.getInv().getItem(i) == null && i < gui.getInv().getSize()) {
+
+                    if (gui.isClickLogging()) {
+                        try {
+                            gui.addClickLog(event.getClickedInventory() == null ? null : event.getClickedInventory().getType(), event.isCancelled(), event.getClick(), event.getAction(), event
+                                .getCurrentItem(), event.getCursor(), event.getSlot());
+                        } catch (Throwable e) {
+                            e.printStackTrace();
+                        }
+                    }
+
                     gui.getInv().setItem(i, item);
                     player.getInventory().setItem(event.getSlot(), null);
                     event.setCurrentItem(null);
@@ -273,7 +288,7 @@ public class GUIListener implements Listener {
         if (!gui.isClickLogging())
             return;
         try {
-            gui.addClickLog(event.isCancelled(), event.getCursor(), event.getNewItems(), event.getInventorySlots(), event.getType());
+            gui.addClickLog(event.getInventory().getType(), event.isCancelled(), event.getCursor(), event.getNewItems(), event.getInventorySlots(), event.getType());
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -305,14 +320,8 @@ public class GUIListener implements Listener {
         if (plugin.getGUIManager().isLockedPart(player, buttons, event.getCursor()))
             event.setCancelled(true);
 
-//	Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-//	    @Override
-//	    public void run() {
-
         plugin.getGUIManager().processClick(player, buttons, plugin.getGUIManager().getClickType(true, false, null, null));
         clearIconItems(player);
-//	    }
-//	}, 1);
     }
 
     @SuppressWarnings("deprecation")

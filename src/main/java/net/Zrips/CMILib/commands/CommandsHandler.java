@@ -55,9 +55,13 @@ public class CommandsHandler implements CommandExecutor {
         this.plugin = plugin;
         packagePath = this.getClass().getPackage().getName() + ".list";
 
-        // Enables extra commands for test servers
-        if (plugin.getReflectionManager().getServerName().equals("LT_Craft") && Bukkit.getWorlds().get(0).getSeed() == 1782374759)
-            testServer = true;
+        try {
+            // Enables extra commands for test servers
+            if (plugin.getReflectionManager().getServerName().equals("LT_Craft") && Bukkit.getWorlds().get(0).getSeed() == 1782374759)
+                testServer = true;
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -65,6 +69,7 @@ public class CommandsHandler implements CommandExecutor {
         CMICommand cmd = getCommands().get(command.getSimpleName().toLowerCase());
         if (cmd == null)
             return false;
+        
         return performCMICommand(sender, cmd, args);
     }
 

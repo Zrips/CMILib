@@ -63,7 +63,7 @@ public class CMIGui {
 
     private CMIMaterial filler = null;
 
-    private boolean log = false;
+    private boolean logging = false;
     private LinkedHashSet<GUIClickActionLog> clickLog = new LinkedHashSet<GUIClickActionLog>();
 
     public CMIGui(Player player) {
@@ -232,7 +232,7 @@ public class CMIGui {
             return b;
 
         // Missing code to check for slot limits and creation of new button
-        
+
         return null;
     }
 
@@ -593,11 +593,17 @@ public class CMIGui {
         return clickLog;
     }
 
+    @Deprecated
     public void addClickLog(boolean canceled, ClickType clickType, InventoryAction action, ItemStack currentItem, ItemStack holdingItem, int slot) {
+        addClickLog(null, canceled, clickType, action, currentItem, holdingItem, slot);
+    }
+
+    public void addClickLog(InventoryType inv, boolean canceled, ClickType clickType, InventoryAction action, ItemStack currentItem, ItemStack holdingItem, int slot) {
         if (!isClickLogging())
             return;
         GUIClickActionLog log = new GUIClickActionLog(canceled);
         this.clickLog.add(log);
+        log.setInv(inv);
         log.setBukkitClickType(clickType);
         log.setAction(action);
         log.setHoldingItem(holdingItem);
@@ -606,22 +612,27 @@ public class CMIGui {
     }
 
     public void addClickLog(boolean canceled, ItemStack holdingItem, Map<Integer, ItemStack> map, Set<Integer> slots, DragType dragType) {
+        addClickLog(null, canceled, holdingItem, map, slots, dragType);
+    }
+
+    public void addClickLog(InventoryType inv, boolean canceled, ItemStack holdingItem, Map<Integer, ItemStack> map, Set<Integer> slots, DragType dragType) {
         if (!isClickLogging())
             return;
         GUIClickActionLog log = new GUIClickActionLog(canceled);
         this.clickLog.add(log);
-        log.setDragtype(dragType);
         log.setHoldingItem(holdingItem);
+        log.setDragtype(dragType);
         log.addSlots(slots);
         log.setNewItems(map);
+        log.setInv(inv);
     }
 
     public boolean isClickLogging() {
-        return log;
+        return logging;
     }
 
     public void logClicks(boolean log) {
-        this.log = log;
+        this.logging = log;
     }
 
     public Set<Integer> getPagePrevButtons() {

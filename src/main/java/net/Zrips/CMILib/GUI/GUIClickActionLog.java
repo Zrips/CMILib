@@ -7,13 +7,14 @@ import java.util.Set;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.DragType;
 import org.bukkit.event.inventory.InventoryAction;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
 
 import net.Zrips.CMILib.GUI.GUIManager.GUIClickType;
 
 public class GUIClickActionLog {
     private int indication;
-    private Long time;
+    private long time = 0L;
     private GUIClickType clickType;
     private Set<Integer> slots;
     private ItemStack holdingItem;
@@ -21,6 +22,7 @@ public class GUIClickActionLog {
     private Map<Integer, ItemStack> newItems;
     private ClickType bukkitClickType;
     private InventoryAction action;
+    private InventoryType inv;
     private DragType dragtype;
     private boolean canceled;
 
@@ -123,6 +125,14 @@ public class GUIClickActionLog {
 
     public void setCanceled(boolean canceled) {
 	this.canceled = canceled;
+    }
+
+    public InventoryType getInv() {
+        return inv;
+    }
+
+    public void setInv(InventoryType inv) {
+        this.inv = inv;
     }
 
 }
