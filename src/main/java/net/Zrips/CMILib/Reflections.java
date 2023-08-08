@@ -733,7 +733,7 @@ public class Reflections {
 
             Object worldServer = this.getCraftWorld(world).getClass().getMethod("getHandle").invoke(this.getCraftWorld(world));
             dm = worldServer.getClass().getField(Version.isCurrentEqualOrHigher(Version.v1_18_R1) ? "G" : "dimension").get(worldServer);
-        } catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException | InvocationTargetException | NoSuchMethodException e) {
+        } catch (Throwable e) {
 //	    e.printStackTrace();
         }
 
@@ -748,17 +748,16 @@ public class Reflections {
             try {
                 res = srv.getClass().getMethod("getServerName").invoke(srv);
                 return (String) res;
-            } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+            } catch (Throwable e) {
                 e.printStackTrace();
             }
             return Bukkit.getName();
         }
 
-        Object worldServer = this.getCraftWorld(Bukkit.getWorlds().get(0));
-
         try {
+            Object worldServer = this.getCraftWorld(Bukkit.getWorlds().get(0));
             return (String) worldServer.getClass().getMethod("getName").invoke(worldServer);
-        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+        } catch (Throwable e) {
             e.printStackTrace();
         }
         return Bukkit.getName();
@@ -772,7 +771,7 @@ public class Reflections {
         Object obj = getCraftWorld(world);
         try {
             return WorldServerClass.cast(obj.getClass().getMethod("getHandle").invoke(obj));
-        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+        } catch (Throwable e) {
             e.printStackTrace();
         }
         return null;
@@ -1814,7 +1813,7 @@ public class Reflections {
                     LootPredicateManager = net.minecraft.server.MinecraftServer.getServer().getClass().getMethod("aH").invoke(net.minecraft.server.MinecraftServer.getServer());
                 else if (Version.isCurrentEqualOrLower(Version.v1_19_R3))
                     LootPredicateManager = net.minecraft.server.MinecraftServer.getServer().getClass().getMethod("aI").invoke(net.minecraft.server.MinecraftServer.getServer());
-                
+
                 if (LootPredicateManager == null)
                     return;
 
