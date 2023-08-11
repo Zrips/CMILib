@@ -58,7 +58,7 @@ public class FileDownloader {
 
                 fileOutputStream.close();
                 bufferedInputStream.close();
-                CMIScheduler.get().runTask(FileDownloader.this::afterDownload);
+                CMIScheduler.runTask(FileDownloader.this::afterDownload);
             } catch (final Throwable e) {
                 final File file = new File(fileName);
 
