@@ -903,7 +903,7 @@ public class CMIItemStack {
     static Pattern pattribute = Pattern.compile("^(?i)(attribute|a)\\" + prefix);
     static Pattern pflags = Pattern.compile("^(?i)(flags|f)\\" + prefix);
     static Pattern pcolor = Pattern.compile("^(?i)(color|c)\\" + prefix);
-    static Pattern pmodel = Pattern.compile("^(?i)(custommodeldata|custommodel|cm)\\" + prefix);
+    static Pattern pmodel = Pattern.compile("^(?i)(custommodeldata|custommodel|cm|cmd)\\" + prefix);
     static Pattern pspecial = Pattern.compile("^(?i)(special|s)\\" + prefix);
     static Pattern ptrim = Pattern.compile("^(?i)(trim|t)\\" + prefix);
 
