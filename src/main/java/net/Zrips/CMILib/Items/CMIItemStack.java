@@ -926,8 +926,6 @@ public class CMIItemStack {
 
         String itemNameUpdated = itemName.contains("-") || itemName.toLowerCase().startsWith("head:") || itemName.toLowerCase().startsWith("player_head:") ? itemName : itemName.replace(":", "-");
 
-        CMIDebug.d(itemNameUpdated);
-
         CMIItemStack cim = CMILib.getInstance().getItemManager().getItem(itemNameUpdated);
 
         if (cim == null)

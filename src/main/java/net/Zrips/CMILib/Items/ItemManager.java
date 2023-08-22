@@ -163,7 +163,7 @@ public class ItemManager {
             item = new ItemStack(Material.AIR);
         CMIItemStack cm = getItem(CMIMaterial.get(item));
         if (cm == null)
-            return new CMIItemStack(Material.AIR);
+            return new CMIItemStack(item.getType());
         cm.setItemStack(item);
         return cm;
     }
