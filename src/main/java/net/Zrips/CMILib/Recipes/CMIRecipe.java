@@ -120,28 +120,30 @@ public class CMIRecipe {
 
             LinkedHashMap<String, CMIRecipeIngredient> itemsused = new LinkedHashMap<String, CMIRecipeIngredient>();
 
-            String ss = "";
+            StringBuilder ss = new StringBuilder();
 
             int y = 0;
             for (int i = 0; i < 9; i++) {
                 CMIRecipeIngredient ritem = Recipe.get(i);
                 if (ritem == null) {
-                    ss += " ";
+                    ss.append(" ");
                     continue;
                 }
                 int e = 1;
                 ItemStack item = ritem.getItem().clone();
 
-                if (!itemsused.containsKey(item.getType().toString())) {
-                    itemsused.put(item.getType().toString(), ritem.setItem(item));
+                String ident = item.toString();
+
+                if (!itemsused.containsKey(ident)) {
+                    itemsused.put(ident, ritem.setItem(item));
                     y++;
                     e = y;
                 } else {
-                    e = getIndex(itemsused, item.getType().toString()) + 1;
+                    e = getIndex(itemsused, ident) + 1;
                 }
-                ss += String.valueOf(e);
+                ss.append(String.valueOf(e));
             }
-            NewShapedRecipe.shape(ss.split("(?<=\\G...)"));
+            NewShapedRecipe.shape(ss.toString().split("(?<=\\G...)"));
 
             char[] charId = new char[] { '1', '2', '3', '4', '5', '6', '7', '8', '9' };
             int i = 0;
