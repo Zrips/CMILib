@@ -1,5 +1,6 @@
 package net.Zrips.CMILib.Container;
 
+import java.text.DecimalFormat;
 import java.util.TreeMap;
 
 public class CMINumber {
@@ -32,6 +33,12 @@ public class CMINumber {
             return map.get(number);
         }
         return map.get(l) + toRoman(number - l);
+    }
+
+    private final static DecimalFormat dcf = new DecimalFormat("##.##");
+
+    public static String format2Decimals(double number) {
+        return dcf.format(number);
     }
 
     public static double sum(double number1, double number2) {

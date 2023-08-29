@@ -231,8 +231,7 @@ public class CMIRecipe {
         if (Version.isCurrentEqualOrHigher(Version.v1_13_R1)) {
             ShapelessRecipe NewShapelessRecipe = new ShapelessRecipe(
                 key == null ? new org.bukkit.NamespacedKey(CMILib.getInstance(), customKey == null ? getRecipeIdentificator(CMIRecipeType.Shapeless, result, recipe) : customKey)
-                    : new org.bukkit.NamespacedKey(key.getNamespace(), key
-                        .getKey()), result);
+                    : new org.bukkit.NamespacedKey(key.getNamespace(), key.getKey()), result);
             for (CMIRecipeIngredient item : recipe.values()) {
                 if (item == null)
                     continue;

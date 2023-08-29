@@ -40,6 +40,7 @@ public class CMIRecipeIngredient {
 	if (choice.equals(CMIRecipeChoice.byMaterial)) {
 	    return new org.bukkit.inventory.RecipeChoice.MaterialChoice(item.getType());
 	}
+	CMIDebug.d("Exact item", item.toString());
 	return new org.bukkit.inventory.RecipeChoice.ExactChoice(item);
     }
 }
