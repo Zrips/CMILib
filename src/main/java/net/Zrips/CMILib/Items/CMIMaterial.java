@@ -179,7 +179,7 @@ public enum CMIMaterial {
     COCOA(127),
     COCOA_BEANS(351, 3, CMIMC.DYE),
     COD("Raw Cod"),
-    COD_BUCKET(28601, "Bucket of Cod"),
+    COD_BUCKET(28601, "Bucket of Cod", CMIMC.BUCKETANIMAL),
     COD_SPAWN_EGG(CMIMC.SPAWNEGG),
     COMMAND_BLOCK(137, "COMMAND"),
     COMMAND_BLOCK_MINECART(422, "Minecart With Command Block"),
@@ -658,7 +658,7 @@ public enum CMIMaterial {
     PRISMARINE_SLAB(31323, CMIMC.SLAB),
     PRISMARINE_STAIRS(CMIMC.STAIRS),
     PUFFERFISH(349, 3),
-    PUFFERFISH_BUCKET("Bucket of Pufferfish"),
+    PUFFERFISH_BUCKET("Bucket of Pufferfish", CMIMC.BUCKETANIMAL),
     PUFFERFISH_SPAWN_EGG(CMIMC.SPAWNEGG),
     PUMPKIN(86),
     PUMPKIN_PIE(400),
@@ -726,7 +726,7 @@ public enum CMIMaterial {
     ROTTEN_FLESH(367),
     SADDLE(329),
     SALMON(349, 1, "Raw Salmon"),
-    SALMON_BUCKET(),
+    SALMON_BUCKET(CMIMC.BUCKETANIMAL),
     SALMON_SPAWN_EGG(CMIMC.SPAWNEGG),
     SAND(12),
     SANDSTONE(24),
@@ -825,7 +825,7 @@ public enum CMIMaterial {
     TRIPWIRE(132),
     TRIPWIRE_HOOK(131),
     TROPICAL_FISH(349, 2),
-    TROPICAL_FISH_BUCKET(),
+    TROPICAL_FISH_BUCKET(CMIMC.BUCKETANIMAL),
     TROPICAL_FISH_SPAWN_EGG(CMIMC.SPAWNEGG),
     TUBE_CORAL(),
     TUBE_CORAL_BLOCK(),
@@ -1115,7 +1115,7 @@ public enum CMIMaterial {
     AMETHYST_BLOCK(),
     AMETHYST_CLUSTER(),
     AMETHYST_SHARD(),
-    AXOLOTL_BUCKET(),
+    AXOLOTL_BUCKET(CMIMC.BUCKETANIMAL),
     AXOLOTL_SPAWN_EGG(CMIMC.SPAWNEGG),
     AZALEA(),
     AZALEA_LEAVES(),
@@ -1318,7 +1318,7 @@ public enum CMIMaterial {
     SPRUCE_CHEST_BOAT(CMIMC.BOAT, CMIMC.CHESTBOAT),
     STRIPPED_MANGROVE_LOG(),
     STRIPPED_MANGROVE_WOOD(),
-    TADPOLE_BUCKET(),
+    TADPOLE_BUCKET(CMIMC.BUCKETANIMAL),
     TADPOLE_SPAWN_EGG(CMIMC.SPAWNEGG),
     VERDANT_FROGLIGHT(),
     WARDEN_SPAWN_EGG(CMIMC.SPAWNEGG),
@@ -1996,6 +1996,15 @@ public enum CMIMaterial {
 
     public boolean isCake() {
         return isCandleCake() || this.containsCriteria(CMIMC.CAKE);
+    }
+
+    public static boolean isBuckedAnimal(Material mat) {
+        CMIMaterial m = CMIMaterial.get(mat);
+        return m == null ? false : m.isBuckedAnimal();
+    }
+
+    public boolean isBuckedAnimal() {
+        return this.containsCriteria(CMIMC.BUCKETANIMAL);
     }
 
     public static boolean isBed(Material mat) {
