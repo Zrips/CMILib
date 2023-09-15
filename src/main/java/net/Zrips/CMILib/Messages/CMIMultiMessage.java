@@ -291,4 +291,8 @@ public class CMIMultiMessage {
     public void setTranslatePlaceholders(boolean translatePlaceholders) {
 	this.translatePlaceholders = translatePlaceholders;
     }
+
+    public void setType(CMIMultiMessageType type) {
+        this.type = type;
+    }
 }

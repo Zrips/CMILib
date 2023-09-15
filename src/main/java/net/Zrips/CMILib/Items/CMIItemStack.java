@@ -391,6 +391,10 @@ public class CMIItemStack {
 
             setEnt();
 
+            // Should not be null at this point if everything went how it should have, but just in case
+            if (this.item == null)
+                return null;
+
             if (this.getCMIType().isPotion() || item.getType().name().contains("SPLASH_POTION") || item.getType().name().contains("TIPPED_ARROW")) {
                 PotionMeta potion = (PotionMeta) item.getItemMeta();
                 PotionEffectType effect = PotionEffectType.getById(data);

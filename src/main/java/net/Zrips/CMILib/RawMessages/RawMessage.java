@@ -12,13 +12,17 @@ import java.util.regex.Pattern;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.Nullable;
 
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Colors.CMIChatColor;
 import net.Zrips.CMILib.Container.CMICommandSender;
 import net.Zrips.CMILib.Items.CMIItemStack;
 import net.Zrips.CMILib.Locale.LC;
+import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Messages.CMIMessages;
+import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.Shadow.ShadowCommand;
 import net.Zrips.CMILib.Shadow.ShadowCommandType;
 import net.Zrips.CMILib.Version.Version;
@@ -400,10 +404,15 @@ public class RawMessage {
         if (item == null)
             return this;
 
-        String res = CMILib.getInstance().getReflectionManager().toJson(item.clone());
+        item = item.clone();
+
+        String res = CMINBT.toJson(item);
+
+        // Cleaning up useless information. Italic not included due to some weird behavior which defaults to italic look if not specifically set to not be one
+        res = res.replaceAll("\\\"bold\\\":false,|\\\"underlined\\\":false,|\\\"strikethrough\\\":false,|\\\"obfuscated\\\":false,", "");
 
         try {
-            if (res.length() > 32766) {
+//            if (res.length() > 32766) {
 //		if (CMIMaterial.get(item.getType()).isShulkerBox()) {
 //		    Inventory inv = CMILib.getInstance().getNMS().getShulkerInv(item);
 //		    ItemStack[] contents = inv.getContents();
@@ -423,12 +432,12 @@ public class RawMessage {
 //		    }
 //		    CMI.getInstance().getShulkerBoxManager().setShulkerInv(item, contents);
 //		}
-
-                if (res.length() > 32766) {
-                    res = truncate(res);
-                }
-                res = CMILib.getInstance().getReflectionManager().toJson(item.clone());
-            }
+//
+//                if (res.length() > 32766) {
+//                    res = truncate(res);
+//                }
+//                res = CMINBT.toJson(item);
+//            }
 
             // Lets not even try to add item if its near a limit which still gives 200 bytes to play around
             if (res.length() > 32566) {
@@ -439,6 +448,7 @@ public class RawMessage {
         }
 
         String f = "\"hoverEvent\":{\"action\":\"show_item\",\"value\":\"" + escape(res, true) + "\"}";
+
         temp.put(RawMessagePartType.HoverItem, f);
         return this;
     }
@@ -450,9 +460,9 @@ public class RawMessage {
         if (!url.toLowerCase().startsWith("http://") && !url.toLowerCase().startsWith("https://"))
             url = "http://" + url;
 
-        url= url.replace("\"", "");
-        url= url.replace("\'", "");
-        
+        url = url.replace("\"", "");
+        url = url.replace("\'", "");
+
         url = Matcher.quoteReplacement(url);
 
         String f = "\"clickEvent\":{\"action\":\"open_url\",\"value\":\"" + CMIChatColor.deColorize(url).replace(CMIChatColor.colorReplacerPlaceholder, "&") + "\"}";
