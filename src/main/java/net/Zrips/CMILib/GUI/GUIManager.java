@@ -466,15 +466,26 @@ public class GUIManager {
 
     }
 
+    private static boolean validInventory(CMIGui gui) {
+
+        Player player = gui.getPlayer();
+
+        if (player.getOpenInventory() == null ||
+            player.getOpenInventory().getTopInventory() == null ||
+            !player.getOpenInventory().getTopInventory().getType().equals(gui.getInv().getType()) ||
+            player.getOpenInventory().getTopInventory().getSize() != gui.getInv().getSize() ||
+            player.getOpenInventory().getTopInventory().getLocation() != null) {
+            return false;
+        }
+
+        return true;
+    }
+
     public void updateContent(CMIGui gui) {
 
         Player player = gui.getPlayer();
-        if (player.getOpenInventory() == null || player.getOpenInventory().getTopInventory() == null) {
-            player.closeInventory();
-            map.remove(player.getUniqueId());
-        }
 
-        if (!player.getOpenInventory().getTopInventory().equals(gui.getInv()) || player.getOpenInventory().getTopInventory().getSize() != gui.getInv().getSize()) {
+        if (!validInventory(gui)) {
             player.closeInventory();
             map.remove(player.getUniqueId());
             return;
@@ -498,17 +509,14 @@ public class GUIManager {
     }
 
     public void softUpdateContent(CMIGui gui) {
-        
+
         Player player = gui.getPlayer();
-        if (player.getOpenInventory() == null || player.getOpenInventory().getTopInventory() == null) {
-            player.closeInventory();
-        }
-        
-        if (!player.getOpenInventory().getTopInventory().equals(gui.getInv()) || player.getOpenInventory().getTopInventory().getSize() != gui.getInv().getSize()) {
+
+        if (!validInventory(gui)) {
             player.closeInventory();
             return;
         }
-        
+
 //	plugin.getNMS().updateInventoryTitle(player, gui.getTitle());
 
         for (int i = 0; i < player.getOpenInventory().getTopInventory().getSize(); i++) {
