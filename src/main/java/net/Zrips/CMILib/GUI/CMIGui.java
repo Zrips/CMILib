@@ -29,6 +29,7 @@ import net.Zrips.CMILib.GUI.GUIManager.GUIRows;
 import net.Zrips.CMILib.GUI.GUIManager.InvType;
 import net.Zrips.CMILib.Items.CMIMaterial;
 import net.Zrips.CMILib.Locale.LC;
+import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Sounds.CMISound;
 import net.Zrips.CMILib.Version.Version;
 
@@ -307,8 +308,9 @@ public class CMIGui {
     public void updateButton(CMIGuiButton button) {
         if (inv == null || button.getSlot() == null || inv.getSize() <= button.getSlot())
             return;
+
         if (GUIManager.usePackets) {
-            CMILib.getInstance().getReflectionManager().upadteItemWithPacket(getPlayer(), button.getItem(this.getPlayer()), button.getSlot());
+            CMILib.getInstance().getReflectionManager().updateItemWithPacket(getPlayer(), button.getItem(this.getPlayer()), button.getSlot());
         } else {
             this.inv.setItem(button.getSlot(), button.getItem(this.getPlayer()));
         }
@@ -317,7 +319,7 @@ public class CMIGui {
     }
 
     public void fakeUpdate(int slot, ItemStack item) {
-        CMILib.getInstance().getReflectionManager().upadteItemWithPacket(getPlayer(), item, slot);
+        CMILib.getInstance().getReflectionManager().updateItemWithPacket(getPlayer(), item, slot);
     }
 
     public void addEmptyButton(int slot) {
@@ -557,7 +559,7 @@ public class CMIGui {
                 try {
                     ItemStack item = one.getValue().getItem(getPlayer());
                     item = item == null ? null : item.clone();
-                    CMILib.getInstance().getReflectionManager().upadteItemWithPacket(getPlayer(), item, one.getKey());
+                    CMILib.getInstance().getReflectionManager().updateItemWithPacket(getPlayer(), item, one.getKey());
 
                 } catch (ArrayIndexOutOfBoundsException e) {
                 }

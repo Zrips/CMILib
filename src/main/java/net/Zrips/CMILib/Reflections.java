@@ -874,7 +874,7 @@ public class Reflections {
         }
     }
 
-    public void upadteItemWithPacket(Player player, ItemStack item, int slot) {
+    public void updateItemWithPacket(Player player, ItemStack item, int slot) {
         if (Version.isCurrentEqualOrHigher(Version.v1_19_R1)) {
             try {
                 Constructor<?> packet = PacketPlayOutSetSlot.getConstructor(int.class, int.class, int.class, IStack);
