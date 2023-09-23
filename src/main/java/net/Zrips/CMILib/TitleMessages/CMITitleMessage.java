@@ -35,7 +35,16 @@ public class CMITitleMessage {
 
         if (Version.isCurrentHigher(Version.v1_7_R4)) {
             Version version = Version.getCurrent();
-            if (Version.isCurrentEqualOrHigher(Version.v1_20_R1)) {
+            if (Version.isCurrentEqualOrHigher(Version.v1_20_R2)) {
+                try {
+                    getHandle = Class.forName("org.bukkit.craftbukkit." + version + ".entity.CraftPlayer").getMethod("getHandle");
+                    nmsIChatBaseComponent = net.minecraft.network.chat.IChatBaseComponent.class;
+                    playerConnection = net.minecraft.server.level.EntityPlayer.class.getField("c");
+                    sendPacket = net.minecraft.server.network.PlayerConnection.class.getMethod("a", net.minecraft.network.protocol.Packet.class);
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
+            } else if (Version.isCurrentEqualOrHigher(Version.v1_20_R1)) {
                 try {
                     getHandle = Class.forName("org.bukkit.craftbukkit." + version + ".entity.CraftPlayer").getMethod("getHandle");
                 } catch (Throwable e) {

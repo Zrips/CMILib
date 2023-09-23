@@ -79,7 +79,7 @@ public class SkinManager {
 	if (checkCache(profile, uuid))
 	    return true;
 	try {
-	    HttpsURLConnection connection = (HttpsURLConnection) new URL(String.format("https://sessionserver.mojang.com/session/minecraft/profile/%s?unsigned=false", UUIDTypeAdapter.fromUUID(uuid)))
+	    HttpsURLConnection connection = (HttpsURLConnection) new URL(String.format("https://sessionserver.mojang.com/session/minecraft/profile/%s?unsigned=false", uuid.toString().replace("-", "")))
 		.openConnection();
 	    if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
 		InputStream stream = connection.getInputStream();

@@ -36,7 +36,18 @@ public class CMIActionBar {
     private static Constructor<?> constructor;
 
     static {
-        if (Version.isCurrentEqualOrHigher(Version.v1_20_R1)) {
+        if (Version.isCurrentEqualOrHigher(Version.v1_20_R2)) {
+            try {
+                packetType = net.minecraft.network.protocol.game.ClientboundSystemChatPacket.class;
+                nmsIChatBaseComponent = Class.forName("net.minecraft.network.chat.IChatBaseComponent");
+                nmsChatSerializer = Class.forName("net.minecraft.network.chat.IChatBaseComponent$ChatSerializer");
+                playerConnection = Class.forName("net.minecraft.server.level.EntityPlayer").getField("c");
+                sendPacket = Class.forName("net.minecraft.server.network.PlayerConnection").getMethod("b", net.minecraft.network.protocol.Packet.class);
+                getHandle = Class.forName("org.bukkit.craftbukkit." + Version.getCurrent() + ".entity.CraftPlayer").getMethod("getHandle");
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+        } else if (Version.isCurrentEqualOrHigher(Version.v1_20_R1)) {
             try {
                 packetType = net.minecraft.network.protocol.game.ClientboundSystemChatPacket.class;
                 nmsIChatBaseComponent = Class.forName("net.minecraft.network.chat.IChatBaseComponent");

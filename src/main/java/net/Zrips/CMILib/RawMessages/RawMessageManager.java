@@ -16,6 +16,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import net.Zrips.CMILib.CMILib;
+import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Messages.CMIMessages;
 import net.Zrips.CMILib.Version.Version;
 import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
@@ -100,7 +101,17 @@ public class RawMessageManager {
 
     static {
         Version version = Version.getCurrent();
-        if (Version.isCurrentEqualOrHigher(Version.v1_20_R1)) {
+        if (Version.isCurrentEqualOrHigher(Version.v1_20_R2)) {
+            try {
+                getHandle = Class.forName("org.bukkit.craftbukkit." + version + ".entity.CraftPlayer").getMethod("getHandle");
+                playerConnection = net.minecraft.server.level.EntityPlayer.class.getField("c");
+                sendPacket = net.minecraft.server.network.PlayerConnection.class.getMethod("b", net.minecraft.network.protocol.Packet.class);
+                nmsChatSerializer = Class.forName("net.minecraft.network.chat.IChatBaseComponent$ChatSerializer");
+                constructor = net.minecraft.network.protocol.game.ClientboundSystemChatPacket.class.getConstructor(net.minecraft.network.chat.IChatBaseComponent.class, boolean.class);
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+        } else if (Version.isCurrentEqualOrHigher(Version.v1_20_R1)) {
             try {
                 getHandle = Class.forName("org.bukkit.craftbukkit." + version + ".entity.CraftPlayer").getMethod("getHandle");
                 packetType = net.minecraft.network.protocol.game.ClientboundSystemChatPacket.class;
@@ -207,6 +218,7 @@ public class RawMessageManager {
             }
             return;
         }
+
         for (Player receivingPacket : players) {
             if (!receivingPacket.isOnline())
                 return;
@@ -235,6 +247,7 @@ public class RawMessageManager {
                 }
                 Object player = getHandle.invoke(receivingPacket);
                 Object connection = playerConnection.get(player);
+
                 sendPacket.invoke(connection, packet);
             } catch (Exception ex) {
                 ex.printStackTrace();

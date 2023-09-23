@@ -9,17 +9,18 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import com.Zrips.CMI.Modules.Advancements.AdvancementManager;
+import com.Zrips.CMI.Modules.Advancements.AdvancementManager.FrameType;
+
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.ActionBar.CMIActionBar;
-import net.Zrips.CMILib.Advancements.AdvancementManager;
-import net.Zrips.CMILib.Advancements.AdvancementManager.FrameType;
+import net.Zrips.CMILib.Advancements.AdvancementFrameType;
+import net.Zrips.CMILib.Advancements.CMIAdvancement;
 import net.Zrips.CMILib.BossBar.BossBarInfo;
 import net.Zrips.CMILib.Colors.CMIChatColor;
 import net.Zrips.CMILib.Container.CMICommandSender;
-import net.Zrips.CMILib.Items.CMIItemStack;
 import net.Zrips.CMILib.Items.CMIMaterial;
 import net.Zrips.CMILib.Locale.Snd;
-import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.RawMessages.RawMessage;
 import net.Zrips.CMILib.TitleMessages.CMITitleMessage;
 import net.Zrips.CMILib.Version.Version;
@@ -218,17 +219,17 @@ public class CMIMultiMessage {
 	    else {
 
 		CMIMaterial material = CMIMaterial.BLACK_STAINED_GLASS_PANE;
-		FrameType type = FrameType.CHALLENGE;
+		AdvancementFrameType frametype = AdvancementFrameType.CHALLENGE;
 
 		if (extra != null)
 		    for (Object oneS : extra) {
 			if (oneS instanceof CMIMaterial)
 			    material = (CMIMaterial) oneS;
-			else if (oneS instanceof FrameType)
-			    type = (FrameType) oneS;
+			else if (oneS instanceof AdvancementFrameType)
+			    frametype = (AdvancementFrameType) oneS;
 		    }
 
-		AdvancementManager.sendToast((Player) sender, message, material.newCMIItemStack(), type);
+		new CMIAdvancement().setFrame(frametype).setIcon(material).setTitle(message).show((Player) sender);
 	    }
 	    break;
 	case plain:

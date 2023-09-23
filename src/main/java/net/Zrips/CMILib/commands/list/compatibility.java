@@ -9,11 +9,11 @@ import com.Zrips.CMI.CMI;
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Reflections;
 import net.Zrips.CMILib.ActionBar.CMIActionBar;
-import net.Zrips.CMILib.Advancements.AdvancementManager;
-import net.Zrips.CMILib.Advancements.AdvancementManager.FrameType;
 import net.Zrips.CMILib.BossBar.BossBarInfo;
 import net.Zrips.CMILib.Container.CMICommandSender;
 import net.Zrips.CMILib.Container.CMIServerProperties;
+import net.Zrips.CMILib.Effects.CMIEffect;
+import net.Zrips.CMILib.Effects.CMIEffectManager.CMIParticle;
 import net.Zrips.CMILib.FileHandler.ConfigReader;
 import net.Zrips.CMILib.Items.CMIMaterial;
 import net.Zrips.CMILib.Messages.CMIMessages;
@@ -49,13 +49,6 @@ public class compatibility implements Cmd {
 
         CMINBT.HideFlag(CMIMaterial.STONE.newItemStack(), 2);
 
-        Player player = Bukkit.getOnlinePlayers().iterator().next();
-        ref.getProfile(player);
-        ref.getCraftPlayer(player);
-        ref.getPlayerHandle(player);
-        ref.getPlayerConnection(player);
-        ref.getTileEntityAt(player.getLocation().clone().add(0, -1, 0));
-
         CMINBT.toJson(CMIMaterial.STONE.newItemStack());
 
         CMINBT nbt = new CMINBT(CMIMaterial.DIAMOND_SWORD.newItemStack());
@@ -84,25 +77,45 @@ public class compatibility implements Cmd {
         if (!nbt.getString("stringTest").equals("test"))
             CMIMessages.consoleMessage("Error stringTest");
 
-        
+        Player player = Bukkit.getOnlinePlayers().iterator().next();
+        ref.getProfile(player);
+        ref.getCraftPlayer(player);
+        ref.getPlayerHandle(player);
+        ref.getPlayerConnection(player);
+        ref.getTileEntityAt(player.getLocation().clone().add(0, -1, 0));
+
         CMINBT blockNBT = new CMINBT(player.getLocation().clone().add(0, -1, 0).getBlock());
-        
+
         CMINBT entityNBT = new CMINBT(player);
-                
+
         nbt.getKeys();
 
-        AdvancementManager.sendToast(player, "Test", CMIMaterial.ACACIA_BOAT.newCMIItemStack(), FrameType.CHALLENGE);
+//        AdvancementManager.sendToast(player, "Test", CMIMaterial.ACACIA_BOAT.newCMIItemStack(), FrameType.CHALLENGE);
 
         CMITitleMessage.send(player, "Title", "SubTitle");
         CMIActionBar.send(player, "Action bar Test");
+
+        plugin.getReflectionManager().playEffect(player, player.getEyeLocation(), new CMIEffect(CMIParticle.COLOURED_DUST));
+
+        RawMessage rm = new RawMessage();
+        rm.addText("Active container ID: " + plugin.getReflectionManager().getActiveContainerId(player));
+        rm.addHover("Hover text");
+        rm.show(player);
 
         try {
             CMI.getInstance().getReflectionManager().changePlayerLimit(Bukkit.getMaxPlayers());
         } catch (Throwable e) {
             e.printStackTrace();
         }
-
-        plugin.getBossBarManager().Show(new BossBarInfo(player, "Compatibility"));
+        try {
+            CMI.getInstance().getNMS().showResurection(player);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+        BossBarInfo bossbar = new BossBarInfo(player, "Compatibility");
+        bossbar.setTitleOfBar("Test");
+        bossbar.setPercentage(0.33);
+        plugin.getBossBarManager().Show(bossbar);
 
         // Check this
         // ref.setSkullTexture(item, customProfileName, texture)	

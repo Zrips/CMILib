@@ -223,6 +223,11 @@ public class CMINBT {
             getTagName = "v";
         }
 
+        if (Version.isCurrentEqualOrHigher(Version.v1_20_R2)) {
+            asStringName = "toString";
+            listGetName = "j";
+        }
+
         try {
             met_getString = nbtTagCompound.getMethod(getStringName, String.class);
             met_getInt = nbtTagCompound.getMethod(getIntName, String.class);
@@ -531,7 +536,11 @@ public class CMINBT {
                 }
             } else {
                 for (int i = 0; i < size; i++) {
-                    list.add(met_toString.invoke(method.invoke(ls, i)).toString());
+                    CMIDebug.d(method.invoke(ls, i));
+                    if (Version.isCurrentEqualOrHigher(Version.v1_20_R2)) {
+                        list.add(method.invoke(ls, i).toString());
+                    } else
+                        list.add(met_toString.invoke(method.invoke(ls, i)).toString());
                 }
             }
             return list;
@@ -1120,16 +1129,13 @@ public class CMINBT {
             // TileEntity -> getUpdateTag
             String ff = "d";
             switch (Version.getCurrent()) {
-            case v1_10_R1:
-            case v1_9_R1:
-            case v1_9_R2:
+            case v1_7_R4:
             case v1_8_R1:
             case v1_8_R3:
             case v1_8_R2:
-            case v1_7_R1:
-            case v1_7_R2:
-            case v1_7_R3:
-            case v1_7_R4:
+            case v1_9_R1:
+            case v1_9_R2:
+            case v1_10_R1:
             case v1_11_R1:
             case v1_12_R1:
                 ff = "d";
@@ -1137,6 +1143,10 @@ public class CMINBT {
             case v1_13_R1:
             case v1_13_R2:
                 ff = "aa_";
+                break;
+            case v1_14_R1:
+            case v1_15_R1:
+                ff = "b";
                 break;
             case v1_17_R1:
             case v1_18_R1:
@@ -1160,12 +1170,13 @@ public class CMINBT {
             case v1_20_R1:
                 ff = "ao_";
                 break;
-            case v1_14_R1:
-            case v1_15_R1:
+            case v1_20_R2:
             default:
-                ff = "b";
+                ff = "as_";
                 break;
             }
+
+            CMIDebug.d(ff);
 
             if (tile == null)
                 return null;
