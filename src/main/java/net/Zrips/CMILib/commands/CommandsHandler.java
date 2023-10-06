@@ -40,6 +40,7 @@ import net.Zrips.CMILib.Messages.CMIMessages;
 import net.Zrips.CMILib.Permissions.CMILPerm;
 import net.Zrips.CMILib.RawMessages.RawMessage;
 import net.Zrips.CMILib.RawMessages.RawMessageManager;
+import net.Zrips.CMILib.Version.Version;
 
 public class CommandsHandler implements CommandExecutor {
     public static final String label = "cmil";
@@ -47,22 +48,12 @@ public class CommandsHandler implements CommandExecutor {
     private static Map<String, CMICommand> commands = new TreeMap<>();
     public static boolean enabledDebug = true;
 
-    private boolean testServer = false;
 
     protected CMILib plugin;
 
     public CommandsHandler(CMILib plugin) {
         this.plugin = plugin;
         packagePath = this.getClass().getPackage().getName() + ".list";
-
-        try {
-            // Enables extra commands for test servers
-            if (plugin.getReflectionManager().getServerName().equals("LT_Craft") && Bukkit.getWorlds().get(0).getSeed() == 1782374759)
-                testServer = true;
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-
     }
 
     public Boolean performCMICommand(CommandSender sender, Class<?> command, String... args) {
@@ -497,7 +488,7 @@ public class CommandsHandler implements CommandExecutor {
                         cmdClass = (Cmd) OneClass.getValue().getConstructor().newInstance();
                         CMICommand cmiCommand = new CMICommand(cmdClass, cmd, met.getAnnotation(CAnnotation.class));
 
-                        if (cmiCommand.getAnottation().test() && !testServer)
+                        if (cmiCommand.getAnottation().test() && !Version.isTestServer())
                             continue;
 
                         commands.put(cmd.toLowerCase(), cmiCommand);
@@ -530,7 +521,7 @@ public class CommandsHandler implements CommandExecutor {
         CMICommand cmd = commands.get(cmdName.toLowerCase());
         Cmd cmdClass = null;
         if (cmd != null) {
-            if (cmd.getAnottation().test() && !testServer)
+            if (cmd.getAnottation().test() && !Version.isTestServer())
                 return null;
             if (cmd.getEnabled() != null && !cmd.getEnabled()) {
                 CMIMessages.consoleMessage("&5Someone tried to use command for disabled module (" + cmd.getName() + ")");
@@ -619,10 +610,6 @@ public class CommandsHandler implements CommandExecutor {
 
     public static String getLabel() {
         return label;
-    }
-
-    public boolean isTestServer() {
-        return testServer;
     }
 
     public static String getCommandPrefix(String command) {

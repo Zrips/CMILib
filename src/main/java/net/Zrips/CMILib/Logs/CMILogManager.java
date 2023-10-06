@@ -2,6 +2,7 @@ package net.Zrips.CMILib.Logs;
 
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Messages.CMIMessages;
+import net.Zrips.CMILib.Version.Version;
 
 public class CMILogManager {
 
@@ -10,7 +11,7 @@ public class CMILogManager {
     boolean enabledDebug = false;
 
     public CMILogManager() {
-	enabledDebug = CMILib.getInstance().getCommandManager().isTestServer();
+	enabledDebug = Version.isTestServer();
     }
 
     public void print(CMIDebug log) {

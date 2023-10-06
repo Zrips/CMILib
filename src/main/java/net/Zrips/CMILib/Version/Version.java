@@ -2,6 +2,7 @@ package net.Zrips.CMILib.Version;
 
 import org.bukkit.Bukkit;
 
+import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Messages.CMIMessages;
 
 public enum Version {
@@ -53,9 +54,15 @@ public enum Version {
     private static Version current = null;
     private static MinecraftPlatform platform = null;
 
+    private static boolean testServer = false;
+
     static {
         getCurrent();
         CMIMessages.consoleMessage("&3Server version: " + current.toString() + " - " + current.getFormated() + " - " + getPlatform());
+
+        // Enables extra commands for test servers
+        if (CMILib.getInstance().getReflectionManager().getServerName().equals("LT_Craft") && Bukkit.getWorlds().get(0).getSeed() == 1782374759)
+            testServer = true;
     }
 
     Version() {
@@ -98,7 +105,7 @@ public enum Version {
         if (platform != null)
             return platform;
 
-        try {            
+        try {
             Class.forName("io.papermc.paper.threadedregions.RegionizedServer");
             platform = MinecraftPlatform.folia;
             return platform;
@@ -257,5 +264,9 @@ public enum Version {
         }
 
         return version.toString();
+    }
+
+    public static boolean isTestServer() {
+        return testServer;
     }
 }

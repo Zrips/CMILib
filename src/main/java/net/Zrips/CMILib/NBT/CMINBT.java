@@ -536,7 +536,6 @@ public class CMINBT {
                 }
             } else {
                 for (int i = 0; i < size; i++) {
-                    CMIDebug.d(method.invoke(ls, i));
                     if (Version.isCurrentEqualOrHigher(Version.v1_20_R2)) {
                         list.add(method.invoke(ls, i).toString());
                     } else
@@ -1175,8 +1174,6 @@ public class CMINBT {
                 ff = "as_";
                 break;
             }
-
-            CMIDebug.d(ff);
 
             if (tile == null)
                 return null;

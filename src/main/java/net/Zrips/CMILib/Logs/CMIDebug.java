@@ -7,6 +7,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import net.Zrips.CMILib.CMILib;
+import net.Zrips.CMILib.Version.Version;
 
 
 public class CMIDebug {
@@ -20,7 +21,7 @@ public class CMIDebug {
     }
     
     public static boolean isTestServer() {
-	return CMILib.getInstance().getCommandManager().isTestServer();
+	return Version.isTestServer();
     }
 
     public static double getIT() {
@@ -75,7 +76,7 @@ public class CMIDebug {
 
 	if (!CMILib.getInstance().getCommandManager().enabledDebug)
 	    return;
-	if (!CMILib.getInstance().getCommandManager().isTestServer())
+	if (!Version.isTestServer())
 	    return;
 	new CMIDebug(message);
     }

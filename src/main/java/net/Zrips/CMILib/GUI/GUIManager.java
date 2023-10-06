@@ -20,6 +20,7 @@ import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.Permissions.CMILPerm;
+import net.Zrips.CMILib.Version.Version;
 import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
 import net.Zrips.CMILib.commands.CMICommand;
 
@@ -474,7 +475,7 @@ public class GUIManager {
             player.getOpenInventory().getTopInventory() == null ||
             !player.getOpenInventory().getTopInventory().getType().equals(gui.getInv().getType()) ||
             player.getOpenInventory().getTopInventory().getSize() != gui.getInv().getSize() ||
-            player.getOpenInventory().getTopInventory().getLocation() != null) {
+            Version.isCurrentEqualOrHigher(Version.v1_9_R1) && player.getOpenInventory().getTopInventory().getLocation() != null) {
             return false;
         }
 

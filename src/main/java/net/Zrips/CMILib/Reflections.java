@@ -1459,18 +1459,28 @@ public class Reflections {
         return CMINBT.HideFlag(item, state);
     }
 
+    private Method teleportMethod = null;
+    private Constructor<?> teleportPacket = null;
+
     public void superficialEntityTeleport(Player player, Object entity, Location targetLoc) {
         try {
+
+            if (!CEntity.isInstance(entity))
+                return;
+
             Object centity = CEntity.cast(entity);
-            Method method = null;
-            if (Version.isCurrentEqualOrHigher(Version.v1_18_R1))
-                method = centity.getClass().getMethod("a", double.class, double.class, double.class);
-            else
-                method = centity.getClass().getMethod("setPosition", double.class, double.class, double.class);
-            method.invoke(centity, targetLoc.getX(), targetLoc.getY(), targetLoc.getZ());
-            Constructor<?> packet = PacketPlayOutEntityTeleport.getConstructor(CEntity);
-            Object newPack = packet.newInstance(centity);
-            sendPlayerPacket(player, newPack);
+
+            if (teleportMethod == null) {
+                if (Version.isCurrentEqualOrHigher(Version.v1_18_R1))
+                    teleportMethod = centity.getClass().getMethod("a", double.class, double.class, double.class);
+                else
+                    teleportMethod = centity.getClass().getMethod("setPosition", double.class, double.class, double.class);
+            }
+            teleportMethod.invoke(centity, targetLoc.getX(), targetLoc.getY(), targetLoc.getZ());
+            if (teleportPacket == null)
+                teleportPacket = PacketPlayOutEntityTeleport.getConstructor(CEntity);
+
+            sendPlayerPacket(player, teleportPacket.newInstance(centity));
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -1782,7 +1792,7 @@ public class Reflections {
     public void showToast(CMIAdvancement advancement, Player... players) {
         if (!Version.isCurrentEqualOrHigher(Version.v1_20_R2))
             return;
-        CMIDebug.d("show toast");
+
         CMIScheduler.runTaskAsynchronously(() -> {
             Map<net.minecraft.resources.MinecraftKey, net.minecraft.advancements.AdvancementProgress> progressMap =
                 new HashMap<net.minecraft.resources.MinecraftKey, net.minecraft.advancements.AdvancementProgress>();
