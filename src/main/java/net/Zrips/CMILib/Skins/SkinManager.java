@@ -25,6 +25,7 @@ import com.mojang.util.UUIDTypeAdapter;
 
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.FileHandler.ConfigReader;
+import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
 
 public class SkinManager {
@@ -79,6 +80,7 @@ public class SkinManager {
 	if (checkCache(profile, uuid))
 	    return true;
 	try {
+
 	    HttpsURLConnection connection = (HttpsURLConnection) new URL(String.format("https://sessionserver.mojang.com/session/minecraft/profile/%s?unsigned=false", uuid.toString().replace("-", "")))
 		.openConnection();
 	    if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {

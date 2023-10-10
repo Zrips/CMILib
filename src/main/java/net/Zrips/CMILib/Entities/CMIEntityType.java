@@ -16,7 +16,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Colors.CMIChatColor;
 import net.Zrips.CMILib.Items.CMIMaterial;
-import net.Zrips.CMILib.Logs.CMIDebug;
 
 public enum CMIEntityType {
 

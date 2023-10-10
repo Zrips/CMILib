@@ -967,7 +967,12 @@ public class Reflections {
             return null;
         try {
 
-            com.mojang.authlib.GameProfile prof = new com.mojang.authlib.GameProfile(UUID.nameUUIDFromBytes(texture.getBytes()), null);
+            com.mojang.authlib.GameProfile prof = null;
+            if (Version.isCurrentEqualOrHigher(Version.v1_20_R2))
+                prof = new com.mojang.authlib.GameProfile(UUID.nameUUIDFromBytes(texture.getBytes()), "");
+            else
+                prof = new com.mojang.authlib.GameProfile(UUID.nameUUIDFromBytes(texture.getBytes()), null);
+
             prof.getProperties().removeAll("textures");
             prof.getProperties().put("textures", new Property("textures", texture));
 
@@ -1006,7 +1011,7 @@ public class Reflections {
 
             return i == null ? null : (ItemStack) i;
         } catch (Throwable e) {
-//            e.printStackTrace();
+            e.printStackTrace();
             return item;
         }
     }
