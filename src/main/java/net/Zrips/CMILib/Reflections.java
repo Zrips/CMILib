@@ -851,16 +851,16 @@ public class Reflections {
     }
 
     public void sendPlayerPacket(Player player, Object packet) throws Exception {
-        Object connection = getPlayerConnection(player);
-        if (Version.isCurrentEqualOrHigher(Version.v1_17_R1)) {
-            sendPacket.invoke(connection, packet);
-        } else
-            connection.getClass().getMethod("sendPacket", getClass("{nms}.Packet")).invoke(connection, packet);
+        sendPacket(getPlayerConnection(player), packet);
     }
 
     public void sendPacket(Object connection, Object packet) {
         try {
-            sendPacket.invoke(connection, packet);
+            if (Version.isCurrentEqualOrHigher(Version.v1_17_R1)) {
+                sendPacket.invoke(connection, packet);
+            } else {
+                connection.getClass().getMethod("sendPacket", getClass("{nms}.Packet")).invoke(connection, packet);
+            }
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -1769,7 +1769,7 @@ public class Reflections {
                 Map<net.minecraft.resources.MinecraftKey, net.minecraft.advancements.Advancement> advancements =
                     (Map<net.minecraft.resources.MinecraftKey, net.minecraft.advancements.Advancement>) advancementRegistry.getClass().getField("b").get(advancementRegistry);
                 if (ad.getId() != null)
-                    advancements.remove(ad.getId());
+                    advancements.remove(new net.minecraft.resources.MinecraftKey(ad.getId().getNamespace(), ad.getId().getKey()));
             } catch (Throwable e) {
                 e.printStackTrace();
             }
@@ -1782,7 +1782,7 @@ public class Reflections {
 
                 Map<Object, Object> advs = (Map<Object, Object>) REGISTRY.getClass().getField("advancements").get(REGISTRY);
                 if (ad.getId() != null)
-                    advs.remove(ad.getId());
+                    advs.remove(new net.minecraft.resources.MinecraftKey(ad.getId().getNamespace(), ad.getId().getKey()));
             } catch (Exception | Error e) {
                 e.printStackTrace();
             }
@@ -1912,7 +1912,6 @@ public class Reflections {
                         Object az = net.minecraft.server.MinecraftServer.getServer().getClass().getMethod("az").invoke(net.minecraft.server.MinecraftServer.getServer());
                         Object c = az.getClass().getField("c").get(az);
                         c.getClass().getMethod("a", Map.class).invoke(c, Maps.newHashMap(Collections.singletonMap(minecraftkey, nms)));
-
                     } else if (Version.isCurrentEqualOrHigher(Version.v1_19_R2)) {
                         Object ay = net.minecraft.server.MinecraftServer.getServer().getClass().getMethod("ay").invoke(net.minecraft.server.MinecraftServer.getServer());
                         Object c = ay.getClass().getField("c").get(ay);
