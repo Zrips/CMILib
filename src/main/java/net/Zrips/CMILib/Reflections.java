@@ -8,6 +8,9 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -20,6 +23,7 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Server;
 import org.bukkit.Sound;
@@ -31,6 +35,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.scoreboard.Scoreboard;
+import org.jetbrains.annotations.Nullable;
 
 import com.google.common.collect.Maps;
 import com.google.gson.JsonElement;
@@ -961,22 +966,41 @@ public class Reflections {
         return CMINBT.getNbt(item);
     }
 
+    @SuppressWarnings("deprecation")
+    private static org.bukkit.profile.PlayerProfile getProfile(String url) {
+        org.bukkit.profile.PlayerProfile profile = Bukkit.createPlayerProfile(UUID.nameUUIDFromBytes(url.getBytes()));
+        org.bukkit.profile.PlayerTextures textures = profile.getTextures();
+        try {
+            textures.setSkin(new URL(url));
+        } catch (MalformedURLException exception) {
+            throw new RuntimeException("Invalid URL", exception);
+        }
+        profile.setTextures(textures);
+        return profile;
+    }
+
     public ItemStack setSkullTexture(ItemStack item, String customProfileName, String texture) {
 
         if (item == null)
             return null;
-        try {
 
+        try {
             com.mojang.authlib.GameProfile prof = null;
-            if (Version.isCurrentEqualOrHigher(Version.v1_20_R2))
-                prof = new com.mojang.authlib.GameProfile(UUID.nameUUIDFromBytes(texture.getBytes()), "");
-            else
-                prof = new com.mojang.authlib.GameProfile(UUID.nameUUIDFromBytes(texture.getBytes()), null);
+            if (Version.isCurrentEqualOrHigher(Version.v1_20_R2)) {
+                String decodedString = new String(java.util.Base64.getMimeDecoder().decode(texture));
+                if (decodedString.contains("url\":\"")) {
+                    SkullMeta meta = (SkullMeta) item.getItemMeta();
+                    meta.setOwnerProfile(getProfile(decodedString.split("url\":\"", 2)[1].split("\"", 2)[0]));
+                    item.setItemMeta(meta);
+                }
+                return item;
+            }
+
+            prof = new com.mojang.authlib.GameProfile(UUID.nameUUIDFromBytes(texture.getBytes()), null);
 
             prof.getProperties().removeAll("textures");
             prof.getProperties().put("textures", new Property("textures", texture));
 
-//	    ItemMeta headMeta = item.getItemMeta();
             SkullMeta headMeta = (SkullMeta) item.getItemMeta();
 
             Field profileField = null;
@@ -1004,7 +1028,6 @@ public class Reflections {
                     item = (ItemStack) new CMINBT(item).setString("SkullOwner.Name", name);
                 }
             } catch (Throwable e) {
-
             }
 
             Object i = new CMINBT(item).setString("Id", UUID.nameUUIDFromBytes(texture.getBytes()).toString());
@@ -1742,8 +1765,13 @@ public class Reflections {
                     dd = Bukkit.createBlockData(ef.getMaterial() == null ? CMIMaterial.STONE.getMaterial() : ef.getMaterial().getMaterial());
                 }
 
-                if (CraftParticleMethod == null)
-                    CraftParticleMethod = CraftParticle.getMethod("toNMS", org.bukkit.Particle.class, Object.class);
+                if (CraftParticleMethod == null) {
+                    try {
+                        CraftParticleMethod = CraftParticle.getMethod("toNMS", org.bukkit.Particle.class, Object.class);
+                    } catch (Throwable e) {
+                        CraftParticleMethod = CraftParticle.getMethod("createParticleParam", org.bukkit.Particle.class, Object.class);
+                    }
+                }
 
                 net.minecraft.network.protocol.game.PacketPlayOutWorldParticles packet = new net.minecraft.network.protocol.game.PacketPlayOutWorldParticles(
                     (net.minecraft.core.particles.ParticleParam) CraftParticleMethod.invoke(null, particle, dd),

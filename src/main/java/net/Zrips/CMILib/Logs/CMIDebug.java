@@ -7,6 +7,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import net.Zrips.CMILib.CMILib;
+import net.Zrips.CMILib.Colors.CMIChatColor;
 import net.Zrips.CMILib.Version.Version;
 
 
@@ -35,15 +36,15 @@ public class CMIDebug {
 
 	StringBuilder FullMessage = new StringBuilder();
 	int i = 1;
-	ChatColor cl = ChatColor.GRAY;
+	CMIChatColor cl = CMIChatColor.GRAY;
 	for (Object one : message) {
 	    i++;
 	    if (i >= 2) {
 		i = 0;
-		if (cl == ChatColor.GRAY)
-		    cl = ChatColor.WHITE;
+		if (cl == CMIChatColor.GRAY)
+		    cl = CMIChatColor.WHITE;
 		else
-		    cl = ChatColor.GRAY;
+		    cl = CMIChatColor.GRAY;
 		FullMessage.append(cl);
 	    }
 	    if (one instanceof String[]) {
@@ -52,7 +53,7 @@ public class CMIDebug {
 		FullMessage.append(String.valueOf(one) + " ");
 	}
 
-	player.sendMessage(ChatColor.DARK_GRAY + "[CMID] " + ChatColor.DARK_AQUA + FullMessage.toString());
+	player.sendMessage(CMIChatColor.DARK_GRAY + "[CMID] " + CMIChatColor.DARK_AQUA + FullMessage.toString());
     }
 
     public static void cd(Object... message) {
@@ -68,7 +69,7 @@ public class CMIDebug {
 		FullMessage.append(String.valueOf(one) + " ");
 	}
 
-	player.sendMessage(ChatColor.DARK_GRAY + "[CMID] " + ChatColor.DARK_AQUA + FullMessage.toString());
+	player.sendMessage(CMIChatColor.DARK_GRAY + "[CMID] " + CMIChatColor.DARK_AQUA + FullMessage.toString());
     }
 
     @SuppressWarnings("unused")
