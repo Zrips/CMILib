@@ -1,5 +1,6 @@
 package net.Zrips.CMILib.Messages;
 
+import java.util.HashMap;
 import java.util.regex.Pattern;
 
 public enum CMIMultiMessageType {
@@ -16,11 +17,23 @@ public enum CMIMultiMessageType {
 
     private Pattern patern;
 
+    private static HashMap<String, CMIMultiMessageType> map = new HashMap<String, CMIMultiMessageType>();
+
+    static {
+        for (CMIMultiMessageType one : CMIMultiMessageType.values()) {
+            map.put(one.toString().toLowerCase(), one);
+        }
+    }
+
     CMIMultiMessageType(String regex) {
-	patern = Pattern.compile(regex);
+        patern = Pattern.compile(regex);
     }
 
     public Pattern getRegex() {
-	return patern;
+        return patern;
+    }
+
+    public static CMIMultiMessageType getByName(String name) {
+        return map.get(name.toLowerCase());
     }
 }

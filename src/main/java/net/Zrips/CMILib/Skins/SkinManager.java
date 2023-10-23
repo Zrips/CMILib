@@ -144,7 +144,7 @@ public class SkinManager {
 	    System.out.println("Connection could not be opened (Response code " + connection.getResponseCode() + ", " + connection.getResponseMessage() + ")");
 	    return false;
 	} catch (IOException e) {
-//	    e.printStackTrace();
+ 	    e.printStackTrace();
 	    return false;
 	}
 

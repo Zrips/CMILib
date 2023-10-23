@@ -223,7 +223,7 @@ public class CMIActionBar {
                             e.printStackTrace();
                         }
                     });
-                    return;
+                    continue;
                 }
 
                 repeatingActionBar old = actionbarMap.remove(player.getUniqueId());
