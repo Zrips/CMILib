@@ -23,6 +23,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
+import org.bukkit.inventory.RecipeChoice;
+import org.bukkit.inventory.ShapedRecipe;
+import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.inventory.meta.ArmorMeta;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -771,11 +774,35 @@ public class CMIItemStack {
             if (rec == null)
                 continue;
             for (ItemStack one : CMIRecipe.getIngredientsList(rec)) {
-                if (one.isSimilar(i)) {
+
+                if (one.getType() != i.getType()) {
+                    continue;
+                }
+
+                if (one.getDurability() == -1 || one.getDurability() == Short.MAX_VALUE || one.getDurability() == i.getDurability()) {
                     recipes.add(rec);
                     break;
                 }
             }
+
+            if (rec instanceof ShapelessRecipe) {
+                ShapelessRecipe srec = (ShapelessRecipe) rec;
+                for (RecipeChoice one : srec.getChoiceList()) {
+                    if (one != null && one.test(i)) {
+                        recipes.add(rec);
+                        break;
+                    }
+                }
+            } else if (rec instanceof ShapedRecipe) {
+                ShapedRecipe srec = (ShapedRecipe) rec;
+                for (RecipeChoice one : srec.getChoiceMap().values()) {
+                    if (one != null && one.test(i)) {
+                        recipes.add(rec);
+                        break;
+                    }
+                }
+            }
+
         }
 
         return recipes;
@@ -1148,7 +1175,7 @@ public class CMIItemStack {
                                 }
 
                                 if (sherds.size() == 4) {
-                                    
+
                                     // TO-DO Finilize sherd deserialization
 
                                 }

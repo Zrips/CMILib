@@ -238,6 +238,7 @@ public class CMIRecipe {
 
                 NewShapelessRecipe.addIngredient((org.bukkit.inventory.RecipeChoice) item.generateChoice());
             }
+
             return NewShapelessRecipe;
         }
         ShapelessRecipe NewShapelessRecipe = null;
