@@ -8,7 +8,7 @@ public enum CMIMultiMessageType {
     plain(""),
     actionBar("^(?i)(!actionbar!)"),
     timedActionBar("^(?i)(!actionbar:)(\\d+)(!)"),
-    title("^(?i)(!title!)((.*?(?=!subtitle!))(!subtitle!))?(.*)"),
+    title("(?i)(!title(:(\\d+(\\.\\d+)?))?!)((.*?(?=!subtitle!))(!subtitle!))?(.*)"),
     toast("^(?i)(!toast!)( -t:([^\\s]+))?( -icon:([^\\s]+))?"),
     broadcast("^(?i)(!broadcast!)"),
     json("^(<T>)(.*)(<\\/T>)"),

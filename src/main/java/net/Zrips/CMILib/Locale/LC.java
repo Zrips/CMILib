@@ -18,7 +18,7 @@ public enum LC {
     info_FromConsole("&cYou can only use this in the console!"),
     info_NotOnline("&cThe player is not online!"),
     info_NobodyOnline("&cThere is no one online!"),
-    info_NoPlayer("&cCan't find player with this name!"),
+    info_NoPlayer("&cCan't find player with this name! (&6[name]&c)"),
     info_NoCommand("&cThere is no command by this name!"),
     info_cantFindCommand("&5Couldn't find &7[%1]&5 command, did you mean &7[%2]&5?"),
     info_nolocation("&4Can't find suitable location"),

@@ -1263,7 +1263,7 @@ public class CMINBT {
             Method meth2 = nmsStack.getClass().getMethod(setTagName, nbtTagCompound);
             meth2.invoke(nmsStack, tag);
             return (ItemStack) asBukkitCopy(nmsStack);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             e.printStackTrace();
         }
         return item;

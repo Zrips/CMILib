@@ -25,6 +25,9 @@ public class PageInfo {
     private String customPrev = null;
     private String customNext = null;
 
+    private String cmd = null;
+    private String pagePref = null;
+
     public PageInfo(int perPage, int totalEntries, int currentPage) {
         this.perPage = perPage;
         this.totalEntries = totalEntries;
@@ -158,10 +161,23 @@ public class PageInfo {
         autoPagination(sender, cmd, null);
     }
 
+    public void autoPagination(CommandSender sender) {
+        autoPagination(sender, null, null);
+    }
+
     public void autoPagination(CommandSender sender, String cmd, String pagePref) {
+
+        if (cmd == null)
+            cmd = this.getPageChangeCommand();
+
+        if (cmd == null)
+            return;
 
         if (getTotalPages() == 1)
             return;
+        
+        if (pagePref == null)
+            pagePref = this.getPageChangeCommandPref();
 
         String pagePrefix = pagePref == null ? "" : pagePref;
 
@@ -232,5 +248,26 @@ public class PageInfo {
 
     public void setCustomNext(String CustomNext) {
         this.customNext = CustomNext;
+    }
+
+    public String getPageChangeCommand() {
+        return cmd;
+    }
+
+    public void setPageChangeCommand(String cmd) {
+        this.cmd = cmd;
+    }
+
+    public String getPageChangeCommandPref() {
+        return pagePref;
+    }
+
+    public void setPageChangeCommandPref(String pagePref) {
+        this.pagePref = pagePref;
+    }
+
+    public void setTotalEntries(int totalEntries) {
+        this.totalEntries = totalEntries;
+        calculate();
     }
 }
