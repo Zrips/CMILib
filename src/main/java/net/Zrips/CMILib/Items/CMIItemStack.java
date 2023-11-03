@@ -802,7 +802,6 @@ public class CMIItemStack {
                     }
                 }
             }
-
         }
 
         return recipes;
