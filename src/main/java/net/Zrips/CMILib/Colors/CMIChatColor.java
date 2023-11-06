@@ -18,6 +18,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Color;
 
 import net.Zrips.CMILib.CMILibConfig;
+import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Version.Version;
 
 public class CMIChatColor {
@@ -27,8 +28,8 @@ public class CMIChatColor {
     private static final LinkedHashMap<String, CMIChatColor> CUSTOM_BY_NAME = new LinkedHashMap<>();
     private static final Map<String, CMIChatColor> CUSTOM_BY_HEX = new HashMap<>();
     private static final TreeMap<String, CMIChatColor> CUSTOM_BY_RGB = new TreeMap<>();
-    
-    static {        
+
+    static {
         for (CMICustomColors one : CMICustomColors.values()) {
             CUSTOM_BY_NAME.put(one.name().toLowerCase().replace("_", ""), new CMIChatColor(one.toString(), one.getHex()));
             CUSTOM_BY_HEX.put(one.getHex().toLowerCase(), new CMIChatColor(one.toString(), one.getHex()));
@@ -153,7 +154,7 @@ public class CMIChatColor {
     public static final CMIChatColor LIGHT_PURPLE = new CMIChatColor("Light_Purple", 'd', 255, 85, 255);
     public static final CMIChatColor YELLOW = new CMIChatColor("Yellow", 'e', 255, 255, 85);
     public static final CMIChatColor WHITE = new CMIChatColor("White", 'f', 255, 255, 255);
-    
+
     public static final CMIChatColor OBFUSCATED = new CMIChatColor("Obfuscated", 'k', false);
     public static final CMIChatColor BOLD = new CMIChatColor("Bold", 'l', false);
     public static final CMIChatColor STRIKETHROUGH = new CMIChatColor("Strikethrough", 'm', false);
@@ -228,7 +229,6 @@ public class CMIChatColor {
     }
 
     public static String processGradient(String text) {
-
         Matcher gradientMatch = gradientPattern.matcher(text);
 
         while (gradientMatch.find()) {
@@ -260,7 +260,20 @@ public class CMIChatColor {
                         updated.append("&" + one.getChar());
                     }
                 }
-                updated.append(String.valueOf(ch));
+
+                int codePoint = Character.codePointAt(gtext, i);
+
+                if (codePoint > 127) {
+                    if (Character.isSurrogate(ch)) {
+                        // Should be "" instead of StringOf to get correct results
+                        updated.append("" + ch + gtext.charAt(i + 1));
+                        i++;
+                    } else {
+                        updated.append("" + ch);
+                    }
+                } else {
+                    updated.append(String.valueOf(ch));
+                }
             }
 
             if (continuous) {
