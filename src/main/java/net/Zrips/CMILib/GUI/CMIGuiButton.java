@@ -21,6 +21,7 @@ import net.Zrips.CMILib.GUI.GUIManager.GUIClickType;
 import net.Zrips.CMILib.GUI.GUIManager.GUIFieldType;
 import net.Zrips.CMILib.Items.CMIItemStack;
 import net.Zrips.CMILib.Items.CMIMaterial;
+import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.Version.Version;
 import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
@@ -381,9 +382,8 @@ public class CMIGuiButton {
         if (item != null) {
             ItemStack i = item.clone();
 
-            if (this.isLocked()) {
+            if (this.isLocked() && !CMIMaterial.isAir(i.getType()))
                 i = (ItemStack) new CMINBT(i).setString(GUIManager.CMIGUIIcon, GUIManager.LIProtection);
-            }
 
             ItemMeta meta = i.hasItemMeta() ? i.getItemMeta() : null;
 

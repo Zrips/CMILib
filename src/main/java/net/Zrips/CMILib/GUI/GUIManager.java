@@ -17,6 +17,7 @@ import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 
 import net.Zrips.CMILib.CMILib;
+import net.Zrips.CMILib.Items.CMIMaterial;
 import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.Permissions.CMILPerm;
@@ -399,9 +400,8 @@ public class GUIManager {
                 try {
                     ItemStack item = one.getValue().getItem(gui.getPlayer());
                     item = item == null ? null : item.clone();
-                    if (item != null && one.getValue().isLocked()) {
+                    if (item != null && one.getValue().isLocked() && !CMIMaterial.isAir(item.getType()))
                         item = (ItemStack) new CMINBT(item).setString(CMIGUIIcon, LIProtection);
-                    }
 
                     if (one.getKey() < GuiInv.getSize())
                         GuiInv.setItem(one.getKey(), item);
