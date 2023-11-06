@@ -342,7 +342,7 @@ public class BossBarManager {
 
                 if (barInfo.getCommands() != null)
                     old.setCmds(barInfo.getCommands());
-                
+
                 old.setStarted(System.currentTimeMillis());
 
             }
@@ -371,15 +371,19 @@ public class BossBarManager {
     }
 
     public synchronized void hideBossBars(Player player) {
-        if (player.isOnline()) {
-            ConcurrentHashMap<String, BossBarInfo> info = getBossBarInfo(player);
-            if (info == null)
-                return;
-            for (Entry<String, BossBarInfo> one : info.entrySet()) {
-                try {
-                    one.getValue().getBar().setVisible(false);
-                } catch (NullPointerException e) {
-                }
+        if (player == null || !player.isOnline()) {
+            if (player != null)
+                clearBossMaps(player);
+            return;
+        }
+
+        ConcurrentHashMap<String, BossBarInfo> info = getBossBarInfo(player);
+        if (info == null)
+            return;
+        for (Entry<String, BossBarInfo> one : info.entrySet()) {
+            try {
+                one.getValue().getBar().setVisible(false);
+            } catch (NullPointerException e) {
             }
         }
     }
