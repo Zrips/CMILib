@@ -18,7 +18,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Color;
 
 import net.Zrips.CMILib.CMILibConfig;
-import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Version.Version;
 
 public class CMIChatColor {
@@ -28,8 +27,8 @@ public class CMIChatColor {
     private static final LinkedHashMap<String, CMIChatColor> CUSTOM_BY_NAME = new LinkedHashMap<>();
     private static final Map<String, CMIChatColor> CUSTOM_BY_HEX = new HashMap<>();
     private static final TreeMap<String, CMIChatColor> CUSTOM_BY_RGB = new TreeMap<>();
-
-    static {
+    
+    static {        
         for (CMICustomColors one : CMICustomColors.values()) {
             CUSTOM_BY_NAME.put(one.name().toLowerCase().replace("_", ""), new CMIChatColor(one.toString(), one.getHex()));
             CUSTOM_BY_HEX.put(one.getHex().toLowerCase(), new CMIChatColor(one.toString(), one.getHex()));
@@ -39,7 +38,6 @@ public class CMIChatColor {
 //		}
 //	    }
         }
-
         for (float x = 0.0F; x <= 1; x += 0.1) {
             for (float z = 0.1F; z <= 1; z += 0.1) {
                 for (float y = 0; y <= 1; y += 0.03) {
@@ -155,6 +153,7 @@ public class CMIChatColor {
     public static final CMIChatColor LIGHT_PURPLE = new CMIChatColor("Light_Purple", 'd', 255, 85, 255);
     public static final CMIChatColor YELLOW = new CMIChatColor("Yellow", 'e', 255, 255, 85);
     public static final CMIChatColor WHITE = new CMIChatColor("White", 'f', 255, 255, 255);
+    
     public static final CMIChatColor OBFUSCATED = new CMIChatColor("Obfuscated", 'k', false);
     public static final CMIChatColor BOLD = new CMIChatColor("Bold", 'l', false);
     public static final CMIChatColor STRIKETHROUGH = new CMIChatColor("Strikethrough", 'm', false);
@@ -184,7 +183,7 @@ public class CMIChatColor {
     public CMIChatColor(String name, String hex) {
         if (hex == null)
             return;
-        
+
         if (hex.startsWith(colorCodePrefix))
             hex = hex.substring(colorCodePrefix.length());
         if (hex.endsWith(colorCodeSuffix))

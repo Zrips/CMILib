@@ -2,9 +2,23 @@ package net.Zrips.CMILib.Colors;
 
 public enum CMICustomColors {
     Black("000000"),
-    Navy_Blue("000080"),
     Dark_Blue("0000C8"),
+    Dark_Green("00AA00"),
+    Dark_Aqua("00AAAA"),
+    Dark_Red("AA0000"),
+    Dark_Purple("AA00AA"),
+    Gold("FFD700"),
+    Gray("808080"),
+    Dark_Gray("555555"),
     Blue("0000FF"),
+    Green("00FF00"),
+    Aqua("55FFFF"),
+    Red("FF0000"),
+    Light_Purple("FF55FF"),
+    Yellow("FFFF00"),
+    White("FFFFFF"),
+    
+    Navy_Blue("000080"),
     Stratos("000741"),
     Swamp("001B1C"),
     Resolution_Blue("002387"),
@@ -36,7 +50,6 @@ public enum CMICustomColors {
     Jade("00A86B"),
     Caribbean_Green("00CC99"),
     Robins_Egg_Blue("00CCCC"),
-    Green("00FF00"),
     Spring_Green("00FF7F"),
     Cyan("00FFFF"),
     Blue_Charcoal("010D1A"),
@@ -612,7 +625,6 @@ public enum CMICustomColors {
     Russet("80461B"),
     Friar_Gray("807E79"),
     Olive("808000"),
-    Gray("808080"),
     Gulf_Stream("80B3AE"),
     Glacier("80B3C4"),
     Seagull("80CCEA"),
@@ -1435,7 +1447,6 @@ public enum CMICustomColors {
     White_Pointer("FEF8FF"),
     Off_Yellow("FEF9E3"),
     Orange_White("FEFCED"),
-    Red("FF0000"),
     Rose("FF007F"),
     Purple_Pizzazz("FF00CC"),
     Magenta("FF00FF"),
@@ -1495,7 +1506,6 @@ public enum CMICustomColors {
     Pastel_Pink("FFD1DC"),
     Romantic("FFD2B7"),
     Grandis("FFD38C"),
-    Gold("FFD700"),
     School_bus_Yellow("FFD800"),
     Cosmos("FFD8D9"),
     Mustard("FFDB58"),
@@ -1562,12 +1572,10 @@ public enum CMICustomColors {
     Rice_Cake("FFFEF0"),
     Black_White("FFFEF6"),
     Romance("FFFEFD"),
-    Yellow("FFFF00"),
     Laser_Lemon("FFFF66"),
     Pale_Canary("FFFF99"),
     Portafino("FFFFB4"),
-    Ivory("FFFFF0"),
-    White("FFFFFF");
+    Ivory("FFFFF0");
 
     private String hex;
 //    private String[] extra;
