@@ -42,12 +42,12 @@ import net.Zrips.CMILib.Attributes.Attribute;
 import net.Zrips.CMILib.Attributes.AttributeType;
 import net.Zrips.CMILib.Colors.CMIChatColor;
 import net.Zrips.CMILib.Colors.CMIColors;
+import net.Zrips.CMILib.Container.CMINumber;
 import net.Zrips.CMILib.Container.CMIText;
 import net.Zrips.CMILib.Container.LeatherAnimationType;
 import net.Zrips.CMILib.Enchants.CMIEnchantment;
 import net.Zrips.CMILib.Entities.CMIEntity;
 import net.Zrips.CMILib.Entities.CMIEntityType;
-import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.Recipes.CMIRecipe;
 import net.Zrips.CMILib.Recipes.CMIRecipeIngredient;
@@ -942,6 +942,25 @@ public class CMIItemStack {
         return deserialize(null, input);
     }
 
+    private static int getOperation(String value) {
+
+        String simplified = value.replace("_", "").toLowerCase();
+        switch (simplified) {
+        case "add":
+            return 0;
+        case "multiplybase":
+            return 1;
+        case "multiply":
+            return 2;
+        default:
+            try {
+                return Integer.parseInt(value);
+            } catch (NumberFormatException e) {
+            }
+        }
+        return -1;
+    }
+
     public static CMIItemStack deserialize(CommandSender sender, String input) {
 
         if (input == null)
@@ -989,8 +1008,10 @@ public class CMIItemStack {
                         String lore = one.substring(loreMatch.group().length());
                         lore = CMIText.replaceUnderScoreSpace(lore);
                         lore = CMILib.getInstance().getPlaceholderAPIManager().updatePlaceHolders(sender instanceof Player ? (Player) sender : null, lore);
-                        if (lore != null)
-                            cim.setLore(Arrays.asList(lore.split("\\\\n")));
+                        if (lore != null) {
+                            lore = lore.replace("\\\\n", "\\n");
+                            cim.setLore(Arrays.asList(lore.split("\\n")));
+                        }
                         continue;
                     }
                 }
@@ -1025,13 +1046,36 @@ public class CMIItemStack {
                         List<Attribute> attList = new ArrayList<Attribute>();
 
                         for (String OE : attributes.split(",")) {
+
                             if (!OE.contains(":"))
                                 continue;
                             String[] split = OE.split(":");
 
+                            AttributeType attribute = AttributeType.get(split[0]);
                             AttSlot slot = null;
                             double attributeMod = -1D;
-                            int operation = 0;
+                            int operation = -1;
+
+                            for (int ai = 1; ai < split.length; ai++) {
+
+                                if (slot == null) {
+                                    slot = AttSlot.get(split[ai]);
+                                    if (slot != null)
+                                        continue;
+                                }
+
+                                if (attributeMod == -1) {
+                                    try {
+                                        attributeMod = Double.parseDouble(split[ai]);
+                                        continue;
+                                    } catch (Throwable e) {
+                                    }
+                                }
+                                if (operation == -1) {
+                                    operation = getOperation(split[ai]);
+                                }
+                            }
+
                             try {
                                 attributeMod = Double.parseDouble(split[1]);
                             } catch (NumberFormatException e) {
@@ -1041,29 +1085,8 @@ public class CMIItemStack {
                             if (attributeMod <= 0)
                                 continue;
 
-                            AttributeType attribute = AttributeType.get(split[0]);
-
-                            if (split.length > 2) {
-                                AttSlot g = AttSlot.get(split[2]);
-                                if (g == null) {
-                                    try {
-                                        operation = Integer.parseInt(split[2]);
-                                    } catch (NumberFormatException e) {
-                                    }
-                                } else {
-                                    slot = g;
-                                }
-                            }
-
-                            if (split.length > 3) {
-                                try {
-                                    operation = Integer.parseInt(split[3]);
-                                } catch (NumberFormatException e) {
-                                }
-                            }
-
                             if (attribute != null && attributeMod != -1D) {
-                                attList.add(new Attribute(attribute, slot, attributeMod, operation));
+                                attList.add(new Attribute(attribute, slot, attributeMod, CMINumber.clamp(operation, 0, 2)));
                             }
                         }
                         if (!attList.isEmpty())
