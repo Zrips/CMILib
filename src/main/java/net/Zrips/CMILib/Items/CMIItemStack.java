@@ -48,6 +48,7 @@ import net.Zrips.CMILib.Container.LeatherAnimationType;
 import net.Zrips.CMILib.Enchants.CMIEnchantment;
 import net.Zrips.CMILib.Entities.CMIEntity;
 import net.Zrips.CMILib.Entities.CMIEntityType;
+import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.Recipes.CMIRecipe;
 import net.Zrips.CMILib.Recipes.CMIRecipeIngredient;
@@ -1113,6 +1114,7 @@ public class CMIItemStack {
                         for (ItemFlag oneF : cim.getItemStack().getItemMeta().getItemFlags()) {
                             tagg |= getBitModifier(oneF);
                         }
+
                         cim.getItemStack().setItemMeta(CMINBT.HideFlag(cim.getItemStack(), tagg).getItemMeta());
                         continue;
                     }
@@ -1190,16 +1192,25 @@ public class CMIItemStack {
                             if (cim.getCMIType().equals(CMIMaterial.DECORATED_POT)) {
                                 List<String> sherds = new ArrayList<String>();
                                 for (String oneSherd : f.split(",")) {
+                                    if (!oneSherd.toLowerCase().endsWith("_pottery_sherd"))
+                                        oneSherd += "_pottery_sherd";
                                     CMIMaterial sherd = CMIMaterial.get(oneSherd);
                                     if (sherd.toString().endsWith("_SHERD")) {
                                         sherds.add("minecraft:" + sherd.toString().toLowerCase());
                                     }
                                 }
 
-                                if (sherds.size() == 4) {
+                                sherds.subList(4, sherds.size()).clear();
 
-                                    // TO-DO Finilize sherd deserialization
-
+                                if (!sherds.isEmpty() && sherds.size() <= 4) {
+                                    CMINBT nbt = new CMINBT(cim.getItemStack());
+                                    try {
+                                        CMINBT stag = new CMINBT(nbt.getCompound("BlockEntityTag"));
+                                        stag.setStringList("sherds", sherds);
+                                        cim.setItemStack((ItemStack) nbt.set("BlockEntityTag", stag.getNbt()));
+                                    } catch (Throwable e) {
+                                        e.printStackTrace();
+                                    }
                                 }
                             }
                         } catch (Throwable e) {
@@ -1244,6 +1255,7 @@ public class CMIItemStack {
                     org.bukkit.inventory.meta.ArmorMeta ameta = (ArmorMeta) meta;
                     org.bukkit.inventory.meta.trim.TrimMaterial trim = CMITrimMaterial.getByName(split[0]);
                     org.bukkit.inventory.meta.trim.TrimPattern pattern = CMITrimPattern.getByName(split[1]);
+
                     if (trim != null && pattern != null) {
                         org.bukkit.inventory.meta.trim.ArmorTrim teim = new org.bukkit.inventory.meta.trim.ArmorTrim(trim, pattern);
                         ameta.setTrim(teim);

@@ -1,5 +1,6 @@
 package net.Zrips.CMILib.NBT;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,6 +23,7 @@ import net.Zrips.CMILib.Version.Version;
 public class CMINBT {
 
     private static Class<?> NBTBase;
+    private static Class<?> NBTTagString;
     private static Class<?> nbtTagCompound;
     private static Class<?> nbtTagList;
     private static Method met_getInt;
@@ -52,6 +54,9 @@ public class CMINBT {
     private static Method met_setLongArray;
     private static Method met_set;
     private static Method met_add;
+
+    private static Method met_tagStringValueOf;
+
     private static Class<?> CraftItemStack;
     private static Class<?> IStack;
     private static Class<?> CraftEntity;
@@ -116,11 +121,21 @@ public class CMINBT {
             } catch (Throwable e) {
                 e.printStackTrace();
             }
+            try {
+                NBTTagString = net.minecraft.nbt.NBTTagString.class;
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
         } else {
             try {
                 NBTBase = getMinecraftClass("NBTBase");
                 nbtTagCompound = getMinecraftClass("NBTTagCompound");
                 nbtTagList = getMinecraftClass("NBTTagList");
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+            try {
+                NBTTagString = getMinecraftClass("NBTTagString");
             } catch (Throwable e) {
                 e.printStackTrace();
             }
@@ -278,8 +293,18 @@ public class CMINBT {
             try {
                 met_add = nbtTagList.getMethod(listAddMethod, int.class, NBTBase);
             } catch (Throwable e) {
-
             }
+
+            try {
+                met_tagStringValueOf = NBTTagString.getMethod("a", String.class);
+            } catch (Throwable e) {
+                try {
+                    met_tagStringValueOf = NBTTagString.getMethod("valueOf", String.class);
+                } catch (Throwable ex) {
+
+                }
+            }
+
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -664,6 +689,63 @@ public class CMINBT {
                     e.printStackTrace();
                 return object;
             }
+        default:
+            break;
+        }
+        return object;
+    }
+
+    public Object setStringList(String path, List<String> value) {
+        try {
+
+            Object nbtbase = tag;
+            String realPath = path;
+
+            if (tag != null && path.contains(".")) {
+                List<String> keys = new ArrayList<String>();
+                keys.addAll(Arrays.asList(path.split("\\.")));
+                try {
+                    nbtbase = met_get.invoke(tag, keys.get(0));
+                    for (int i = 1; i < keys.size(); i++) {
+                        if (i + 1 < keys.size()) {
+                            nbtbase = met_get.invoke(nbtbase, keys.get(i));
+                        } else {
+                            realPath = keys.get(i);
+                            break;
+                        }
+                    }
+                } catch (Throwable e) {
+                }
+            }
+
+            if (value == null) {
+                met_remove.invoke(nbtbase, realPath);
+            } else {
+                Object tagList = nbtTagList.newInstance();
+
+                for (int i = 0; i < value.size(); i++) {
+                    try {
+                        addToList(tagList, i, met_tagStringValueOf.invoke(null, value.get(i)));
+                    } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                met_set.invoke(nbtbase, realPath, tagList);
+            }
+        } catch (Throwable e) {
+            return object;
+        }
+        switch (type) {
+        case custom:
+            return tag;
+        case block:
+            break;
+        case entity:
+            break;
+        case item:
+
+            return setTag((ItemStack) object, tag);
         default:
             break;
         }
@@ -1365,6 +1447,7 @@ public class CMINBT {
         if (met_add == null)
             return;
         try {
+            CMIDebug.d(data);
             met_add.invoke(list, size, data);
         } catch (Throwable e) {
             e.printStackTrace();
