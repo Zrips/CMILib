@@ -1,35 +1,27 @@
 package net.Zrips.CMILib.Items;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.ShapelessRecipe;
-import org.bukkit.inventory.meta.ArmorMeta;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.potion.PotionData;
@@ -37,18 +29,12 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import net.Zrips.CMILib.CMILib;
-import net.Zrips.CMILib.Attributes.AttSlot;
 import net.Zrips.CMILib.Attributes.Attribute;
-import net.Zrips.CMILib.Attributes.AttributeType;
 import net.Zrips.CMILib.Colors.CMIChatColor;
 import net.Zrips.CMILib.Colors.CMIColors;
-import net.Zrips.CMILib.Container.CMINumber;
-import net.Zrips.CMILib.Container.CMIText;
-import net.Zrips.CMILib.Container.LeatherAnimationType;
 import net.Zrips.CMILib.Enchants.CMIEnchantment;
 import net.Zrips.CMILib.Entities.CMIEntity;
 import net.Zrips.CMILib.Entities.CMIEntityType;
-import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.Recipes.CMIRecipe;
 import net.Zrips.CMILib.Recipes.CMIRecipeIngredient;
@@ -824,66 +810,7 @@ public class CMIItemStack {
     }
 
     public String toOneLiner() {
-
-        String liner = this.getType().toString();
-        if (this.getCMIType().equals(CMIMaterial.SPAWNER) || this.getCMIType().isMonsterEgg()) {
-            EntityType t = this.getEntityType();
-            if (t != null)
-                liner += ":" + t.toString();
-        } else if (this.getCMIType().isPotion() || this.getType().name().contains("TIPPED_ARROW")) {
-            PotionMeta potion = (PotionMeta) item.getItemMeta();
-            try {
-                if (potion != null && potion.getBasePotionData() != null && potion.getBasePotionData().getType() != null && potion.getBasePotionData().getType().getEffectType() != null) {
-                    liner += ":" + potion.getBasePotionData().getType().getEffectType().getName() + "-" + potion.getBasePotionData().isUpgraded() + "-" + potion.getBasePotionData().isExtended();
-                }
-            } catch (NoSuchMethodError e) {
-            }
-        } else {
-            if (Version.isCurrentLower(Version.v1_13_R1))
-                liner += ":" + this.getData();
-        }
-        if (this.getItemStack().getItemMeta() instanceof EnchantmentStorageMeta) {
-            EnchantmentStorageMeta meta = (EnchantmentStorageMeta) this.getItemStack().getItemMeta();
-            String s = "";
-            for (Entry<Enchantment, Integer> one : meta.getStoredEnchants().entrySet()) {
-                if (!s.isEmpty())
-                    s += ";";
-                s += one.getKey().getName() + "x" + one.getValue();
-            }
-
-            for (Entry<Enchantment, Integer> one : meta.getEnchants().entrySet()) {
-                if (!s.isEmpty())
-                    s += ";";
-                s += one.getKey().getName() + "x" + one.getValue();
-            }
-            if (!s.isEmpty()) {
-                liner += ":" + s;
-            }
-        }
-
-        if (this.getCMIType().isPlayerHead()) {
-
-            String base = null;
-            // Trying to extract head data and its owner name
-            try {
-                CMINBT nbt = new CMINBT(this.getItemStack());
-                List<String> ls = nbt.getList("SkullOwner.Properties.textures");
-                if (ls != null) {
-                    base = ls.get(0).split("Value:\"", 2)[1].split("\"", 2)[0];
-//		    CMIEntityType entType = CMIEntityType.getByTexture(base);
-//		    if (entType != null) {
-//			liner += ":" + entType.toString();
-//		    } else {
-                    if (base != null && !base.isEmpty())
-                        liner += ":" + base;
-//		    }
-                }
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }
-        }
-
-        return liner;
+        return CMIItemSerializer.toOneLiner(this);
     }
 
     public static ItemStack getHead(String texture) {
@@ -925,469 +852,23 @@ public class CMIItemStack {
         CMILib.getInstance().getReflectionManager().setItemInOffHand(player, item);
     }
 
-    static String prefix = "{";
-    static String suffix = "}";
-
-    static Pattern pname = Pattern.compile("^(?i)(name|n)\\" + prefix);
-    static Pattern plore = Pattern.compile("^(?i)(lore|l)\\" + prefix);
-    static Pattern penchant = Pattern.compile("^(?i)(enchant|e)\\" + prefix);
-    static Pattern pattribute = Pattern.compile("^(?i)(attribute|a)\\" + prefix);
-    static Pattern pflags = Pattern.compile("^(?i)(flags|f)\\" + prefix);
-    static Pattern pcolor = Pattern.compile("^(?i)(color|c)\\" + prefix);
-    static Pattern pmodel = Pattern.compile("^(?i)(custommodeldata|custommodel|cm|cmd)\\" + prefix);
-    static Pattern pspecial = Pattern.compile("^(?i)(special|s)\\" + prefix);
-    static Pattern ptrim = Pattern.compile("^(?i)(trim|t)\\" + prefix);
-    static Pattern psherds = Pattern.compile("^(?i)(sherds|sh)\\" + prefix);
-
     public static CMIItemStack deserialize(String input) {
-        return deserialize(null, input);
+        return CMIItemSerializer.deserialize(null, input, null);
     }
 
-    private static int getOperation(String value) {
-
-        String simplified = value.replace("_", "").toLowerCase();
-        switch (simplified) {
-        case "add":
-            return 0;
-        case "multiplybase":
-            return 1;
-        case "multiply":
-            return 2;
-        default:
-            try {
-                return Integer.parseInt(value);
-            } catch (NumberFormatException e) {
-            }
-        }
-        return -1;
+    public static CMIItemStack deserialize(String input, CMIAsyncHead ahead) {
+        return CMIItemSerializer.deserialize(null, input, ahead);
     }
 
     public static CMIItemStack deserialize(CommandSender sender, String input) {
-
-        if (input == null)
-            return null;
-
-        String itemName = input.contains(";") ? input.split(";", 2)[0] : input;
-
-        String tag = null;
-        if (itemName.endsWith("}") && itemName.contains("{")) {
-            tag = "{" + itemName.split("\\{", 2)[1];
-            itemName = itemName.split("\\{", 2)[0];
-        }
-
-        String itemNameUpdated = itemName.contains("-") || itemName.toLowerCase().startsWith("head:") || itemName.toLowerCase().startsWith("player_head:") ? itemName : itemName.replace(":", "-");
-
-        CMIItemStack cim = CMILib.getInstance().getItemManager().getItem(itemNameUpdated);
-
-        if (cim == null)
-            return cim;
-
-        if (input.contains(";")) {
-
-            String extra = input.split(";", 2)[1];
-
-            String[] s = extra.split(suffix + ";");
-            for (int i = 0; i < s.length; i++) {
-                String one = s[i];
-
-                if (i == s.length - 1 && one.endsWith(suffix))
-                    one = one.substring(0, one.length() - 1);
-
-                Matcher nameMatch = pname.matcher(one);
-                if (nameMatch.find()) {
-                    String name = one.substring(nameMatch.group().length());
-                    name = CMIText.replaceUnderScoreSpace(name);
-                    name = CMILib.getInstance().getPlaceholderAPIManager().updatePlaceHolders(sender instanceof Player ? (Player) sender : null, name);
-                    if (name != null)
-                        cim.setDisplayName(name);
-                    continue;
-                }
-
-                if (cim.getLore().isEmpty()) {
-                    Matcher loreMatch = plore.matcher(one);
-                    if (loreMatch.find()) {
-                        String lore = one.substring(loreMatch.group().length());
-                        lore = CMIText.replaceUnderScoreSpace(lore);
-                        lore = CMILib.getInstance().getPlaceholderAPIManager().updatePlaceHolders(sender instanceof Player ? (Player) sender : null, lore);
-                        if (lore != null) {
-                            lore = lore.replace("\\\\n", "\\n");
-                            cim.setLore(Arrays.asList(lore.split("\\n")));
-                        }
-                        continue;
-                    }
-                }
-
-                Matcher enchantMatch = penchant.matcher(one);
-                if (enchantMatch.find()) {
-                    String enchants = one.substring(enchantMatch.group().length());
-
-                    for (String OE : enchants.split(",")) {
-                        if (!OE.contains(":"))
-                            continue;
-                        int level = 0;
-                        String[] split = OE.split(":", 2);
-                        try {
-                            level = Integer.parseInt(split[1]);
-                        } catch (NumberFormatException e) {
-                            continue;
-                        }
-                        Enchantment enc = CMIEnchantment.get(split[0]);
-                        if (enc == null)
-                            continue;
-                        cim.addEnchant(enc, level);
-                    }
-                    continue;
-                }
-
-                if (Version.isCurrentEqualOrHigher(Version.v1_9_R1)) {
-                    Matcher attMatch = pattribute.matcher(one);
-                    if (attMatch.find()) {
-                        String attributes = one.substring(attMatch.group().length());
-
-                        List<Attribute> attList = new ArrayList<Attribute>();
-
-                        for (String OE : attributes.split(",")) {
-
-                            if (!OE.contains(":"))
-                                continue;
-                            String[] split = OE.split(":");
-
-                            AttributeType attribute = AttributeType.get(split[0]);
-                            AttSlot slot = null;
-                            double attributeMod = -1D;
-                            int operation = -1;
-
-                            for (int ai = 1; ai < split.length; ai++) {
-
-                                if (slot == null) {
-                                    slot = AttSlot.get(split[ai]);
-                                    if (slot != null)
-                                        continue;
-                                }
-
-                                if (attributeMod == -1) {
-                                    try {
-                                        attributeMod = Double.parseDouble(split[ai]);
-                                        continue;
-                                    } catch (Throwable e) {
-                                    }
-                                }
-                                if (operation == -1) {
-                                    operation = getOperation(split[ai]);
-                                }
-                            }
-
-                            try {
-                                attributeMod = Double.parseDouble(split[1]);
-                            } catch (NumberFormatException e) {
-                                continue;
-                            }
-
-                            if (attributeMod <= 0)
-                                continue;
-
-                            if (attribute != null && attributeMod != -1D) {
-                                attList.add(new Attribute(attribute, slot, attributeMod, CMINumber.clamp(operation, 0, 2)));
-                            }
-                        }
-                        if (!attList.isEmpty())
-                            cim.addAttributes(attList);
-                        continue;
-                    }
-                }
-
-                if (Version.isCurrentEqualOrHigher(Version.v1_8_R1)) {
-                    Matcher fMatch = pflags.matcher(one);
-                    if (fMatch.find()) {
-                        String f = one.substring(fMatch.group().length());
-                        List<ItemFlag> flags = new ArrayList<ItemFlag>();
-                        for (String OE : f.split(",")) {
-                            ItemFlag itemFlag = getitemFlag(OE);
-                            if (itemFlag == null)
-                                continue;
-                            flags.add(itemFlag);
-                        }
-                        int tagg = 0;
-                        for (ItemFlag oneF : flags) {
-                            tagg |= getBitModifier(oneF);
-                        }
-                        for (ItemFlag oneF : cim.getItemStack().getItemMeta().getItemFlags()) {
-                            tagg |= getBitModifier(oneF);
-                        }
-
-                        cim.getItemStack().setItemMeta(CMINBT.HideFlag(cim.getItemStack(), tagg).getItemMeta());
-                        continue;
-                    }
-                }
-
-                if (cim.getCMIType().isLeatherArmor()) {
-                    Matcher cMatch = pcolor.matcher(one);
-                    if (cMatch.find()) {
-                        String f = one.substring(cMatch.group().length());
-                        String[] split = f.split(",");
-                        CMIChatColor cmic = null;
-                        int[] colors = new int[3];
-                        int ii = 0;
-                        for (String c : split) {
-                            if (split.length == 3) {
-                                try {
-                                    colors[ii] = Integer.parseInt(c);
-                                } catch (Throwable e) {
-                                    continue;
-                                }
-                                ii++;
-                                continue;
-                            }
-                            if (c.startsWith("#"))
-                                c = c.substring(1);
-                            cmic = CMIChatColor.getByHex(c);
-                            if (cmic == null) {
-                                cmic = CMIChatColor.getByCustomName(c);
-                            }
-
-                            if (cmic == null && CMILib.getInstance().isCmiPresent()) {
-                                LeatherAnimationType custom = LeatherAnimationType.getByName(c);
-                                if (custom != null) {
-                                    continue;
-                                }
-                            }
-
-                            if (cmic == null) {
-                                cmic = new CMIChatColor(c);
-                            }
-
-                        }
-                        if (split.length == 3) {
-                            cmic = new CMIChatColor("temp", "z".charAt(0), colors[0], colors[1], colors[2]);
-                        }
-                        if (cmic != null) {
-                            LeatherArmorMeta meta = (LeatherArmorMeta) cim.getItemStack().getItemMeta();
-                            meta.setColor(cmic.getRGBColor());
-                            cim.getItemStack().setItemMeta(meta);
-                        }
-                        continue;
-                    }
-                }
-                if (Version.isCurrentEqualOrHigher(Version.v1_16_R1)) {
-                    Matcher mMatch = pmodel.matcher(one);
-                    if (mMatch.find()) {
-                        String f = one.substring(mMatch.group().length());
-
-                        try {
-                            int data = Integer.parseInt(f);
-                            cim.setNbt("CustomModelData", data);
-                        } catch (Throwable e) {
-                            e.printStackTrace();
-                        }
-
-                        continue;
-                    }
-                }
-                if (Version.isCurrentEqualOrHigher(Version.v1_20_R1)) {
-                    Matcher mMatch = psherds.matcher(one);
-                    if (mMatch.find()) {
-                        String f = one.substring(mMatch.group().length());
-
-                        try {
-                            if (cim.getCMIType().equals(CMIMaterial.DECORATED_POT)) {
-                                List<String> sherds = new ArrayList<String>();
-                                for (String oneSherd : f.split(",")) {
-                                    if (!oneSherd.toLowerCase().endsWith("_pottery_sherd"))
-                                        oneSherd += "_pottery_sherd";
-                                    CMIMaterial sherd = CMIMaterial.get(oneSherd);
-                                    if (sherd.toString().endsWith("_SHERD")) {
-                                        sherds.add("minecraft:" + sherd.toString().toLowerCase());
-                                    }
-                                }
-
-                                sherds.subList(4, sherds.size()).clear();
-
-                                if (!sherds.isEmpty() && sherds.size() <= 4) {
-                                    CMINBT nbt = new CMINBT(cim.getItemStack());
-                                    try {
-                                        CMINBT stag = new CMINBT(nbt.getCompound("BlockEntityTag"));
-                                        stag.setStringList("sherds", sherds);
-                                        cim.setItemStack((ItemStack) nbt.set("BlockEntityTag", stag.getNbt()));
-                                    } catch (Throwable e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            }
-                        } catch (Throwable e) {
-                            e.printStackTrace();
-                        }
-
-                        continue;
-                    }
-                }
-                if (Version.isCurrentEqualOrHigher(Version.v1_20_R1)) {
-                    applyTrim(cim, one);
-                }
-                Matcher mMatch = pspecial.matcher(one);
-                if (mMatch.find()) {
-                    String f = one.substring(mMatch.group().length());
-                    switch (f.toLowerCase()) {
-                    case "unbreakable":
-                        cim.setItemStack((ItemStack) new CMINBT(cim.getItemStack()).setByte("Unbreakable", (byte) 1));
-                        continue;
-                    }
-                }
-            }
-        }
-
-        if (tag != null)
-            cim.setTag(CMIChatColor.translate(tag));
-
-        return cim;
+        return CMIItemSerializer.deserialize(sender, input, null);
     }
 
-    private static void applyTrim(CMIItemStack cim, String value) {
-        Matcher mMatch = ptrim.matcher(value);
-        if (mMatch.find()) {
-            String f = value.substring(mMatch.group().length());
-            try {
-
-                String[] split = f.split(":");
-
-                ItemMeta meta = cim.getItemStack().getItemMeta();
-
-                if (split.length == 2 && meta instanceof org.bukkit.inventory.meta.ArmorMeta) {
-                    org.bukkit.inventory.meta.ArmorMeta ameta = (ArmorMeta) meta;
-                    org.bukkit.inventory.meta.trim.TrimMaterial trim = CMITrimMaterial.getByName(split[0]);
-                    org.bukkit.inventory.meta.trim.TrimPattern pattern = CMITrimPattern.getByName(split[1]);
-
-                    if (trim != null && pattern != null) {
-                        org.bukkit.inventory.meta.trim.ArmorTrim teim = new org.bukkit.inventory.meta.trim.ArmorTrim(trim, pattern);
-                        ameta.setTrim(teim);
-                        cim.getItemStack().setItemMeta(meta);
-                    }
-                }
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }
-        }
+    public static CMIItemStack deserialize(CommandSender sender, String input, CMIAsyncHead ahead) {
+        return CMIItemSerializer.deserialize(sender, input, ahead);
     }
 
     public static String serialize(ItemStack item) {
-        StringBuilder str = new StringBuilder();
-
-        if (item == null)
-            return str.toString();
-
-        String material = "";
-        CMIMaterial cmim = CMIMaterial.get(item);
-        material += cmim.toString();
-
-        if (cmim.isPlayerHead()) {
-            String base = null;
-            // Trying to extract head data and its owner name
-            try {
-                CMINBT nbt = new CMINBT(item);
-                List<String> ls = nbt.getList("SkullOwner.Properties.textures");
-                if (ls != null) {
-                    base = ls.get(0).split("Value:\"", 2)[1].split("\"", 2)[0];
-                    CMIEntityType entType = CMIEntityType.getByTexture(base);
-                    if (entType != null) {
-                        material += ":" + entType.toString();
-                    } else {
-                        material += ":" + base;
-                    }
-                }
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }
-        } else if (cmim.equals(CMIMaterial.SPAWNER) || cmim.isMonsterEgg()) {
-            EntityType t = new CMIItemStack(item).getEntityType();
-            if (t != null)
-                material += ":" + t.toString();
-        } else if (cmim.isPotion() || item.getType().name().contains("TIPPED_ARROW")) {
-            PotionMeta potion = (PotionMeta) item.getItemMeta();
-            try {
-                if (potion != null && potion.getBasePotionData() != null && potion.getBasePotionData().getType() != null && potion.getBasePotionData().getType().getEffectType() != null) {
-                    material += ":" + potion.getBasePotionData().getType().getEffectType().getName() + "-" + potion.getBasePotionData().isUpgraded() + "-" + potion.getBasePotionData().isExtended();
-                }
-            } catch (NoSuchMethodError e) {
-            }
-        }
-
-        str.append(material);
-
-        if (item.getAmount() > 1)
-            str.append("-" + item.getAmount());
-
-        ItemMeta meta = item.getItemMeta();
-
-        if (meta != null) {
-            if (meta.hasDisplayName()) {
-                str.append(";n" + prefix);
-                str.append(meta.getDisplayName().replace(" ", "_"));
-                str.append(suffix);
-            }
-            if (meta.hasLore()) {
-                List<String> lore = meta.getLore();
-                str.append(";l" + prefix);
-                StringBuilder l = new StringBuilder();
-                for (String one : lore) {
-                    if (!l.toString().isEmpty())
-                        l.append("\\n");
-                    l.append(one.replace(" ", "_"));
-                }
-                str.append(l);
-                str.append(suffix);
-            }
-
-            if (cmim.isLeatherArmor()) {
-                try {
-                    LeatherArmorMeta leatherMeta = (LeatherArmorMeta) meta;
-                    Color color = leatherMeta.getColor();
-                    str.append(";c" + prefix);
-                    str.append(color.getRed() + "," + color.getGreen() + "," + color.getBlue());
-                    str.append(suffix);
-                } catch (Throwable e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        if (Version.isCurrentEqualOrHigher(Version.v1_20_R1)) {
-            if (meta instanceof org.bukkit.inventory.meta.ArmorMeta) {
-                org.bukkit.inventory.meta.ArmorMeta ameta = (ArmorMeta) meta;
-                if (ameta.hasTrim()) {
-                    org.bukkit.inventory.meta.trim.ArmorTrim trim = ameta.getTrim();
-                    str.append(";t" + prefix);
-                    str.append(trim.getMaterial().getKey().getKey().toLowerCase() + ":" + trim.getPattern().getKey().getKey().toLowerCase());
-                    str.append(suffix);
-                }
-            }
-        }
-
-        Map<Enchantment, Integer> enchants = item.getEnchantments();
-
-        if (enchants != null && !enchants.isEmpty()) {
-            str.append(";e" + prefix);
-            StringBuilder enchantS = new StringBuilder();
-            for (Entry<Enchantment, Integer> e : enchants.entrySet()) {
-                if (!enchantS.toString().isEmpty())
-                    enchantS.append(",");
-                enchantS.append(CMIEnchantment.getName(e.getKey()) + ":" + e.getValue());
-            }
-            str.append(enchantS.toString());
-            str.append(suffix);
-        }
-
-        return str.toString();
-    }
-
-    private static byte getBitModifier(ItemFlag hideFlag) {
-        return (byte) (1 << hideFlag.ordinal());
-    }
-
-    private static ItemFlag getitemFlag(String name) {
-        name = name.replace("_", "");
-        for (ItemFlag one : ItemFlag.values()) {
-            if (one.name().replace("_", "").equalsIgnoreCase(name))
-                return one;
-        }
-        return null;
+        return CMIItemSerializer.serialize(item);
     }
 }

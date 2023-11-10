@@ -24,6 +24,7 @@ import net.Zrips.CMILib.Placeholders.Placeholder;
 import net.Zrips.CMILib.Placeholders.PlaceholderAPIHook;
 import net.Zrips.CMILib.RawMessages.RawMessageListener;
 import net.Zrips.CMILib.Shadow.ShadowCommandListener;
+import net.Zrips.CMILib.Skins.SkinManager;
 import net.Zrips.CMILib.Version.Version;
 import net.Zrips.CMILib.commands.CommandsHandler;
 
@@ -50,6 +51,7 @@ public class CMILib extends JavaPlugin {
     private CMILogManager logManager;
     private GUIManager GUIManager;
     private BossBarManager BossBarManager;
+    private SkinManager SkinManager;
 
     private boolean PlaceholderAPIEnabled = false;
 
@@ -67,6 +69,12 @@ public class CMILib extends JavaPlugin {
         if (BossBarManager == null)
             BossBarManager = new BossBarManager(this);
         return BossBarManager;
+    }
+
+    public SkinManager getSkinManager() {
+        if (SkinManager == null)
+            SkinManager = new SkinManager(this);
+        return SkinManager;
     }
 
     public CMILogManager getLogManager() {
@@ -158,7 +166,7 @@ public class CMILib extends JavaPlugin {
         try {
             List<String> lang = Arrays.asList("CN", "DE", "ES", "IT", "LT", "RU", "SK", "SL", "FR", "PL", "NO", "ZH", "TR", "CZ");
             String lr = null;
-            
+
             boolean download = true;
             try {
                 File f = new File(getDataFolder(), "config.yml");
@@ -174,7 +182,7 @@ public class CMILib extends JavaPlugin {
 
             if (!download)
                 return;
-            
+
             for (String one : lang) {
                 File file = new File(getDataFolder() + File.separator + "Translations", "Locale_" + one + ".yml");
                 if (!file.isFile()) {
@@ -238,7 +246,7 @@ public class CMILib extends JavaPlugin {
 
     @Override
     public void onEnable() {
-      
+
         instance = this;
         this.getItemManager().load();
         this.getConfigManager().load();
@@ -313,7 +321,7 @@ public class CMILib extends JavaPlugin {
         getConfigManager().LoadLang("EN");
         if (!CMILibConfig.lang.equalsIgnoreCase("EN")) {
             getConfigManager().LoadLang(CMILibConfig.lang);
-        }      
+        }
     }
 
     @Override

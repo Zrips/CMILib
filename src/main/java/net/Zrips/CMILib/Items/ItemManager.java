@@ -181,8 +181,6 @@ public class ItemManager {
     public CMIItemStack getItem(String name, CMIAsyncHead ahead) {
         if (name == null)
             return null;
-//	if (byBukkitName.isEmpty())
-//	    load(); 
 
         CMIItemStack cm = null;
         String original = name.replace("minecraft:", "");
