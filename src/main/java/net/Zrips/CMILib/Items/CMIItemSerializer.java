@@ -16,6 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.bukkit.Art;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -48,7 +49,6 @@ import net.Zrips.CMILib.Container.CMIText;
 import net.Zrips.CMILib.Container.LeatherAnimationType;
 import net.Zrips.CMILib.Enchants.CMIEnchantment;
 import net.Zrips.CMILib.Entities.CMIEntityType;
-import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.Skins.CMISkin;
 import net.Zrips.CMILib.Version.Version;
@@ -148,12 +148,15 @@ public class CMIItemSerializer {
         }
 
         String subdata = null;
-        if (name.contains(":")) {
+        if (name.contains(":") || name.contains("-")) {
             CMIMaterial mat = CMILib.getInstance().getItemManager().NameMap().get(name);
             if (mat != null)
                 return new CMIItemStack(mat);
             try {
-                subdata = name.split(":")[1];
+                if (name.contains(":"))
+                    subdata = name.split(":")[1];
+                else
+                    subdata = name.split("-")[1];
             } catch (Throwable e) {
             }
         }
@@ -170,6 +173,7 @@ public class CMIItemSerializer {
                 entityType = CMIEntityType.getByName(subdata);
             }
             name = name.split(":")[0];
+            name = name.split("-")[0];
         }
 
         switch (name.toLowerCase()) {
@@ -211,7 +215,8 @@ public class CMIItemSerializer {
                     }
                 }
                 ItemStack skull = CMIItemStack.getHead(texture);
-                headCache.put(original, skull);
+                if (ahead != null)
+                    headCache.put(original, skull);
                 cm.setItemStack(skull);
                 break;
             }
@@ -247,7 +252,8 @@ public class CMIItemSerializer {
                         skullMeta.setOwningPlayer(offPlayer);
                         skull.setItemMeta(skullMeta);
                         cm.setItemStack(skull);
-                        headCache.put(original, skull);
+                        if (ahead != null)
+                            headCache.put(original, skull);
                     }
                 } catch (Exception e) {
                 }
@@ -255,14 +261,17 @@ public class CMIItemSerializer {
             }
 
             if (Version.isCurrentEqualOrHigher(Version.v1_16_R3)) {
-
                 if ((ahead != null && !ahead.isForce() || ahead == null) && Bukkit.getPlayer(d) != null) {
                     Player player = Bukkit.getPlayer(d);
                     skullMeta.setOwningPlayer(player);
                     skull.setItemMeta(skullMeta);
-                    headCache.put(original, skull);
-                    if (ahead != null)
-                        ahead.afterAsyncUpdate(skull);
+                    if (ahead != null) {
+                        ahead.setAsyncHead(true);
+                        CMIScheduler.runTaskAsynchronously(() -> {
+                            ahead.afterAsyncUpdate(skull);
+                        });
+                        headCache.put(original, skull);
+                    }
                 } else {
                     CMIEntityType type = CMIEntityType.getByName(d);
 
@@ -272,16 +281,13 @@ public class CMIItemSerializer {
                         cm.setItemStack(skull);
                         subdata = null;
                     } else {
-
                         if (ahead != null) {
                             ahead.setAsyncHead(true);
                         }
                         CMIScheduler.runTaskAsynchronously(() -> {
                             OfflinePlayer offlineP = Bukkit.getOfflinePlayer(d);
-
                             if (offlineP == null)
                                 return;
-
                             ItemStack lskull = skull;
                             SkullMeta lskullMeta = (SkullMeta) lskull.getItemMeta();
                             lskullMeta.setOwningPlayer(offlineP);
@@ -290,9 +296,7 @@ public class CMIItemSerializer {
                             if (Version.isCurrentEqualOrHigher(Version.v1_17_R1)) {
                                 applySkin(CMILib.getInstance().getSkinManager().getSkin(d), lskull);
                             }
-
                             set(original, lskull, offlineP.getName(), ahead);
-
                         });
                     }
                 }
@@ -301,12 +305,14 @@ public class CMIItemSerializer {
                 skullMeta.setOwner(d);
                 skull.setItemMeta(skullMeta);
                 cm.setItemStack(skull);
-                headCache.put(original, skull);
+                if (ahead != null)
+                    headCache.put(original, skull);
             }
 
             if (ahead == null || !ahead.isAsyncHead()) {
                 skull.setItemMeta(skullMeta);
-                headCache.put(original, skull);
+                if (ahead != null)
+                    headCache.put(original, skull);
             }
 
             break;
@@ -514,6 +520,9 @@ public class CMIItemSerializer {
                 if (applyColor(cim, one))
                     continue;
 
+                if (applyColor(cim, one))
+                    continue;
+
                 if (Version.isCurrentEqualOrHigher(Version.v1_8_R1) && applyFlags(cim, one))
                     continue;
 
@@ -530,18 +539,28 @@ public class CMIItemSerializer {
                         continue;
                 }
 
+                if (applyPainting(cim, one))
+                    continue;
+
+                if (applyHorn(cim, one))
+                    continue;
+
                 if (applyPotionEffect(cim, one.split(":")))
                     continue;
 
-                // Shoudl be last ones to check due to option of them not having identificators and having random text
+                if (applyEntityType(cim, one))
+                    continue;
+
+                if (applyAmount(cim, one))
+                    continue;
+
+                // Should be last ones to check due to option of them not having identificators and having random text
                 if (applyName(sender, cim, one))
                     continue;
 
                 if (applyLore(sender, cim, one))
                     continue;
 
-                if (applyAmount(cim, one))
-                    continue;
             }
         }
 
@@ -551,6 +570,24 @@ public class CMIItemSerializer {
         tempReplacer = null;
 
         return cim;
+    }
+
+    private static boolean applyEntityType(CMIItemStack cim, String value) {
+
+        if (!cim.getCMIType().equals(CMIMaterial.SPAWNER))
+            return false;
+
+        if (cim.getEntityType() != null)
+            return false;
+
+        CMIEntityType type = CMIEntityType.getByName(value);
+
+        if (type == null)
+            return false;
+
+        cim.setEntityType(type);
+
+        return true;
     }
 
     private static boolean applyAmount(CMIItemStack cim, String value) {
@@ -624,20 +661,16 @@ public class CMIItemSerializer {
         if (tempReplacer != null)
             lore = lore.replace(tempReplacer, ";");
         if (lore != null) {
-            CMIDebug.c(lore);
-
-//            lore = lore.replace("\\\\n", "\n"); 
-//            CMIDebug.c(lore, lore.split("\\\\n").length);
-            cim.setLore(Arrays.asList(lore.split("\\\\n")));
+            lore = lore.replace("\\n", "\n");
+            cim.setLore(Arrays.asList(lore.split("\\n")));
             return true;
         }
-
         return false;
     }
 
     private static boolean applyPotionEffect(CMIItemStack cim, String[] split) {
 
-        if (!cim.getCMIType().isPotion() && !cim.getCMIType().equals(CMIMaterial.SPLASH_POTION) && !cim.getCMIType().equals(CMIMaterial.TIPPED_ARROW))
+        if (!cim.getCMIType().isPotion() && !cim.getCMIType().equals(CMIMaterial.TIPPED_ARROW))
             return false;
 
         PotionEffectType type = null;
@@ -795,6 +828,69 @@ public class CMIItemSerializer {
         } catch (Throwable e) {
             e.printStackTrace();
         }
+        return false;
+    }
+
+    private static boolean applyPainting(CMIItemStack cim, String value) {
+
+        if (!cim.getCMIType().equals(CMIMaterial.PAINTING))
+            return false;
+
+        value = value.replace("_", "");
+
+        try {
+
+            Art art = null;
+
+            for (Art one : Art.values()) {
+                String artName = one.toString().replace("_", "");
+                if (!artName.equalsIgnoreCase(value))
+                    continue;
+                art = one;
+                break;
+            }
+            if (art == null)
+                return false;
+
+            try {
+                CMINBT nbt = new CMINBT(cim.getItemStack());
+                CMINBT stag = new CMINBT(nbt.getCompound("EntityTag"));
+                stag.setString("variant", "minecraft:" + art.toString().toLowerCase());
+                cim.setItemStack((ItemStack) nbt.set("EntityTag", stag.getNbt()));
+                return true;
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+
+        } catch (Throwable e) {
+
+        }
+
+        return false;
+    }
+
+    private static boolean applyHorn(CMIItemStack cim, String value) {
+
+        if (!cim.getCMIType().equals(CMIMaterial.GOAT_HORN))
+            return false;
+
+        value = value.replace("_", "");
+
+        try {
+            CMIMusicInstrument instrument = CMIMusicInstrument.get(value);
+            if (instrument == null)
+                return false;
+            try {
+                cim.setNbt("instrument", "minecraft:" + instrument.toString().toLowerCase() + "_goat_horn");
+                return true;
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+
+        } catch (Throwable e) {
+
+        }
+
         return false;
     }
 

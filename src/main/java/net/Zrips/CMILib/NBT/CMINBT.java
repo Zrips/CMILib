@@ -1447,7 +1447,6 @@ public class CMINBT {
         if (met_add == null)
             return;
         try {
-            CMIDebug.d(data);
             met_add.invoke(list, size, data);
         } catch (Throwable e) {
             e.printStackTrace();

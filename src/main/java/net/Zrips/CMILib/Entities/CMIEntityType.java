@@ -308,7 +308,8 @@ public enum CMIEntityType {
         for (CMIEntityType one : CMIEntityType.values()) {
             byName.put(one.toString().replace("_", "").toLowerCase(), one);
             byName.put(one.getName().replace("_", "").replace(" ", "").toLowerCase(), one);
-            byName.put(String.valueOf(one.getId()), one);
+            // No more entity types by ID's
+//            byName.put(String.valueOf(one.getId()), one);
             if (one.secondaryName != null)
                 byName.put(one.secondaryName.replace("_", "").replace(" ", "").toLowerCase(), one);
 

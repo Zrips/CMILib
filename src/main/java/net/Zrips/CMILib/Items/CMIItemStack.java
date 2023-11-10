@@ -397,18 +397,8 @@ public class CMIItemStack {
                 potion.setDisplayName(this.getRealName());
                 item.setItemMeta(potion);
             }
+            applyEntityType();
 
-            if (CMIMaterial.SPAWNER.equals(this.item.getType())) {
-                if (data == 0)
-                    data = 90;
-                CMIEntityType type = this.entityType;
-                if (type == null && Version.isCurrentEqualOrLower(Version.v1_19_R2)) {
-                    type = CMIEntityType.getById(data);
-                }
-                if (type != null) {
-                    this.item = CMIEntity.setEntityType(this.item, type.getType());
-                }
-            }
             if (this.durability > 0) {
                 if (Version.isCurrentEqualOrHigher(Version.v1_13_R1)) {
                     org.bukkit.inventory.meta.Damageable damage = (org.bukkit.inventory.meta.Damageable) item.getItemMeta();
@@ -419,6 +409,23 @@ public class CMIItemStack {
             }
         }
         return item;
+    }
+
+    private void applyEntityType() {
+
+        if (!CMIMaterial.SPAWNER.equals(getCMIType()))
+            return;
+
+        if (data == 0)
+            data = 90;
+        CMIEntityType type = this.entityType;
+        if (type == null && Version.isCurrentEqualOrLower(Version.v1_19_R2)) {
+            type = CMIEntityType.getById(data);
+        }
+        if (type != null) {
+            this.item = CMIEntity.setEntityType(this.getItemStack(), type.getType());
+        }
+
     }
 
     @SuppressWarnings("deprecation")
@@ -830,6 +837,7 @@ public class CMIItemStack {
 
     public void setEntityType(CMIEntityType entityType) {
         this.entityType = entityType;
+        applyEntityType();
     }
 
     public void setEntityType(EntityType entityType) {
