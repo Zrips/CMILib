@@ -18,7 +18,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Color;
 
 import net.Zrips.CMILib.CMILibConfig;
-import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Version.Version;
 
 public class CMIChatColor {
@@ -192,13 +191,16 @@ public class CMIChatColor {
         if (hex.startsWith("#"))
             hex = hex.substring(1);
 
-        this.hexCode = hex;
+        if (hex.length() == 3 || hex.length() == 6)
+            this.hexCode = hex;
         this.name = name;
 
         try {
-            redChannel = Integer.valueOf(this.hexCode.substring(0, 2), 16);
-            greenChannel = Integer.valueOf(this.hexCode.substring(2, 4), 16);
-            blueChannel = Integer.parseInt(this.hexCode.substring(4, 6), 16);
+            if (this.hexCode != null) {
+                redChannel = Integer.valueOf(this.hexCode.substring(0, 2), 16);
+                greenChannel = Integer.valueOf(this.hexCode.substring(2, 4), 16);
+                blueChannel = Integer.parseInt(this.hexCode.substring(4, 6), 16);
+            }
         } catch (Throwable e) {
             this.hexCode = null;
         }
@@ -233,8 +235,8 @@ public class CMIChatColor {
 
         while (gradientMatch.find()) {
             String fullmatch = gradientMatch.group();
-            CMIChatColor c1 = CMIChatColor.getColor(CMIChatColor.colorCodePrefix + gradientMatch.group(2).replace("#", "") + CMIChatColor.colorCodeSuffix);
-            CMIChatColor c2 = CMIChatColor.getColor(CMIChatColor.colorCodePrefix + gradientMatch.group(5).replace("#", "") + CMIChatColor.colorCodeSuffix);
+            CMIChatColor c1 = getColor(colorCodePrefix + gradientMatch.group(2).replace("#", "") + colorCodeSuffix);
+            CMIChatColor c2 = getColor(colorCodePrefix + gradientMatch.group(5).replace("#", "") + colorCodeSuffix);
 
             if (c1 == null || c2 == null) {
                 continue;
@@ -253,8 +255,8 @@ public class CMIChatColor {
                 int length = gtext.length();
                 length = length < 2 ? 2 : length;
                 double percent = (i * 100D) / (length - 1);
-                CMIChatColor mix = CMIChatColor.mixColors(c1, c2, percent);
-                updated.append(CMIChatColor.colorCodePrefix + mix.getHex() + CMIChatColor.colorCodeSuffix);
+                CMIChatColor mix = mixColors(c1, c2, percent);
+                updated.append(colorCodePrefix + mix.getHex() + colorCodeSuffix);
                 if (!formats.isEmpty()) {
                     for (CMIChatColor one : formats) {
                         updated.append("&" + one.getChar());
@@ -277,7 +279,7 @@ public class CMIChatColor {
             }
 
             if (continuous) {
-                updated.append(CMIChatColor.colorCodePrefix + gradientMatch.group(5).replace("#", "") + ">" + CMIChatColor.colorCodeSuffix);
+                updated.append(colorCodePrefix + gradientMatch.group(5).replace("#", "") + ">" + colorCodeSuffix);
             }
 
             text = text.replace(fullmatch, updated.toString());
@@ -478,7 +480,7 @@ public class CMIChatColor {
         if (text == null)
             return null;
         if (colorizeBeforeDe)
-            text = CMIChatColor.translate(text);
+            text = translate(text);
         text = text.replace("§", "&");
 
         if (text.contains("&x")) {
@@ -867,7 +869,7 @@ public class CMIChatColor {
             }
             match = hexColorNamePatternLast.matcher(or);
             if (match.find()) {
-                return CMIChatColor.getByCustomName(match.group(2));
+                return getByCustomName(match.group(2));
             }
         }
 

@@ -988,7 +988,10 @@ public class Reflections {
             com.mojang.authlib.GameProfile prof = null;
             if (Version.isCurrentEqualOrHigher(Version.v1_20_R2)) {
                 String decodedString = new String(java.util.Base64.getMimeDecoder().decode(texture));
+                    CMIDebug.d(decodedString);
                 if (decodedString.contains("url\":\"")) {
+                    
+                    CMIDebug.d("set tjosmg");
                     SkullMeta meta = (SkullMeta) item.getItemMeta();
                     meta.setOwnerProfile(getProfile(decodedString.split("url\":\"", 2)[1].split("\"", 2)[0]));
                     item.setItemMeta(meta);

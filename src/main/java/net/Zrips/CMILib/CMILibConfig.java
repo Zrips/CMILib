@@ -170,11 +170,11 @@ public class CMILibConfig {
 
         cfg.addComment("Colors.OfficialHex", "When enabled plugin will try to detect simplified hex color codes like #f6f6f6 or #ff6 in adition to {#f6f6f6} and {#red}",
             "Keep in mind that this adds extra checks and simplified format will not support gradients or named colors so you will still need to use more complex format for those");
-        OfficialHex = cfg.get("Colors.OfficialHex", false);
+        OfficialHex = cfg.get("Colors.OfficialHex", true);
         
         cfg.addComment("Colors.QuirkyHex", "When enabled plugin will try to detect quirky hex color codes like &#f6f6f6 or &#ff6 in adition to {#f6f6f6} and {#red}",
             "Keep in mind that this adds extra checks and quirky format will not support gradients or named colors so you will still need to use more complex format for those");
-        QuirkyHex = cfg.get("Colors.QuirkyHex", false);
+        QuirkyHex = cfg.get("Colors.QuirkyHex", true);
 
         cfg.save();
         return true;

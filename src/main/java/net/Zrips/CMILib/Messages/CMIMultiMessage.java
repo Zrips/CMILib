@@ -192,6 +192,10 @@ public class CMIMultiMessage {
             break;
         case customText:
             if (CMILib.getInstance().isCmiPresent()) {
+                String text = (String) getExtra().get(0);
+                text = text.replaceAll(".*\\<CC>|\\</CC>.*", "");
+                text = text.replaceAll(".*\\<CCI>|\\</CCI>.*", "");
+
                 com.Zrips.CMI.Modules.CustomText.CText cText = com.Zrips.CMI.CMI.getInstance().getCTextManager().getCText((String) getExtra().get(0));
                 if (cText == null)
                     sender.sendMessage(message);

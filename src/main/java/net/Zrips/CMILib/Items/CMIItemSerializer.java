@@ -61,6 +61,8 @@ public class CMIItemSerializer {
 
     static Pattern pname = Pattern.compile("^(?i)(name|n)\\" + prefix);
     static Pattern plore = Pattern.compile("^(?i)(lore|l)\\" + prefix);
+    static Pattern pcolor = Pattern.compile("^(?i)(c)\\" + prefix);
+    static Pattern penchant = Pattern.compile("^(?i)(e)\\" + prefix);
     static Pattern pmodel = Pattern.compile("^(?i)(custommodeldata|custommodel|cm|cmd)\\" + prefix);
 
     private static int getOperation(String value) {
@@ -185,6 +187,7 @@ public class CMIItemSerializer {
             break;
         case "head":
         case "playerhead":
+        case "player_head":
             cm = CMIMaterial.PLAYER_HEAD.newCMIItemStack();
 
             if (!original.contains(":"))
@@ -738,6 +741,11 @@ public class CMIItemSerializer {
         if (!value.contains(":"))
             return false;
 
+        Matcher mMatch = penchant.matcher(value);
+        if (mMatch.find()) {
+            value = value.substring(mMatch.group().length());
+        }
+
         boolean added = false;
         for (String OE : value.split(",")) {
             if (!OE.contains(":"))
@@ -898,6 +906,11 @@ public class CMIItemSerializer {
         if (!cim.getCMIType().isLeatherArmor())
             return false;
 
+        Matcher mMatch = pcolor.matcher(value);
+        if (mMatch.find()) {
+            value = value.substring(mMatch.group().length());
+        }
+
         String[] split = value.split(",");
         CMIChatColor cmic = null;
         int[] colors = new int[3];
@@ -1053,6 +1066,15 @@ public class CMIItemSerializer {
                     } else {
                         material += ":" + base;
                     }
+                } else {
+                    int[] idArray = nbt.getIntArray("SkullOwner.Id");
+                    if (idArray != null && idArray.length == 4) {
+                        material += ":" + new UUID(((long) idArray[0] << 32) | idArray[1], ((long) idArray[2] << 32) | idArray[3]).toString();
+                    } else {
+                        String name = nbt.getString("SkullOwner.Name");
+                        if (name != null)
+                            material += ":" + name;
+                    }
                 }
             } catch (Throwable e) {
                 e.printStackTrace();
@@ -1101,9 +1123,9 @@ public class CMIItemSerializer {
                 try {
                     LeatherArmorMeta leatherMeta = (LeatherArmorMeta) meta;
                     Color color = leatherMeta.getColor();
-                    str.append(";c" + prefix);
+//                    str.append(";c" + prefix);
                     str.append(color.getRed() + "," + color.getGreen() + "," + color.getBlue());
-                    str.append(suffix);
+//                    str.append(suffix);
                 } catch (Throwable e) {
                     e.printStackTrace();
                 }
@@ -1115,9 +1137,9 @@ public class CMIItemSerializer {
                 org.bukkit.inventory.meta.ArmorMeta ameta = (ArmorMeta) meta;
                 if (ameta.hasTrim()) {
                     org.bukkit.inventory.meta.trim.ArmorTrim trim = ameta.getTrim();
-                    str.append(";t" + prefix);
+//                    str.append(";t" + prefix);
                     str.append(trim.getMaterial().getKey().getKey().toLowerCase() + ":" + trim.getPattern().getKey().getKey().toLowerCase());
-                    str.append(suffix);
+//                    str.append(suffix);
                 }
             }
         }
@@ -1125,7 +1147,7 @@ public class CMIItemSerializer {
         Map<Enchantment, Integer> enchants = item.getEnchantments();
 
         if (enchants != null && !enchants.isEmpty()) {
-            str.append(";e" + prefix);
+//            str.append(";e" + prefix);
             StringBuilder enchantS = new StringBuilder();
             for (Entry<Enchantment, Integer> e : enchants.entrySet()) {
                 if (!enchantS.toString().isEmpty())
@@ -1133,7 +1155,7 @@ public class CMIItemSerializer {
                 enchantS.append(CMIEnchantment.getName(e.getKey()) + ":" + e.getValue());
             }
             str.append(enchantS.toString());
-            str.append(suffix);
+//            str.append(suffix);
         }
 
         return str.toString();
