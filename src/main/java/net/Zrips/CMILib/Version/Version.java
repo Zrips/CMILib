@@ -105,6 +105,14 @@ public enum Version {
         if (platform != null)
             return platform;
 
+        String[] split = Bukkit.getVersion().split("-");
+        final String serverType = split.length > 1 ? split[1] : split[0];
+
+        if (serverType.equalsIgnoreCase("Purpur")) {
+            platform = MinecraftPlatform.purpur;
+            return platform;
+        }
+
         try {
             Class.forName("io.papermc.paper.threadedregions.RegionizedServer");
             platform = MinecraftPlatform.folia;

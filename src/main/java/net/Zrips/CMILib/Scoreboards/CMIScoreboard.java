@@ -155,7 +155,7 @@ public class CMIScoreboard {
                 sendPacket(player, pp1);
 
                 net.minecraft.network.protocol.game.PacketPlayOutScoreboardDisplayObjective obj = new net.minecraft.network.protocol.game.PacketPlayOutScoreboardDisplayObjective(
-                    net.minecraft.world.scores.DisplaySlot.a, sobj);
+                    net.minecraft.world.scores.DisplaySlot.b, sobj);
                 Field field = obj.getClass().getDeclaredField("b");
                 field.setAccessible(true);
                 field.set(obj, player.getName());
@@ -169,6 +169,7 @@ public class CMIScoreboard {
                         .newInstance(net.minecraft.server.ScoreboardServer.Action.a, player.getName(), null, 0);
                     setField(PacketPlayOutScoreboardScore, "a", CMIChatColor.translate(lines.get(i)));
                     setField(PacketPlayOutScoreboardScore, "c", 15 - i);
+                    CMIDebug.d("send packet", CMIChatColor.translate(lines.get(i)));
                     sendPacket(player, PacketPlayOutScoreboardScore);
                 }
             } else if (Version.isCurrentEqualOrHigher(Version.v1_19_R1)) {

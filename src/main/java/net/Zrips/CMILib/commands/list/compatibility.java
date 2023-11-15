@@ -1,5 +1,7 @@
 package net.Zrips.CMILib.commands.list;
 
+import java.util.Arrays;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -19,6 +21,7 @@ import net.Zrips.CMILib.Items.CMIMaterial;
 import net.Zrips.CMILib.Messages.CMIMessages;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.RawMessages.RawMessage;
+import net.Zrips.CMILib.Scoreboards.CMIScoreboard;
 import net.Zrips.CMILib.TitleMessages.CMITitleMessage;
 import net.Zrips.CMILib.commands.CAnnotation;
 import net.Zrips.CMILib.commands.Cmd;
@@ -94,6 +97,7 @@ public class compatibility implements Cmd {
 
         CMITitleMessage.send(player, "Title", "SubTitle");
         CMIActionBar.send(player, "Action bar Test");
+        CMIScoreboard.show(player, "Top line", Arrays.asList("first", "second"), 2);
 
         plugin.getReflectionManager().playEffect(player, player.getEyeLocation(), new CMIEffect(CMIParticle.COLOURED_DUST));
 
