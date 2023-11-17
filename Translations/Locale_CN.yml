@@ -480,79 +480,151 @@ info:
     zombie_villager: 僵尸村民
     zombified_piglin: 僵尸猪灵
   EnchantAliases:
-    arrow_damage: 力量
-    arrow_fire: 火矢
-    arrow_infinite: 无限
-    arrow_knockback: 冲击
-    binding_curse: 绑定诅咒
-    channeling: 引雷
-    damage_all: 锋利
-    damage_arthropods: 节肢杀手
-    damage_undead: 亡灵杀手
-    depth_strider: 深海探索者
-    dig_speed: 效率
-    durability: 耐久
-    fire_aspect: 火焰附加
-    frost_walker: 冰霜行者
-    impaling: 穿刺
-    knockback: 击退
-    loot_bonus_blocks: 时运
-    loot_bonus_mobs: 抢夺
-    loyalty: 忠诚
-    luck: 幸运
-    lure: 饵钓
-    mending: 经验修补
-    multishot: 多重射击
-    oxygen: 水下呼吸
-    piercing: 穿透
-    protection_environmental: 保护
-    protection_explosions: 爆炸保护
-    protection_fall: 摔落缓冲
-    protection_fire: 火焰保护
-    protection_projectile: 弹射物保护
-    quick_charge: 快速装填
-    riptide: 激流
-    silk_touch: 精准采集
-    soul_speed: 灵魂疾行
-    sweeping_edge: 横扫之刃
-    swift_sneak: 迅捷潜行
-    thorns: 荆棘
-    vanishing_curse: 消失诅咒
-    water_worker: 水下速掘
+    arrow_damage:
+    - 力量
+    arrow_fire:
+    - 火矢
+    arrow_infinite:
+    - 无限
+    arrow_knockback:
+    - 冲击
+    binding_curse:
+    - 绑定诅咒
+    channeling:
+    - 引雷
+    damage_all:
+    - 锋利
+    damage_arthropods:
+    - 节肢杀手
+    damage_undead:
+    - 亡灵杀手
+    depth_strider:
+    - 深海探索者
+    dig_speed:
+    - 效率
+    durability:
+    - 耐久
+    fire_aspect:
+    - 火焰附加
+    frost_walker:
+    - 冰霜行者
+    impaling:
+    - 穿刺
+    knockback:
+    - 击退
+    loot_bonus_blocks:
+    - 时运
+    loot_bonus_mobs:
+    - 抢夺
+    loyalty:
+    - 忠诚
+    luck:
+    - 幸运
+    lure:
+    - 饵钓
+    mending:
+    - 经验修补
+    multishot:
+    - 多重射击
+    oxygen:
+    - 水下呼吸
+    piercing:
+    - 穿透
+    protection_environmental:
+    - 保护
+    protection_explosions:
+    - 爆炸保护
+    protection_fall:
+    - 摔落缓冲
+    protection_fire:
+    - 火焰保护
+    protection_projectile:
+    - 弹射物保护
+    quick_charge:
+    - 快速装填
+    riptide:
+    - 激流
+    silk_touch:
+    - 精准采集
+    soul_speed:
+    - 灵魂疾行
+    sweeping_edge:
+    - 横扫之刃
+    swift_sneak:
+    - 迅捷潜行
+    thorns:
+    - 荆棘
+    vanishing_curse:
+    - 消失诅咒
+    water_worker:
+    - 水下速掘
   PotionEffectAliases:
-    absorption: 伤害吸收
-    bad_omen: 不祥之兆
-    blindness: 失明
-    conduit_power: 潮涌能量
-    confusion: 反胃
-    damage_resistance: 抗性提升
-    darkness: 黑暗
-    dolphins_grace: 海豚的恩惠
-    fast_digging: 急迫
-    fire_resistance: 抗火
-    glowing: 发光
-    harm: 瞬间伤害
-    heal: 瞬间治疗
-    health_boost: 生命提升
-    hero_of_the_village: 村庄英雄
-    hunger: 饥饿
-    increase_damage: 力量
-    invisibility: 隐身
-    jump: 跳跃提升
-    levitation: 飘浮
-    luck: 幸运
-    night_vision: 夜视
-    poison: 中毒
-    regeneration: 生命恢复
-    saturation: 饱和
-    slow: 缓降
-    slow_digging: 挖掘疲劳
-    slow_falling: 缓降
-    speed: 迅捷
-    unluck: 霉运
-    water_breathing: 水下呼吸
-    weakness: 虚弱
-    wither: 凋灵
+    absorption:
+    - 伤害吸收
+    bad_omen:
+    - 不祥之兆
+    blindness:
+    - 失明
+    conduit_power:
+    - 潮涌能量
+    confusion:
+    - 反胃
+    damage_resistance:
+    - 抗性提升
+    darkness:
+    - 黑暗
+    dolphins_grace:
+    - 海豚的恩惠
+    fast_digging:
+    - 急迫
+    fire_resistance:
+    - 抗火
+    glowing:
+    - 发光
+    harm:
+    - 瞬间伤害
+    heal:
+    - 瞬间治疗
+    health_boost:
+    - 生命提升
+    hero_of_the_village:
+    - 村庄英雄
+    hunger:
+    - 饥饿
+    increase_damage:
+    - 力量
+    invisibility:
+    - 隐身
+    jump:
+    - 跳跃提升
+    levitation:
+    - 飘浮
+    luck:
+    - 幸运
+    night_vision:
+    - 夜视
+    poison:
+    - 中毒
+    regeneration:
+    - 生命恢复
+    saturation:
+    - 饱和
+    slow:
+    - 缓降
+    slow_digging:
+    - 挖掘疲劳
+    slow_falling:
+    - 缓降
+    speed:
+    - 迅捷
+    unluck:
+    - 霉运
+    water_breathing:
+    - 水下呼吸
+    weakness:
+    - 虚弱
+    wither:
+    - 凋灵
 direction:
   n: 北
   ne: 东北
