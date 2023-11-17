@@ -107,7 +107,12 @@ public enum Version {
 
         String[] split = Bukkit.getVersion().split("-");
         final String serverType = split.length > 1 ? split[1] : split[0];
-
+        
+        if (serverType.equalsIgnoreCase("Mohist")) {
+            platform = MinecraftPlatform.mohist;
+            return platform;
+        }
+        
         if (serverType.equalsIgnoreCase("Purpur")) {
             platform = MinecraftPlatform.purpur;
             return platform;

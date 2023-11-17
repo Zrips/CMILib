@@ -442,7 +442,10 @@ public class Placeholder {
             return null;
 
         if (CMILib.getInstance().isCmiPresent()) {
-            message = com.Zrips.CMI.CMI.getInstance().getPlaceholderAPIManager().translateOwnPlaceHolder(uuid, message);
+            try {
+                message = com.Zrips.CMI.CMI.getInstance().getPlaceholderAPIManager().translateOwnPlaceHolder(uuid, message);
+            } catch (Throwable e) {
+            }
         }
 
         if (message.contains("{")) {
