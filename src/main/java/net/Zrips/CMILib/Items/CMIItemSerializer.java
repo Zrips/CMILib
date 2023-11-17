@@ -517,6 +517,9 @@ public class CMIItemSerializer {
                 if (i == s.size() - 1 && one.endsWith(suffix))
                     one = one.substring(0, one.length() - 1);
 
+                if (applyAmount(cim, one))
+                    continue;
+
                 if (applySpecials(cim, one))
                     continue;
 
@@ -555,9 +558,6 @@ public class CMIItemSerializer {
                     continue;
 
                 if (applyEntityType(cim, one))
-                    continue;
-
-                if (applyAmount(cim, one))
                     continue;
 
                 // Should be last ones to check due to option of them not having identificators and having random text
