@@ -49,6 +49,7 @@ import net.Zrips.CMILib.Container.CMIText;
 import net.Zrips.CMILib.Container.LeatherAnimationType;
 import net.Zrips.CMILib.Enchants.CMIEnchantment;
 import net.Zrips.CMILib.Entities.CMIEntityType;
+import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.Skins.CMISkin;
 import net.Zrips.CMILib.Version.Version;
@@ -476,6 +477,8 @@ public class CMIItemSerializer {
         if (input == null)
             return null;
 
+        input = input.replace(" ", "_");
+
         input = updateCustomVariables(input);
 
         String itemName = input.contains(";") ? input.split(";", 2)[0] : input;
@@ -513,6 +516,9 @@ public class CMIItemSerializer {
 
                 if (i == s.size() - 1 && one.endsWith(suffix))
                     one = one.substring(0, one.length() - 1);
+
+                if (applyAmount(cim, one))
+                    continue;
 
                 if (applySpecials(cim, one))
                     continue;
@@ -552,9 +558,6 @@ public class CMIItemSerializer {
                     continue;
 
                 if (applyEntityType(cim, one))
-                    continue;
-
-                if (applyAmount(cim, one))
                     continue;
 
                 // Should be last ones to check due to option of them not having identificators and having random text
@@ -676,14 +679,20 @@ public class CMIItemSerializer {
         if (!cim.getCMIType().isPotion() && !cim.getCMIType().equals(CMIMaterial.TIPPED_ARROW))
             return false;
 
-        PotionEffectType type = null;
+        PotionType potionType = null;
         Boolean upgraded = null;
         Boolean extended = null;
 
         for (String one : split) {
-            if (type == null) {
-                type = CMIPotionEffect.get(one);
-                if (type != null)
+            if (potionType == null) {
+                PotionEffectType type = CMIPotionEffect.get(one);
+                if (type != null) {
+                    potionType = CMIPotionType.get(type);
+                    if (potionType != null)
+                        continue;
+                }
+                potionType = CMIPotionType.get(one);
+                if (potionType != null)
                     continue;
             }
 
@@ -700,7 +709,7 @@ public class CMIItemSerializer {
             }
         }
 
-        if (type == null)
+        if (potionType == null)
             return false;
 
         upgraded = upgraded == null ? false : upgraded;
@@ -713,11 +722,6 @@ public class CMIItemSerializer {
 
         try {
             PotionMeta meta = (PotionMeta) item.getItemMeta();
-
-            PotionType potionType = CMIPotionType.get(type);
-
-            if (potionType == null)
-                return false;
 
             if (CMIMaterial.TIPPED_ARROW.equals(CMIMaterial.get(item))) {
                 if (!potionType.isExtendable())
