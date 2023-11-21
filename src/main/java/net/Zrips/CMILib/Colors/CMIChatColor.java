@@ -594,8 +594,6 @@ public class CMIChatColor {
 //		t = t.replace(fullMatch, subEndTest.toString());
 //
 //	    }
-//	    if (!endTest.toString().isEmpty())
-//		CMIDebug.d("endString: " + endTest);
 //	}
 
 //	if (text.contains(colorCodePrefix)) {
@@ -612,7 +610,6 @@ public class CMIChatColor {
 //		    endTest.append(t.split(escape(g1), 2)[0]);
 //		    String oneC = "";
 //		    if (!prevG9.isEmpty()) {
-//			CMIDebug.d("S----------------------");
 //			oneC = String.valueOf(t.split(escape(g1), 2)[1].charAt(0));
 //			t = t.substring(1);
 //		    }
@@ -685,7 +682,6 @@ public class CMIChatColor {
 //
 //		match = postGradientPattern.matcher(t);
 //
-//		CMIDebug.d("Distance ", g8, g1, g9, (int) (dist * 100) / 100D, prevDist - dist <= 2 ? "OK" : "FAIL");
 //	    }
 //
 //	    if (!prevG9.isEmpty()) {
@@ -693,8 +689,6 @@ public class CMIChatColor {
 //	    }
 //	    endTest.append(prevG9);
 //	    endTest.append(t);
-//	    if (!endTest.toString().isEmpty())
-//		CMIDebug.d("endString: " + endTest);
 //	}
 //
         return text;

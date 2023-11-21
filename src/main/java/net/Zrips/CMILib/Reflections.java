@@ -988,10 +988,7 @@ public class Reflections {
             com.mojang.authlib.GameProfile prof = null;
             if (Version.isCurrentEqualOrHigher(Version.v1_20_R2)) {
                 String decodedString = new String(java.util.Base64.getMimeDecoder().decode(texture));
-                    CMIDebug.d(decodedString);
                 if (decodedString.contains("url\":\"")) {
-                    
-                    CMIDebug.d("set tjosmg");
                     SkullMeta meta = (SkullMeta) item.getItemMeta();
                     meta.setOwnerProfile(getProfile(decodedString.split("url\":\"", 2)[1].split("\"", 2)[0]));
                     item.setItemMeta(meta);
@@ -1511,7 +1508,17 @@ public class Reflections {
             if (teleportPacket == null)
                 teleportPacket = PacketPlayOutEntityTeleport.getConstructor(CEntity);
 
-            sendPlayerPacket(player, teleportPacket.newInstance(centity));
+            
+            Object packet = teleportPacket.newInstance(centity);
+            
+            try {
+                setValue(packet, "e", (byte) ((int) targetLoc.getYaw() * 256.0F / 360.0F));
+                setValue(packet, "f", (byte) ((int) targetLoc.getPitch() * 256.0F / 360.0F));
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+            
+            sendPlayerPacket(player, packet);
         } catch (Throwable e) {
             e.printStackTrace();
         }

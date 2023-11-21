@@ -77,6 +77,22 @@ public enum Version {
         return value;
     }
 
+    public static boolean isPaperBranch() {
+        switch (getPlatform()) {
+        case mohist:
+            break;
+        case purpur:
+        case folia:
+        case paper:
+        case pufferfish:
+            return true;
+        case craftbukkit:
+        case spigot:
+            return false;
+        }
+        return false;
+    }
+
     public String getShortVersion() {
         return shortVersion;
     }
@@ -90,7 +106,7 @@ public enum Version {
     }
 
     public static boolean isPaper() {
-        return getPlatform().equals(MinecraftPlatform.paper) || getPlatform().equals(MinecraftPlatform.folia);
+        return getPlatform().equals(MinecraftPlatform.paper) || getPlatform().equals(MinecraftPlatform.folia) || getPlatform().equals(MinecraftPlatform.purpur);
     }
 
     public static boolean isSpigot() {
@@ -107,12 +123,12 @@ public enum Version {
 
         String[] split = Bukkit.getVersion().split("-");
         final String serverType = split.length > 1 ? split[1] : split[0];
-        
+
         if (serverType.equalsIgnoreCase("Mohist")) {
             platform = MinecraftPlatform.mohist;
             return platform;
         }
-        
+
         if (serverType.equalsIgnoreCase("Purpur")) {
             platform = MinecraftPlatform.purpur;
             return platform;

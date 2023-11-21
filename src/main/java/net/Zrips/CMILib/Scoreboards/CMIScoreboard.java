@@ -15,7 +15,6 @@ import org.bukkit.scoreboard.Objective;
 
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Colors.CMIChatColor;
-import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Version.Version;
 import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
 import net.minecraft.network.chat.IChatBaseComponent;
@@ -169,7 +168,6 @@ public class CMIScoreboard {
                         .newInstance(net.minecraft.server.ScoreboardServer.Action.a, player.getName(), null, 0);
                     setField(PacketPlayOutScoreboardScore, "a", CMIChatColor.translate(lines.get(i)));
                     setField(PacketPlayOutScoreboardScore, "c", 15 - i);
-                    CMIDebug.d("send packet", CMIChatColor.translate(lines.get(i)));
                     sendPacket(player, PacketPlayOutScoreboardScore);
                 }
             } else if (Version.isCurrentEqualOrHigher(Version.v1_19_R1)) {
