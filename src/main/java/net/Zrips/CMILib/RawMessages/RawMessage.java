@@ -12,15 +12,12 @@ import java.util.regex.Pattern;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.jetbrains.annotations.Nullable;
 
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Colors.CMIChatColor;
 import net.Zrips.CMILib.Container.CMICommandSender;
 import net.Zrips.CMILib.Items.CMIItemStack;
 import net.Zrips.CMILib.Locale.LC;
-import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Messages.CMIMessages;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.Shadow.ShadowCommand;
@@ -45,6 +42,10 @@ public class RawMessage {
     String combinedClean = "";
 
     private boolean dontBreakLine = false;
+    
+    public RawMessage RawMessage() {
+        return this;
+    }
 
     public void clear() {
         parts = new ArrayList<String>();
@@ -641,7 +642,7 @@ public class RawMessage {
         return this;
     }
 
-    private String truncate(String value) {
+    private static String truncate(String value) {
         if (value.length() < 5000)
             return value;
         value = value.replace("\"bold\":false,", "");

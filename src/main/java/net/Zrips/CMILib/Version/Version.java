@@ -128,6 +128,11 @@ public enum Version {
             platform = MinecraftPlatform.mohist;
             return platform;
         }
+        
+        if (serverType.equalsIgnoreCase("arclight")) {
+            platform = MinecraftPlatform.archlight;
+            return platform;
+        }
 
         if (serverType.equalsIgnoreCase("Purpur")) {
             platform = MinecraftPlatform.purpur;

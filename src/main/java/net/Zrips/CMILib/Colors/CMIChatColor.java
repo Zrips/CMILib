@@ -166,9 +166,9 @@ public class CMIChatColor {
     private boolean color = true;
     private boolean isReset = false;
     private Pattern pattern = null;
-    private int redChannel;
-    private int greenChannel;
-    private int blueChannel;
+    private int redChannel = -1;
+    private int greenChannel = -1;
+    private int blueChannel = -1;
     private String hexCode = null;
     private String name;
 
@@ -202,6 +202,9 @@ public class CMIChatColor {
                 blueChannel = Integer.parseInt(this.hexCode.substring(4, 6), 16);
             }
         } catch (Throwable e) {
+            this.redChannel = -1;
+            this.greenChannel = -1;
+            this.blueChannel = -1;
             this.hexCode = null;
         }
     }
@@ -228,6 +231,10 @@ public class CMIChatColor {
             return;
         BY_CHAR.put(Character.valueOf(c), this);
         BY_NAME.put(this.getName().toLowerCase().replace("_", ""), this);
+    }
+
+    public boolean isValid() {
+        return this.c != 10 || getHex() != null || this.name != null || this.blueChannel > -1 && this.greenChannel > -1 && this.redChannel > -1;
     }
 
     public static String processGradient(String text) {

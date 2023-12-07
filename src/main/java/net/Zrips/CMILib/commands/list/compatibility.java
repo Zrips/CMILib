@@ -116,6 +116,11 @@ public class compatibility implements Cmd {
         } catch (Throwable e) {
             e.printStackTrace();
         }
+        try {
+            CMI.getInstance().getNMS().updateExpBar(player);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
         BossBarInfo bossbar = new BossBarInfo(player, "Compatibility");
         bossbar.setTitleOfBar("Test");
         bossbar.setPercentage(0.33);

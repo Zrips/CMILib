@@ -16,6 +16,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Colors.CMIChatColor;
 import net.Zrips.CMILib.Items.CMIMaterial;
+import net.Zrips.CMILib.NBT.CMINBT;
 
 public enum CMIEntityType {
 
@@ -436,6 +437,7 @@ public enum CMIEntityType {
         ItemStack item = CMIMaterial.PLAYER_HEAD.newItemStack();
 
         MobHeadInfo customName = headTextures.get(texture);
+        
         if (customName != null && customName.getCustomName() != null) {
             ItemMeta meta = item.getItemMeta();
             meta.setDisplayName(CMIChatColor.translate(customName.getCustomName()));
@@ -445,8 +447,11 @@ public enum CMIEntityType {
             meta.setDisplayName(CMIChatColor.translate("&r" + getTranslatedName()));
             item.setItemMeta(meta);
         }
-
+        
         item = CMILib.getInstance().getReflectionManager().setSkullTexture(item, getTranslatedName(), texture);
+
+//        new CMINBT(item).setString("SkullOwner.Name", getTranslatedName());
+
         cache.put(texture, item);
         return item.clone();
     }

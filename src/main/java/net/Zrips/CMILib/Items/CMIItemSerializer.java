@@ -104,10 +104,10 @@ public class CMIItemSerializer {
             ahead.afterAsyncUpdate(lskull);
     }
 
-    private static void applySkin(CMISkin skin, ItemStack lskull) {
+    private static ItemStack applySkin(CMISkin skin, ItemStack lskull) {
         if (skin == null)
-            return;
-        lskull = CMILib.getInstance().getReflectionManager().setSkullTexture(lskull, skin.getName(), skin.getSkin());
+            return lskull;
+        return CMILib.getInstance().getReflectionManager().setSkullTexture(lskull, skin.getName(), skin.getSkin());
     }
 
     private static CMIItemStack getItem(String name, CMIAsyncHead ahead) {
@@ -219,7 +219,7 @@ public class CMIItemSerializer {
                     }
                 }
                 ItemStack skull = CMIItemStack.getHead(texture);
-                if (ahead != null)
+                if (ahead != null && skull != null)
                     headCache.put(original, skull);
                 cm.setItemStack(skull);
                 break;
@@ -227,96 +227,124 @@ public class CMIItemSerializer {
 
             ItemStack skull = CMIMaterial.PLAYER_HEAD.newItemStack();
             SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
-            if (d.length() == 36) {
-                try {
-                    OfflinePlayer offPlayer = Bukkit.getOfflinePlayer(UUID.fromString(d));
 
-                    if (offPlayer == null || offPlayer.getName() == null) {
+            if (Version.isCurrentEqualOrHigher(Version.v1_20_R1)) {
+                CMIEntityType type = CMIEntityType.getByName(d);
 
+                if (type != null) {
+                    skullMeta = (SkullMeta) type.getHead().getItemMeta();
+                    skull.setItemMeta(skullMeta);
+                    cm.setItemStack(skull);
+                    subdata = null;
+                    break;
+                }
+
+                if (ahead != null)
+                    ahead.setAsyncHead(true);
+
+                CMIScheduler.runTaskAsynchronously(() -> {
+                    CMISkin skin = CMILib.getInstance().getSkinManager().getSkin(d);
+                    ItemStack s = applySkin(skin, skull);
+                    CMINBT nbt = new CMINBT(s);
+                    nbt.setString("SkullOwner.Name", skin.getName());
+                    if (ahead != null)
+                        ahead.afterAsyncUpdate(s);
+                    headCache.put(original, s);
+                });
+
+            } else {
+
+                if (d.length() == 36) {
+                    try {
+                        OfflinePlayer offPlayer = Bukkit.getOfflinePlayer(UUID.fromString(d));
+
+                        if (offPlayer == null || offPlayer.getName() == null) {
+
+                            if (ahead != null) {
+                                ahead.setAsyncHead(true);
+                            }
+
+                            CMIScheduler.runTaskAsynchronously(() -> {
+                                OfflinePlayer offlineP = Bukkit.getOfflinePlayer(d);
+                                if (offlineP != null) {
+                                    ItemStack lskull = skull;
+                                    SkullMeta lskullMeta = (SkullMeta) lskull.getItemMeta();
+                                    lskullMeta.setOwningPlayer(offlineP);
+                                    lskull.setItemMeta(lskullMeta);
+                                    if (Version.isCurrentEqualOrHigher(Version.v1_17_R1)) {
+                                        applySkin(CMILib.getInstance().getSkinManager().getSkin(d), lskull);
+                                    }
+
+                                    set(original, lskull, offlineP.getName(), ahead);
+                                }
+                            });
+
+                        } else {
+                            skullMeta.setOwningPlayer(offPlayer);
+                            skull.setItemMeta(skullMeta);
+                            cm.setItemStack(skull);
+                            if (ahead != null)
+                                headCache.put(original, skull);
+                        }
+                    } catch (Exception e) {
+                    }
+                    break;
+                }
+
+                if (Version.isCurrentEqualOrHigher(Version.v1_16_R3)) {
+                    if ((ahead != null && !ahead.isForce() || ahead == null) && Bukkit.getPlayer(d) != null) {
+                        Player player = Bukkit.getPlayer(d);
+                        skullMeta.setOwningPlayer(player);
+                        skull.setItemMeta(skullMeta);
                         if (ahead != null) {
                             ahead.setAsyncHead(true);
+                            CMIScheduler.runTaskAsynchronously(() -> {
+                                ahead.afterAsyncUpdate(skull);
+                            });
+                            headCache.put(original, skull);
                         }
+                    } else {
+                        CMIEntityType type = CMIEntityType.getByName(d);
 
-                        CMIScheduler.runTaskAsynchronously(() -> {
-                            OfflinePlayer offlineP = Bukkit.getOfflinePlayer(d);
-                            if (offlineP != null) {
+                        if (type != null) {
+                            skullMeta = (SkullMeta) type.getHead().getItemMeta();
+                            skull.setItemMeta(skullMeta);
+                            cm.setItemStack(skull);
+                            subdata = null;
+                        } else {
+                            if (ahead != null) {
+                                ahead.setAsyncHead(true);
+                            }
+                            CMIScheduler.runTaskAsynchronously(() -> {
+                                OfflinePlayer offlineP = Bukkit.getOfflinePlayer(d);
+                                if (offlineP == null)
+                                    return;
                                 ItemStack lskull = skull;
                                 SkullMeta lskullMeta = (SkullMeta) lskull.getItemMeta();
                                 lskullMeta.setOwningPlayer(offlineP);
                                 lskull.setItemMeta(lskullMeta);
+
                                 if (Version.isCurrentEqualOrHigher(Version.v1_17_R1)) {
                                     applySkin(CMILib.getInstance().getSkinManager().getSkin(d), lskull);
                                 }
-
                                 set(original, lskull, offlineP.getName(), ahead);
-                            }
-                        });
-
-                    } else {
-                        skullMeta.setOwningPlayer(offPlayer);
-                        skull.setItemMeta(skullMeta);
-                        cm.setItemStack(skull);
-                        if (ahead != null)
-                            headCache.put(original, skull);
-                    }
-                } catch (Exception e) {
-                }
-                break;
-            }
-
-            if (Version.isCurrentEqualOrHigher(Version.v1_16_R3)) {
-                if ((ahead != null && !ahead.isForce() || ahead == null) && Bukkit.getPlayer(d) != null) {
-                    Player player = Bukkit.getPlayer(d);
-                    skullMeta.setOwningPlayer(player);
-                    skull.setItemMeta(skullMeta);
-                    if (ahead != null) {
-                        ahead.setAsyncHead(true);
-                        CMIScheduler.runTaskAsynchronously(() -> {
-                            ahead.afterAsyncUpdate(skull);
-                        });
-                        headCache.put(original, skull);
-                    }
-                } else {
-                    CMIEntityType type = CMIEntityType.getByName(d);
-
-                    if (type != null) {
-                        skullMeta = (SkullMeta) type.getHead().getItemMeta();
-                        skull.setItemMeta(skullMeta);
-                        cm.setItemStack(skull);
-                        subdata = null;
-                    } else {
-                        if (ahead != null) {
-                            ahead.setAsyncHead(true);
+                            });
                         }
-                        CMIScheduler.runTaskAsynchronously(() -> {
-                            OfflinePlayer offlineP = Bukkit.getOfflinePlayer(d);
-                            if (offlineP == null)
-                                return;
-                            ItemStack lskull = skull;
-                            SkullMeta lskullMeta = (SkullMeta) lskull.getItemMeta();
-                            lskullMeta.setOwningPlayer(offlineP);
-                            lskull.setItemMeta(lskullMeta);
-
-                            if (Version.isCurrentEqualOrHigher(Version.v1_17_R1)) {
-                                applySkin(CMILib.getInstance().getSkinManager().getSkin(d), lskull);
-                            }
-                            set(original, lskull, offlineP.getName(), ahead);
-                        });
                     }
+
+                } else {
+                    skullMeta.setOwner(d);
+                    skull.setItemMeta(skullMeta);
+                    cm.setItemStack(skull);
+                    if (ahead != null)
+                        headCache.put(original, skull);
                 }
 
-            } else {
-                skullMeta.setOwner(d);
-                skull.setItemMeta(skullMeta);
-                cm.setItemStack(skull);
-                if (ahead != null)
-                    headCache.put(original, skull);
-            }
-
-            if (ahead == null || !ahead.isAsyncHead()) {
-                skull.setItemMeta(skullMeta);
-                if (ahead != null)
-                    headCache.put(original, skull);
+                if (ahead == null || !ahead.isAsyncHead()) {
+                    skull.setItemMeta(skullMeta);
+                    if (ahead != null)
+                        headCache.put(original, skull);
+                }
             }
 
             break;
@@ -524,9 +552,6 @@ public class CMIItemSerializer {
                     continue;
 
                 if (applyEnchants(cim, one))
-                    continue;
-
-                if (applyColor(cim, one))
                     continue;
 
                 if (applyColor(cim, one))
@@ -953,7 +978,7 @@ public class CMIItemSerializer {
             cmic = new CMIChatColor("temp", "z".charAt(0), colors[0], colors[1], colors[2]);
         }
 
-        if (cmic == null)
+        if (cmic == null || !cmic.isValid())
             return false;
 
         LeatherArmorMeta meta = (LeatherArmorMeta) cim.getItemStack().getItemMeta();
@@ -1127,7 +1152,7 @@ public class CMIItemSerializer {
                 try {
                     LeatherArmorMeta leatherMeta = (LeatherArmorMeta) meta;
                     Color color = leatherMeta.getColor();
-//                    str.append(";c" + prefix);
+                    str.append(";");
                     str.append(color.getRed() + "," + color.getGreen() + "," + color.getBlue());
 //                    str.append(suffix);
                 } catch (Throwable e) {
@@ -1141,7 +1166,7 @@ public class CMIItemSerializer {
                 org.bukkit.inventory.meta.ArmorMeta ameta = (ArmorMeta) meta;
                 if (ameta.hasTrim()) {
                     org.bukkit.inventory.meta.trim.ArmorTrim trim = ameta.getTrim();
-//                    str.append(";t" + prefix);
+                    str.append(";");
                     str.append(trim.getMaterial().getKey().getKey().toLowerCase() + ":" + trim.getPattern().getKey().getKey().toLowerCase());
 //                    str.append(suffix);
                 }
@@ -1151,7 +1176,7 @@ public class CMIItemSerializer {
         Map<Enchantment, Integer> enchants = item.getEnchantments();
 
         if (enchants != null && !enchants.isEmpty()) {
-//            str.append(";e" + prefix);
+            str.append(";");
             StringBuilder enchantS = new StringBuilder();
             for (Entry<Enchantment, Integer> e : enchants.entrySet()) {
                 if (!enchantS.toString().isEmpty())
