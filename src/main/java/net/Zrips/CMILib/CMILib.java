@@ -16,6 +16,7 @@ import net.Zrips.CMILib.BossBar.BossBarManager;
 import net.Zrips.CMILib.Chat.ChatEditorListener;
 import net.Zrips.CMILib.GUI.GUIListener;
 import net.Zrips.CMILib.GUI.GUIManager;
+import net.Zrips.CMILib.Items.ItemListener;
 import net.Zrips.CMILib.Items.ItemManager;
 import net.Zrips.CMILib.Locale.Language;
 import net.Zrips.CMILib.Logs.CMILogManager;
@@ -316,6 +317,7 @@ public class CMILib extends JavaPlugin {
         pm.registerEvents(new GUIListener(this), this);
         pm.registerEvents(new RawMessageListener(), this);
         pm.registerEvents(new ShadowCommandListener(), this);
+        pm.registerEvents(new ItemListener(), this);
         getCommandManager().fillCommands();
 
         getConfigManager().LoadLang("EN");

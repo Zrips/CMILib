@@ -246,7 +246,9 @@ public class CMIItemSerializer {
                     CMISkin skin = CMILib.getInstance().getSkinManager().getSkin(d);
                     ItemStack s = applySkin(skin, skull);
                     CMINBT nbt = new CMINBT(s);
-                    nbt.setString("SkullOwner.Name", skin.getName());
+                    if (skin != null)
+                        nbt.setString("SkullOwner.Name", skin.getName());
+
                     if (ahead != null)
                         ahead.afterAsyncUpdate(s);
                     headCache.put(original, s);

@@ -47,6 +47,7 @@ import net.Zrips.CMILib.Container.CMIServerProperties;
 import net.Zrips.CMILib.Effects.CMIEffect;
 import net.Zrips.CMILib.Effects.CMIEffectManager.CMIParticleDataType;
 import net.Zrips.CMILib.Items.CMIMaterial;
+import net.Zrips.CMILib.Locale.LC;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.RawMessages.RawMessage;
 import net.Zrips.CMILib.Version.Version;
@@ -973,6 +974,9 @@ public class Reflections {
                 if (decodedString.contains("url\":\"")) {
                     SkullMeta meta = (SkullMeta) item.getItemMeta();
                     meta.setOwnerProfile(getProfile(decodedString.split("url\":\"", 2)[1].split("\"", 2)[0]));
+
+                    if (CMILibConfig.playerNameForItemStack && customProfileName != null && !customProfileName.isEmpty())
+                        meta.setDisplayName(LC.info_playerHeadName.get("[playerName]", customProfileName));
                     item.setItemMeta(meta);
                 }
                 return item;
@@ -998,8 +1002,11 @@ public class Reflections {
                 } catch (IllegalArgumentException | IllegalAccessException e) {
                     e.printStackTrace();
                 }
-                item.setItemMeta(headMeta);
             }
+
+            if (CMILibConfig.playerNameForItemStack && customProfileName != null && !customProfileName.isEmpty())
+                headMeta.setDisplayName(LC.info_playerHeadName.get("[playerName]", customProfileName));
+            item.setItemMeta(headMeta);
 
             try {
                 byte[] decodedBytes = java.util.Base64.getMimeDecoder().decode(texture);
@@ -1985,14 +1992,12 @@ public class Reflections {
                 if (LootPredicateManager == null)
                     return;
 
-//                Constructor<net.minecraft.advancements.critereon.LootDeserializationContext> constructor = net.minecraft.advancements.critereon.LootDeserializationContext.class.getConstructor(
-//                    net.minecraft.resources.MinecraftKey.class, LootPredicateManager.getClass());
-//
-//                net.minecraft.advancements.critereon.LootDeserializationContext LDC = constructor.newInstance(minecraftkey, LootPredicateManager);
+                Constructor<?> constructor = LootDeserializationContext.getConstructor(net.minecraft.resources.MinecraftKey.class, LootPredicateManager.getClass());
+                Object LDC = constructor.newInstance(minecraftkey, LootPredicateManager);
 
-                Constructor<?> consts = LootDeserializationContext.getConstructor(net.minecraft.resources.MinecraftKey.class,
-                    net.minecraft.world.level.storage.loot.LootDataManager.class);
-                Object LDC = consts.newInstance(minecraftkey, LootPredicateManager);
+//                Constructor<?> consts = LootDeserializationContext.getConstructor(net.minecraft.resources.MinecraftKey.class,
+//                    net.minecraft.world.level.storage.loot.LootDataManager.class);
+//                Object LDC = consts.newInstance(minecraftkey, LootPredicateManager);
 
 //                net.minecraft.advancements.critereon.LootDeserializationContext LDC = new net.minecraft.advancements.critereon.LootDeserializationContext(
 //                    (net.minecraft.resources.MinecraftKey) minecraftkey, (net.minecraft.world.level.storage.loot.LootPredicateManager) LootPredicateManager);
@@ -2039,8 +2044,7 @@ public class Reflections {
 //                    net.minecraft.resources.MinecraftKey.class, LootPredicateManager.getClass());
 //                net.minecraft.advancements.critereon.LootDeserializationContext LDC = constructor.newInstance(minecraftkey, LootPredicateManager);
 
-                Constructor<?> consts = LootDeserializationContext.getConstructor(net.minecraft.resources.MinecraftKey.class,
-                    net.minecraft.world.level.storage.loot.LootDataManager.class);
+                Constructor<?> consts = LootDeserializationContext.getConstructor(net.minecraft.resources.MinecraftKey.class, net.minecraft.world.level.storage.loot.LootDataManager.class);
                 Object LDC = consts.newInstance(minecraftkey, LootPredicateManager);
 
                 net.minecraft.advancements.Advancement.SerializedAdvancement nms = (net.minecraft.advancements.Advancement.SerializedAdvancement) meth.invoke(SerializedAdvancement, jsonobject, LDC);
