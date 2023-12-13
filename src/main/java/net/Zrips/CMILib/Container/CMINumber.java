@@ -65,4 +65,8 @@ public class CMINumber {
     public static long clamp(long number, long min, long max) {
         return number < min ? min : number > max ? max : number;
     }
+
+    public static boolean fractional(double number) {
+        return number != Math.floor(number);
+    }
 }

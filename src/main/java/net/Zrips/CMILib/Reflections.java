@@ -975,7 +975,7 @@ public class Reflections {
                     SkullMeta meta = (SkullMeta) item.getItemMeta();
                     meta.setOwnerProfile(getProfile(decodedString.split("url\":\"", 2)[1].split("\"", 2)[0]));
 
-                    if (CMILibConfig.playerNameForItemStack && customProfileName != null && !customProfileName.isEmpty() && !customProfileName.contains(" "))
+                    if (CMILibConfig.playerNameForItemStack && customProfileName != null && !customProfileName.isEmpty() && !customProfileName.contains(" ") && !customProfileName.contains("-"))
                         meta.setDisplayName(LC.info_playerHeadName.get("[playerName]", customProfileName));
                     item.setItemMeta(meta);
                 }
@@ -1004,7 +1004,7 @@ public class Reflections {
                 }
             }
 
-            if (CMILibConfig.playerNameForItemStack && customProfileName != null && !customProfileName.isEmpty() && !customProfileName.contains(" "))
+            if (CMILibConfig.playerNameForItemStack && customProfileName != null && !customProfileName.isEmpty() && !customProfileName.contains(" ") && !customProfileName.contains("-"))
                 headMeta.setDisplayName(LC.info_playerHeadName.get("[playerName]", customProfileName));
             item.setItemMeta(headMeta);
 
@@ -1943,7 +1943,7 @@ public class Reflections {
                 Object jsonobject = ChatDeserializer.getMethod("m", JsonElement.class, String.class).invoke(ChatDeserializer, jsonelement, "advancement");
                 Method meth = SerializedAdvancement.getMethod("a", jsonobject.getClass(), LootDeserializationContext);
 
-                Object LootPredicateManager = net.minecraft.server.MinecraftServer.getServer().aH();
+                Object LootPredicateManager = net.minecraft.server.MinecraftServer.getServer().getClass().getMethod("aH").invoke(net.minecraft.server.MinecraftServer.getServer());
 
                 Constructor<?> consts = LootDeserializationContext.getConstructor(net.minecraft.resources.MinecraftKey.class,
                     net.minecraft.world.level.storage.loot.LootDataManager.class);

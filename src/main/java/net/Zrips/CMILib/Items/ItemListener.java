@@ -38,7 +38,7 @@ public class ItemListener implements Listener {
 
         if (playerName != null) {
             ItemMeta meta = item.getItemMeta();
-            if (CMILibConfig.playerNameForItemStack && !playerName.contains(" "))
+            if (CMILibConfig.playerNameForItemStack && !playerName.contains(" ") && !playerName.contains("-"))
                 meta.setDisplayName(LC.info_playerHeadName.get("[playerName]", playerName));
 
             item.setItemMeta(meta);
