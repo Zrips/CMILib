@@ -163,7 +163,7 @@ public class CMILibConfig {
         cfg.addComment("RMCCommands.ConsoleLog", "When enabled we will (where possible) include which command was performed when using rmc commands");
         rmcConsoleLog = cfg.get("RMCCommands.ConsoleLog", true);
 
-        cfg.addComment("Heads.PlayerName", "When processing head item stack we will apply owners name instead of letting game client to use its own","This will change 'Zrips's head' to 'Zrips'");
+        cfg.addComment("Heads.PlayerName", "When processing head item stack we will apply owners name instead of letting game client to use its own","This will change 'Zrips's head' to 'Head of Zrips'");
         playerNameForItemStack = cfg.get("Heads.PlayerName", true);
 
         cfg.addComment("Images.Filler", "Symbol to be used to create image fields", "Color codes are NOT supported here",

@@ -38,15 +38,16 @@ public class ItemListener implements Listener {
 
         if (playerName != null) {
             ItemMeta meta = item.getItemMeta();
-            if (CMILibConfig.playerNameForItemStack)
+            if (CMILibConfig.playerNameForItemStack && !playerName.contains(" "))
                 meta.setDisplayName(LC.info_playerHeadName.get("[playerName]", playerName));
+
             item.setItemMeta(meta);
         } else {
             List<String> textures = nbt.getList("SkullOwner.Properties.textures");
             if (textures != null) {
                 String texture = textures.get(0).split("Value:\"", 2)[1].split("\"", 2)[0];
                 CMIEntityType entityType = CMIEntityType.getByTexture(texture);
-                if (entityType != null) {                    
+                if (entityType != null) {
                     MobHeadInfo headinfo = entityType.getHeadInfo(texture);
                     if (headinfo != null && headinfo.getCustomName() != null) {
                         ItemMeta meta = item.getItemMeta();
