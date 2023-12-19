@@ -15,6 +15,7 @@ import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Items.CMIMaterial;
@@ -471,15 +472,26 @@ public class GUIManager {
 
         Player player = gui.getPlayer();
 
-        if (player.getOpenInventory() == null ||
-            player.getOpenInventory().getTopInventory() == null ||
-            !player.getOpenInventory().getTopInventory().getType().equals(gui.getInv().getType()) ||
-            player.getOpenInventory().getTopInventory().getSize() != gui.getInv().getSize() ||
-            Version.isCurrentEqualOrHigher(Version.v1_9_R1) && player.getOpenInventory().getTopInventory().getLocation() != null) {
-            return false;
-        }
+        InventoryView openInv = player.getOpenInventory();
 
-        return true;
+        if (openInv == null)
+            return false;
+
+        Inventory topInv = openInv.getTopInventory();
+
+        if (topInv == null)
+            return false;
+
+        if (!openInv.getTopInventory().getType().equals(gui.getInv().getType()))
+            return false;
+
+        if (player.getOpenInventory().getTopInventory().getSize() != gui.getInv().getSize())
+            return false;
+
+        if (Version.isCurrentEqualOrHigher(Version.v1_9_R1) && player.getOpenInventory().getTopInventory().getLocation() != null)
+            return false;
+
+        return player.getOpenInventory().getTopInventory().getHolder() == null;
     }
 
     public void updateContent(CMIGui gui) {
