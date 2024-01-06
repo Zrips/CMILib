@@ -9,7 +9,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.Zrips.CMI.Modules.Advancements.AdvancementManager;
 import com.Zrips.CMI.Modules.Advancements.AdvancementManager.FrameType;
 
 import net.Zrips.CMILib.CMILib;
@@ -21,7 +20,6 @@ import net.Zrips.CMILib.Colors.CMIChatColor;
 import net.Zrips.CMILib.Container.CMICommandSender;
 import net.Zrips.CMILib.Items.CMIMaterial;
 import net.Zrips.CMILib.Locale.Snd;
-import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.RawMessages.RawMessage;
 import net.Zrips.CMILib.TitleMessages.CMITitleMessage;
 import net.Zrips.CMILib.Version.Version;
@@ -190,21 +188,13 @@ public class CMIMultiMessage {
                 break;
             }
             break;
-        case customText:
-            if (CMILib.getInstance().isCmiPresent()) {
-                String text = (String) getExtra().get(0);
-                text = text.replaceAll(".*\\<CC>|\\</CC>.*", "");
-                text = text.replaceAll(".*\\<CCI>|\\</CCI>.*", "");
-
-                com.Zrips.CMI.Modules.CustomText.CText cText = com.Zrips.CMI.CMI.getInstance().getCTextManager().getCText((String) getExtra().get(0));
-                if (cText == null)
-                    sender.sendMessage(message);
-                else
-                    com.Zrips.CMI.CMI.getInstance().getCTextManager().showCText(sender, cText, 1);
-            }
-            break;
         case json:
-            RawMessage rm = RawMessage.translateRawMessage(sender, message);
+            RawMessage rmc = RawMessage.translateRawMessage(sender, message);
+
+            // Clearing from any command
+            RawMessage rm = new RawMessage();
+            rm.addText(rmc.getTextOnly());
+
             CMIScheduler.get().runTask(() -> rm.show(sender));
             break;
         case timedActionBar:
