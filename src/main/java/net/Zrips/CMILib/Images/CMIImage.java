@@ -392,9 +392,9 @@ public class CMIImage {
                         text = "<T> </T>" + text;
                     }
 
-                    rm.addRM(RawMessage.translateTextOnlyRawMessage(sender, "<T>" + sa[i] + "</T>" + text));
+                    rm.addRM(RawMessage.translateTextOnlyRawMessage("<T>" + sa[i] + "</T>" + text));
                 } else {
-                    rm.addRM(RawMessage.translateTextOnlyRawMessage(sender, "<T>" + sa[i] + imageText.get(i)));
+                    rm.addRM(RawMessage.translateTextOnlyRawMessage("<T>" + sa[i] + imageText.get(i)));
                 }
             } else {
                 if (i > 0)
@@ -443,7 +443,7 @@ public class CMIImage {
             if (image == null) {
                 if (!one.startsWith(imageIndicator)) {
 
-                    rm.addRM(RawMessage.translateTextOnlyRawMessage(sender, !one.contains("<T>") ? "<T>" + one + "</T>" : one));
+                    rm.addRM(RawMessage.translateTextOnlyRawMessage(!one.contains("<T>") ? "<T>" + one + "</T>" : one));
                     testLs.remove(i);
                     i--;
                     continue;

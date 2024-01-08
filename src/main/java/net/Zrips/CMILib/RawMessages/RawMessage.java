@@ -766,15 +766,7 @@ public class RawMessage {
         return translateRawMessage(sender, textLine, false);
     }
 
-    public static RawMessage translateTextOnlyRawMessage(CommandSender sender, String textLine) {
-        return translateRawMessage(sender, textLine, false);
-    }
-
-    public static RawMessage translateRawMessage(CommandSender sender, String textLine, boolean book) {
-        return translateRawMessage(sender, textLine, book, false);
-    }
-
-    public static RawMessage translateRawMessage(CommandSender sender, String textLine, boolean book, boolean textOnly) {
+    public static RawMessage translateTextOnlyRawMessage(String textLine) {
 
         RawMessage rm = new RawMessage();
 
@@ -800,41 +792,81 @@ public class RawMessage {
         }
 
         for (String message : split) {
-            if (message.contains("<T>")) {
-                String text = message.replaceAll(".*\\<T>|\\</T>.*", "");
+            processText(rm, message);
+            processHover(rm, message);
+        }
 
-                Matcher match = patern.matcher(text);
-                if (match.find()) {
-                    String url = match.group();
+        return rm;
+    }
 
-                    String[] sp = text.split(url);
-                    if (sp.length > 0) {
-                        if (sp[0].endsWith("&")) {
-                            rm.addText(CMIChatColor.translate(sp[0]) + url.substring(0, 1));
-                            url = url.substring(1);
-                        } else {
-                            String t = CMIChatColor.translate(sp[0]);
-                            if (!t.equals(url))
-                                rm.addText(t);
-                        }
-                    }
+    private static void processText(RawMessage rm, String message) {
+        if (!message.contains("<T>"))
+            return;
 
-                    rm.addText(url);
-                    rm.addUrl(url);
-                    if (sp.length > 1) {
-                        rm.addText(sp[1]);
-                    }
+        String text = message.replaceAll(".*\\<T>|\\</T>.*", "");
+
+        Matcher match = patern.matcher(text);
+        if (match.find()) {
+            String url = match.group();
+
+            String[] sp = text.split(url);
+            if (sp.length > 0) {
+                if (sp[0].endsWith("&")) {
+                    rm.addText(CMIChatColor.translate(sp[0]) + url.substring(0, 1));
+                    url = url.substring(1);
                 } else {
-                    rm.addText(text);
+                    String t = CMIChatColor.translate(sp[0]);
+                    if (!t.equals(url))
+                        rm.addText(t);
                 }
             }
-            
-            if (textOnly)
-                continue;
 
-            if (message.contains("<H>")) {
-                rm.addHover(message.replaceAll(".*\\<H>|\\</H>.*", ""));
+            rm.addText(url);
+            rm.addUrl(url);
+            if (sp.length > 1) {
+                rm.addText(sp[1]);
             }
+        } else {
+            rm.addText(text);
+        }
+    }
+
+    private static void processHover(RawMessage rm, String message) {
+        if (!message.contains("<H>"))
+            return;
+
+        rm.addHover(message.replaceAll(".*\\<H>|\\</H>.*", ""));
+    }
+
+    public static RawMessage translateRawMessage(CommandSender sender, String textLine, boolean book) {
+
+        RawMessage rm = new RawMessage();
+
+        textLine = textLine.replace("\n", "\\n");
+
+        List<String> split = new ArrayList<String>();
+        if (textLine.contains("<Next>"))
+            split.addAll(Arrays.asList(textLine.split("<Next>")));
+        else
+            split.add(textLine);
+
+        ArrayList<String> temp = new ArrayList<String>(split);
+        split.clear();
+        for (String one : temp) {
+            if (one.split("<T>").length > 2) {
+                for (String spone : one.split("<T>")) {
+                    if (spone == null || spone.isEmpty())
+                        continue;
+                    split.add("<T>" + spone);
+                }
+            } else
+                split.add(one);
+        }
+
+        for (String message : split) {
+
+            processText(rm, message);
+            processHover(rm, message);
 
             if (message.contains("<ITEM>")) {
                 String st = message.replaceAll(".*\\<ITEM>|\\</ITEM>.*", "");

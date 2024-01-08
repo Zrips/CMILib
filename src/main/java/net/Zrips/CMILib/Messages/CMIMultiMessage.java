@@ -189,11 +189,8 @@ public class CMIMultiMessage {
             }
             break;
         case json:
-            RawMessage rmc = RawMessage.translateTextOnlyRawMessage(sender, message);
-
             // Clearing from any command
-            RawMessage rm = new RawMessage();
-            rm.addText(rmc.getTextOnly());
+            RawMessage rm = RawMessage.translateTextOnlyRawMessage(message);
 
             CMIScheduler.get().runTask(() -> rm.show(sender));
             break;
