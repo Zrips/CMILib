@@ -381,26 +381,20 @@ public class CMIImage {
 
         RawMessage rm = new RawMessage();
         String[] sa = imageToSingleArray(baseFolder, image, 8, 0);
-//	boolean firstJson = true;
-        for (int i = 0; i < sa.length; i++) {
 
+        for (int i = 0; i < sa.length; i++) {
             if (imageText.size() > i) {
                 String textLine = imageText.get(i);
                 if (textLine.contains("<T>")) {
-//		    if (firstJson) {
-//			rm.addText(" ");
-//			firstJson = false;
-//		    }
-
                     String text = imageText.get(i);
                     if (text.startsWith(" ")) {
                         text = text.substring(1);
                         text = "<T> </T>" + text;
                     }
 
-                    rm.addRM(RawMessage.translateRawMessage(sender, "<T>" + sa[i] + "</T>" + text));
+                    rm.addRM(RawMessage.translateTextOnlyRawMessage(sender, "<T>" + sa[i] + "</T>" + text));
                 } else {
-                    rm.addRM(RawMessage.translateRawMessage(sender, "<T>" + sa[i] + imageText.get(i)));
+                    rm.addRM(RawMessage.translateTextOnlyRawMessage(sender, "<T>" + sa[i] + imageText.get(i)));
                 }
             } else {
                 if (i > 0)
@@ -449,7 +443,7 @@ public class CMIImage {
             if (image == null) {
                 if (!one.startsWith(imageIndicator)) {
 
-                    rm.addRM(RawMessage.translateRawMessage(sender, !one.contains("<T>") ? "<T>" + one + "</T>" : one));
+                    rm.addRM(RawMessage.translateTextOnlyRawMessage(sender, !one.contains("<T>") ? "<T>" + one + "</T>" : one));
                     testLs.remove(i);
                     i--;
                     continue;

@@ -38,11 +38,12 @@ public class CMIMessages {
     }
 
     public static void info(String c, Player player, String path, Object... variables) {
-        if (player != null) {
-            String msg = CMILib.getInstance().getLM().getMessage("command." + c + ".info." + path, variables);
-            if (!msg.isEmpty())
-                sendMessage(player, msg, false);
-        }
+        if (player == null)
+            return;
+        
+        String msg = CMILib.getInstance().getLM().getMessage("command." + c + ".info." + path, variables);
+        if (!msg.isEmpty())
+            sendMessage(player, msg, false);
     }
 
     public static String getIM(Class<?> c, String path, Object... variables) {
@@ -102,12 +103,12 @@ public class CMIMessages {
     }
 
     public static void sendMessage(Object sender, String msg, boolean updateSnd, boolean translateColors, boolean translatePlaceholders) {
-        
+
         if (sender == null)
             return;
         if (msg == null || msg.isEmpty())
             return;
-                
+
         msg = CMILib.getInstance().getLM().filterNewLine(msg);
 
         CMIMultiMessage multi = new CMIMultiMessage(msg);
@@ -174,13 +175,13 @@ public class CMIMessages {
         return i;
     }
 
-    public static void consoleMessage(String message) {    
+    public static void consoleMessage(String message) {
         if (message == null || message.isEmpty())
             return;
         Bukkit.getConsoleSender().sendMessage(CMIChatColor.translate(message));
     }
 
-    public static void sendMessage(CommandSender sender, String message) {           
+    public static void sendMessage(CommandSender sender, String message) {
         sendMessage(sender, message, true, true, true);
     }
 

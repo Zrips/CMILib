@@ -189,7 +189,7 @@ public class CMIMultiMessage {
             }
             break;
         case json:
-            RawMessage rmc = RawMessage.translateRawMessage(sender, message);
+            RawMessage rmc = RawMessage.translateTextOnlyRawMessage(sender, message);
 
             // Clearing from any command
             RawMessage rm = new RawMessage();

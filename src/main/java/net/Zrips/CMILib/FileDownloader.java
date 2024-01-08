@@ -25,6 +25,7 @@ public class FileDownloader {
      */
     @NotNull
     static final List<String> VALID_TYPES = new ArrayList<>(Arrays.asList("yml", "txt", "jar"));
+    static final List<String> VALID_SOURCES = new ArrayList<>(Arrays.asList("https://raw.githubusercontent.com/Zrips/CMILib/master/Translations/", "https://www.zrips.net/CMILib/"));
 
     /**
      * Downloads a file from the internet using a {@link BufferedInputStream}.
@@ -36,6 +37,13 @@ public class FileDownloader {
     public void downloadUsingStream(@NotNull final String urlString, @NotNull final String fileName, final boolean inform) {
         try {
             if (!VALID_TYPES.contains(fileName.split("\\.")[fileName.split("\\.").length - 1].toLowerCase()))
+                return;
+        } catch (final Exception e) {
+            return;
+        }
+
+        try {
+            if (VALID_SOURCES.stream().noneMatch(urlString::startsWith))
                 return;
         } catch (final Exception e) {
             return;

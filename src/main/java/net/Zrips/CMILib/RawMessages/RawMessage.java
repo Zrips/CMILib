@@ -42,7 +42,7 @@ public class RawMessage {
     String combinedClean = "";
 
     private boolean dontBreakLine = false;
-    
+
     public RawMessage RawMessage() {
         return this;
     }
@@ -70,7 +70,6 @@ public class RawMessage {
 
         RawMessageFragment f = hover ? hoverFragment : fragment;
 
-//	String lastText = "";
         while (match.find()) {
             matcher = match.group();
 
@@ -82,13 +81,6 @@ public class RawMessage {
 
             if (split[0] != null && !split[0].isEmpty()) {
                 String t = split[0];
-
-                // Disabled do to issue with missing spaces for text like "test &2 test"
-//		String t2 = lastText;
-//		lastText = t;
-//		if (t2.endsWith(" ") && t.startsWith(" ")) {
-//		    t = t.substring(1);
-//		}
 
                 f.setText(t);
                 fragments.add(f);
@@ -112,9 +104,6 @@ public class RawMessage {
         }
 
         if (!text.isEmpty()) {
-
-//	    if (lastText.endsWith(" ") && text.startsWith(" "))
-//		text = text.substring(1);
 
             RawMessageFragment t = new RawMessageFragment(f);
 
@@ -311,11 +300,8 @@ public class RawMessage {
         if (temp.containsKey(RawMessagePartType.Text))
             build();
 
-//	if (this.isDontBreakLine()) {
         onlyText.add(CMIChatColor.translate(text));
 
-//	text = escape(text, this.isDontBreakLine());
-//	}
         text = textIntoJson(text, false);
 
         String f = "";
@@ -325,8 +311,7 @@ public class RawMessage {
             f = "\"text\":\" \"";
         else
             f = "\"text\":\"\",\"extra\":[" + CMIChatColor.translate(text).replace(CMIChatColor.colorHexReplacerPlaceholder, CMIChatColor.colorCodePrefix).replace(CMIChatColor.colorReplacerPlaceholder,
-                "&")
-                + "]";
+                "&") + "]";
         temp.put(RawMessagePartType.Text, f);
         return this;
     }
@@ -353,7 +338,7 @@ public class RawMessage {
             return this;
 
         hover = textIntoJson(hover, true);
-//	hover = escape(hover, false);
+
         String f = "";
         if (hover.isEmpty())
             f = "\"text\":\"\"";
@@ -781,7 +766,15 @@ public class RawMessage {
         return translateRawMessage(sender, textLine, false);
     }
 
+    public static RawMessage translateTextOnlyRawMessage(CommandSender sender, String textLine) {
+        return translateRawMessage(sender, textLine, false);
+    }
+
     public static RawMessage translateRawMessage(CommandSender sender, String textLine, boolean book) {
+        return translateRawMessage(sender, textLine, book, false);
+    }
+
+    public static RawMessage translateRawMessage(CommandSender sender, String textLine, boolean book, boolean textOnly) {
 
         RawMessage rm = new RawMessage();
 
@@ -835,6 +828,9 @@ public class RawMessage {
                     rm.addText(text);
                 }
             }
+            
+            if (textOnly)
+                continue;
 
             if (message.contains("<H>")) {
                 rm.addHover(message.replaceAll(".*\\<H>|\\</H>.*", ""));
@@ -879,7 +875,7 @@ public class RawMessage {
                     Player player = (Player) sender;
                     consoleCommand = message.replaceAll(".*\\<CCI>|\\</CCI>.*", "");
                     String id = ShadowCommand.addShadowCmd(player, consoleCommand, true, ShadowCommandType.Console);
-//		command = "cmi shadowcmd " + id;
+
                     command = CommandsHandler.getLabel() + " shadowcmd " + id + " (" + consoleCommand + ")";
                     if (book)
                         command = consoleCommand;
