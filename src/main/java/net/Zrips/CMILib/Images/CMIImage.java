@@ -442,8 +442,7 @@ public class CMIImage {
             String one = testLs.get(i);
             if (image == null) {
                 if (!one.startsWith(imageIndicator)) {
-
-                    rm.addRM(RawMessage.translateTextOnlyRawMessage(!one.contains("<T>") ? "<T>" + one + "</T>" : one));
+                    rm.addRM(RawMessage.translateRawMessage(sender, !one.contains("<T>") ? "<T>" + one + "</T>" : one));
                     testLs.remove(i);
                     i--;
                     continue;
