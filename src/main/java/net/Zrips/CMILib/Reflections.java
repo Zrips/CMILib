@@ -2040,12 +2040,11 @@ public class Reflections {
                 Method meth = SerializedAdvancement.getMethod("a", jsonobject.getClass(), LootDeserializationContext);
                 Object LootPredicateManager = net.minecraft.server.MinecraftServer.getServer().getClass().getMethod("getLootPredicateManager").invoke(net.minecraft.server.MinecraftServer.getServer());
 
-//                Constructor<net.minecraft.advancements.critereon.LootDeserializationContext> constructor = net.minecraft.advancements.critereon.LootDeserializationContext.class.getConstructor(
-//                    net.minecraft.resources.MinecraftKey.class, LootPredicateManager.getClass());
-//                net.minecraft.advancements.critereon.LootDeserializationContext LDC = constructor.newInstance(minecraftkey, LootPredicateManager);
+                Constructor<?> constructor = LootDeserializationContext.getConstructor(net.minecraft.resources.MinecraftKey.class, LootPredicateManager.getClass());
+                Object LDC = constructor.newInstance(minecraftkey, LootPredicateManager);
 
-                Constructor<?> consts = LootDeserializationContext.getConstructor(net.minecraft.resources.MinecraftKey.class, net.minecraft.world.level.storage.loot.LootDataManager.class);
-                Object LDC = consts.newInstance(minecraftkey, LootPredicateManager);
+//                Constructor<?> consts = LootDeserializationContext.getConstructor(net.minecraft.resources.MinecraftKey.class, net.minecraft.world.level.storage.loot.LootDataManager.class);
+//                Object LDC = consts.newInstance(minecraftkey, LootPredicateManager);
 
                 net.minecraft.advancements.Advancement.SerializedAdvancement nms = (net.minecraft.advancements.Advancement.SerializedAdvancement) meth.invoke(SerializedAdvancement, jsonobject, LDC);
                 Object data = net.minecraft.server.MinecraftServer.getServer().getClass().getMethod("getAdvancementData").invoke(net.minecraft.server.MinecraftServer.getServer());
