@@ -391,10 +391,9 @@ public class CMIImage {
                         text = text.substring(1);
                         text = "<T> </T>" + text;
                     }
-
-                    rm.addRM(RawMessage.translateTextOnlyRawMessage("<T>" + sa[i] + "</T>" + text));
+                    rm.addRM(RawMessage.translateRawMessage(sender, "<T>" + sa[i] + "</T>" + text));
                 } else {
-                    rm.addRM(RawMessage.translateTextOnlyRawMessage("<T>" + sa[i] + imageText.get(i)));
+                    rm.addRM(RawMessage.translateRawMessage(sender, "<T>" + sa[i] + imageText.get(i)));
                 }
             } else {
                 if (i > 0)

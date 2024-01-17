@@ -18,6 +18,7 @@ import net.Zrips.CMILib.Colors.CMIChatColor;
 import net.Zrips.CMILib.Container.CMICommandSender;
 import net.Zrips.CMILib.Items.CMIItemStack;
 import net.Zrips.CMILib.Locale.LC;
+import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Messages.CMIMessages;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.Shadow.ShadowCommand;
@@ -433,7 +434,7 @@ public class RawMessage {
             e.printStackTrace();
         }
 
-        String f = "\"hoverEvent\":{\"action\":\"show_item\",\"value\":\"" + escape(res, true) + "\"}";
+        String f = "\"hoverEvent\":{\"action\":\"show_item\",\"value\":\"" + escape(res, false) + "\"}";
 
         temp.put(RawMessagePartType.HoverItem, f);
         return this;
@@ -483,17 +484,20 @@ public class RawMessage {
         if (s == null)
             return null;
         StringBuffer sb = new StringBuffer();
+        if (escapeNewLn) {
+            s = s.replace("\\n", nl);
+            s = s.replace("\n", nl);
+        }
         escape(s, sb);
         if (escapeNewLn)
             return sb.toString().replace(nl, "\\\\n");
+        
         return sb.toString().replace(nl, "\\n");
     }
 
     private static final String nl = "\u00A5n";
 
     private static void escape(String s, StringBuffer sb) {
-        s = s.replace("\n", nl);
-        s = s.replace("\\n", nl);
         for (int i = 0; i < s.length(); i++) {
             char ch = s.charAt(i);
 
