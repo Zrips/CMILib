@@ -48,8 +48,10 @@ import net.Zrips.CMILib.Effects.CMIEffect;
 import net.Zrips.CMILib.Effects.CMIEffectManager.CMIParticleDataType;
 import net.Zrips.CMILib.Items.CMIMaterial;
 import net.Zrips.CMILib.Locale.LC;
+import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.RawMessages.RawMessage;
+import net.Zrips.CMILib.Version.MinecraftPlatform;
 import net.Zrips.CMILib.Version.Version;
 import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
 
@@ -69,7 +71,7 @@ public class Reflections {
 //    private Class<?> MojangsonParser;
 //    private Class<?> PlayerList;
 
-//    private Class<?> EntityHuman;
+    private Class<?> EntityHuman;
 //    private Class<?> EntityPlayer;
 //    private Class<?> EnumGameMode;
     private Class<?> CraftPlayer;
@@ -155,6 +157,8 @@ public class Reflections {
                 CraftBeehive = getBukkitClass("block.impl.CraftBeehive");
                 CraftNamespacedKey = getBukkitClass("util.CraftNamespacedKey");
                 PacketPlayOutEntityTeleport = net.minecraft.network.protocol.game.PacketPlayOutEntityTeleport.class;
+
+                EntityHuman = net.minecraft.world.entity.player.EntityHuman.class;
 
                 if (Version.isCurrentEqualOrLower(Version.v1_18_R2)) {
                     PacketPlayOutSpawnEntityLiving = Class.forName("net.minecraft.network.protocol.game.PacketPlayOutSpawnEntityLiving");
@@ -1321,7 +1325,12 @@ public class Reflections {
                 activeContainer = "bV";
             }
 
-            Object container = CraftContainer.cast(entityplayer.getClass().getField(activeContainer).get(entityplayer));
+            Object container = null;
+            if (Version.isCurrentEqualOrHigher(Version.v1_17_R1)) {
+                container = CraftContainer.cast(EntityHuman.getField(activeContainer).get(entityplayer));
+            } else {
+                container = CraftContainer.cast(entityplayer.getClass().getField(activeContainer).get(entityplayer));
+            }
             return (int) container.getClass().getField(windowId).get(container);
         } catch (Throwable e) {
             if (Version.isCurrentEqualOrHigher(Version.v1_17_R1))
@@ -1419,18 +1428,6 @@ public class Reflections {
 
                     // Need to update inventory to actually update existing items
                     p.updateInventory();
-
-                    // Deprecated, we can use bukkit API as above
-//		    Field field = entityplayer.getClass().getField("bV");
-//		    net.minecraft.world.inventory.Container container = (net.minecraft.world.inventory.Container) this.CraftContainer.cast(field.get(entityplayer));
-//		    net.minecraft.network.protocol.game.PacketPlayOutWindowItems pac = null;
-//		    if (Version.isCurrentEqualOrLower(Version.v1_17_R1) && Version.isCurrentSubEqualOrLower(0)) {
-////			pac = new net.minecraft.network.protocol.game.PacketPlayOutWindowItems(getActiveContainerId(entityplayer), container.c());
-//			p.updateInventory();
-//		    } else {
-//			pac = new net.minecraft.network.protocol.game.PacketPlayOutWindowItems(getActiveContainerId(entityplayer), 0, container.c(), container.c().get(0));
-//		    }
-//		    sendPlayerPacket(p, pac); 
                 } else {
 
                     RawMessage rm = new RawMessage();
@@ -2042,9 +2039,6 @@ public class Reflections {
 
                 Constructor<?> constructor = LootDeserializationContext.getConstructor(net.minecraft.resources.MinecraftKey.class, LootPredicateManager.getClass());
                 Object LDC = constructor.newInstance(minecraftkey, LootPredicateManager);
-
-//                Constructor<?> consts = LootDeserializationContext.getConstructor(net.minecraft.resources.MinecraftKey.class, net.minecraft.world.level.storage.loot.LootDataManager.class);
-//                Object LDC = consts.newInstance(minecraftkey, LootPredicateManager);
 
                 net.minecraft.advancements.Advancement.SerializedAdvancement nms = (net.minecraft.advancements.Advancement.SerializedAdvancement) meth.invoke(SerializedAdvancement, jsonobject, LDC);
                 Object data = net.minecraft.server.MinecraftServer.getServer().getClass().getMethod("getAdvancementData").invoke(net.minecraft.server.MinecraftServer.getServer());

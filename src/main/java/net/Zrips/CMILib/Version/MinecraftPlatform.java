@@ -1,5 +1,5 @@
 package net.Zrips.CMILib.Version;
 
 public enum MinecraftPlatform {
-    craftbukkit, spigot, paper, pufferfish, folia, purpur, mohist, archlight;
+    craftbukkit, spigot, paper, pufferfish, folia, purpur, mohist, arclight;
 }

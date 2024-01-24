@@ -58,7 +58,7 @@ public enum Version {
 
     static {
         getCurrent();
-        CMIMessages.consoleMessage("&3Server version: " + current.toString() + " - " + current.getFormated() + " - " + getPlatform());
+        CMIMessages.consoleMessage("&3Server version: " + current.toString() + " - " + current.getFormated() + " - " + getPlatform() + "  " + Bukkit.getVersion());
 
         // Enables extra commands for test servers
         if (CMILib.getInstance().getReflectionManager().getServerName().equals("LT_Craft") && Bukkit.getWorlds().get(0).getSeed() == 1782374759)
@@ -121,20 +121,17 @@ public enum Version {
         if (platform != null)
             return platform;
 
-        String[] split = Bukkit.getVersion().split("-");
-        final String serverType = split.length > 1 ? split[1] : split[0];
-
-        if (serverType.equalsIgnoreCase("Mohist")) {
+        if (Bukkit.getVersion().toLowerCase().contains("mohist")) {
             platform = MinecraftPlatform.mohist;
             return platform;
         }
         
-        if (serverType.equalsIgnoreCase("arclight")) {
-            platform = MinecraftPlatform.archlight;
+        if (Bukkit.getVersion().toLowerCase().contains("arclight")) {
+            platform = MinecraftPlatform.arclight;
             return platform;
         }
 
-        if (serverType.equalsIgnoreCase("Purpur")) {
+        if (Bukkit.getVersion().toLowerCase().contains("purpur")) {
             platform = MinecraftPlatform.purpur;
             return platform;
         }

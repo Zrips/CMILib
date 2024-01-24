@@ -781,18 +781,37 @@ public class CMIItemStack {
 
             if (rec instanceof ShapelessRecipe) {
                 ShapelessRecipe srec = (ShapelessRecipe) rec;
-                for (RecipeChoice one : srec.getChoiceList()) {
-                    if (one != null && one.test(i)) {
-                        recipes.add(rec);
-                        break;
+                if (Version.isCurrentEqualOrLower(Version.v1_12_R1)) {
+                    for (ItemStack one : srec.getIngredientList()) {
+                        if (one != null && one.isSimilar(i)) {
+                            recipes.add(rec);
+                            break;
+                        }
+                    }
+
+                } else {
+                    for (RecipeChoice one : srec.getChoiceList()) {
+                        if (one != null && one.test(i)) {
+                            recipes.add(rec);
+                            break;
+                        }
                     }
                 }
             } else if (rec instanceof ShapedRecipe) {
                 ShapedRecipe srec = (ShapedRecipe) rec;
-                for (RecipeChoice one : srec.getChoiceMap().values()) {
-                    if (one != null && one.test(i)) {
-                        recipes.add(rec);
-                        break;
+                if (Version.isCurrentEqualOrLower(Version.v1_12_R1)) {
+                    for (ItemStack one : srec.getIngredientMap().values()) {
+                        if (one != null && one.isSimilar(i)) {
+                            recipes.add(rec);
+                            break;
+                        }
+                    }
+                } else {
+                    for (RecipeChoice one : srec.getChoiceMap().values()) {
+                        if (one != null && one.test(i)) {
+                            recipes.add(rec);
+                            break;
+                        }
                     }
                 }
             }

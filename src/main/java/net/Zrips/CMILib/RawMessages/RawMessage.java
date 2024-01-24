@@ -178,7 +178,7 @@ public class RawMessage {
                 t = oldColors.toString() + t;
             }
 
-            finalText.append("\"text\":\"" + escape(t, hover ? false : this.isDontBreakLine()) + "\"");
+            finalText.append("\"text\":\"" + escape(t, this.isDontBreakLine()) + "\"");
         }
 
         if (finalText.toString().isEmpty())
@@ -479,23 +479,21 @@ public class RawMessage {
         return this;
     }
 
-    private static String escape(String s, boolean escapeNewLn) {
+    private String escape(String s, boolean escapeNewLn) {
 
         if (s == null)
             return null;
         StringBuffer sb = new StringBuffer();
-        if (escapeNewLn) {
-            s = s.replace("\\n", nl);
-            s = s.replace("\n", nl);
-        }
+
+        s = s.replace("\\n", newLine);
+        s = s.replace("\n", newLine);
+
         escape(s, sb);
-        if (escapeNewLn)
-            return sb.toString().replace(nl, "\\\\n");
-        
-        return sb.toString().replace(nl, "\\n");
+
+        return sb.toString().replace(newLine, escapeNewLn ? "\\\\n" : "\\n");
     }
 
-    private static final String nl = "\u00A5n";
+    public static final String newLine = "\u00A5n";
 
     private static void escape(String s, StringBuffer sb) {
         for (int i = 0; i < s.length(); i++) {
@@ -505,9 +503,9 @@ public class RawMessage {
             case '"':
                 sb.append("\\\"");
                 break;
-            case '\n':
-                sb.append("\\n");
-                break;
+//            case '\n':
+//                sb.append("\\n");
+//                break;
             case '\\':
                 sb.append("\\\\");
                 break;
