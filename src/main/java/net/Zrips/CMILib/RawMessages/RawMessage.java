@@ -178,7 +178,7 @@ public class RawMessage {
                 t = oldColors.toString() + t;
             }
 
-            finalText.append("\"text\":\"" + escape(t, this.isDontBreakLine()) + "\"");
+            finalText.append("\"text\":\"" + escape(t, this.isDontBreakLine() && !hover) + "\"");
         }
 
         if (finalText.toString().isEmpty())

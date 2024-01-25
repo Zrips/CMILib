@@ -199,9 +199,7 @@ public class BossBarInfo {
 
         CMIChatColor c = colors.remove(0);
         colors.add(c);
-        
-        CMIDebug.d(c.toString() + "get color", colors.size());
-        
+
         return c.toString();
     }
 
