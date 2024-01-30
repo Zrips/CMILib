@@ -437,7 +437,7 @@ public class CMIRecipe {
 
         if (recipe instanceof ShapelessRecipe) {
             ShapelessRecipe rc = (ShapelessRecipe) recipe;
-
+            
             for (int i = 0; i < rc.getIngredientList().size(); i++) {
 
                 CMIRecipeIngredient CMIri = new CMIRecipeIngredient(rc.getIngredientList().get(i));

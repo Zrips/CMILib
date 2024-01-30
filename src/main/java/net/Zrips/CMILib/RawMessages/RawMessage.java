@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BookMeta;
 
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Colors.CMIChatColor;
@@ -393,6 +394,12 @@ public class RawMessage {
 
         item = item.clone();
 
+        if (item.getItemMeta() instanceof org.bukkit.inventory.meta.BookMeta) {
+            org.bukkit.inventory.meta.BookMeta bmeta = (BookMeta) item.getItemMeta();
+            bmeta.setPages(new ArrayList<String>());
+            item.setItemMeta(bmeta);
+        }
+
         String res = CMINBT.toJson(item);
 
         // Cleaning up useless information. Italic not included due to some weird behavior which defaults to italic look if not specifically set to not be one
@@ -434,7 +441,7 @@ public class RawMessage {
             e.printStackTrace();
         }
 
-        String f = "\"hoverEvent\":{\"action\":\"show_item\",\"value\":\"" + escape(res, false) + "\"}";
+        String f = "\"hoverEvent\":{\"action\":\"show_item\",\"value\":\"" + escape(res, true) + "\"}";
 
         temp.put(RawMessagePartType.HoverItem, f);
         return this;
