@@ -38,6 +38,8 @@ public class CMILib extends JavaPlugin {
     public static final String translationsFolderName = "Translations";
     public static final String itemsFolderName = "Items";
 
+    public static Boolean isFolia;
+
     private static CMILib instance;
 
     private boolean cmiPresent = false;
@@ -249,6 +251,14 @@ public class CMILib extends JavaPlugin {
     public void onEnable() {
 
         instance = this;
+
+        try {
+            Class.forName("io.papermc.paper.threadedregions.RegionizedServerInitEvent");
+            isFolia = true;
+        } catch (ClassNotFoundException e) {
+            isFolia = false;
+        }
+
         this.getItemManager().load();
         this.getConfigManager().load();
         this.getItemManager().loadLocale();
