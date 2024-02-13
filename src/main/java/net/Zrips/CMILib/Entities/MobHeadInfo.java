@@ -3,43 +3,46 @@ package net.Zrips.CMILib.Entities;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.inventory.meta.ItemMeta;
+
+import net.Zrips.CMILib.Locale.LC;
+
 public class MobHeadInfo {
 
     private String customName = null;
 
     private List<CMIEntitySubType> criterias = new ArrayList<CMIEntitySubType>();
-    
+
     private List<String> lore = new ArrayList<String>();
 
     public MobHeadInfo() {
     }
 
     public String getCustomName() {
-	return customName;
+        return customName;
     }
 
     public void setCustomName(String customName) {
-	this.customName = customName;
+        this.customName = customName;
     }
 
     public List<CMIEntitySubType> getCriterias() {
-	return criterias;
+        return criterias;
     }
 
     public void setCriterias(List<CMIEntitySubType> criterias) {
-	this.criterias = criterias;
+        this.criterias = criterias;
     }
 
     public void addCriterias(CMIEntitySubType criteria) {
-	this.criterias.add(criteria);
+        this.criterias.add(criteria);
     }
 
     public List<String> getLore() {
-	return lore;
+        return lore;
     }
 
     public void setLore(List<String> lore) {
-	this.lore = lore;
+        this.lore = lore;
     }
-
 }

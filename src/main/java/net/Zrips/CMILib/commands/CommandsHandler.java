@@ -21,11 +21,13 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import org.bukkit.Bukkit;
+import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.CMILibConfig;
@@ -48,7 +50,6 @@ public class CommandsHandler implements CommandExecutor {
     private static Map<String, CMICommand> commands = new TreeMap<>();
     public static boolean enabledDebug = true;
 
-
     protected CMILib plugin;
 
     public CommandsHandler(CMILib plugin) {
@@ -60,7 +61,7 @@ public class CommandsHandler implements CommandExecutor {
         CMICommand cmd = getCommands().get(command.getSimpleName().toLowerCase());
         if (cmd == null)
             return false;
-        
+
         return performCMICommand(sender, cmd, args);
     }
 
@@ -91,6 +92,11 @@ public class CommandsHandler implements CommandExecutor {
             return false;
 
         CMICommandSender cmiSender = new CMICommandSender(sender);
+
+        if (!(sender instanceof Player) && !(sender instanceof ConsoleCommandSender)) {
+            CMIMessages.consoleMessage("Unknown CMILib command source (" + sender.getName() + ") " + CMIArray.toString(args));
+            return false;
+        }
 
         if (cmiSender.isCommandBlock()) {
             try {

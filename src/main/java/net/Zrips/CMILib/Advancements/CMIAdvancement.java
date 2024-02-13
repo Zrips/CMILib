@@ -29,7 +29,7 @@ public class CMIAdvancement {
     private String parent;
     private String icon;
     private AdvancementBackground background;
-    private String title;
+    private String title = "";
     private String description;
     private int data;
     private int customModelData = 0;

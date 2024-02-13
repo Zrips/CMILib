@@ -166,9 +166,9 @@ public class CMIChatColor {
     private boolean color = true;
     private boolean isReset = false;
     private Pattern pattern = null;
-    private int redChannel;
-    private int greenChannel;
-    private int blueChannel;
+    private int redChannel = -1;
+    private int greenChannel = -1;
+    private int blueChannel = -1;
     private String hexCode = null;
     private String name;
 
@@ -202,6 +202,9 @@ public class CMIChatColor {
                 blueChannel = Integer.parseInt(this.hexCode.substring(4, 6), 16);
             }
         } catch (Throwable e) {
+            this.redChannel = -1;
+            this.greenChannel = -1;
+            this.blueChannel = -1;
             this.hexCode = null;
         }
     }
@@ -228,6 +231,10 @@ public class CMIChatColor {
             return;
         BY_CHAR.put(Character.valueOf(c), this);
         BY_NAME.put(this.getName().toLowerCase().replace("_", ""), this);
+    }
+
+    public boolean isValid() {
+        return this.c != 10 || getHex() != null || this.name != null || this.blueChannel > -1 && this.greenChannel > -1 && this.redChannel > -1;
     }
 
     public static String processGradient(String text) {
@@ -594,8 +601,6 @@ public class CMIChatColor {
 //		t = t.replace(fullMatch, subEndTest.toString());
 //
 //	    }
-//	    if (!endTest.toString().isEmpty())
-//		CMIDebug.d("endString: " + endTest);
 //	}
 
 //	if (text.contains(colorCodePrefix)) {
@@ -612,7 +617,6 @@ public class CMIChatColor {
 //		    endTest.append(t.split(escape(g1), 2)[0]);
 //		    String oneC = "";
 //		    if (!prevG9.isEmpty()) {
-//			CMIDebug.d("S----------------------");
 //			oneC = String.valueOf(t.split(escape(g1), 2)[1].charAt(0));
 //			t = t.substring(1);
 //		    }
@@ -685,7 +689,6 @@ public class CMIChatColor {
 //
 //		match = postGradientPattern.matcher(t);
 //
-//		CMIDebug.d("Distance ", g8, g1, g9, (int) (dist * 100) / 100D, prevDist - dist <= 2 ? "OK" : "FAIL");
 //	    }
 //
 //	    if (!prevG9.isEmpty()) {
@@ -693,8 +696,6 @@ public class CMIChatColor {
 //	    }
 //	    endTest.append(prevG9);
 //	    endTest.append(t);
-//	    if (!endTest.toString().isEmpty())
-//		CMIDebug.d("endString: " + endTest);
 //	}
 //
         return text;

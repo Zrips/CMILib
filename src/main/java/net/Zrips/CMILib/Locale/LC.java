@@ -150,6 +150,8 @@ public enum LC {
     info_pageCountHover("&e[totalEntries] entries"),
 
     info_skullOwner("!actionbar!&7Owner:&r [playerName]"),
+    info_playerHeadName("&eHead of &7[playerName]"),
+    info_mobHeadName("&eHead of &f[mobName]"),
 
     info_circle("&3Circle"),
     info_square("&5Square"),

@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Container.CommandType;
+import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Version.Version;
 import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
 import net.Zrips.CMILib.commands.CMICommand;
@@ -94,7 +95,7 @@ public class BossBarManager {
         barInfo.cancelAutoScheduler();
         barInfo.cancelHideScheduler();
 
-        barInfo.setAutoId(CMIScheduler.get().scheduleSyncRepeatingTask(new Runnable() {
+        barInfo.setAutoId(CMIScheduler.scheduleSyncRepeatingTask(new Runnable() {
             @Override
             public void run() {
 

@@ -437,7 +437,7 @@ public class CMIRecipe {
 
         if (recipe instanceof ShapelessRecipe) {
             ShapelessRecipe rc = (ShapelessRecipe) recipe;
-
+            
             for (int i = 0; i < rc.getIngredientList().size(); i++) {
 
                 CMIRecipeIngredient CMIri = new CMIRecipeIngredient(rc.getIngredientList().get(i));
@@ -642,7 +642,10 @@ public class CMIRecipe {
         Iterator<Recipe> iter = Bukkit.getServer().recipeIterator();
         while (iter.hasNext()) {
             Recipe recipe = iter.next();
-            if (CMINamespacedKey.getKey(recipe).toString().equals(key.toString()))
+
+            CMINamespacedKey subKey = CMINamespacedKey.getKey(recipe);
+
+            if (subKey != null && subKey.toString().equals(key.toString()))
                 return recipe;
         }
         return null;

@@ -12,8 +12,7 @@ import java.util.regex.Pattern;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.jetbrains.annotations.Nullable;
+import org.bukkit.inventory.meta.BookMeta;
 
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Colors.CMIChatColor;
@@ -46,6 +45,10 @@ public class RawMessage {
 
     private boolean dontBreakLine = false;
 
+    public RawMessage RawMessage() {
+        return this;
+    }
+
     public void clear() {
         parts = new ArrayList<String>();
         onlyText = new ArrayList<String>();
@@ -69,7 +72,6 @@ public class RawMessage {
 
         RawMessageFragment f = hover ? hoverFragment : fragment;
 
-//	String lastText = "";
         while (match.find()) {
             matcher = match.group();
 
@@ -81,13 +83,6 @@ public class RawMessage {
 
             if (split[0] != null && !split[0].isEmpty()) {
                 String t = split[0];
-
-                // Disabled do to issue with missing spaces for text like "test &2 test"
-//		String t2 = lastText;
-//		lastText = t;
-//		if (t2.endsWith(" ") && t.startsWith(" ")) {
-//		    t = t.substring(1);
-//		}
 
                 f.setText(t);
                 fragments.add(f);
@@ -111,9 +106,6 @@ public class RawMessage {
         }
 
         if (!text.isEmpty()) {
-
-//	    if (lastText.endsWith(" ") && text.startsWith(" "))
-//		text = text.substring(1);
 
             RawMessageFragment t = new RawMessageFragment(f);
 
@@ -187,7 +179,7 @@ public class RawMessage {
                 t = oldColors.toString() + t;
             }
 
-            finalText.append("\"text\":\"" + escape(t, hover ? false : this.isDontBreakLine()) + "\"");
+            finalText.append("\"text\":\"" + escape(t, this.isDontBreakLine() && !hover) + "\"");
         }
 
         if (finalText.toString().isEmpty())
@@ -310,11 +302,8 @@ public class RawMessage {
         if (temp.containsKey(RawMessagePartType.Text))
             build();
 
-//	if (this.isDontBreakLine()) {
         onlyText.add(CMIChatColor.translate(text));
 
-//	text = escape(text, this.isDontBreakLine());
-//	}
         text = textIntoJson(text, false);
 
         String f = "";
@@ -324,8 +313,7 @@ public class RawMessage {
             f = "\"text\":\" \"";
         else
             f = "\"text\":\"\",\"extra\":[" + CMIChatColor.translate(text).replace(CMIChatColor.colorHexReplacerPlaceholder, CMIChatColor.colorCodePrefix).replace(CMIChatColor.colorReplacerPlaceholder,
-                "&")
-                + "]";
+                "&") + "]";
         temp.put(RawMessagePartType.Text, f);
         return this;
     }
@@ -352,7 +340,7 @@ public class RawMessage {
             return this;
 
         hover = textIntoJson(hover, true);
-//	hover = escape(hover, false);
+
         String f = "";
         if (hover.isEmpty())
             f = "\"text\":\"\"";
@@ -405,6 +393,12 @@ public class RawMessage {
             return this;
 
         item = item.clone();
+
+        if (item.getItemMeta() instanceof org.bukkit.inventory.meta.BookMeta) {
+            org.bukkit.inventory.meta.BookMeta bmeta = (BookMeta) item.getItemMeta();
+            bmeta.setPages(new ArrayList<String>());
+            item.setItemMeta(bmeta);
+        }
 
         String res = CMINBT.toJson(item);
 
@@ -492,22 +486,23 @@ public class RawMessage {
         return this;
     }
 
-    private static String escape(String s, boolean escapeNewLn) {
+    private String escape(String s, boolean escapeNewLn) {
 
         if (s == null)
             return null;
         StringBuffer sb = new StringBuffer();
+
+        s = s.replace("\\n", newLine);
+        s = s.replace("\n", newLine);
+
         escape(s, sb);
-        if (escapeNewLn)
-            return sb.toString().replace(nl, "\\\\n");
-        return sb.toString().replace(nl, "\\n");
+
+        return sb.toString().replace(newLine, escapeNewLn ? "\\\\n" : "\\n");
     }
 
-    private static final String nl = "\u00A5n";
+    public static final String newLine = "\u00A5n";
 
     private static void escape(String s, StringBuffer sb) {
-        s = s.replace("\n", nl);
-        s = s.replace("\\n", nl);
         for (int i = 0; i < s.length(); i++) {
             char ch = s.charAt(i);
 
@@ -515,9 +510,9 @@ public class RawMessage {
             case '"':
                 sb.append("\\\"");
                 break;
-            case '\n':
-                sb.append("\\n");
-                break;
+//            case '\n':
+//                sb.append("\\n");
+//                break;
             case '\\':
                 sb.append("\\\\");
                 break;
@@ -641,7 +636,7 @@ public class RawMessage {
         return this;
     }
 
-    private String truncate(String value) {
+    private static String truncate(String value) {
         if (value.length() < 5000)
             return value;
         value = value.replace("\"bold\":false,", "");
@@ -780,6 +775,78 @@ public class RawMessage {
         return translateRawMessage(sender, textLine, false);
     }
 
+    public static RawMessage translateTextOnlyRawMessage(String textLine) {
+
+        RawMessage rm = new RawMessage();
+
+        textLine = textLine.replace("\n", "\\n");
+
+        List<String> split = new ArrayList<String>();
+        if (textLine.contains("<Next>"))
+            split.addAll(Arrays.asList(textLine.split("<Next>")));
+        else
+            split.add(textLine);
+
+        ArrayList<String> temp = new ArrayList<String>(split);
+        split.clear();
+        for (String one : temp) {
+            if (one.split("<T>").length > 2) {
+                for (String spone : one.split("<T>")) {
+                    if (spone == null || spone.isEmpty())
+                        continue;
+                    split.add("<T>" + spone);
+                }
+            } else
+                split.add(one);
+        }
+
+        for (String message : split) {
+            processText(rm, message);
+            processHover(rm, message);
+        }
+
+        return rm;
+    }
+
+    private static void processText(RawMessage rm, String message) {
+        if (!message.contains("<T>"))
+            return;
+
+        String text = message.replaceAll(".*\\<T>|\\</T>.*", "");
+
+        Matcher match = patern.matcher(text);
+        if (match.find()) {
+            String url = match.group();
+
+            String[] sp = text.split(url);
+            if (sp.length > 0) {
+                if (sp[0].endsWith("&")) {
+                    rm.addText(CMIChatColor.translate(sp[0]) + url.substring(0, 1));
+                    url = url.substring(1);
+                } else {
+                    String t = CMIChatColor.translate(sp[0]);
+                    if (!t.equals(url))
+                        rm.addText(t);
+                }
+            }
+
+            rm.addText(url);
+            rm.addUrl(url);
+            if (sp.length > 1) {
+                rm.addText(sp[1]);
+            }
+        } else {
+            rm.addText(text);
+        }
+    }
+
+    private static void processHover(RawMessage rm, String message) {
+        if (!message.contains("<H>"))
+            return;
+
+        rm.addHover(message.replaceAll(".*\\<H>|\\</H>.*", ""));
+    }
+
     public static RawMessage translateRawMessage(CommandSender sender, String textLine, boolean book) {
 
         RawMessage rm = new RawMessage();
@@ -806,38 +873,9 @@ public class RawMessage {
         }
 
         for (String message : split) {
-            if (message.contains("<T>")) {
-                String text = message.replaceAll(".*\\<T>|\\</T>.*", "");
 
-                Matcher match = patern.matcher(text);
-                if (match.find()) {
-                    String url = match.group();
-
-                    String[] sp = text.split(url);
-                    if (sp.length > 0) {
-                        if (sp[0].endsWith("&")) {
-                            rm.addText(CMIChatColor.translate(sp[0]) + url.substring(0, 1));
-                            url = url.substring(1);
-                        } else {
-                            String t = CMIChatColor.translate(sp[0]);
-                            if (!t.equals(url))
-                                rm.addText(t);
-                        }
-                    }
-
-                    rm.addText(url);
-                    rm.addUrl(url);
-                    if (sp.length > 1) {
-                        rm.addText(sp[1]);
-                    }
-                } else {
-                    rm.addText(text);
-                }
-            }
-
-            if (message.contains("<H>")) {
-                rm.addHover(message.replaceAll(".*\\<H>|\\</H>.*", ""));
-            }
+            processText(rm, message);
+            processHover(rm, message);
 
             if (message.contains("<ITEM>")) {
                 String st = message.replaceAll(".*\\<ITEM>|\\</ITEM>.*", "");
@@ -878,7 +916,7 @@ public class RawMessage {
                     Player player = (Player) sender;
                     consoleCommand = message.replaceAll(".*\\<CCI>|\\</CCI>.*", "");
                     String id = ShadowCommand.addShadowCmd(player, consoleCommand, true, ShadowCommandType.Console);
-//		command = "cmi shadowcmd " + id;
+
                     command = CommandsHandler.getLabel() + " shadowcmd " + id + " (" + consoleCommand + ")";
                     if (book)
                         command = consoleCommand;

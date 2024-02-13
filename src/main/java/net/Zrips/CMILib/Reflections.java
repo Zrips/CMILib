@@ -11,6 +11,7 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -23,7 +24,6 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Server;
 import org.bukkit.Sound;
@@ -35,7 +35,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.scoreboard.Scoreboard;
-import org.jetbrains.annotations.Nullable;
 
 import com.google.common.collect.Maps;
 import com.google.gson.JsonElement;
@@ -48,9 +47,11 @@ import net.Zrips.CMILib.Container.CMIServerProperties;
 import net.Zrips.CMILib.Effects.CMIEffect;
 import net.Zrips.CMILib.Effects.CMIEffectManager.CMIParticleDataType;
 import net.Zrips.CMILib.Items.CMIMaterial;
+import net.Zrips.CMILib.Locale.LC;
 import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.RawMessages.RawMessage;
+import net.Zrips.CMILib.Version.MinecraftPlatform;
 import net.Zrips.CMILib.Version.Version;
 import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
 
@@ -70,7 +71,7 @@ public class Reflections {
 //    private Class<?> MojangsonParser;
 //    private Class<?> PlayerList;
 
-//    private Class<?> EntityHuman;
+    private Class<?> EntityHuman;
 //    private Class<?> EntityPlayer;
 //    private Class<?> EnumGameMode;
     private Class<?> CraftPlayer;
@@ -157,6 +158,8 @@ public class Reflections {
                 CraftNamespacedKey = getBukkitClass("util.CraftNamespacedKey");
                 PacketPlayOutEntityTeleport = net.minecraft.network.protocol.game.PacketPlayOutEntityTeleport.class;
 
+                EntityHuman = net.minecraft.world.entity.player.EntityHuman.class;
+
                 if (Version.isCurrentEqualOrLower(Version.v1_18_R2)) {
                     PacketPlayOutSpawnEntityLiving = Class.forName("net.minecraft.network.protocol.game.PacketPlayOutSpawnEntityLiving");
                 } else {
@@ -174,7 +177,9 @@ public class Reflections {
                 AdvancementDataWorld = net.minecraft.server.AdvancementDataWorld.class;
                 ChatDeserializer = net.minecraft.util.ChatDeserializer.class;
                 SerializedAdvancement = net.minecraft.advancements.Advancement.SerializedAdvancement.class;
-                LootDeserializationContext = net.minecraft.advancements.critereon.LootDeserializationContext.class;
+
+                if (Version.isCurrentEqualOrLower(Version.v1_20_R2))
+                    LootDeserializationContext = Class.forName("net.minecraft.advancements.critereon.LootDeserializationContext");
 
                 CraftParticle = getBukkitClass("CraftParticle");
                 ParticleParam = net.minecraft.core.particles.ParticleParam.class;
@@ -204,7 +209,9 @@ public class Reflections {
                 IStack = net.minecraft.world.item.ItemStack.class;
 
                 String variable = "ax";
-                if (Version.isCurrentEqualOrHigher(Version.v1_19_R3))
+                if (Version.isCurrentEqualOrHigher(Version.v1_20_R3))
+                    variable = "aB";
+                else if (Version.isCurrentEqualOrHigher(Version.v1_19_R3))
                     variable = "az";
                 else if (Version.isCurrentEqualOrHigher(Version.v1_19_R2))
                     variable = "ay";
@@ -432,8 +439,7 @@ public class Reflections {
 
     public Object textToIChatBaseComponent(String text) {
         try {
-            Object serialized = nmsChatSerializer.getMethod("a", String.class).invoke(null, CMIChatColor.translate(text));
-            return serialized;
+            return nmsChatSerializer.getMethod("a", String.class).invoke(null, CMIChatColor.translate(text));
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -449,32 +455,8 @@ public class Reflections {
         return (int) (System.currentTimeMillis() / 50);
     }
 
-//    public void setDura() {
-//	Class<?> c;
-//	try {
-//	    c = getMinecraftClass("Block");
-//	    Method method = c.getDeclaredMethod("b", float.class);
-//	    method.setAccessible(true);
-//	    Block b = Block.REGISTRY.getId(1);
-//	    method.invoke(b, 30.0F);
-//	} catch (ClassNotFoundException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
-//	    e.printStackTrace();
-//	}
-//    }
-
     public Object getItemInfo(int id, String fieldName) {
         try {
-
-//	    BlockStateList list = net.minecraft.server.v1_12_R1.Block.getById(id).s();
-//	    for (IBlockData one : list.a()) {
-//		for (IBlockState<?> ones : one.s()) {
-//
-//		    for (int i = 0; i < ones.c().size(); i++) {
-//
-//		    }
-//		}
-//
-//	    }
             Field field = getMinecraftClass("Block").getDeclaredField(fieldName);
             field.setAccessible(true);
 
@@ -514,11 +496,16 @@ public class Reflections {
     }
 
     public void setServerProperties(CMIServerProperties setting, Object value, boolean save) {
+
         if (Version.isCurrentEqualOrHigher(Version.v1_20_R2)) {
 
             try {
                 // DedicatedServer -> DedicatedServerSettings
-                Object field1 = MinecraftServer.getClass().getField("u").get(MinecraftServer);
+                Object field1 = null;
+                if (Version.isCurrentEqualOrHigher(Version.v1_20_R3)) {
+                    field1 = MinecraftServer.getClass().getField("s").get(MinecraftServer);
+                } else
+                    field1 = MinecraftServer.getClass().getField("u").get(MinecraftServer);
                 // DedicatedServerSettings -> DedicatedServerProperties method
                 Object prop = field1.getClass().getMethod("a").invoke(field1);
                 // PropertyManager -> Properties
@@ -987,13 +974,13 @@ public class Reflections {
         try {
             com.mojang.authlib.GameProfile prof = null;
             if (Version.isCurrentEqualOrHigher(Version.v1_20_R2)) {
-                String decodedString = new String(java.util.Base64.getMimeDecoder().decode(texture));
-                    CMIDebug.d(decodedString);
+                String decodedString = new String(java.util.Base64.getMimeDecoder().decode(texture)).replace("\n", "").replace(" ", "");
                 if (decodedString.contains("url\":\"")) {
-                    
-                    CMIDebug.d("set tjosmg");
                     SkullMeta meta = (SkullMeta) item.getItemMeta();
                     meta.setOwnerProfile(getProfile(decodedString.split("url\":\"", 2)[1].split("\"", 2)[0]));
+
+                    if (CMILibConfig.playerNameForItemStack && customProfileName != null && !customProfileName.isEmpty() && !customProfileName.contains(" ") && !customProfileName.contains("-"))
+                        meta.setDisplayName(LC.info_playerHeadName.get("[playerName]", customProfileName));
                     item.setItemMeta(meta);
                 }
                 return item;
@@ -1019,8 +1006,11 @@ public class Reflections {
                 } catch (IllegalArgumentException | IllegalAccessException e) {
                     e.printStackTrace();
                 }
-                item.setItemMeta(headMeta);
             }
+
+            if (CMILibConfig.playerNameForItemStack && customProfileName != null && !customProfileName.isEmpty() && !customProfileName.contains(" ") && !customProfileName.contains("-"))
+                headMeta.setDisplayName(LC.info_playerHeadName.get("[playerName]", customProfileName));
+            item.setItemMeta(headMeta);
 
             try {
                 byte[] decodedBytes = java.util.Base64.getMimeDecoder().decode(texture);
@@ -1335,7 +1325,12 @@ public class Reflections {
                 activeContainer = "bV";
             }
 
-            Object container = CraftContainer.cast(entityplayer.getClass().getField(activeContainer).get(entityplayer));
+            Object container = null;
+            if (Version.isCurrentEqualOrHigher(Version.v1_17_R1)) {
+                container = CraftContainer.cast(EntityHuman.getField(activeContainer).get(entityplayer));
+            } else {
+                container = CraftContainer.cast(entityplayer.getClass().getField(activeContainer).get(entityplayer));
+            }
             return (int) container.getClass().getField(windowId).get(container);
         } catch (Throwable e) {
             if (Version.isCurrentEqualOrHigher(Version.v1_17_R1))
@@ -1433,18 +1428,6 @@ public class Reflections {
 
                     // Need to update inventory to actually update existing items
                     p.updateInventory();
-
-                    // Deprecated, we can use bukkit API as above
-//		    Field field = entityplayer.getClass().getField("bV");
-//		    net.minecraft.world.inventory.Container container = (net.minecraft.world.inventory.Container) this.CraftContainer.cast(field.get(entityplayer));
-//		    net.minecraft.network.protocol.game.PacketPlayOutWindowItems pac = null;
-//		    if (Version.isCurrentEqualOrLower(Version.v1_17_R1) && Version.isCurrentSubEqualOrLower(0)) {
-////			pac = new net.minecraft.network.protocol.game.PacketPlayOutWindowItems(getActiveContainerId(entityplayer), container.c());
-//			p.updateInventory();
-//		    } else {
-//			pac = new net.minecraft.network.protocol.game.PacketPlayOutWindowItems(getActiveContainerId(entityplayer), 0, container.c(), container.c().get(0));
-//		    }
-//		    sendPlayerPacket(p, pac); 
                 } else {
 
                     RawMessage rm = new RawMessage();
@@ -1496,7 +1479,7 @@ public class Reflections {
     public void superficialEntityTeleport(Player player, Object entity, Location targetLoc) {
         try {
 
-            if (!CEntity.isInstance(entity))
+            if (entity == null || !CEntity.isInstance(entity))
                 return;
 
             Object centity = CEntity.cast(entity);
@@ -1511,7 +1494,16 @@ public class Reflections {
             if (teleportPacket == null)
                 teleportPacket = PacketPlayOutEntityTeleport.getConstructor(CEntity);
 
-            sendPlayerPacket(player, teleportPacket.newInstance(centity));
+            Object packet = teleportPacket.newInstance(centity);
+
+            try {
+                setValue(packet, "e", (byte) ((int) targetLoc.getYaw() * 256.0F / 360.0F));
+                setValue(packet, "f", (byte) ((int) targetLoc.getPitch() * 256.0F / 360.0F));
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+
+            sendPlayerPacket(player, packet);
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -1582,11 +1574,13 @@ public class Reflections {
 
     public void playSound(Player player, Location location, Sound sound, float volume, float pitch) {
         Object cPlayer = this.getCraftPlayer(player);
-        try {
-            cPlayer.getClass().getMethod("playSound", Location.class, Sound.class, float.class, float.class).invoke(cPlayer, location, sound, volume, pitch);
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
+        CMIScheduler.runTask(() -> {
+            try {
+                cPlayer.getClass().getMethod("playSound", Location.class, Sound.class, float.class, float.class).invoke(cPlayer, location, sound, volume, pitch);
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     public int getEggId(ItemStack item) {
@@ -1830,6 +1824,64 @@ public class Reflections {
             return;
 
         CMIScheduler.runTaskAsynchronously(() -> {
+
+            if (Version.isCurrentEqualOrHigher(Version.v1_20_R3)) {
+
+                Set<net.minecraft.resources.MinecraftKey> removed = new HashSet<net.minecraft.resources.MinecraftKey>();
+
+                net.minecraft.resources.MinecraftKey minecraftkey = new net.minecraft.resources.MinecraftKey(advancement.getId().getNamespace(), advancement.getId().getKey());
+
+                removed.add(minecraftkey);
+
+                net.minecraft.resources.MinecraftKey bg = new net.minecraft.resources.MinecraftKey(advancement.getBackground().getUrl());
+                net.minecraft.advancements.AdvancementFrameType frame = net.minecraft.advancements.AdvancementFrameType.a;
+                if (advancement.getFrame().equals(net.Zrips.CMILib.Advancements.AdvancementFrameType.GOAL))
+                    frame = net.minecraft.advancements.AdvancementFrameType.c;
+                else if (advancement.getFrame().equals(net.Zrips.CMILib.Advancements.AdvancementFrameType.CHALLENGE))
+                    frame = net.minecraft.advancements.AdvancementFrameType.b;
+
+                net.minecraft.advancements.AdvancementDisplay display = new net.minecraft.advancements.AdvancementDisplay(
+                    (net.minecraft.world.item.ItemStack) CMINBT.asNMSCopy(CMIMaterial.get(advancement.getIcon()).newItemStack()),
+                    (net.minecraft.network.chat.IChatBaseComponent) textToIChatBaseComponent(new RawMessage().addText(advancement.getTitle()).getRaw()),
+                    (net.minecraft.network.chat.IChatBaseComponent) textToIChatBaseComponent(new RawMessage().addText(advancement.getDescription()).getRaw()),
+                    java.util.Optional.of(bg),
+                    frame,
+                    true,
+                    false,
+                    false);
+
+                ArrayList<List<String>> adreq = new ArrayList<List<String>>();
+                adreq.add(Arrays.asList(CMIAdvancement.identificator));
+                net.minecraft.advancements.AdvancementRequirements adhd = new net.minecraft.advancements.AdvancementRequirements(adreq);
+
+                net.minecraft.advancements.AdvancementProgress progress = new net.minecraft.advancements.AdvancementProgress();
+                progress.a(adhd);
+                progress.a(CMIAdvancement.identificator);
+
+                Map<net.minecraft.resources.MinecraftKey, net.minecraft.advancements.AdvancementProgress> progressMap =
+                    new HashMap<net.minecraft.resources.MinecraftKey, net.minecraft.advancements.AdvancementProgress>();
+                progressMap.put(minecraftkey, progress);
+
+                Set<net.minecraft.advancements.AdvancementHolder> addedMap = new HashSet<net.minecraft.advancements.AdvancementHolder>();
+
+                net.minecraft.advancements.Advancement.SerializedAdvancement add = new net.minecraft.advancements.Advancement.SerializedAdvancement();
+                add.a(display);
+                add.a(adhd);
+
+                addedMap.add(add.b(minecraftkey));
+
+                for (Player player : players) {
+                    Object connection = CMILib.getInstance().getReflectionManager().getPlayerConnection(player);
+
+                    sendPacket(connection, new net.minecraft.network.protocol.game.PacketPlayOutAdvancements(false, addedMap, new HashSet<net.minecraft.resources.MinecraftKey>(), progressMap));
+
+                    sendPacket(connection, new net.minecraft.network.protocol.game.PacketPlayOutAdvancements(false, new HashSet<net.minecraft.advancements.AdvancementHolder>(), removed,
+                        new HashMap<net.minecraft.resources.MinecraftKey, net.minecraft.advancements.AdvancementProgress>()));
+                }
+
+                return;
+            }
+
             Map<net.minecraft.resources.MinecraftKey, net.minecraft.advancements.AdvancementProgress> progressMap =
                 new HashMap<net.minecraft.resources.MinecraftKey, net.minecraft.advancements.AdvancementProgress>();
             Set<net.minecraft.resources.MinecraftKey> removed = new HashSet<net.minecraft.resources.MinecraftKey>();
@@ -1838,16 +1890,23 @@ public class Reflections {
 
             removed.add(minecraftkey);
 
-            net.minecraft.advancements.Advancement adv = net.minecraft.advancements.Advancement.a(advancement.getJSONObject(), null);
-
-            net.minecraft.advancements.AdvancementProgress progress = new net.minecraft.advancements.AdvancementProgress();
-            progress.a(adv.g());
-            progress.c(CMIAdvancement.identificator).b();
-            progressMap.put(minecraftkey, progress);
-
-            net.minecraft.advancements.AdvancementHolder holder = new net.minecraft.advancements.AdvancementHolder(minecraftkey, adv);
             Set<net.minecraft.advancements.AdvancementHolder> addedMap = new HashSet<net.minecraft.advancements.AdvancementHolder>();
-            addedMap.add(holder);
+
+            try {
+                Method mt = net.minecraft.advancements.Advancement.class.getMethod("a", com.google.gson.JsonObject.class, LootDeserializationContext);
+                net.minecraft.advancements.Advancement adv = (net.minecraft.advancements.Advancement) mt.invoke(null, advancement.getJSONObject(), null);
+//            net.minecraft.advancements.Advancement adv = net.minecraft.advancements.Advancement.a(advancement.getJSONObject(), null);
+
+                net.minecraft.advancements.AdvancementProgress progress = new net.minecraft.advancements.AdvancementProgress();
+                progress.a((net.minecraft.advancements.AdvancementRequirements) adv.getClass().getMethod("g").invoke(adv));
+                progress.c(CMIAdvancement.identificator).b();
+                progressMap.put(minecraftkey, progress);
+
+                net.minecraft.advancements.AdvancementHolder holder = new net.minecraft.advancements.AdvancementHolder(minecraftkey, adv);
+                addedMap.add(holder);
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
 
             for (Player player : players) {
                 Object connection = CMILib.getInstance().getReflectionManager().getPlayerConnection(player);
@@ -1867,7 +1926,6 @@ public class Reflections {
         if (Bukkit.getAdvancement(ad.getId()) != null) {
             return;
         }
-
         NamespacedKey key = ad.getId();
         if (Version.isCurrentEqualOrHigher(Version.v1_20_R1)) {
 
@@ -1882,14 +1940,15 @@ public class Reflections {
                 Object jsonobject = ChatDeserializer.getMethod("m", JsonElement.class, String.class).invoke(ChatDeserializer, jsonelement, "advancement");
                 Method meth = SerializedAdvancement.getMethod("a", jsonobject.getClass(), LootDeserializationContext);
 
-                Object LootPredicateManager = null;
+                Object LootPredicateManager = net.minecraft.server.MinecraftServer.getServer().getClass().getMethod("aH").invoke(net.minecraft.server.MinecraftServer.getServer());
 
-                LootPredicateManager = net.minecraft.server.MinecraftServer.getServer().aH();
+                Constructor<?> consts = LootDeserializationContext.getConstructor(net.minecraft.resources.MinecraftKey.class,
+                    net.minecraft.world.level.storage.loot.LootDataManager.class);
+                Object LDC = consts.newInstance(minecraftkey, LootPredicateManager);
 
-                net.minecraft.advancements.critereon.LootDeserializationContext LDC = new net.minecraft.advancements.critereon.LootDeserializationContext(
-                    minecraftkey, (net.minecraft.world.level.storage.loot.LootDataManager) LootPredicateManager);
-                net.minecraft.advancements.Advancement.SerializedAdvancement nms = (net.minecraft.advancements.Advancement.SerializedAdvancement) meth.invoke(SerializedAdvancement, jsonobject,
-                    LDC);
+//                net.minecraft.advancements.critereon.LootDeserializationContext LDC = new net.minecraft.advancements.critereon.LootDeserializationContext(
+//                    minecraftkey, (net.minecraft.world.level.storage.loot.LootDataManager) LootPredicateManager);
+                net.minecraft.advancements.Advancement.SerializedAdvancement nms = (net.minecraft.advancements.Advancement.SerializedAdvancement) meth.invoke(SerializedAdvancement, jsonobject, LDC);
 
                 if (nms != null) {
                     //getAdvancementData                    
@@ -1930,10 +1989,12 @@ public class Reflections {
                 if (LootPredicateManager == null)
                     return;
 
-                Constructor<net.minecraft.advancements.critereon.LootDeserializationContext> constructor = net.minecraft.advancements.critereon.LootDeserializationContext.class.getConstructor(
-                    net.minecraft.resources.MinecraftKey.class, LootPredicateManager.getClass());
+                Constructor<?> constructor = LootDeserializationContext.getConstructor(net.minecraft.resources.MinecraftKey.class, LootPredicateManager.getClass());
+                Object LDC = constructor.newInstance(minecraftkey, LootPredicateManager);
 
-                net.minecraft.advancements.critereon.LootDeserializationContext LDC = constructor.newInstance(minecraftkey, LootPredicateManager);
+//                Constructor<?> consts = LootDeserializationContext.getConstructor(net.minecraft.resources.MinecraftKey.class,
+//                    net.minecraft.world.level.storage.loot.LootDataManager.class);
+//                Object LDC = consts.newInstance(minecraftkey, LootPredicateManager);
 
 //                net.minecraft.advancements.critereon.LootDeserializationContext LDC = new net.minecraft.advancements.critereon.LootDeserializationContext(
 //                    (net.minecraft.resources.MinecraftKey) minecraftkey, (net.minecraft.world.level.storage.loot.LootPredicateManager) LootPredicateManager);
@@ -1976,12 +2037,8 @@ public class Reflections {
                 Method meth = SerializedAdvancement.getMethod("a", jsonobject.getClass(), LootDeserializationContext);
                 Object LootPredicateManager = net.minecraft.server.MinecraftServer.getServer().getClass().getMethod("getLootPredicateManager").invoke(net.minecraft.server.MinecraftServer.getServer());
 
-                Constructor<net.minecraft.advancements.critereon.LootDeserializationContext> constructor = net.minecraft.advancements.critereon.LootDeserializationContext.class.getConstructor(
-                    net.minecraft.resources.MinecraftKey.class, LootPredicateManager.getClass());
-                net.minecraft.advancements.critereon.LootDeserializationContext LDC = constructor.newInstance(minecraftkey, LootPredicateManager);
-
-//                net.minecraft.advancements.critereon.LootDeserializationContext LDC = new net.minecraft.advancements.critereon.LootDeserializationContext(
-//                    (net.minecraft.resources.MinecraftKey) minecraftkey, (net.minecraft.world.level.storage.loot.LootPredicateManager) LootPredicateManager);
+                Constructor<?> constructor = LootDeserializationContext.getConstructor(net.minecraft.resources.MinecraftKey.class, LootPredicateManager.getClass());
+                Object LDC = constructor.newInstance(minecraftkey, LootPredicateManager);
 
                 net.minecraft.advancements.Advancement.SerializedAdvancement nms = (net.minecraft.advancements.Advancement.SerializedAdvancement) meth.invoke(SerializedAdvancement, jsonobject, LDC);
                 Object data = net.minecraft.server.MinecraftServer.getServer().getClass().getMethod("getAdvancementData").invoke(net.minecraft.server.MinecraftServer.getServer());
@@ -2012,23 +2069,7 @@ public class Reflections {
             } catch (Throwable e) {
                 e.printStackTrace();
             }
-        } else {
-            // Fix
-//	    if (plugin.isCmiPresent()) {
-//		CMI.getInstance().getNMS().loadAdvancement(key, advancement);
-//	    }
         }
-//	Object minecraftkey = CraftNamespacedKey.getClass().getMethod("toMinecraft", NamespacedKey.class).invoke(CraftNamespacedKey, key);
-//	
-////	MinecraftKey minecraftkey = CraftNamespacedKey.toMinecraft(key);
-//	JsonElement jsonelement = AdvancementDataWorld.b.fromJson(advancement, JsonElement.class);
-//	com.google.gson.JsonObject jsonobject = ChatDeserializer.m(jsonelement, "advancement");
-//	SerializedAdvancement nms = SerializedAdvancement.a(jsonobject, new LootDeserializationContext(minecraftkey, MinecraftServer.getServer().getLootPredicateManager()));
-//	if (nms != null) {
-//	    advancementRegistry
-//	    
-//	    .a(Maps.newHashMap(Collections.singletonMap(minecraftkey, nms)));
-//	}
     }
 
     public ItemStack addAttributes(List<Attribute> ls, ItemStack item) {

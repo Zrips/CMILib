@@ -1252,8 +1252,11 @@ public class CMINBT {
                 ff = "ao_";
                 break;
             case v1_20_R2:
-            default:
                 ff = "as_";
+                break;
+            case v1_20_R3:
+            default:
+                ff = "ax_";
                 break;
             }
 

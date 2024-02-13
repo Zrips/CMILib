@@ -1,5 +1,10 @@
 package net.Zrips.CMILib.Version;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.bukkit.Bukkit;
 
 import net.Zrips.CMILib.CMILib;
@@ -37,7 +42,7 @@ public enum Version {
     v1_19_R3,
     v1_20_R1,
     v1_20_R2,
-    v1_20_R3,
+    v1_20_R3(4),
     v1_21_R1,
     v1_21_R2,
     v1_21_R3,
@@ -49,6 +54,7 @@ public enum Version {
     v1_23_R3;
 
     private Integer value;
+    private int[] minorVersions = null;
     private String shortVersion;
     private static int subVersion = 0;
     private static Version current = null;
@@ -58,11 +64,16 @@ public enum Version {
 
     static {
         getCurrent();
-        CMIMessages.consoleMessage("&3Server version: " + current.toString() + " - " + current.getFormated() + " - " + getPlatform());
+        CMIMessages.consoleMessage("&3Server version: " + current.toString() + " - " + current.getFormated() + " - " + getPlatform() + "  " + Bukkit.getVersion());
 
         // Enables extra commands for test servers
         if (CMILib.getInstance().getReflectionManager().getServerName().equals("LT_Craft") && Bukkit.getWorlds().get(0).getSeed() == 1782374759)
             testServer = true;
+    }
+
+    Version(int... versions) {
+        this();
+        minorVersions = versions;
     }
 
     Version() {
@@ -75,6 +86,22 @@ public enum Version {
 
     public Integer getValue() {
         return value;
+    }
+
+    public static boolean isPaperBranch() {
+        switch (getPlatform()) {
+        case mohist:
+            break;
+        case purpur:
+        case folia:
+        case paper:
+        case pufferfish:
+            return true;
+        case craftbukkit:
+        case spigot:
+            return false;
+        }
+        return false;
     }
 
     public String getShortVersion() {
@@ -90,7 +117,7 @@ public enum Version {
     }
 
     public static boolean isPaper() {
-        return getPlatform().equals(MinecraftPlatform.paper) || getPlatform().equals(MinecraftPlatform.folia);
+        return getPlatform().equals(MinecraftPlatform.paper) || getPlatform().equals(MinecraftPlatform.folia) || getPlatform().equals(MinecraftPlatform.purpur);
     }
 
     public static boolean isSpigot() {
@@ -105,15 +132,17 @@ public enum Version {
         if (platform != null)
             return platform;
 
-        String[] split = Bukkit.getVersion().split("-");
-        final String serverType = split.length > 1 ? split[1] : split[0];
-        
-        if (serverType.equalsIgnoreCase("Mohist")) {
+        if (Bukkit.getVersion().toLowerCase().contains("mohist")) {
             platform = MinecraftPlatform.mohist;
             return platform;
         }
-        
-        if (serverType.equalsIgnoreCase("Purpur")) {
+
+        if (Bukkit.getVersion().toLowerCase().contains("arclight")) {
+            platform = MinecraftPlatform.arclight;
+            return platform;
+        }
+
+        if (Bukkit.getVersion().toLowerCase().contains("purpur")) {
             platform = MinecraftPlatform.purpur;
             return platform;
         }
@@ -165,8 +194,35 @@ public enum Version {
                 break;
             }
         }
-        if (current == null)
-            return Version.v1_13_R2;
+
+        if (current == null) {
+            String ve = Bukkit.getBukkitVersion().split("-", 2)[0];
+            main: for (Version one : values()) {
+                if (one.name().equalsIgnoreCase(ve)) {
+                    current = one;
+                    break;
+                }
+                List<String> cleanVersion = one.getMinorVersions();
+                for (String cv : cleanVersion) {
+                    if (ve.equalsIgnoreCase(cv)) {
+                        current = one;
+                        break main;
+                    }
+                }
+            }
+        }
+
+        if (current == null) {
+            String ve = Bukkit.getBukkitVersion().split("-", 2)[0];
+            for (Version one : values()) {
+                if (ve.startsWith(one.getSimplifiedVersion())) {
+                    current = one;
+                    CMIMessages.consoleMessage("&c[CMILib] &eServer version detection needs aditional update");
+                    break;
+                }
+            }
+        }
+
         return current;
     }
 
@@ -281,5 +337,19 @@ public enum Version {
 
     public static boolean isTestServer() {
         return testServer;
+    }
+
+    private String getSimplifiedVersion() {
+        return this.name().substring(1).replace("_", ".").split("R", 2)[0];
+    }
+
+    public List<String> getMinorVersions() {
+
+        if (minorVersions == null)
+            return new ArrayList<String>();
+
+        return Arrays.stream(minorVersions)
+            .mapToObj(version -> getSimplifiedVersion() + version)
+            .collect(Collectors.toList());
     }
 }

@@ -353,7 +353,7 @@ public enum CMIMaterial {
     GOLD_NUGGET(371),
     GOLD_ORE(14),
     GRANITE(1, 1),
-    GRASS(31, 1),
+    SHORT_GRASS(31, 1, "GRASS"),
     GRASS_BLOCK(2),
     GRAVEL(13),
     GRAY_BANNER(425, 8),
@@ -1448,6 +1448,8 @@ public enum CMIMaterial {
 
     // Legacy
     SIGN(323),
+    
+    GRASS(31, 1),
 
     LEGACY_STATIONARY_WATER(9, "Stationary Water"),
     LEGACY_STATIONARY_LAVA(11, "Stationary Lava"),

@@ -12,8 +12,8 @@ import org.bukkit.entity.Player;
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Colors.CMIChatColor;
 import net.Zrips.CMILib.Locale.Snd;
+import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Time.CMITimeManager;
-import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
 import net.Zrips.CMILib.Version.Schedulers.CMITask;
 
 public class BossBarInfo {
@@ -36,6 +36,10 @@ public class BossBarInfo {
     private long started = 0L;
     private boolean translateColors = true;
 
+    private List<CMIChatColor> colors = null;
+    private int colorChangeIntervalTicks = 20;
+    private long nextColorChange = 0L;
+
     public BossBarInfo clone(Player player) {
         BossBarInfo barInfo = new BossBarInfo(player, nameOfBar);
         barInfo.percentage = percentage;
@@ -45,8 +49,6 @@ public class BossBarInfo {
         barInfo.bar = bar;
         barInfo.startingColor = startingColor;
         barInfo.style = style;
-//	barInfo.autoId = autoId;
-//	barInfo.id = id;
         barInfo.nameOfBar = nameOfBar;
         barInfo.translateColors = translateColors;
 
@@ -54,6 +56,8 @@ public class BossBarInfo {
         barInfo.withPlaceholder = CMILib.getInstance().getPlaceholderAPIManager().containsPlaceHolder(titleOfBar);
         barInfo.cmds = cmds;
         barInfo.global = global;
+        barInfo.colors = colors == null ? null : new ArrayList<CMIChatColor>(colors);
+        barInfo.colorChangeIntervalTicks = colorChangeIntervalTicks;
         return barInfo;
     }
 
@@ -74,7 +78,7 @@ public class BossBarInfo {
 
     public void setHideScheduler(CMITask cmiTask) {
         cancelHideScheduler();
-        this.hideSheduler = cmiTask; 
+        this.hideSheduler = cmiTask;
     }
 
     public synchronized void cancelAutoScheduler() {
@@ -168,11 +172,11 @@ public class BossBarInfo {
     public String getTitleOfBar() {
         if (titleOfBar != null && titleOfBar.contains("[autoTimeLeft]")) {
             if (this.percentage != null && this.adjustPerc != null && this.auto != null) {
-                return titleOfBar.replace("[autoTimeLeft]", CMITimeManager.to24hourShort(getLeftDuration(), false));
+                return getDynamicColor() + titleOfBar.replace("[autoTimeLeft]", CMITimeManager.to24hourShort(getLeftDuration(), false));
             }
-            return titleOfBar.replace("[autoTimeLeft]", CMITimeManager.to24hourShort(0L, false));
+            return getDynamicColor() + titleOfBar.replace("[autoTimeLeft]", CMITimeManager.to24hourShort(0L, false));
         }
-        return titleOfBar == null ? "" : titleOfBar;
+        return titleOfBar == null ? "" : getDynamicColor() + titleOfBar;
     }
 
     public String getTitleOfBar(Player player) {
@@ -182,6 +186,21 @@ public class BossBarInfo {
             t = CMILib.getInstance().getPlaceholderAPIManager().updatePlaceHolders(player, t);
 
         return t == null ? "" : isTranslateColors() ? CMIChatColor.colorize(t) : t;
+    }
+
+    private String getDynamicColor() {
+        if (colors == null || colors.isEmpty())
+            return "";
+
+        if (nextColorChange > System.currentTimeMillis())
+            return colors.get(colors.size() - 1).toString();
+
+        nextColorChange = System.currentTimeMillis() + (colorChangeIntervalTicks * 50L);
+
+        CMIChatColor c = colors.remove(0);
+        colors.add(c);
+
+        return c.toString();
     }
 
     public long getLeftDuration() {
@@ -214,8 +233,6 @@ public class BossBarInfo {
     }
 
     public void setColor(BarColor startingColor) {
-//	if (startingColor == null)
-//	    startingColor = BarColor.GREEN;
         this.startingColor = startingColor;
     }
 
@@ -232,8 +249,6 @@ public class BossBarInfo {
     }
 
     public void setStyle(BarStyle style) {
-//	if (style == null)
-//	    style = BarStyle.SEGMENTED_10;
         this.style = style;
     }
 
@@ -346,5 +361,21 @@ public class BossBarInfo {
     }
 
     public void updateCycle() {
+    }
+
+    public List<CMIChatColor> getColors() {
+        return colors;
+    }
+
+    public void setColors(List<CMIChatColor> colors) {
+        this.colors = colors;
+    }
+
+    public int getColorChangeIntervalTicks() {
+        return colorChangeIntervalTicks;
+    }
+
+    public void setColorChangeIntervalTicks(int colorChangeIntervalTicks) {
+        this.colorChangeIntervalTicks = colorChangeIntervalTicks;
     }
 }
