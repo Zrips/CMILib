@@ -269,17 +269,6 @@ public class CMIItemStack {
     public String getRealName() {
         return this.getCMIType() == null || this.getCMIType() == CMIMaterial.NONE ? this.getType().name() : this.getCMIType().getTranslatedName() != null ? this.getCMIType().getTranslatedName() : this
             .getCMIType().getName();
-//	if (this.getItemStack() != null) {
-//
-////	    String translated = CMI.getInstance().getItemManager().getTranslatedName(this.getItemStack());
-//	    if (translated != null)
-////		return translated;
-//	    try {
-//		return CMI.getInstance().getRef().getItemMinecraftName(this.getItemStack());
-//	    } catch (Exception e) {
-//	    }
-//	}
-//	return CMI.getInstance().getItemManager().getRealName(this, true).getName();
     }
 
     public String getBukkitName() {
@@ -291,13 +280,6 @@ public class CMIItemStack {
     }
 
     public String getMojangName() {
-//	if (getCMIType().isSkull() && !Version.isCurrentEqualOrHigher(Version.v1_13_R1))
-//	    mojangName = "skull";
-//	try {
-//	    mojangName = CMI.getInstance().getRef().getItemMinecraftName(getItemStack()).replace("minecraft:", "");
-//	} catch (Exception e) {
-//
-//	}
         return mojangName == null || mojangName.isEmpty() ? this.getCMIType().getMaterial().name() : mojangName;
     }
 

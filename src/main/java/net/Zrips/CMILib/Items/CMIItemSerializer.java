@@ -558,7 +558,7 @@ public class CMIItemSerializer {
                 if (i == s.size() - 1 && one.endsWith(suffix))
                     one = one.substring(0, one.length() - 1);
 
-                if (applyAmount(cim, one))
+                if (applyAmount(sender, cim, one))
                     continue;
 
                 if (applySpecials(cim, one))
@@ -634,10 +634,14 @@ public class CMIItemSerializer {
         return true;
     }
 
-    private static boolean applyAmount(CMIItemStack cim, String value) {
+    private static boolean applyAmount(CommandSender sender, CMIItemStack cim, String value) {
 
         if (cim.getAmount() != 1)
             return false;
+
+        if (value.startsWith("%")) {
+            value = CMILib.getInstance().getPlaceholderAPIManager().updatePlaceHolders(sender instanceof Player ? (Player) sender : null, value);
+        }
 
         try {
             cim.setAmount(CMINumber.clamp(Integer.parseInt(value), 1, 999));

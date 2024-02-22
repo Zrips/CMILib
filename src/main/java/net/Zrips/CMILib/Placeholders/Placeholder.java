@@ -16,6 +16,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import net.Zrips.CMILib.CMILib;
+import net.Zrips.CMILib.CMILibConfig;
 import net.Zrips.CMILib.Chat.ChatFilterRule;
 import net.Zrips.CMILib.Colors.CMIChatColor;
 import net.Zrips.CMILib.Locale.LC;
@@ -248,8 +249,10 @@ public class Placeholder {
         CMI, PAPI, MVdW;
     }
 
+    private static final String checkItem = "%checkitem_";
+
     private void reportIssue() {
-        CMIMessages.consoleMessage("&cPlaceholder got blocked due to security concerns (%checkitem%)");
+        CMIMessages.consoleMessage("&cPlaceholder got blocked due to security concerns (" + checkItem + "...%)");
     }
 
     public CMIPlaceholderType getPlaceHolderType(Player player, String placeholder) {
@@ -266,7 +269,7 @@ public class Placeholder {
         if (plugin.isPlaceholderAPIEnabled()) {
             try {
                 if (placeholder.contains("%"))
-                    if (!placeholder.toLowerCase().contains("%checkitem")) {
+                    if (!placeholder.toLowerCase().contains(checkItem) || !CMILibConfig.ExploitPatcherCheckItem) {
                         if (!placeholder.equals(me.clip.placeholderapi.PlaceholderAPI.setPlaceholders(player, placeholder)))
                             return CMIPlaceholderType.PAPI;
                     } else {
@@ -293,7 +296,7 @@ public class Placeholder {
             try {
                 if (message.contains("%")) {
                     Player player = Bukkit.getPlayer(uuid);
-                    if (!message.toLowerCase().contains("%checkitem")) {
+                    if (!message.toLowerCase().contains(checkItem) || !CMILibConfig.ExploitPatcherCheckItem) {
                         message = me.clip.placeholderapi.PlaceholderAPI.setPlaceholders(player, message);
                     } else {
                         reportIssue();
@@ -353,7 +356,7 @@ public class Placeholder {
         if (plugin.isPlaceholderAPIEnabled()) {
             try {
                 if (message.contains("%")) {
-                    if (!message.toLowerCase().contains("%checkitem")) {
+                    if (!message.toLowerCase().contains(checkItem) || !CMILibConfig.ExploitPatcherCheckItem) {
                         message = me.clip.placeholderapi.PlaceholderAPI.setPlaceholders(player, message);
                     } else {
                         reportIssue();
@@ -407,7 +410,7 @@ public class Placeholder {
                                 String group = match.group();
 
                                 if (!group.startsWith(CMIChatColor.colorCodePrefix)) {
-                                    if (!cmd.toLowerCase().contains("checkitem")) {
+                                    if (!cmd.toLowerCase().contains(checkItem) || !CMILibConfig.ExploitPatcherCheckItem) {
                                         String with = me.clip.placeholderapi.PlaceholderAPI.setPlaceholders(player, "%" + cmd + "%");
                                         if (with == null)
                                             with = "";

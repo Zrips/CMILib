@@ -452,12 +452,12 @@ public class RawMessage {
             return this;
 
         if (!url.toLowerCase().startsWith("http://") && !url.toLowerCase().startsWith("https://"))
-            url = "http://" + url;
+            url = "https://" + url;
 
         url = url.replace("\"", "");
         url = url.replace("\'", "");
 
-        url = Matcher.quoteReplacement(url);
+        url = escape(url, true);
 
         String f = "\"clickEvent\":{\"action\":\"open_url\",\"value\":\"" + CMIChatColor.deColorize(url).replace(CMIChatColor.colorReplacerPlaceholder, "&") + "\"}";
 
@@ -505,7 +505,6 @@ public class RawMessage {
     private static void escape(String s, StringBuffer sb) {
         for (int i = 0; i < s.length(); i++) {
             char ch = s.charAt(i);
-
             switch (ch) {
             case '"':
                 sb.append("\\\"");

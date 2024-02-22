@@ -50,6 +50,8 @@ public class CMILibConfig {
     public static boolean OfficialHex = true;
     public static boolean QuirkyHex = true;
     public static List<String> mysterySpawners;
+    
+    public static boolean ExploitPatcherCheckItem = true;
 
     private CMIItemStack GUIEmptyField = null;
     private CMIItemStack GUIPreviousPage = null;
@@ -121,6 +123,11 @@ public class CMILibConfig {
         cfg.addComment("AutoFileRemoval", "When enabled plugin will try to clean up outdated CMILib files. This only works when autoUpdate is enabled");
         autoFileRemoval = cfg.get("AutoFileRemoval", true);
 
+        cfg.addComment("ExploitPatcher.Placeholders.blocked.checkItem",
+            "By default we are blocking PAPI %checkitem_...% placeholder to avoid potential serious issues with it", 
+            "Only disable this if you have dedicated protection for it");
+        ExploitPatcherCheckItem = cfg.get("ExploitPatcher.Placeholders.blocked.checkItem", true);
+        
         cfg.addComment("GlobalGui.EmptyField", "Defines item type in empty fields in GUI when its needed to be filled up");
         GUIEmptyField = CMILib.getInstance().getItemManager().getItem(cfg.get("GlobalGui.EmptyField", "BLACK_STAINED_GLASS_PANE"));
         if (GUIEmptyField == null)
