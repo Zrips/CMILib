@@ -9,8 +9,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.Zrips.CMI.Modules.Advancements.AdvancementManager.FrameType;
-
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.ActionBar.CMIActionBar;
 import net.Zrips.CMILib.Advancements.AdvancementFrameType;
@@ -58,7 +56,7 @@ public class CMIMultiMessage {
                 extra = new ArrayList<Object>();
 
                 if (match.group(2) != null) {
-                    FrameType frame = FrameType.getFromString(match.group(3));
+                    AdvancementFrameType frame = AdvancementFrameType.getFromString(match.group(3));
                     if (frame != null) {
                         extra.add(frame);
                     }

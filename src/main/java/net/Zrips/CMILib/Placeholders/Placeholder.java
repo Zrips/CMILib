@@ -252,7 +252,7 @@ public class Placeholder {
     private static final String checkItem = "%checkitem_";
 
     private void reportIssue() {
-        CMIMessages.consoleMessage("&cPlaceholder got blocked due to security concerns (" + checkItem + "...%)");
+        CMIMessages.consoleMessage("&c[CMIL] Placeholder got blocked due to security concerns (" + checkItem + "...%)");
     }
 
     public CMIPlaceholderType getPlaceHolderType(Player player, String placeholder) {
@@ -270,7 +270,7 @@ public class Placeholder {
             try {
                 if (placeholder.contains("%"))
                     if (!placeholder.toLowerCase().contains(checkItem) || !CMILibConfig.ExploitPatcherCheckItem) {
-                        if (!placeholder.equals(me.clip.placeholderapi.PlaceholderAPI.setPlaceholders(player, placeholder)))
+                        if (me.clip.placeholderapi.PlaceholderAPI.containsPlaceholders(placeholder))
                             return CMIPlaceholderType.PAPI;
                     } else {
                         reportIssue();
