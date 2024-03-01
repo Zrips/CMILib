@@ -42,7 +42,7 @@ public class ItemListener implements Listener {
                 meta.setDisplayName(LC.info_playerHeadName.get("[playerName]", playerName));
 
             item.setItemMeta(meta);
-        } else {
+        } else if (CMILibConfig.mobNameForItemStack) {
             List<String> textures = nbt.getList("SkullOwner.Properties.textures");
             if (textures != null) {
                 String texture = textures.get(0).split("Value:\"", 2)[1].split("\"", 2)[0];

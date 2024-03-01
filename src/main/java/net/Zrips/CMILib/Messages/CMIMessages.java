@@ -33,7 +33,7 @@ public class CMIMessages {
         if (sender != null) {
             String msg = CMILib.getInstance().getLM().getMessage("command." + c + ".info." + path, variables);
             if (!msg.isEmpty())
-                sendMessage(sender, msg, false);
+                sendMessage(sender, msg, false);            
         }
     }
 

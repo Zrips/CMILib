@@ -10,6 +10,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import io.papermc.paper.threadedregions.scheduler.AsyncScheduler;
 import io.papermc.paper.threadedregions.scheduler.GlobalRegionScheduler;
 import io.papermc.paper.threadedregions.scheduler.RegionScheduler;
+import io.papermc.paper.threadedregions.scheduler.RegionScheduler;
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Container.CMINumber;
 
@@ -76,7 +77,7 @@ public class CMIFoliaImpl implements CMIBaseImpl {
         CompletableFuture<Void> future = new CompletableFuture<>();
         this.regionScheduler.execute(this.plugin, location, () -> {
             runnable.run();
-            future.complete(null);
+            future.complete(null); 
         });
         return future;
     }

@@ -48,4 +48,13 @@ public class CMIPlayer {
         }
         return player.getMaxHealth();
     }
+
+    public static void setMaxHealth(Player player, double amount) {
+        if (Version.isCurrentEqualOrHigher(Version.v1_9_R1)) {
+            org.bukkit.attribute.AttributeInstance ati = player.getAttribute(org.bukkit.attribute.Attribute.GENERIC_MAX_HEALTH);
+            ati.setBaseValue(amount);
+        } else {
+            player.setMaxHealth(amount);
+        }
+    }
 }

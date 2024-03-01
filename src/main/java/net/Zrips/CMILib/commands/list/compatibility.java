@@ -93,8 +93,6 @@ public class compatibility implements Cmd {
 
         nbt.getKeys();
 
-//        AdvancementManager.sendToast(player, "Test", CMIMaterial.ACACIA_BOAT.newCMIItemStack(), FrameType.CHALLENGE);
-
         CMITitleMessage.send(player, "Title", "SubTitle");
         CMIActionBar.send(player, "Action bar Test");
         CMIScoreboard.show(player, "Top line", Arrays.asList("first", "second"), 2);
