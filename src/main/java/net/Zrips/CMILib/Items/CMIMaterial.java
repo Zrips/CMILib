@@ -6,9 +6,12 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Skull;
@@ -16,7 +19,6 @@ import org.bukkit.inventory.ItemStack;
 
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Container.CMIText;
-import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Version.Version;
 
 public enum CMIMaterial {
@@ -1861,6 +1863,22 @@ public enum CMIMaterial {
         }
 
         if (Version.isCurrentEqualOrHigher(Version.v1_14_R1)) {
+            if (CMILib.isFolia) {
+                // Invoke World#getChunkAtAsync to load chunk off-main
+                Future<Chunk> future = block.getWorld().getChunkAtAsync(block);
+                Chunk chunk;
+
+                try {
+                    chunk = future.get();
+                } catch (InterruptedException | ExecutionException e) {
+                    throw new RuntimeException(e);
+                }
+
+                if (!chunk.isLoaded()) {
+                    return null;
+                }
+            }
+
             CMIMaterial res = ItemManager.byRealMaterial.get(block.getType());
             return res == null ? CMIMaterial.NONE : res;
         }
