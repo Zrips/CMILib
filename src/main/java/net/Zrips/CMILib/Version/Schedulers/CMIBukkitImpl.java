@@ -2,7 +2,9 @@ package net.Zrips.CMILib.Version.Schedulers;
 
 import java.util.concurrent.CompletableFuture;
 
+import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -61,6 +63,16 @@ public class CMIBukkitImpl implements CMIBaseImpl {
 
     @Override
     public CompletableFuture<Void> runAtLocation(Location location, Runnable runnable) {
+        return runAtLocation(null, 0, 0, runnable);
+    }
+
+    @Override
+    public CompletableFuture<Void> runAtLocation(Chunk chunk, Runnable runnable) {
+        return runAtLocation(null, 0, 0, runnable);
+    }
+
+    @Override
+    public CompletableFuture<Void> runAtLocation(World world, int x, int z, Runnable runnable) {
         CompletableFuture<Void> future = new CompletableFuture<>();
         this.scheduler.runTask(this.plugin, () -> {
             runnable.run();
@@ -113,4 +125,5 @@ public class CMIBukkitImpl implements CMIBaseImpl {
     public CMITask runAtEntityTimer(Entity entity, Runnable runnable, long delay, long period) {
         return new CMIBukkitTask(this.scheduler.runTaskTimer(this.plugin, runnable, delay, period));
     }
+
 }

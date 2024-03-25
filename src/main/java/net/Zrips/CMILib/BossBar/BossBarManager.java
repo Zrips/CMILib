@@ -14,7 +14,6 @@ import org.bukkit.entity.Player;
 
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Container.CommandType;
-import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Version.Version;
 import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
 import net.Zrips.CMILib.commands.CMICommand;
@@ -187,6 +186,9 @@ public class BossBarManager {
                             } catch (Throwable e) {
                             }
                             CMIScheduler.get().runTask(() -> {
+                                if (!barInfo.timerRunOut())
+                                    return;
+
                                 if (CMILib.getInstance().isCmiPresent()) {
                                     if (player != null) {
                                         com.Zrips.CMI.CMI.getInstance().getSpecializedCommandManager().processCmds(barInfo.getCommands(player), player);
@@ -204,18 +206,15 @@ public class BossBarManager {
                         }
 
                         if (barInfo.getHideScheduler() == null)
-                            barInfo.setHideScheduler(CMIScheduler.get().runTaskLater(new Runnable() {
-                                @Override
-                                public void run() {
-                                    CMIBossBarHideEvent ev = new CMIBossBarHideEvent(barInfo);
-                                    Bukkit.getServer().getPluginManager().callEvent(ev);
-                                    if (!ev.isCancelled()) {
-                                        barInfo.getBar().setVisible(false);
-                                        barInfo.cancelAutoScheduler();
-                                        removeGlobalBossbar(barInfo);
-                                        barInfo.remove();
-                                        barInfo.setHideScheduler(null);
-                                    }
+                            barInfo.setHideScheduler(CMIScheduler.get().runTaskLater(() -> {
+                                CMIBossBarHideEvent ev = new CMIBossBarHideEvent(barInfo);
+                                Bukkit.getServer().getPluginManager().callEvent(ev);
+                                if (!ev.isCancelled()) {
+                                    barInfo.getBar().setVisible(false);
+                                    barInfo.cancelAutoScheduler();
+                                    removeGlobalBossbar(barInfo);
+                                    barInfo.remove();
+                                    barInfo.setHideScheduler(null);
                                 }
                             }, barInfo.getKeepFor()));
 //			barInfo.cancelAutoScheduler();
@@ -256,17 +255,14 @@ public class BossBarManager {
                 }
 
                 if (!barInfo.stillRunning() && barInfo.getHideScheduler() == null) {
-                    barInfo.setHideScheduler(CMIScheduler.get().runTaskLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            CMIBossBarHideEvent ev = new CMIBossBarHideEvent(barInfo);
-                            Bukkit.getServer().getPluginManager().callEvent(ev);
-                            if (!ev.isCancelled()) {
-                                barInfo.getBar().setVisible(false);
-                                removeGlobalBossbar(barInfo);
-                                barInfo.remove();
-                                barInfo.setHideScheduler(null);
-                            }
+                    barInfo.setHideScheduler(CMIScheduler.get().runTaskLater(() -> {
+                        CMIBossBarHideEvent ev = new CMIBossBarHideEvent(barInfo);
+                        Bukkit.getServer().getPluginManager().callEvent(ev);
+                        if (!ev.isCancelled()) {
+                            barInfo.getBar().setVisible(false);
+                            removeGlobalBossbar(barInfo);
+                            barInfo.remove();
+                            barInfo.setHideScheduler(null);
                         }
                     }, barInfo.getKeepFor()));
 

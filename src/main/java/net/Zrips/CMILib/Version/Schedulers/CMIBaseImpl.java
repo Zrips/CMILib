@@ -2,7 +2,9 @@ package net.Zrips.CMILib.Version.Schedulers;
 
 import java.util.concurrent.CompletableFuture;
 
+import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 
 public interface CMIBaseImpl {
@@ -31,4 +33,8 @@ public interface CMIBaseImpl {
     CMITask runAtEntityLater(Entity paramEntity, Runnable paramRunnable, long ticksDelay);
 
     CMITask runAtEntityTimer(Entity paramEntity, Runnable paramRunnable, long ticksStart, long ticksDelay);
+
+    CompletableFuture<Void> runAtLocation(Chunk chunk, Runnable runnable);
+
+    CompletableFuture<Void> runAtLocation(World world, int x, int z, Runnable runnable);
 }

@@ -247,10 +247,6 @@ public class CMILocation extends Location {
         if (loc == null)
             return CMIMaterial.AIR;
 
-//	if (Version.isCurrentEqualOrLower(Version.v1_13_R2))
-
-//	if (loc.getWorld().isChunkGenerated(loc.getBlockX() >> 4, loc.getBlockZ() >> 4)) {
-
         try {
             if (Version.isCurrentEqualOrHigher(Version.v1_16_R1) && !super.isWorldLoaded())
                 return CMIMaterial.AIR;
@@ -259,39 +255,6 @@ public class CMILocation extends Location {
 
         CMIMaterial mat = CMIMaterial.get(this.getBlock());
         return mat == CMIMaterial.NONE ? CMIMaterial.AIR : mat;
-//	}
-
-//	CMI.getInstance().d(loc.getWorld().isChunkGenerated(loc.getBlockX() >> 4, loc.getBlockZ() >> 4));
-//	@NotNull Chunk c = loc.getWorld().getChunkAt(loc.getBlockX() >> 4, loc.getBlockZ() >> 4);
-//	CMI.getInstance().d(loc.getWorld().isChunkGenerated(loc.getBlockX() >> 4, loc.getBlockZ() >> 4));
-//	@NotNull
-//	ChunkSnapshot chunk = c.getChunkSnapshot(false, false, false);
-//
-//	int x = loc.getBlockX() % 16;
-//	x = x < 0 ? 16 + x : x;
-//	int z = loc.getBlockZ() % 16;
-//	z = z < 0 ? 16 + z : z;
-//
-////	CMI.getInstance().d(x, z, loc.getBlockX(), loc.getBlockZ());
-//
-//	CMIMaterial mat = CMIMaterial.get(chunk.getBlockType(x, loc.getBlockY(), z));
-//	return mat == CMIMaterial.NONE ? CMIMaterial.AIR : mat;
-
-//	ChunkSnapshot snap = this.getChunk().getChunkSnapshot(false, false, false);
-//
-//	int x = this.getBlockX() - (snap.getX() * 16);
-//	int z = this.getBlockZ() - (snap.getZ() * 16);
-//
-//	x = x < 0 ? 0 : x > 15 ? 15 : x;
-//	z = z < 0 ? 0 : z > 15 ? 15 : z;
-//	
-//	if (Version.isCurrentEqualOrHigher(Version.v1_13_R1)) {
-//	    CMIMaterial mat = CMIMaterial.get(snap.getBlockType(x, this.getBlockY(), z));
-//	    return mat == CMIMaterial.NONE ? CMIMaterial.AIR : mat;
-//	}
-//	CMIMaterial mat = CMIMaterial.get(snap.getBlockType(x, this.getBlockY(), z) + ":" +
-//	    snap.getData(x, this.getBlockY(), z));
-//	return mat == CMIMaterial.NONE ? CMIMaterial.AIR : mat;
     }
 
     private static MethodHandle getBlockTypeId = null;

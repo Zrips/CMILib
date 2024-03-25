@@ -378,4 +378,8 @@ public class BossBarInfo {
     public void setColorChangeIntervalTicks(int colorChangeIntervalTicks) {
         this.colorChangeIntervalTicks = colorChangeIntervalTicks;
     }
+    
+    public boolean timerRunOut() {
+        return true;
+    }
 }

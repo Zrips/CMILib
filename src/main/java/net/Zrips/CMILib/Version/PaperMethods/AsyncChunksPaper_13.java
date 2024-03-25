@@ -5,6 +5,10 @@ import java.util.concurrent.CompletableFuture;
 
 import org.bukkit.Chunk;
 import org.bukkit.World;
+import org.jetbrains.annotations.NotNull;
+
+import net.Zrips.CMILib.Version.Version;
+import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
 
 public class AsyncChunksPaper_13 implements AsyncChunks {
 
@@ -12,13 +16,14 @@ public class AsyncChunksPaper_13 implements AsyncChunks {
 
     @Override
     public CompletableFuture<Chunk> getChunkAtAsync(World world, int x, int z, boolean gen) {
-	try {
-	    if (meth == null)
-		meth = world.getClass().getMethod("getChunkAtAsync", int.class, int.class, boolean.class);
-	    return (CompletableFuture<Chunk>) meth.invoke(world, x, z, gen);
-	} catch (Throwable e) {
-	    e.printStackTrace();
-	}
-	return null;
+//
+//        CompletableFuture<Chunk> future = new CompletableFuture<>();
+//        CMIScheduler.get().runAtLocation(world, x, z, () -> {
+//            CompletableFuture<Chunk> chunkFuture = world.getChunkAtAsync(x, z, gen);
+//            chunkFuture.thenAccept(future::complete); // Complete the future when chunk retrieval is done
+//        });
+//        return future;
+
+        return world.getChunkAtAsync(x, z, gen);
     }
 }

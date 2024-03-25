@@ -476,7 +476,11 @@ public class CMIChatColor {
     }
 
     public static String flaten(String text) {
-        return deColorize(text, true).replace("&", colorReplacerPlaceholder).replace(colorCodePrefix, colorHexReplacerPlaceholder);
+        return flaten(text, true);
+    }
+
+    public static String flaten(String text, boolean colorizeBefore) {
+        return deColorize(text, colorizeBefore).replace("&", colorReplacerPlaceholder).replace(colorCodePrefix, colorHexReplacerPlaceholder);
     }
 
     public static String deColorize(String text) {

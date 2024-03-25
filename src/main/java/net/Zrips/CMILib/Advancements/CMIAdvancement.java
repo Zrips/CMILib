@@ -18,6 +18,7 @@ import net.Zrips.CMILib.Items.CMIMaterial;
 import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.RawMessages.RawMessage;
 import net.Zrips.CMILib.Version.Version;
+import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
 
 public class CMIAdvancement {
 
@@ -253,12 +254,9 @@ public class CMIAdvancement {
         add();
         grant(players);
         final CMIAdvancement ad = this;
-        Bukkit.getScheduler().runTaskLater(CMI.getInstance(), new Runnable() {
-            @Override
-            public void run() {
-                revoke(players);
-                CMILib.getInstance().getReflectionManager().removeAdvancement(ad);
-            }
+        CMIScheduler.runTaskLater(() -> {
+            revoke(players);
+            CMILib.getInstance().getReflectionManager().removeAdvancement(ad);
         }, 20L);
         return this;
     }

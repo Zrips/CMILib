@@ -15,6 +15,7 @@ import net.Zrips.CMILib.Container.CMILocation;
 import net.Zrips.CMILib.Container.CMIText;
 import net.Zrips.CMILib.Container.PageInfo;
 import net.Zrips.CMILib.Locale.LC;
+import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.RawMessages.RawMessage;
 import net.Zrips.CMILib.RawMessages.RawMessageCommand;
 
@@ -197,8 +198,9 @@ public class ChatMessageListEdit {
                 };
 
                 String text = (String) lines.get(i);
+
                 if (this.isFlatenLines())
-                    text = CMIChatColor.flaten(text);
+                    text = CMIChatColor.flaten(text, false);
 
                 if (this.getShortenLines() > 0) {
                     text = CMIText.truncate(text, this.getShortenLines(), "...");

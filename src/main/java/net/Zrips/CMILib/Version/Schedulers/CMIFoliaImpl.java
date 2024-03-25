@@ -3,7 +3,9 @@ package net.Zrips.CMILib.Version.Schedulers;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
+import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -77,7 +79,27 @@ public class CMIFoliaImpl implements CMIBaseImpl {
         CompletableFuture<Void> future = new CompletableFuture<>();
         this.regionScheduler.execute(this.plugin, location, () -> {
             runnable.run();
-            future.complete(null); 
+            future.complete(null);
+        });
+        return future;
+    }
+
+    @Override
+    public CompletableFuture<Void> runAtLocation(Chunk chunk, Runnable runnable) {
+        CompletableFuture<Void> future = new CompletableFuture<>();
+        this.regionScheduler.execute(this.plugin, chunk.getWorld(), chunk.getX(), chunk.getZ(), () -> {
+            runnable.run();
+            future.complete(null);
+        });
+        return future;
+    }
+
+    @Override
+    public CompletableFuture<Void> runAtLocation(World world, int x, int z, Runnable runnable) {
+        CompletableFuture<Void> future = new CompletableFuture<>();
+        this.regionScheduler.execute(this.plugin, world, x, z, () -> {
+            runnable.run();
+            future.complete(null);
         });
         return future;
     }

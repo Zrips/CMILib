@@ -2,6 +2,7 @@ package net.Zrips.CMILib.Version.Schedulers;
 
 import java.util.concurrent.CompletableFuture;
 
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 
@@ -57,6 +58,10 @@ public class CMIScheduler {
 
     public static CompletableFuture<Void> runAtLocation(Location location, Runnable runnable) {
         return get().runAtLocation(location, runnable);
+    }
+
+    public static CompletableFuture<Void> runAtLocation(Chunk chunk, Runnable runnable) {
+        return get().runAtLocation(chunk, runnable);
     }
 
     public static CMITask runAtLocationLater(Location location, Runnable runnable, long delay) {
