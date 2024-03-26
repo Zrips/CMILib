@@ -128,6 +128,10 @@ public enum Version {
         return getPlatform().equals(MinecraftPlatform.folia);
     }
 
+    public static boolean isPurpur() {
+        return getPlatform().equals(MinecraftPlatform.purpur);
+    }
+
     public static MinecraftPlatform getPlatform() {
         if (platform != null)
             return platform;
