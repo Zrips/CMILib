@@ -29,6 +29,7 @@ import org.bukkit.Server;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.craftbukkit.v1_20_R3.CraftServer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -54,6 +55,7 @@ import net.Zrips.CMILib.RawMessages.RawMessage;
 import net.Zrips.CMILib.Version.MinecraftPlatform;
 import net.Zrips.CMILib.Version.Version;
 import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.entity.decoration.EntityArmorStand;
 
 public class Reflections {
@@ -448,11 +450,15 @@ public class Reflections {
     }
 
     public int getCurrentTick() {
+        if (Version.isFolia())
+            return Bukkit.getCurrentTick();
+
         try {
             return MinecraftServer.getClass().getField("currentTick").getInt(CraftServer);
         } catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
             e.printStackTrace();
         }
+
         return (int) (System.currentTimeMillis() / 50);
     }
 
@@ -789,10 +795,17 @@ public class Reflections {
         return this.CraftWorldClass.cast(world);
     }
 
+    private Method getWorldServerMeth = null;
+    private Method getWorldWorldMeth = null;
+
     public Object getWorldServer(World world) {
         Object obj = getCraftWorld(world);
         try {
-            return WorldServerClass.cast(obj.getClass().getMethod("getHandle").invoke(obj));
+
+            if (getWorldServerMeth == null)
+                getWorldServerMeth = obj.getClass().getMethod("getHandle");
+
+            return WorldServerClass.cast(getWorldServerMeth.invoke(obj));
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -802,8 +815,12 @@ public class Reflections {
     public Object getMineCraftWorld(World world) {
         Object obj = getCraftWorld(world);
         try {
-            Object handle = WorldServerClass.cast(obj.getClass().getMethod("getHandle").invoke(obj));
-            return this.world.cast(handle.getClass().getMethod("getMinecraftWorld").invoke(handle));
+            if (getWorldServerMeth == null)
+                getWorldServerMeth = obj.getClass().getMethod("getHandle");
+            Object handle = WorldServerClass.cast(getWorldServerMeth.invoke(obj));
+            if (getWorldWorldMeth == null)
+                getWorldWorldMeth = handle.getClass().getMethod("getMinecraftWorld");
+            return this.world.cast(getWorldWorldMeth.invoke(handle));
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -820,14 +837,16 @@ public class Reflections {
         return null;
     }
 
+    private Method getTileEntityAtMeth = null;
+
     public Object getTileEntityAt(Location loc) {
         try {
             if (Version.isCurrentEqualOrHigher(Version.v1_13_R2)) {
                 try {
                     Object ncw = getWorldServer(loc.getWorld());
-                    Method meth = ncw.getClass().getMethod(Version.isCurrentEqualOrHigher(Version.v1_18_R1) ? "c_" : "getTileEntity", BlockPosition);
-                    Object res = meth.invoke(ncw, getBlockPosition(loc));
-                    return res;
+                    if (getTileEntityAtMeth == null)
+                        getTileEntityAtMeth = ncw.getClass().getMethod(Version.isCurrentEqualOrHigher(Version.v1_18_R1) ? "c_" : "getTileEntity", BlockPosition);
+                    return getTileEntityAtMeth.invoke(ncw, getBlockPosition(loc));
                 } catch (Throwable e) {
                     e.printStackTrace();
                 }
@@ -1511,7 +1530,7 @@ public class Reflections {
     }
 
     public void spawnInEntityData(Player player, Entity entity) {
-        
+
         if (Version.isCurrentEqualOrHigher(Version.v1_19_R2))
             return;
 
@@ -1812,8 +1831,9 @@ public class Reflections {
                 Object REGISTRY = AdvancementData.getClass().getField("REGISTRY").get(AdvancementData);
 
                 Map<Object, Object> advs = (Map<Object, Object>) REGISTRY.getClass().getField("advancements").get(REGISTRY);
-                if (ad.getId() != null)
-                    advs.remove(new net.minecraft.resources.MinecraftKey(ad.getId().getNamespace(), ad.getId().getKey()));
+                if (ad.getId() != null) {
+                    advs.remove(CraftNamespacedKey.getMethod("toMinecraft", NamespacedKey.class).invoke(CraftNamespacedKey, ad.getId()));
+                }
             } catch (Exception | Error e) {
                 e.printStackTrace();
             }
@@ -2053,7 +2073,7 @@ public class Reflections {
         } else if (Version.isCurrentEqualOrHigher(Version.v1_16_R1)) {
             try {
                 Object minecraftkey = CraftNamespacedKey.getMethod("toMinecraft", NamespacedKey.class).invoke(CraftNamespacedKey, key);
-                ad.setId((NamespacedKey) minecraftkey);
+                ad.setId(key);
                 Object DESERIALIZER = AdvancementDataWorld.getField("DESERIALIZER").get(AdvancementDataWorld);
                 Object jsonelement = DESERIALIZER.getClass().getMethod("fromJson", String.class, Class.class).invoke(DESERIALIZER, advancement, JsonElement.class);
                 Object jsonobject = ChatDeserializer.getMethod("m", JsonElement.class, String.class).invoke(ChatDeserializer, jsonelement, "advancement");
