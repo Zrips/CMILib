@@ -347,30 +347,42 @@ public class CMINBT {
         type = nmbtType.entity;
     }
 
-    public Integer getInt(String path) {
-
-        if (!this.hasNBT(path))
+    private Object get(String path, Method getMethod) {
+        if (tag == null)
             return null;
         try {
+            if (!path.contains("."))
+                return getMethod.invoke(tag, path);
 
-            if (tag != null && path.contains(".")) {
-                List<String> keys = new ArrayList<String>();
-                keys.addAll(Arrays.asList(path.split("\\.")));
-                try {
-                    Object nbtbase = met_get.invoke(tag, keys.get(0));
-                    for (int i = 1; i < keys.size(); i++) {
-                        if (i + 1 < keys.size()) {
-                            nbtbase = met_get.invoke(nbtbase, keys.get(i));
-                        } else {
-                            if (nbtbase == null)
-                                return (Integer) met_getInt.invoke(tag, path);
-                            return (Integer) met_getString.invoke(nbtbase, keys.get(i));
-                        }
+            List<String> keys = new ArrayList<String>();
+            keys.addAll(Arrays.asList(path.split("\\.")));
+            try {
+                Object nbtbase = met_get.invoke(tag, keys.get(0));
+                for (int i = 1; i < keys.size(); i++) {
+                    if (i + 1 < keys.size()) {
+                        nbtbase = met_get.invoke(nbtbase, keys.get(i));
+                    } else {
+                        if (nbtbase == null)
+                            break;
+                        return getMethod.invoke(nbtbase, keys.get(i));
                     }
-                } catch (Throwable e) {
                 }
+            } catch (Throwable e) {
             }
-            return (Integer) met_getInt.invoke(tag, path);
+
+            return getMethod.invoke(tag, path);
+        } catch (Exception e) {
+        }
+        return null;
+    }
+
+    public Integer getInt(String path) {
+        if (!this.hasNBT(path))
+            return null;
+
+        try {
+            Object res = get(path, met_getInt);
+            return res == null ? null : (Integer) res;
         } catch (Exception e) {
         }
         return null;
@@ -379,10 +391,11 @@ public class CMINBT {
     public Byte getByte(String path) {
         if (!this.hasNBT(path))
             return null;
+
         try {
-            return (Byte) met_getByte.invoke(tag, path);
+            Object res = get(path, met_getByte);
+            return res == null ? null : (Byte) res;
         } catch (Exception e) {
-            e.printStackTrace();
         }
         return null;
     }
@@ -390,8 +403,10 @@ public class CMINBT {
     public Long getLong(String path) {
         if (!this.hasNBT(path))
             return null;
+
         try {
-            return (Long) met_getLong.invoke(tag, path);
+            Object res = get(path, met_getLong);
+            return res == null ? null : (Long) res;
         } catch (Exception e) {
         }
         return null;
@@ -400,10 +415,11 @@ public class CMINBT {
     public Boolean getBoolean(String path) {
         if (!this.hasNBT(path))
             return null;
+
         try {
-            return (Boolean) met_getBoolean.invoke(tag, path);
+            Object res = get(path, met_getBoolean);
+            return res == null ? null : (Boolean) res;
         } catch (Exception e) {
-            e.printStackTrace();
         }
         return null;
     }
@@ -411,8 +427,10 @@ public class CMINBT {
     public float getFloat(String path) {
         if (!this.hasNBT(path))
             return 0.0F;
+
         try {
-            return (Float) met_getFloat.invoke(tag, path);
+            Object res = get(path, met_getFloat);
+            return res == null ? 0.0F : (Float) res;
         } catch (Exception e) {
         }
         return 0.0F;
@@ -421,18 +439,22 @@ public class CMINBT {
     public Short getShort(String path) {
         if (tag == null)
             return null;
+
         try {
-            return (Short) met_getShort.invoke(tag, path);
+            Object res = get(path, met_getShort);
+            return res == null ? null : (Short) res;
         } catch (Exception e) {
-            return null;
         }
+        return null;
     }
 
     public double getDouble(String path) {
         if (!this.hasNBT(path))
             return 0.0D;
+
         try {
-            return (Double) met_getDouble.invoke(tag, path);
+            Object res = get(path, met_getDouble);
+            return res == null ? 0.0D : (Double) res;
         } catch (Exception e) {
         }
         return 0.0D;
@@ -441,8 +463,10 @@ public class CMINBT {
     public byte[] getByteArray(String path) {
         if (!this.hasNBT(path))
             return new byte[0];
+
         try {
-            return (byte[]) met_getByteArray.invoke(tag, path);
+            Object res = get(path, met_getByteArray);
+            return res == null ? new byte[0] : (byte[]) res;
         } catch (Exception e) {
         }
         return new byte[0];
@@ -451,8 +475,10 @@ public class CMINBT {
     public int[] getIntArray(String path) {
         if (!this.hasNBT(path))
             return new int[0];
+
         try {
-            return (int[]) met_getIntArray.invoke(tag, path);
+            Object res = get(path, met_getIntArray);
+            return res == null ? new int[0] : (int[]) res;
         } catch (Exception e) {
         }
         return new int[0];
@@ -462,12 +488,12 @@ public class CMINBT {
         if (!this.hasNBT(path))
             return new long[0];
 
-        if (!Version.isCurrentEqualOrHigher(Version.v1_13_R1)) {
+        if (!Version.isCurrentEqualOrHigher(Version.v1_13_R1))
             return new long[0];
-        }
 
         try {
-            return (long[]) met_getLongArray.invoke(tag, path);
+            Object res = get(path, met_getLongArray);
+            return res == null ? new long[0] : (long[]) res;
         } catch (Exception e) {
         }
         return new long[0];
@@ -478,30 +504,13 @@ public class CMINBT {
             return null;
         if (!this.hasNBT(path))
             return null;
+
         try {
-
-            if (tag != null && path.contains(".")) {
-                List<String> keys = new ArrayList<String>();
-                keys.addAll(Arrays.asList(path.split("\\.")));
-                try {
-                    Object nbtbase = met_get.invoke(tag, keys.get(0));
-                    for (int i = 1; i < keys.size(); i++) {
-                        if (i + 1 < keys.size()) {
-                            nbtbase = met_get.invoke(nbtbase, keys.get(i));
-                        } else {
-                            if (nbtbase == null)
-                                return (String) met_getString.invoke(tag, path);
-                            return (String) met_getString.invoke(nbtbase, keys.get(i));
-                        }
-                    }
-                } catch (Throwable e) {
-                }
-            }
-
-            return (String) met_getString.invoke(tag, path);
+            Object res = get(path, met_getString);
+            return res == null ? null : (String) res;
         } catch (Exception e) {
-            return null;
         }
+        return null;
     }
 
     public List<String> getList(String path) {
@@ -1076,6 +1085,14 @@ public class CMINBT {
 
     public boolean hasNBT(String key) {
         if (tag != null && key.contains(".")) {
+
+            try {
+                if ((boolean) tag.getClass().getMethod(hasKeyName, String.class).invoke(tag, key))
+                    return true;
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+
             List<String> keys = new ArrayList<String>();
             keys.addAll(Arrays.asList(key.split("\\.")));
             try {
@@ -1086,12 +1103,13 @@ public class CMINBT {
                     if (i + 1 < keys.size()) {
                         nbtbase = met_get.invoke(nbtbase, keys.get(i));
                     } else {
-                        if (nbtbase == null) {
-                            return (Boolean) tag.getClass().getMethod(hasKeyName, String.class).invoke(tag, key);
-                        }
+                        if (nbtbase == null)
+                            break;
                         return (Boolean) nbtbase.getClass().getMethod(hasKeyName, String.class).invoke(nbtbase, keys.get(i));
                     }
                 }
+
+                return (Boolean) tag.getClass().getMethod(hasKeyName, String.class).invoke(tag, key);
             } catch (Throwable e) {
                 e.printStackTrace();
             }
