@@ -24,7 +24,6 @@ public class CMIFoliaImpl implements CMIBaseTeleportImpl {
 
     @Override
     public @NotNull boolean teleport(Entity ent, Location loc, TeleportCause cause) {
-
         return ent.teleport(loc, cause);
     }
 

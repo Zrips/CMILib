@@ -69,4 +69,20 @@ public class CMINumber {
     public static boolean fractional(double number) {
         return number != Math.floor(number);
     }
+
+    public static int abs(int num) {
+        return num < 0 ? -num : num;
+    }
+
+    public static long abs(long num) {
+        return num < 0 ? -num : num;
+    }
+
+    public static float abs(float num) {
+        return num < 0 ? -num : num;
+    }
+
+    public static double abs(double num) {
+        return num < 0 ? -num : num;
+    }
 }

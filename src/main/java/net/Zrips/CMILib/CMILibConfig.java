@@ -348,7 +348,7 @@ public class CMILibConfig {
         // Loading data
         CMIBiome.initialize();
         CMIEntity.initialize();
-        CMIEnchantment.initialize();
+        CMIEnchantment.updateLocale();
         CMIPotionEffect.initialize();
         CMIWorld.initialize();
 

@@ -55,6 +55,7 @@ public class BossBarManager {
     }
 
     public void updateGlobalBars(Player player) {
+
         for (Entry<String, BossBarInfo> iter : new HashMap<String, BossBarInfo>(globalBars).entrySet()) {
             BossBarInfo binfo = iter.getValue();
 

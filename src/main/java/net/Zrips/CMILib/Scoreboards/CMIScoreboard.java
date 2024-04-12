@@ -79,6 +79,7 @@ public class CMIScoreboard {
     }
 
     public static void removeScoreBoard(Player player) {
+
         try {
             if (Version.isCurrentEqualOrHigher(Version.v1_20_R3)) {
 

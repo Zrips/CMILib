@@ -14,6 +14,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import net.Zrips.CMILib.BossBar.BossBarListener;
 import net.Zrips.CMILib.BossBar.BossBarManager;
 import net.Zrips.CMILib.Chat.ChatEditorListener;
+import net.Zrips.CMILib.Enchants.CMIEnchantment;
 import net.Zrips.CMILib.GUI.GUIListener;
 import net.Zrips.CMILib.GUI.GUIManager;
 import net.Zrips.CMILib.Items.ItemListener;
@@ -27,6 +28,7 @@ import net.Zrips.CMILib.RawMessages.RawMessageListener;
 import net.Zrips.CMILib.Shadow.ShadowCommandListener;
 import net.Zrips.CMILib.Skins.SkinManager;
 import net.Zrips.CMILib.Version.Version;
+import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
 import net.Zrips.CMILib.commands.CommandsHandler;
 
 public class CMILib extends JavaPlugin {
@@ -320,10 +322,15 @@ public class CMILib extends JavaPlugin {
         pm.registerEvents(new ItemListener(), this);
         getCommandManager().fillCommands();
 
+        // Primary initialization to record locale
+        CMIEnchantment.initialize();
+        // Secondary initialization in case 3rd party plugin adds custom enchants after CMILib load
+        CMIScheduler.runTask(CMIEnchantment::initialize);
+
         getConfigManager().LoadLang("EN");
-        if (!CMILibConfig.lang.equalsIgnoreCase("EN")) {
+
+        if (!CMILibConfig.lang.equalsIgnoreCase("EN"))
             getConfigManager().LoadLang(CMILibConfig.lang);
-        }
     }
 
     @Override

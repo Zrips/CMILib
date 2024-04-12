@@ -71,7 +71,7 @@ public class CMIWorld {
     public static int getMinHeight(World world) {
         if (Version.isCurrentEqualOrLower(Version.v1_16_R3))
             return 0;
-        return world.getMinHeight();
+        return world == null ? 0 : world.getMinHeight();
     }
 
     public static int getMaxHeight(World world) {
