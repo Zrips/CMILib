@@ -46,8 +46,8 @@ public class CMILibConfig {
     public static boolean CommandSorting = true;
     public static boolean isSimilarCommandPrevention = false;
     public static boolean rmcConsoleLog = true;
-    public static boolean playerNameForItemStack = true;
-    public static boolean mobNameForItemStack = true;
+//    public static boolean playerNameForItemStack = true;
+//    public static boolean mobNameForItemStack = true;
     public static boolean OfficialHex = true;
     public static boolean QuirkyHex = true;
     public static List<String> mysterySpawners;
@@ -171,12 +171,12 @@ public class CMILibConfig {
         cfg.addComment("RMCCommands.ConsoleLog", "When enabled we will (where possible) include which command was performed when using rmc commands");
         rmcConsoleLog = cfg.get("RMCCommands.ConsoleLog", true);
 
-        cfg.addComment("Heads.PlayerName", "When processing head item stack we will apply owners name instead of letting game client to use its own", "This will change 'Zrips's head' to 'Head of Zrips'");
-        playerNameForItemStack = cfg.get("Heads.PlayerName", false);
-
-        cfg.addComment("Heads.MobName", "When processing head item stack we will apply monsters name instead of letting game client to use its own",
-            "This will change 'Zrips's head' to 'Head of Chicken' in case custom skin is applyed to it");
-        mobNameForItemStack = cfg.get("Heads.MobName", false);
+//        cfg.addComment("Heads.PlayerName", "When processing head item stack we will apply owners name instead of letting game client to use its own", "This will change 'Zrips's head' to 'Head of Zrips'");
+//        playerNameForItemStack = cfg.get("Heads.PlayerName", false);
+//
+//        cfg.addComment("Heads.MobName", "When processing head item stack we will apply monsters name instead of letting game client to use its own",
+//            "This will change 'Zrips's head' to 'Head of Chicken' in case custom skin is applyed to it");
+//        mobNameForItemStack = cfg.get("Heads.MobName", false);
 
         cfg.addComment("Images.Filler", "Symbol to be used to create image fields", "Color codes are NOT supported here",
             "This will take full effect after server restart due to some images being already cached");

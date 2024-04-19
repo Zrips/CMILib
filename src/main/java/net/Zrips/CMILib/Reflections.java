@@ -999,8 +999,8 @@ public class Reflections {
                     SkullMeta meta = (SkullMeta) item.getItemMeta();
                     meta.setOwnerProfile(getProfile(decodedString.split("url\":\"", 2)[1].split("\"", 2)[0]));
 
-                    if (CMILibConfig.playerNameForItemStack && customProfileName != null && !customProfileName.isEmpty() && !customProfileName.contains(" ") && !customProfileName.contains("-"))
-                        meta.setDisplayName(LC.info_playerHeadName.get("[playerName]", customProfileName));
+//                    if (CMILibConfig.playerNameForItemStack && customProfileName != null && !customProfileName.isEmpty() && !customProfileName.contains(" ") && !customProfileName.contains("-"))
+//                        meta.setDisplayName(LC.info_playerHeadName.get("[playerName]", customProfileName));
                     item.setItemMeta(meta);
                 }
                 return item;
@@ -1028,8 +1028,8 @@ public class Reflections {
                 }
             }
 
-            if (CMILibConfig.playerNameForItemStack && customProfileName != null && !customProfileName.isEmpty() && !customProfileName.contains(" ") && !customProfileName.contains("-"))
-                headMeta.setDisplayName(LC.info_playerHeadName.get("[playerName]", customProfileName));
+//            if (CMILibConfig.playerNameForItemStack && customProfileName != null && !customProfileName.isEmpty() && !customProfileName.contains(" ") && !customProfileName.contains("-"))
+//                headMeta.setDisplayName(LC.info_playerHeadName.get("[playerName]", customProfileName));
             item.setItemMeta(headMeta);
 
             try {

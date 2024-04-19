@@ -1245,6 +1245,9 @@ public class CMINBT {
                 break;
             case v1_14_R1:
             case v1_15_R1:
+            case v1_16_R1:
+            case v1_16_R2:
+            case v1_16_R3:
                 ff = "b";
                 break;
             case v1_17_R1:

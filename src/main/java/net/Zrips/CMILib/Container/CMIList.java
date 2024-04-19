@@ -16,10 +16,10 @@ public class CMIList {
     public static String listToString(List<String> ls, String spliter) {
 	spliter = spliter == null ? " \n" : spliter;
 	StringBuilder s = new StringBuilder();
-	for (String one : ls) {
-	    if (!s.toString().isEmpty())
+	for (int i = 0; i < ls.size(); i++) {
+	    if (i> 0)
 		s.append(spliter);
-	    s.append(one);
+	    s.append(ls.get(i));
 	}
 	return s.toString();
     }
