@@ -1862,7 +1862,7 @@ public class Reflections {
                     frame = net.minecraft.advancements.AdvancementFrameType.b;
 
                 net.minecraft.advancements.AdvancementDisplay display = new net.minecraft.advancements.AdvancementDisplay(
-                    (net.minecraft.world.item.ItemStack) CMINBT.asNMSCopy(CMIMaterial.get(advancement.getIcon()).newItemStack()),
+                    (net.minecraft.world.item.ItemStack) CMINBT.asNMSCopy(advancement.getItem()),
                     (net.minecraft.network.chat.IChatBaseComponent) textToIChatBaseComponent(new RawMessage().addText(advancement.getTitle()).getRaw()),
                     (net.minecraft.network.chat.IChatBaseComponent) textToIChatBaseComponent(new RawMessage().addText(advancement.getDescription()).getRaw()),
                     java.util.Optional.of(bg),

@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import com.Zrips.CMI.CMI;
 import com.google.gson.Gson;
@@ -14,6 +15,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import net.Zrips.CMILib.CMILib;
+import net.Zrips.CMILib.Items.CMIItemStack;
 import net.Zrips.CMILib.Items.CMIMaterial;
 import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.RawMessages.RawMessage;
@@ -27,6 +29,7 @@ public class CMIAdvancement {
     private static final Gson gson = new Gson();
 
     private NamespacedKey id;
+    private ItemStack item;
     private String parent;
     private String icon;
     private AdvancementBackground background;
@@ -59,11 +62,13 @@ public class CMIAdvancement {
         return this;
     }
 
+    @Deprecated
     public CMIAdvancement setIcon(String icon) {
         this.icon = icon;
         return this;
     }
 
+    @Deprecated
     public CMIAdvancement setIcon(CMIMaterial mat) {
         if (mat.isValidAsItemStack())
             this.icon = "minecraft:" + mat.toString().replace(" ", "_").toLowerCase();
@@ -120,8 +125,11 @@ public class CMIAdvancement {
         if (Version.isCurrentLower(Version.v1_13_R1))
             icon.addProperty("data", getData());
 
-        if (Version.isCurrentHigher(Version.v1_13_R1) && getCustomModelData() > 0)
+        CMIDebug.d("pre add custom", getCustomModelData());
+        if (Version.isCurrentHigher(Version.v1_13_R1) && getCustomModelData() > 0) {
+            CMIDebug.d("add custom", getCustomModelData());
             icon.addProperty("nbt", "{CustomModelData:" + getCustomModelData() + "}");
+        }
 
         JsonObject display = new JsonObject();
         display.add("icon", icon);
@@ -315,5 +323,17 @@ public class CMIAdvancement {
 
     public boolean isHidden() {
         return this.hidden;
+    }
+
+    public ItemStack getItem() {
+        if (item == null && this.getIcon() != null)
+            item = CMIItemStack.deserialize(this.getIcon()).getItemStack();
+        return item;
+    }
+
+    public CMIAdvancement setItem(ItemStack item) {
+        this.item = item;
+        setIcon(CMIMaterial.get(item));
+        return this;
     }
 }
