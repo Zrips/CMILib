@@ -949,7 +949,7 @@ public class CMIItemSerializer {
     }
 
     private static boolean applyColor(CMIItemStack cim, String value) {
-        if (!cim.getCMIType().isLeatherArmor())
+        if (!cim.getCMIType().isLeatherArmor() && !cim.getCMIType().equals(CMIMaterial.LEATHER_HORSE_ARMOR))
             return false;
 
         Matcher mMatch = pcolor.matcher(value);
