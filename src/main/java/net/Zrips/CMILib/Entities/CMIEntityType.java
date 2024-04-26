@@ -14,14 +14,12 @@ import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import net.Zrips.CMILib.CMILib;
-import net.Zrips.CMILib.Colors.CMIChatColor;
 import net.Zrips.CMILib.Items.CMIMaterial;
 import net.Zrips.CMILib.Locale.LC;
-import net.Zrips.CMILib.NBT.CMINBT;
 
 public enum CMIEntityType {
 
-    DROPPED_ITEM(1, "Item"),
+    ITEM(1, "Item", "DROPPED_ITEM"),
     EXPERIENCE_ORB(2, "Experience Orb"),
     AREA_EFFECT_CLOUD(3, "Area Effect Cloud"),
     ELDER_GUARDIAN(4, "Elder Guardian", Arrays.asList(
@@ -79,14 +77,14 @@ public enum CMIEntityType {
     ILLUSIONER(37, "Illusioner", Arrays.asList(
         "NTEyNTEyZTdkMDE2YTIzNDNhN2JmZjFhNGNkMTUzNTdhYjg1MTU3OWYxMzg5YmQ0ZTNhMjRjYmViODhiIn19fQ==",
         "MmYyODgyZGQwOTcyM2U0N2MwYWI5NjYzZWFiMDgzZDZhNTk2OTI3MzcwNjExMGM4MjkxMGU2MWJmOGE4ZjA3ZSJ9fX0=")),
-    MINECART_COMMAND(40, "Minecart with Command Block"),
+    COMMAND_BLOCK_MINECART(40, "Minecart with Command Block", "Command Minecart"),
     BOAT(41, "Boat"),
     MINECART(42, "Minecart"),
-    MINECART_CHEST(43, "Minecart with Chest"),
-    MINECART_FURNACE(44, "Minecart with Furnace"),
-    MINECART_TNT(45, "Minecart with TNT"),
-    MINECART_HOPPER(46, "Minecart with Hopper"),
-    MINECART_MOB_SPAWNER(47, "Minecart with Spawner"),
+    CHEST_MINECART(43, "Minecart with Chest", "MINECART_CHEST"),
+    FURNACE_MINECART(44, "Minecart with Furnace", "MINECART_FURNACE"),
+    TNT_MINECART(45, "Minecart with TNT", "MINECART_TNT"),
+    HOPPER_MINECART(46, "Minecart with Hopper", "MINECART_HOPPER"),
+    SPAWNER_MINECART(47, "Minecart with Spawner", "MINECART_MOB_SPAWNER"),
     CREEPER(50, "Creeper", Arrays.asList(
         "ZjQyNTQ4MzhjMzNlYTIyN2ZmY2EyMjNkZGRhYWJmZTBiMDIxNWY3MGRhNjQ5ZTk0NDQ3N2Y0NDM3MGNhNjk1MiJ9fX0=",
         "YTNmMTcyZDI5Y2Y5NGJjODk1NjA4YjdhNWRjMmFmMGRlNDljNzg4ZDViZWNiMTYwNWYxZjUzNDg4YTAxNzBiOCJ9fX0=",
@@ -167,7 +165,7 @@ public enum CMIEntityType {
         "Angry Wolf:c-angry:ZTk1Y2JiNGY3NWVhODc2MTdmMmY3MTNjNmQ0OWRhYzMyMDliYTFiZDRiOTM2OTY1NGIxNDU5ZWExNTMxNyJ9fX0=")),
     MUSHROOM_COW(96, "Mushroom Cow", "Mooshroom", Arrays.asList(
         "ZDBiYzYxYjk3NTdhN2I4M2UwM2NkMjUwN2EyMTU3OTEzYzJjZjAxNmU3YzA5NmE0ZDZjZjFmZTFiOGRiIn19fQ==")),
-    SNOWMAN(97, "Snowman", Arrays.asList(
+    SNOW_GOLEM(97, "Snow Golem", "Snowman", Arrays.asList(
         "MWZkZmQxZjc1MzhjMDQwMjU4YmU3YTkxNDQ2ZGE4OWVkODQ1Y2M1ZWY3MjhlYjVlNjkwNTQzMzc4ZmNmNCJ9fX0=")),
     OCELOT(98, "Ocelot", "Cat", Arrays.asList(
         "YWI4ODFjMzliM2FmZGNjNzlmOTFmZTVkZTNjZGQwMTViYzMzNTM4NDNmNTkxZjRkMjNjZDMwMjdkZTRlNiJ9fX0=",
@@ -293,6 +291,17 @@ public enum CMIEntityType {
     CAMEL(945, "Camel", Arrays.asList("NzRiOGEzMzNkZmE5MmU3ZTVhOTVhZDRhZTJkODRiMWJhZmEzM2RjMjhjMDU0OTI1Mjc3ZjYwZTc5ZGFmYzhjNCJ9fX0=")),
     SNIFFER(946, "Sniffer", Arrays.asList("ODdhZDkyMGE2NmUzOGNjMzQyNmE1YmZmMDg0NjY3ZTg3NzIxMTY5MTVlMjk4MDk4NTY3YzEzOWYyMjJlMmM0MiJ9fX0=")),
 
+    // 1.20.5
+    ARMADILLO(947, "Armadillo", Arrays.asList("OTE2NGVkMGUwZWY2OWIwY2U3ODE1ZTQzMDBiNDQxM2E0ODI4ZmNiMDA5MjkxODU0MzU0NWE0MThhNDhlMGMzYyJ9fX0=")),
+
+    //1.21
+//    BREEZE(949, "Breeze", Arrays.asList("")),  
+//    WIND_CHARGE(950, "Wind Charge", Arrays.asList("")),   
+//    BREEZE_WIND_CHARGE(951, "Breeze Wind Charge", Arrays.asList("")),
+//    BOGGED(952, "Bogged", Arrays.asList("")),
+//    OMINOUS_ITEM_SPAWNER(953, "Ominous Item Spawner", Arrays.asList("")),
+//    FISHING_BOBBER(954, "Fishing Bobber", Arrays.asList("")),
+    
     // if possible we can remove this string for each texture to save up some space
     // eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUv
     UNKNOWN(999, "Unknown");
@@ -439,7 +448,6 @@ public enum CMIEntityType {
 
         MobHeadInfo headInfo = headTextures.get(texture);
 
-
         item = CMILib.getInstance().getReflectionManager().setSkullTexture(item, getTranslatedName(), texture);
 
         if (headInfo != null && headInfo.getCustomName() != null) {
@@ -451,7 +459,7 @@ public enum CMIEntityType {
             meta.setDisplayName(LC.info_mobHeadName.get("[mobName]", getTranslatedName()));
             item.setItemMeta(meta);
         }
-        
+
 //        new CMINBT(item).setString("SkullOwner.Name", getTranslatedName());
 
         cache.put(texture, item);

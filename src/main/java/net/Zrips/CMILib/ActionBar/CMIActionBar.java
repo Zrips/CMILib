@@ -187,7 +187,8 @@ public class CMIActionBar {
 
             RawMessage rm = new RawMessage();
             rm.addText(msg);
-            Object serialized = nmsChatSerializer.getMethod("a", String.class).invoke(null, CMIChatColor.translate(rm.getRaw()));
+
+            Object serialized = CMILib.getInstance().getReflectionManager().textToIChatBaseComponent(CMIChatColor.translate(rm.getRaw()));
 
             Object p = null;
 

@@ -43,6 +43,7 @@ public enum Version {
     v1_20_R1,
     v1_20_R2,
     v1_20_R3(4),
+    v1_20_R4(5),
     v1_21_R1,
     v1_21_R2,
     v1_21_R3,

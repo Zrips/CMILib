@@ -8,7 +8,6 @@ import org.bukkit.advancement.Advancement;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import com.Zrips.CMI.CMI;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -125,9 +124,7 @@ public class CMIAdvancement {
         if (Version.isCurrentLower(Version.v1_13_R1))
             icon.addProperty("data", getData());
 
-        CMIDebug.d("pre add custom", getCustomModelData());
         if (Version.isCurrentHigher(Version.v1_13_R1) && getCustomModelData() > 0) {
-            CMIDebug.d("add custom", getCustomModelData());
             icon.addProperty("nbt", "{CustomModelData:" + getCustomModelData() + "}");
         }
 

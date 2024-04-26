@@ -160,7 +160,9 @@ public class CMIEnchantment {
     }
 
     public static Enchantment getByName(String name) {
-
+        if (name == null)
+            return null;
+        
         if (name.contains(":"))
             name = name.split(":", 2)[0];
 

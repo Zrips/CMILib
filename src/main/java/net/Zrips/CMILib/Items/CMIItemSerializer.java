@@ -949,7 +949,7 @@ public class CMIItemSerializer {
     }
 
     private static boolean applyColor(CMIItemStack cim, String value) {
-        if (!cim.getCMIType().isLeatherArmor() && !cim.getCMIType().equals(CMIMaterial.LEATHER_HORSE_ARMOR))
+        if (!cim.getCMIType().containsCriteria(CMIMC.COLORED))
             return false;
 
         Matcher mMatch = pcolor.matcher(value);
@@ -997,6 +997,13 @@ public class CMIItemSerializer {
 
         if (cmic == null || !cmic.isValid())
             return false;
+
+//        if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
+//            org.bukkit.inventory.meta.ColorableArmorMeta meta = (org.bukkit.inventory.meta.ColorableArmorMeta) cim.getItemStack().getItemMeta();
+//            meta.setColor(cmic.getRGBColor());
+//            cim.getItemStack().setItemMeta(meta);
+//            return true;
+//        }
 
         LeatherArmorMeta meta = (LeatherArmorMeta) cim.getItemStack().getItemMeta();
         meta.setColor(cmic.getRGBColor());

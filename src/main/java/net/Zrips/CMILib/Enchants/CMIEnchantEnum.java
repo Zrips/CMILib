@@ -1,5 +1,7 @@
 package net.Zrips.CMILib.Enchants;
 
+import org.bukkit.enchantments.Enchantment;
+
 public enum CMIEnchantEnum {
     AQUA_AFFINITY("Water Worker"),
     BANE_OF_ARTHROPODS("Damage Arthropods"),
@@ -57,5 +59,12 @@ public enum CMIEnchantEnum {
 
     public String getAlternativeName() {
         return alternative;
+    }
+
+    public Enchantment getEnchantment() {
+        Enchantment enchant = CMIEnchantment.getByName(this.toString());
+        if (enchant != null)
+            return enchant;
+        return CMIEnchantment.getByName(getAlternativeName());
     }
 }

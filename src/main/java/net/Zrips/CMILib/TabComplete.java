@@ -35,7 +35,7 @@ public class TabComplete implements TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
 	List<String> completionList = get(new CMICommandSender(sender), command.getName(), label, args);
-	Collections.sort(completionList);
+	Collections.sort(completionList);	
 	return completionList;
     }
 
@@ -145,7 +145,6 @@ public class TabComplete implements TabCompleter {
 
     public List<String> getByAction(CMICommandSender sender, TabAction action, String[] args, int i) {
 	List<String> temp = new ArrayList<String>();
-	int maxEntries = 800;
 	switch (action) {
 	default:
 	    break;

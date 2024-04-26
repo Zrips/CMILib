@@ -1,11 +1,14 @@
 package net.Zrips.CMILib.Container;
 
 import java.text.DecimalFormat;
+import java.util.Random;
 import java.util.TreeMap;
 
 public class CMINumber {
 
     private final static TreeMap<Integer, String> map = new TreeMap<Integer, String>();
+
+    private final static Random random = new Random();
 
     static {
         map.put(1000, "M");
@@ -84,5 +87,13 @@ public class CMINumber {
 
     public static double abs(double num) {
         return num < 0 ? -num : num;
+    }
+
+    public static int random(int min, int max) {
+        return random.nextInt(max - min) + min;
+    }
+
+    public static double random() {
+        return random.nextDouble();
     }
 }

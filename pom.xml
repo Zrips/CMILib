@@ -6,17 +6,17 @@
 
 	<groupId>CMILib</groupId>
 	<artifactId>CMILib</artifactId>
-	<version>1.4.6.3</version>
+	<version>1.4.7.0</version>
 	<name>CMILib</name>
 	<url>http://maven.apache.org</url>
 	<packaging>jar</packaging>
-
+	
 	<properties>
+		<maven.compiler.source>21</maven.compiler.source>
+		<maven.compiler.target>21</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
 	</properties>
-
+	
 	<dependencies>
 		<dependency>
 			<groupId>dev.folia</groupId>
@@ -33,13 +33,13 @@
 		<dependency>
 			<groupId>org.spigotmc</groupId>
 			<artifactId>spigot-api</artifactId>
-			<version>1.20.3-R0.1-SNAPSHOT</version>
+			<version>1.20.5-R0.1-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.spigotmc</groupId>
 			<artifactId>spigot</artifactId>
-			<version>1.20.3-R0.1-SNAPSHOT</version>
+			<version>1.20.5-R0.1-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<!-- CMI  -->
@@ -109,18 +109,9 @@
 			<!-- Make a Jar -->
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.8.1</version>
 				<configuration>
 					<source>1.8</source>
 					<target>1.8</target>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.3.1</version>
-				<configuration>
-					<outputDirectory>D:\MC\Server 1.20\plugins\</outputDirectory>
 				</configuration>
 			</plugin>
 		</plugins>

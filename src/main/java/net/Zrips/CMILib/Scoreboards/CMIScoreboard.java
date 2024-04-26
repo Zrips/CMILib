@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -18,6 +19,7 @@ import net.Zrips.CMILib.Colors.CMIChatColor;
 import net.Zrips.CMILib.Version.Version;
 import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
 import net.minecraft.network.chat.IChatBaseComponent;
+import net.minecraft.network.chat.numbers.NumberFormat;
 import net.minecraft.network.protocol.game.PacketPlayOutScoreboardDisplayObjective;
 import net.minecraft.network.protocol.game.PacketPlayOutScoreboardScore;
 import net.minecraft.world.scores.ScoreboardObjective;
@@ -81,14 +83,20 @@ public class CMIScoreboard {
     public static void removeScoreBoard(Player player) {
 
         try {
-            if (Version.isCurrentEqualOrHigher(Version.v1_20_R3)) {
+            if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
 
-                Object serialized = null;
-                try {
-                    serialized = nmsChatSerializer.getMethod("a", String.class).invoke(null, "[\"\"]");
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
+                Object serialized = CMILib.getInstance().getReflectionManager().textToIChatBaseComponent("[\"\"]");
+
+                net.minecraft.world.scores.ScoreboardObjective sobj = new net.minecraft.world.scores.ScoreboardObjective(null, "", null, (IChatBaseComponent) serialized, null, false, null);
+
+                Object pp1 = net.minecraft.network.protocol.game.PacketPlayOutScoreboardObjective.class.getConstructor(sobj.getClass(), int.class).newInstance(sobj, 1);
+                setField(pp1, "e", player.getName());
+                setField(pp1, "g", net.minecraft.world.scores.criteria.IScoreboardCriteria.EnumScoreboardHealthDisplay.b);
+                sendPacket(player, pp1);
+
+            } else if (Version.isCurrentEqualOrHigher(Version.v1_20_R3)) {
+
+                Object serialized = CMILib.getInstance().getReflectionManager().textToIChatBaseComponent("[\"\"]");
 
                 net.minecraft.world.scores.ScoreboardObjective sobj = new net.minecraft.world.scores.ScoreboardObjective(null, "", null, (IChatBaseComponent) serialized, null, false, null);
 
@@ -173,14 +181,34 @@ public class CMIScoreboard {
         removeScoreBoard(player);
 
         try {
-            if (Version.isCurrentEqualOrHigher(Version.v1_20_R3)) {
+            if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
 
-                Object serialized = null;
-                try {
-                    serialized = nmsChatSerializer.getMethod("a", String.class).invoke(null, "[\"" + CMIChatColor.translate(displayName) + "\"]");
-                } catch (Exception ex) {
-                    ex.printStackTrace();
+                Object serialized = CMILib.getInstance().getReflectionManager().textToIChatBaseComponent("[\"" + CMIChatColor.translate(displayName) + "\"]");
+
+                net.minecraft.world.scores.ScoreboardObjective sobj = new net.minecraft.world.scores.ScoreboardObjective(null, player.getName(), null, (IChatBaseComponent) serialized, null, false, null);
+
+                Object pp1 = net.minecraft.network.protocol.game.PacketPlayOutScoreboardObjective.class.getConstructor(sobj.getClass(), int.class).newInstance(sobj, 0);
+                setField(pp1, "e", player.getName());
+                setField(pp1, "g", net.minecraft.world.scores.criteria.IScoreboardCriteria.EnumScoreboardHealthDisplay.b);
+                sendPacket(player, pp1);
+
+                net.minecraft.network.protocol.game.PacketPlayOutScoreboardDisplayObjective obj = new net.minecraft.network.protocol.game.PacketPlayOutScoreboardDisplayObjective(
+                    net.minecraft.world.scores.DisplaySlot.b, sobj);
+                Field field = obj.getClass().getDeclaredField("c");
+                field.setAccessible(true);
+                field.set(obj, player.getName());
+                sendPacket(player, obj);
+
+                for (int i = 0; i < 15; i++) {
+                    if (i >= lines.size())
+                        break;
+                    net.minecraft.network.protocol.game.PacketPlayOutScoreboardScore PacketPlayOutScoreboardScore = new PacketPlayOutScoreboardScore(CMIChatColor.translate(lines.get(i)), player.getName(),
+                        15 - i, Optional.ofNullable(null), Optional.ofNullable(null));
+                    sendPacket(player, PacketPlayOutScoreboardScore);
                 }
+            } else if (Version.isCurrentEqualOrHigher(Version.v1_20_R3)) {
+
+                Object serialized = CMILib.getInstance().getReflectionManager().textToIChatBaseComponent("[\"" + CMIChatColor.translate(displayName) + "\"]");
 
                 net.minecraft.world.scores.ScoreboardObjective sobj = new net.minecraft.world.scores.ScoreboardObjective(null, player.getName(), null, (IChatBaseComponent) serialized, null, false, null);
 
@@ -195,11 +223,17 @@ public class CMIScoreboard {
                 field.setAccessible(true);
                 field.set(obj, player.getName());
                 sendPacket(player, obj);
-                
+
+                Constructor<PacketPlayOutScoreboardScore> PacketPlayOutScoreboardScoreConstructor = net.minecraft.network.protocol.game.PacketPlayOutScoreboardScore.class.getConstructor(
+                    String.class, String.class, int.class, IChatBaseComponent.class, NumberFormat.class);
+
                 for (int i = 0; i < 15; i++) {
                     if (i >= lines.size())
                         break;
-                    net.minecraft.network.protocol.game.PacketPlayOutScoreboardScore PacketPlayOutScoreboardScore = new PacketPlayOutScoreboardScore(CMIChatColor.translate(lines.get(i)), player.getName(),  15 - i, null, null);
+
+                    net.minecraft.network.protocol.game.PacketPlayOutScoreboardScore PacketPlayOutScoreboardScore = PacketPlayOutScoreboardScoreConstructor.newInstance(CMIChatColor.translate(lines.get(i)),
+                        player.getName(), 15 - i, null, null);
+
                     sendPacket(player, PacketPlayOutScoreboardScore);
                 }
             } else if (Version.isCurrentEqualOrHigher(Version.v1_20_R2)) {

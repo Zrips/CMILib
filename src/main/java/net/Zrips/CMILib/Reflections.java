@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
@@ -29,7 +30,7 @@ import org.bukkit.Server;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.v1_20_R3.CraftServer;
+import org.bukkit.craftbukkit.v1_20_R4.util.CraftChatMessage;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -50,12 +51,15 @@ import net.Zrips.CMILib.Effects.CMIEffectManager.CMIParticleDataType;
 import net.Zrips.CMILib.Items.CMIMaterial;
 import net.Zrips.CMILib.Locale.LC;
 import net.Zrips.CMILib.Logs.CMIDebug;
+import net.Zrips.CMILib.Messages.CMIMessages;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.RawMessages.RawMessage;
 import net.Zrips.CMILib.Version.MinecraftPlatform;
 import net.Zrips.CMILib.Version.Version;
 import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.Unit;
 import net.minecraft.world.entity.decoration.EntityArmorStand;
 
 public class Reflections {
@@ -120,6 +124,7 @@ public class Reflections {
     private Class<?> ChatDeserializer;
     private Class<?> SerializedAdvancement;
     private Class<?> LootDeserializationContext;
+    private Class<?> LootDataManager;
 
     private Class<?> world;
 
@@ -181,8 +186,10 @@ public class Reflections {
                 ChatDeserializer = net.minecraft.util.ChatDeserializer.class;
                 SerializedAdvancement = net.minecraft.advancements.Advancement.SerializedAdvancement.class;
 
-                if (Version.isCurrentEqualOrLower(Version.v1_20_R2))
+                if (Version.isCurrentEqualOrLower(Version.v1_20_R2)) {
                     LootDeserializationContext = Class.forName("net.minecraft.advancements.critereon.LootDeserializationContext");
+                    LootDataManager = Class.forName("net.minecraft.world.level.storage.loot.LootDataManager");
+                }
 
                 CraftParticle = getBukkitClass("CraftParticle");
                 ParticleParam = net.minecraft.core.particles.ParticleParam.class;
@@ -190,6 +197,8 @@ public class Reflections {
                 WorldServerClass = net.minecraft.server.level.WorldServer.class;
                 dimensionManager = net.minecraft.world.level.dimension.DimensionManager.class;
                 BlockPosition = net.minecraft.core.BlockPosition.class;
+
+//                IChatBaseComponent = net.minecraft.network.chat.IChatBaseComponent.class;
 
                 nmsChatSerializer = Class.forName("net.minecraft.network.chat.IChatBaseComponent$ChatSerializer");
 
@@ -212,7 +221,9 @@ public class Reflections {
                 IStack = net.minecraft.world.item.ItemStack.class;
 
                 String variable = "ax";
-                if (Version.isCurrentEqualOrHigher(Version.v1_20_R3))
+                if (Version.isCurrentEqualOrHigher(Version.v1_20_R4))
+                    variable = "aE";
+                else if (Version.isCurrentEqualOrHigher(Version.v1_20_R3))
                     variable = "aB";
                 else if (Version.isCurrentEqualOrHigher(Version.v1_19_R3))
                     variable = "az";
@@ -224,6 +235,7 @@ public class Reflections {
                     variable = "getAdvancementData";
 
                 Object advancementData = MinecraftServer.getClass().getMethod(variable).invoke(MinecraftServer);
+
                 advancementRegistry = advancementData.getClass().getField("c").get(advancementData);
 
             } catch (Throwable e) {
@@ -432,7 +444,7 @@ public class Reflections {
 
     public String serializeText(String text) {
         try {
-            Object serialized = nmsChatSerializer.getMethod("a", String.class).invoke(null, CMIChatColor.translate(text));
+            Object serialized = textToIChatBaseComponent(text);
             return (String) serialized.getClass().getMethod("e").invoke(serialized);
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
             e.printStackTrace();
@@ -440,9 +452,23 @@ public class Reflections {
         return text;
     }
 
+    Method nmsChatSerializerMethod = null;
+
     public Object textToIChatBaseComponent(String text) {
+
+        if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
+            try {
+                return CraftChatMessage.fromJSON(text);
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+            return text;
+        }
+
         try {
-            return nmsChatSerializer.getMethod("a", String.class).invoke(null, CMIChatColor.translate(text));
+            if (nmsChatSerializerMethod == null)
+                nmsChatSerializerMethod = nmsChatSerializer.getMethod("a", String.class);
+            return nmsChatSerializerMethod.invoke(null, CMIChatColor.translate(text));
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -509,14 +535,23 @@ public class Reflections {
             try {
                 // DedicatedServer -> DedicatedServerSettings
                 Object field1 = null;
-                if (Version.isCurrentEqualOrHigher(Version.v1_20_R3)) {
+                if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
+                    field1 = MinecraftServer.getClass().getField("r").get(MinecraftServer);
+                } else if (Version.isCurrentEqualOrHigher(Version.v1_20_R3)) {
                     field1 = MinecraftServer.getClass().getField("s").get(MinecraftServer);
                 } else
                     field1 = MinecraftServer.getClass().getField("u").get(MinecraftServer);
                 // DedicatedServerSettings -> DedicatedServerProperties method
                 Object prop = field1.getClass().getMethod("a").invoke(field1);
+
                 // PropertyManager -> Properties
-                Object field2 = prop.getClass().getField("Z").get(prop);
+
+                Object field2 = null;
+                if (Version.isCurrentEqualOrHigher(Version.v1_20_R4))
+                    field2 = prop.getClass().getField("ab").get(prop);
+                else
+                    field2 = prop.getClass().getField("Z").get(prop);
+
                 Method setPropertyMethod = field2.getClass().getDeclaredMethod("setProperty", String.class, String.class);
                 setPropertyMethod.invoke(field2, setting.getPath(), String.valueOf(value));
                 if (save)
@@ -726,16 +761,24 @@ public class Reflections {
         return handle;
     }
 
+    Field getConnectionField = null;
+
     public Object getPlayerConnection(Player player) {
         Object connection = null;
         try {
             Object handle = getPlayerHandle(player);
-            if (Version.isCurrentEqualOrHigher(Version.v1_20_R1))
-                connection = handle.getClass().getField("c").get(handle);
-            else if (Version.isCurrentEqualOrHigher(Version.v1_17_R1))
-                connection = handle.getClass().getField("b").get(handle);
-            else
-                connection = handle.getClass().getField("playerConnection").get(handle);
+
+            if (getConnectionField == null) {
+                if (Version.isCurrentEqualOrHigher(Version.v1_20_R1))
+                    getConnectionField = handle.getClass().getField("c");
+                else if (Version.isCurrentEqualOrHigher(Version.v1_17_R1))
+                    getConnectionField = handle.getClass().getField("b");
+                else
+                    getConnectionField = handle.getClass().getField("playerConnection");
+            }
+
+            connection = getConnectionField.get(handle);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1329,7 +1372,9 @@ public class Reflections {
                 windowId = "j";
 
             // EntityHuman -> Container
-            if (Version.isCurrentEqualOrHigher(Version.v1_20_R2)) {
+            if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
+                activeContainer = "cb";
+            } else if (Version.isCurrentEqualOrHigher(Version.v1_20_R2)) {
                 activeContainer = "bS";
             } else if (Version.isCurrentEqualOrHigher(Version.v1_20_R1)) {
                 activeContainer = "bR";
@@ -1505,7 +1550,9 @@ public class Reflections {
             Object centity = CEntity.cast(entity);
 
             if (teleportMethod == null) {
-                if (Version.isCurrentEqualOrHigher(Version.v1_18_R1))
+                if (Version.isCurrentEqualOrHigher(Version.v1_20_R4))
+                    teleportMethod = centity.getClass().getMethod("p", double.class, double.class, double.class);
+                else if (Version.isCurrentEqualOrHigher(Version.v1_18_R1))
                     teleportMethod = centity.getClass().getMethod("a", double.class, double.class, double.class);
                 else
                     teleportMethod = centity.getClass().getMethod("setPosition", double.class, double.class, double.class);
@@ -1517,8 +1564,13 @@ public class Reflections {
             Object packet = teleportPacket.newInstance(centity);
 
             try {
-                setValue(packet, "e", (byte) ((int) targetLoc.getYaw() * 256.0F / 360.0F));
-                setValue(packet, "f", (byte) ((int) targetLoc.getPitch() * 256.0F / 360.0F));
+                if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
+                    setValue(packet, "f", (byte) ((int) targetLoc.getYaw() * 256.0F / 360.0F));
+                    setValue(packet, "g", (byte) ((int) targetLoc.getPitch() * 256.0F / 360.0F));
+                } else {
+                    setValue(packet, "e", (byte) ((int) targetLoc.getYaw() * 256.0F / 360.0F));
+                    setValue(packet, "f", (byte) ((int) targetLoc.getPitch() * 256.0F / 360.0F));
+                }
             } catch (Throwable e) {
                 e.printStackTrace();
             }
@@ -1948,6 +2000,7 @@ public class Reflections {
             return;
         }
         NamespacedKey key = ad.getId();
+
         if (Version.isCurrentEqualOrHigher(Version.v1_20_R1)) {
 
             if (Bukkit.getAdvancement(key) != null) {
@@ -1963,8 +2016,7 @@ public class Reflections {
 
                 Object LootPredicateManager = net.minecraft.server.MinecraftServer.getServer().getClass().getMethod("aH").invoke(net.minecraft.server.MinecraftServer.getServer());
 
-                Constructor<?> consts = LootDeserializationContext.getConstructor(net.minecraft.resources.MinecraftKey.class,
-                    net.minecraft.world.level.storage.loot.LootDataManager.class);
+                Constructor<?> consts = LootDeserializationContext.getConstructor(net.minecraft.resources.MinecraftKey.class, LootDataManager);
                 Object LDC = consts.newInstance(minecraftkey, LootPredicateManager);
 
 //                net.minecraft.advancements.critereon.LootDeserializationContext LDC = new net.minecraft.advancements.critereon.LootDeserializationContext(

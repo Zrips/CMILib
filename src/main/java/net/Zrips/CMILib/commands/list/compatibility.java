@@ -11,8 +11,12 @@ import com.Zrips.CMI.CMI;
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Reflections;
 import net.Zrips.CMILib.ActionBar.CMIActionBar;
+import net.Zrips.CMILib.Advancements.AdvancementBackground;
+import net.Zrips.CMILib.Advancements.AdvancementFrameType;
+import net.Zrips.CMILib.Advancements.CMIAdvancement;
 import net.Zrips.CMILib.BossBar.BossBarInfo;
 import net.Zrips.CMILib.Container.CMICommandSender;
+import net.Zrips.CMILib.Container.CMINumber;
 import net.Zrips.CMILib.Container.CMIServerProperties;
 import net.Zrips.CMILib.Effects.CMIEffect;
 import net.Zrips.CMILib.Effects.CMIEffectManager.CMIParticle;
@@ -39,46 +43,26 @@ public class compatibility implements Cmd {
 
         RawMessage raw = new RawMessage();
         raw.addText("test");
-        ref.textToIChatBaseComponent(raw.getRaw());
+        try {
+            ref.textToIChatBaseComponent(raw.getRaw());
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
 
-        ref.getCurrentTick();
+        try {
+            ref.getCurrentTick();
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
 
         // Not working on 1.18
 //	ref.getItemInfo(1, "strength");
 
-        ref.setServerProperties(CMIServerProperties.motd, Bukkit.getServer().getMotd(), true);
-
-        CMINBT.isNBTSimilar(CMIMaterial.STONE.newItemStack(), CMIMaterial.STONE.newItemStack());
-
-        CMINBT.HideFlag(CMIMaterial.STONE.newItemStack(), 2);
-
-        CMINBT.toJson(CMIMaterial.STONE.newItemStack());
-
-        CMINBT nbt = new CMINBT(CMIMaterial.DIAMOND_SWORD.newItemStack());
-
-        nbt.setBoolean("boolTest", true);
-        if (!nbt.getBoolean("boolTest"))
-            CMIMessages.consoleMessage("Error boolTest");
-
-        nbt.setByte("byteTest", (byte) 1);
-        if (nbt.getByte("byteTest") != 1)
-            CMIMessages.consoleMessage("Error byteTest");
-
-        nbt.setInt("intTest", 1);
-        if (nbt.getInt("intTest") != 1)
-            CMIMessages.consoleMessage("Error intTest");
-
-        nbt.setLong("longTest", 1L);
-        if (nbt.getLong("longTest") != 1)
-            CMIMessages.consoleMessage("Error longTest");
-
-        nbt.setShort("shortTest", (short) 1);
-        if (nbt.getShort("shortTest") != 1)
-            CMIMessages.consoleMessage("Error shortTest");
-
-        ItemStack item = (ItemStack) nbt.setString("stringTest", "test");
-        if (!nbt.getString("stringTest").equals("test"))
-            CMIMessages.consoleMessage("Error stringTest");
+        try {
+            ref.setServerProperties(CMIServerProperties.motd, Bukkit.getServer().getMotd(), true);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
 
         Player player = Bukkit.getOnlinePlayers().iterator().next();
         ref.getProfile(player);
@@ -87,11 +71,47 @@ public class compatibility implements Cmd {
         ref.getPlayerConnection(player);
         ref.getTileEntityAt(player.getLocation().clone().add(0, -1, 0));
 
-        CMINBT blockNBT = new CMINBT(player.getLocation().clone().add(0, -1, 0).getBlock());
+        CMINBT.isNBTSimilar(CMIMaterial.STONE.newItemStack(), CMIMaterial.STONE.newItemStack());
 
-        CMINBT entityNBT = new CMINBT(player);
+        player.getInventory().addItem(CMINBT.HideFlag(CMIMaterial.STONE.newItemStack(), 2));
 
-        nbt.getKeys();
+        CMIMessages.sendMessage(sender, CMINBT.toJson(CMIMaterial.STONE.newItemStack()));
+
+        try {
+            CMINBT nbt = new CMINBT(CMIMaterial.DIAMOND_SWORD.newItemStack());
+
+            nbt.setBoolean("boolTest", true);
+            if (!nbt.getBoolean("boolTest"))
+                CMIMessages.consoleMessage("Error boolTest");
+
+            nbt.setByte("byteTest", (byte) 1);
+            if (nbt.getByte("byteTest") != 1)
+                CMIMessages.consoleMessage("Error byteTest");
+
+            nbt.setInt("intTest", 1);
+            if (nbt.getInt("intTest") != 1)
+                CMIMessages.consoleMessage("Error intTest");
+
+            nbt.setLong("longTest", 1L);
+            if (nbt.getLong("longTest") != 1)
+                CMIMessages.consoleMessage("Error longTest");
+
+            nbt.setShort("shortTest", (short) 1);
+            if (nbt.getShort("shortTest") != 1)
+                CMIMessages.consoleMessage("Error shortTest");
+
+            ItemStack item = (ItemStack) nbt.setString("stringTest", "test");
+            if (!nbt.getString("stringTest").equals("test"))
+                CMIMessages.consoleMessage("Error stringTest");
+
+            CMINBT blockNBT = new CMINBT(player.getLocation().clone().add(0, -1, 0).getBlock());
+
+            CMINBT entityNBT = new CMINBT(player);
+
+            nbt.getKeys();
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
 
         CMITitleMessage.send(player, "Title", "SubTitle");
         CMIActionBar.send(player, "Action bar Test");
@@ -105,24 +125,40 @@ public class compatibility implements Cmd {
         rm.show(player);
 
         try {
-            CMI.getInstance().getReflectionManager().changePlayerLimit(Bukkit.getMaxPlayers());
+            CMILib.getInstance().getReflectionManager().setServerProperties(CMIServerProperties.max_players, Bukkit.getMaxPlayers(), true);
         } catch (Throwable e) {
             e.printStackTrace();
         }
-        try {
-            CMI.getInstance().getNMS().showResurection(player);
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-        try {
-            CMI.getInstance().getNMS().updateExpBar(player);
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
+//        try {
+//            CMI.getInstance().getNMS().showResurection(player);
+//        } catch (Throwable e) {
+//            e.printStackTrace();
+//        }
+//        try {
+//            CMI.getInstance().getNMS().updateExpBar(player);
+//        } catch (Throwable e) {
+//            e.printStackTrace();
+//        }
         BossBarInfo bossbar = new BossBarInfo(player, "Compatibility");
         bossbar.setTitleOfBar("Test");
         bossbar.setPercentage(0.33);
         plugin.getBossBarManager().Show(bossbar);
+
+        CMIAdvancement advancement = new CMIAdvancement()
+            .setId(new org.bukkit.NamespacedKey(plugin, "cmi/commandToast"))
+            .setDescription("_")
+            .setAnnounce(false)
+            .setHidden(false)
+            .setToast(true)
+            .setBackground(AdvancementBackground.ADVENTURE)
+            .setFrame(AdvancementFrameType.TASK)
+            .setTitle("Toast Test " + CMINumber.random(0, 1000));
+        try {
+            advancement.setItem(CMIMaterial.LEATHER_HELMET.newItemStack());
+        } catch (Throwable e) {
+        }
+
+        advancement.show(player);
 
         // Check this
         // ref.setSkullTexture(item, customProfileName, texture)	

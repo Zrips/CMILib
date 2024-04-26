@@ -13,6 +13,7 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.craftbukkit.v1_20_R4.util.CraftChatMessage;
 import org.bukkit.entity.Player;
 
 import net.Zrips.CMILib.CMILib;
@@ -21,6 +22,7 @@ import net.Zrips.CMILib.Messages.CMIMessages;
 import net.Zrips.CMILib.Version.Version;
 import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
 import net.Zrips.CMILib.commands.CommandsHandler;
+import net.minecraft.network.chat.IChatBaseComponent;
 
 public class RawMessageManager {
 
@@ -28,7 +30,6 @@ public class RawMessageManager {
     private static Method getHandle;
     private static Method sendPacket;
     private static Field playerConnection;
-    private static Class<?> nmsChatSerializer;
     private static Class<?> nmsIChatBaseComponent;
     private static Class<?> packetType;
 
@@ -106,7 +107,6 @@ public class RawMessageManager {
                 getHandle = Class.forName("org.bukkit.craftbukkit." + version + ".entity.CraftPlayer").getMethod("getHandle");
                 playerConnection = net.minecraft.server.level.EntityPlayer.class.getField("c");
                 sendPacket = net.minecraft.server.network.PlayerConnection.class.getMethod("b", net.minecraft.network.protocol.Packet.class);
-                nmsChatSerializer = Class.forName("net.minecraft.network.chat.IChatBaseComponent$ChatSerializer");
                 constructor = net.minecraft.network.protocol.game.ClientboundSystemChatPacket.class.getConstructor(net.minecraft.network.chat.IChatBaseComponent.class, boolean.class);
             } catch (Throwable e) {
                 e.printStackTrace();
@@ -116,7 +116,6 @@ public class RawMessageManager {
                 getHandle = Class.forName("org.bukkit.craftbukkit." + version + ".entity.CraftPlayer").getMethod("getHandle");
                 packetType = net.minecraft.network.protocol.game.ClientboundSystemChatPacket.class;
                 nmsIChatBaseComponent = Class.forName("net.minecraft.network.chat.IChatBaseComponent");
-                nmsChatSerializer = Class.forName("net.minecraft.network.chat.IChatBaseComponent$ChatSerializer");
                 playerConnection = Class.forName("net.minecraft.server.level.EntityPlayer").getField("c");
                 sendPacket = Class.forName("net.minecraft.server.network.PlayerConnection").getMethod("a", net.minecraft.network.protocol.Packet.class);
 
@@ -130,7 +129,6 @@ public class RawMessageManager {
                 getHandle = Class.forName("org.bukkit.craftbukkit." + version + ".entity.CraftPlayer").getMethod("getHandle");
                 packetType = net.minecraft.network.protocol.game.ClientboundSystemChatPacket.class;
                 nmsIChatBaseComponent = Class.forName("net.minecraft.network.chat.IChatBaseComponent");
-                nmsChatSerializer = Class.forName("net.minecraft.network.chat.IChatBaseComponent$ChatSerializer");
                 playerConnection = Class.forName("net.minecraft.server.level.EntityPlayer").getField("b");
                 sendPacket = Class.forName("net.minecraft.server.network.PlayerConnection").getMethod(Version.isCurrentEqualOrHigher(Version.v1_18_R1) ? "a" : "sendPacket",
                     net.minecraft.network.protocol.Packet.class);
@@ -148,7 +146,6 @@ public class RawMessageManager {
                 getHandle = Class.forName("org.bukkit.craftbukkit." + version + ".entity.CraftPlayer").getMethod("getHandle");
                 packetType = Class.forName("net.minecraft.network.protocol.game.PacketPlayOutChat");
                 nmsIChatBaseComponent = Class.forName("net.minecraft.network.chat.IChatBaseComponent");
-                nmsChatSerializer = Class.forName("net.minecraft.network.chat.IChatBaseComponent$ChatSerializer");
                 playerConnection = Class.forName("net.minecraft.server.level.EntityPlayer").getField("b");
                 sendPacket = Class.forName("net.minecraft.server.network.PlayerConnection").getMethod(Version.isCurrentEqualOrHigher(Version.v1_18_R1) ? "a" : "sendPacket",
                     net.minecraft.network.protocol.Packet.class);
@@ -166,7 +163,6 @@ public class RawMessageManager {
                 Class<?> typeCraftPlayer = Class.forName("org.bukkit.craftbukkit." + version + ".entity.CraftPlayer");
                 Class<?> typeNMSPlayer = Class.forName("net.minecraft.server." + version + ".EntityPlayer");
                 Class<?> typePlayerConnection = Class.forName("net.minecraft.server." + version + ".PlayerConnection");
-                nmsChatSerializer = Class.forName(getChatSerializerClasspath());
                 nmsIChatBaseComponent = Class.forName("net.minecraft.server." + version + ".IChatBaseComponent");
                 getHandle = typeCraftPlayer.getMethod("getHandle");
                 playerConnection = typeNMSPlayer.getField("playerConnection");
@@ -198,36 +194,15 @@ public class RawMessageManager {
         if (players == null || players.isEmpty() || ajson == null)
             return;
 
-//	if (players.size() == 1) {
-//	    ajson = CMILib.getInstance().getPlaceholderAPIManager().updatePlaceHolders(players.iterator().next(), ajson);
-//	}
-
         String json = ajson;
 
-        Object serialized = null;
-        try {
-            serialized = nmsChatSerializer.getMethod("a", String.class).invoke(null, json);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-
-            for (Player receivingPacket : players) {
-                if (!receivingPacket.isOnline())
-                    return;
-
-                receivingPacket.sendMessage(ajson);
-            }
-            return;
-        }
+        Object serialized = CMILib.getInstance().getReflectionManager().textToIChatBaseComponent(json);
 
         for (Player receivingPacket : players) {
             if (!receivingPacket.isOnline())
                 return;
 
             try {
-
-//		if (method != null) {
-//		    serialized = method.invoke(null, CMILib.getInstance().getPlaceholderAPIManager().updatePlaceHolders(receivingPacket, json));
-//		}
 
                 if (Version.isCurrentEqualOrHigher(Version.v1_20_R1)) {
                     packet = constructor.newInstance(serialized, false);
