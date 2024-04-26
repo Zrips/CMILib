@@ -10,7 +10,6 @@ import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.v1_20_R4.CraftServer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
@@ -19,14 +18,11 @@ import org.bukkit.inventory.meta.ItemMeta;
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Entities.CMIEntityType;
 import net.Zrips.CMILib.Items.CMIMaterial;
-import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.PersistentData.CMIBlockPersistentDataContainer;
 import net.Zrips.CMILib.PersistentData.CMIEntityPersistentDataContainer;
 import net.Zrips.CMILib.PersistentData.CMIItemPersistentDataContainer;
 import net.Zrips.CMILib.Version.Version;
 import net.minecraft.core.IRegistryCustom;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.WorldServer;
 
 public class CMINBT {
 
@@ -1495,7 +1491,7 @@ public class CMINBT {
     }
 
     private static IRegistryCustom getRegistry() {
-        return ((CraftServer) Bukkit.getServer()).getServer().getDefaultRegistryAccess();
+        return ((org.bukkit.craftbukkit.v1_20_R4.CraftServer) Bukkit.getServer()).getServer().getDefaultRegistryAccess();
     }
 
     private static Object setTag(Object nmsStack, Object tag) {
