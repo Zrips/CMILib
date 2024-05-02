@@ -8,21 +8,21 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.Nullable;
 
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Entities.CMIEntityType;
 import net.Zrips.CMILib.Items.CMIMaterial;
-import net.Zrips.CMILib.PersistentData.CMIBlockPersistentDataContainer;
-import net.Zrips.CMILib.PersistentData.CMIEntityPersistentDataContainer;
-import net.Zrips.CMILib.PersistentData.CMIItemPersistentDataContainer;
+import net.Zrips.CMILib.Logs.CMIDebug;
+import net.Zrips.CMILib.PersistentData.CMIPersistentDataContainer;
 import net.Zrips.CMILib.Version.Version;
-import net.minecraft.core.IRegistryCustom;
+import net.minecraft.server.dedicated.DedicatedServer;
 
 public class CMINBT {
 
@@ -390,16 +390,13 @@ public class CMINBT {
             return null;
 
         if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
-            Integer v = null;
-            if (object instanceof ItemStack) {
-                v = new CMIItemPersistentDataContainer((ItemStack) object).getInt(path);
-            } else if (object instanceof Block) {
-                v = new CMIBlockPersistentDataContainer((Block) object).getInt(path);
-            } else if (object instanceof Entity) {
-                v = new CMIEntityPersistentDataContainer((Entity) object).getInt(path);
+            @Nullable
+            CMIPersistentDataContainer persistentDataContainer = CMIPersistentDataContainer.get(object);
+            if (persistentDataContainer != null) {
+                Integer v = persistentDataContainer.getInt(path);
+                if (v != null)
+                    return v;
             }
-            if (v != null)
-                return v;
         }
 
         try {
@@ -415,16 +412,13 @@ public class CMINBT {
             return null;
 
         if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
-            Byte v = null;
-            if (object instanceof ItemStack) {
-                v = new CMIItemPersistentDataContainer((ItemStack) object).getByte(path);
-            } else if (object instanceof Block) {
-                v = new CMIBlockPersistentDataContainer((Block) object).getByte(path);
-            } else if (object instanceof Entity) {
-                v = new CMIEntityPersistentDataContainer((Entity) object).getByte(path);
+            @Nullable
+            CMIPersistentDataContainer persistentDataContainer = CMIPersistentDataContainer.get(object);
+            if (persistentDataContainer != null) {
+                Byte v = CMIPersistentDataContainer.get(object).getByte(path);
+                if (v != null)
+                    return v;
             }
-            if (v != null)
-                return v;
         }
 
         try {
@@ -440,16 +434,14 @@ public class CMINBT {
             return null;
 
         if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
-            Long v = null;
-            if (object instanceof ItemStack) {
-                v = new CMIItemPersistentDataContainer((ItemStack) object).getLong(path);
-            } else if (object instanceof Block) {
-                v = new CMIBlockPersistentDataContainer((Block) object).getLong(path);
-            } else if (object instanceof Entity) {
-                v = new CMIEntityPersistentDataContainer((Entity) object).getLong(path);
+            @Nullable
+            CMIPersistentDataContainer persistentDataContainer = CMIPersistentDataContainer.get(object);
+            if (persistentDataContainer != null) {
+                Long v = persistentDataContainer.getLong(path);
+
+                if (v != null)
+                    return v;
             }
-            if (v != null)
-                return v;
         }
 
         try {
@@ -465,16 +457,14 @@ public class CMINBT {
             return null;
 
         if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
-            Boolean v = null;
-            if (object instanceof ItemStack) {
-                v = new CMIItemPersistentDataContainer((ItemStack) object).getBoolean(path);
-            } else if (object instanceof Block) {
-                v = new CMIBlockPersistentDataContainer((Block) object).getBoolean(path);
-            } else if (object instanceof Entity) {
-                v = new CMIEntityPersistentDataContainer((Entity) object).getBoolean(path);
+            @Nullable
+            CMIPersistentDataContainer persistentDataContainer = CMIPersistentDataContainer.get(object);
+            if (persistentDataContainer != null) {
+                Boolean v = persistentDataContainer.getBoolean(path);
+
+                if (v != null)
+                    return v;
             }
-            if (v != null)
-                return v;
         }
 
         try {
@@ -490,16 +480,14 @@ public class CMINBT {
             return 0.0F;
 
         if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
-            Float v = null;
-            if (object instanceof ItemStack) {
-                v = new CMIItemPersistentDataContainer((ItemStack) object).getFloat(path);
-            } else if (object instanceof Block) {
-                v = new CMIBlockPersistentDataContainer((Block) object).getFloat(path);
-            } else if (object instanceof Entity) {
-                v = new CMIEntityPersistentDataContainer((Entity) object).getFloat(path);
+            @Nullable
+            CMIPersistentDataContainer persistentDataContainer = CMIPersistentDataContainer.get(object);
+            if (persistentDataContainer != null) {
+                Float v = persistentDataContainer.getFloat(path);
+
+                if (v != null)
+                    return v;
             }
-            if (v != null)
-                return v;
         }
 
         try {
@@ -515,16 +503,13 @@ public class CMINBT {
             return null;
 
         if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
-            Short v = null;
-            if (object instanceof ItemStack) {
-                v = new CMIItemPersistentDataContainer((ItemStack) object).getShort(path);
-            } else if (object instanceof Block) {
-                v = new CMIBlockPersistentDataContainer((Block) object).getShort(path);
-            } else if (object instanceof Entity) {
-                v = new CMIEntityPersistentDataContainer((Entity) object).getShort(path);
+            @Nullable
+            CMIPersistentDataContainer persistentDataContainer = CMIPersistentDataContainer.get(object);
+            if (persistentDataContainer != null) {
+                Short v = persistentDataContainer.getShort(path);
+                if (v != null)
+                    return v;
             }
-            if (v != null)
-                return v;
         }
 
         try {
@@ -540,16 +525,14 @@ public class CMINBT {
             return 0.0D;
 
         if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
-            Double v = null;
-            if (object instanceof ItemStack) {
-                v = new CMIItemPersistentDataContainer((ItemStack) object).getDouble(path);
-            } else if (object instanceof Block) {
-                v = new CMIBlockPersistentDataContainer((Block) object).getDouble(path);
-            } else if (object instanceof Entity) {
-                v = new CMIEntityPersistentDataContainer((Entity) object).getDouble(path);
+            @Nullable
+            CMIPersistentDataContainer persistentDataContainer = CMIPersistentDataContainer.get(object);
+            if (persistentDataContainer != null) {
+                Double v = persistentDataContainer.getDouble(path);
+
+                if (v != null)
+                    return v;
             }
-            if (v != null)
-                return v;
         }
 
         try {
@@ -565,16 +548,14 @@ public class CMINBT {
             return new byte[0];
 
         if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
-            byte[] v = null;
-            if (object instanceof ItemStack) {
-                v = new CMIItemPersistentDataContainer((ItemStack) object).getByteArray(path);
-            } else if (object instanceof Block) {
-                v = new CMIBlockPersistentDataContainer((Block) object).getByteArray(path);
-            } else if (object instanceof Entity) {
-                v = new CMIEntityPersistentDataContainer((Entity) object).getByteArray(path);
+            @Nullable
+            CMIPersistentDataContainer persistentDataContainer = CMIPersistentDataContainer.get(object);
+            if (persistentDataContainer != null) {
+                byte[] v = persistentDataContainer.getByteArray(path);
+
+                if (v != null)
+                    return v;
             }
-            if (v != null)
-                return v;
         }
 
         try {
@@ -619,16 +600,13 @@ public class CMINBT {
             return null;
 
         if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
-            String v = null;
-            if (object instanceof ItemStack) {
-                v = new CMIItemPersistentDataContainer((ItemStack) object).getString(path);
-            } else if (object instanceof Block) {
-                v = new CMIBlockPersistentDataContainer((Block) object).getString(path);
-            } else if (object instanceof Entity) {
-                v = new CMIEntityPersistentDataContainer((Entity) object).getString(path);
+            @Nullable
+            CMIPersistentDataContainer persistentDataContainer = CMIPersistentDataContainer.get(object);
+            if (persistentDataContainer != null) {
+                String v = persistentDataContainer.getString(path);
+                if (v != null)
+                    return v;
             }
-            if (v != null)
-                return v;
         }
 
         try {
@@ -652,16 +630,14 @@ public class CMINBT {
             return null;
 
         if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
-            List<String> v = null;
-            if (object instanceof ItemStack) {
-                v = new CMIItemPersistentDataContainer((ItemStack) object).getListString(path);
-            } else if (object instanceof Block) {
-                v = new CMIBlockPersistentDataContainer((Block) object).getListString(path);
-            } else if (object instanceof Entity) {
-                v = new CMIEntityPersistentDataContainer((Entity) object).getListString(path);
+            @Nullable
+            CMIPersistentDataContainer persistentDataContainer = CMIPersistentDataContainer.get(object);
+            if (persistentDataContainer != null) {
+                List<String> v = persistentDataContainer.getListString(path);
+
+                if (v != null)
+                    return v;
             }
-            if (v != null)
-                return v;
         }
 
         List<String> list = new ArrayList<String>();
@@ -771,13 +747,7 @@ public class CMINBT {
     public Object setBoolean(String path, Boolean value) {
 
         if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
-            if (object instanceof ItemStack) {
-                new CMIItemPersistentDataContainer((ItemStack) object).set(path, value);
-            } else if (object instanceof Block) {
-                new CMIBlockPersistentDataContainer((Block) object).set(path, value);
-            } else if (object instanceof Entity) {
-                new CMIEntityPersistentDataContainer((Entity) object).set(path, value);
-            }
+            CMIPersistentDataContainer.get(object).set(path, value);
             return object;
         }
 
@@ -808,13 +778,7 @@ public class CMINBT {
     public Object setByte(String path, Byte value) {
 
         if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
-            if (object instanceof ItemStack) {
-                new CMIItemPersistentDataContainer((ItemStack) object).set(path, value);
-            } else if (object instanceof Block) {
-                new CMIBlockPersistentDataContainer((Block) object).set(path, value);
-            } else if (object instanceof Entity) {
-                new CMIEntityPersistentDataContainer((Entity) object).set(path, value);
-            }
+            CMIPersistentDataContainer.get(object).set(path, value);
             return object;
         }
 
@@ -844,13 +808,7 @@ public class CMINBT {
 
     public Object setShort(String path, Short value) {
         if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
-            if (object instanceof ItemStack) {
-                new CMIItemPersistentDataContainer((ItemStack) object).set(path, value);
-            } else if (object instanceof Block) {
-                new CMIBlockPersistentDataContainer((Block) object).set(path, value);
-            } else if (object instanceof Entity) {
-                new CMIEntityPersistentDataContainer((Entity) object).set(path, value);
-            }
+            CMIPersistentDataContainer.get(object).set(path, value);
             return object;
         }
 
@@ -881,13 +839,7 @@ public class CMINBT {
     public Object setStringList(String path, List<String> value) {
 
         if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
-            if (object instanceof ItemStack) {
-                new CMIItemPersistentDataContainer((ItemStack) object).set(path, value);
-            } else if (object instanceof Block) {
-                new CMIBlockPersistentDataContainer((Block) object).set(path, value);
-            } else if (object instanceof Entity) {
-                new CMIEntityPersistentDataContainer((Entity) object).set(path, value);
-            }
+            CMIPersistentDataContainer.get(object).set(path, value);
             return object;
         }
 
@@ -950,13 +902,7 @@ public class CMINBT {
     public Object setString(String path, String value) {
 
         if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
-            if (object instanceof ItemStack) {
-                new CMIItemPersistentDataContainer((ItemStack) object).set(path, value);
-            } else if (object instanceof Block) {
-                new CMIBlockPersistentDataContainer((Block) object).set(path, value);
-            } else if (object instanceof Entity) {
-                new CMIEntityPersistentDataContainer((Entity) object).set(path, value);
-            }
+            CMIPersistentDataContainer.get(object).set(path, value);
             return object;
         }
 
@@ -1011,13 +957,7 @@ public class CMINBT {
     public Object setInt(String path, Integer value) {
 
         if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
-            if (object instanceof ItemStack) {
-                new CMIItemPersistentDataContainer((ItemStack) object).set(path, value);
-            } else if (object instanceof Block) {
-                new CMIBlockPersistentDataContainer((Block) object).set(path, value);
-            } else if (object instanceof Entity) {
-                new CMIEntityPersistentDataContainer((Entity) object).set(path, value);
-            }
+            CMIPersistentDataContainer.get(object).set(path, value);
             return object;
         }
 
@@ -1050,13 +990,7 @@ public class CMINBT {
     public Object setIntArray(String path, int[] value) {
 
         if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
-            if (object instanceof ItemStack) {
-                new CMIItemPersistentDataContainer((ItemStack) object).set(path, value);
-            } else if (object instanceof Block) {
-                new CMIBlockPersistentDataContainer((Block) object).set(path, value);
-            } else if (object instanceof Entity) {
-                new CMIEntityPersistentDataContainer((Entity) object).set(path, value);
-            }
+            CMIPersistentDataContainer.get(object).set(path, value);
             return object;
         }
 
@@ -1089,13 +1023,7 @@ public class CMINBT {
     public Object setByteArray(String path, byte[] value) {
 
         if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
-            if (object instanceof ItemStack) {
-                new CMIItemPersistentDataContainer((ItemStack) object).set(path, value);
-            } else if (object instanceof Block) {
-                new CMIBlockPersistentDataContainer((Block) object).set(path, value);
-            } else if (object instanceof Entity) {
-                new CMIEntityPersistentDataContainer((Entity) object).set(path, value);
-            }
+            CMIPersistentDataContainer.get(object).set(path, value);
             return object;
         }
 
@@ -1128,13 +1056,7 @@ public class CMINBT {
     public Object setLongArray(String path, long[] value) {
 
         if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
-            if (object instanceof ItemStack) {
-                new CMIItemPersistentDataContainer((ItemStack) object).set(path, value);
-            } else if (object instanceof Block) {
-                new CMIBlockPersistentDataContainer((Block) object).set(path, value);
-            } else if (object instanceof Entity) {
-                new CMIEntityPersistentDataContainer((Entity) object).set(path, value);
-            }
+            CMIPersistentDataContainer.get(object).set(path, value);
             return object;
         }
 
@@ -1167,13 +1089,7 @@ public class CMINBT {
     public Object setLong(String path, Long value) {
 
         if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
-            if (object instanceof ItemStack) {
-                new CMIItemPersistentDataContainer((ItemStack) object).set(path, value);
-            } else if (object instanceof Block) {
-                new CMIBlockPersistentDataContainer((Block) object).set(path, value);
-            } else if (object instanceof Entity) {
-                new CMIEntityPersistentDataContainer((Entity) object).set(path, value);
-            }
+            CMIPersistentDataContainer.get(object).set(path, value);
             return object;
         }
 
@@ -1216,13 +1132,7 @@ public class CMINBT {
 
     public Object setDouble(String path, Double value) {
         if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
-            if (object instanceof ItemStack) {
-                new CMIItemPersistentDataContainer((ItemStack) object).set(path, value);
-            } else if (object instanceof Block) {
-                new CMIBlockPersistentDataContainer((Block) object).set(path, value);
-            } else if (object instanceof Entity) {
-                new CMIEntityPersistentDataContainer((Entity) object).set(path, value);
-            }
+            CMIPersistentDataContainer.get(object).set(path, value);
             return object;
         }
 
@@ -1256,13 +1166,7 @@ public class CMINBT {
     public Object remove(String path) {
 
         if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
-            if (object instanceof ItemStack) {
-                new CMIItemPersistentDataContainer((ItemStack) object).remove(path);
-            } else if (object instanceof Block) {
-                new CMIBlockPersistentDataContainer((Block) object).remove(path);
-            } else if (object instanceof Entity) {
-                new CMIEntityPersistentDataContainer((Entity) object).remove(path);
-            }
+            CMIPersistentDataContainer.get(object).remove(path);
             return object;
         }
 
@@ -1366,16 +1270,10 @@ public class CMINBT {
     public boolean hasNBT(String key) {
 
         if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
-            if (object instanceof ItemStack) {
-                if (new CMIItemPersistentDataContainer((ItemStack) object).hasKey(key))
-                    return true;
-            } else if (object instanceof Block) {
-                if (new CMIBlockPersistentDataContainer((Block) object).hasKey(key))
-                    return true;
-            } else if (object instanceof Entity) {
-                if (new CMIEntityPersistentDataContainer((Entity) object).hasKey(key))
-                    return true;
-            }
+            @Nullable
+            CMIPersistentDataContainer persistent = CMIPersistentDataContainer.get(object);
+            if (persistent != null && persistent.hasKey(key))
+                return true;
         }
 
         if (tag != null && key.contains(".")) {
@@ -1467,10 +1365,10 @@ public class CMINBT {
     private static Method getSetTagMethod(Object nmsStack) {
         try {
             if (setTagMethod == null) {
-                if (Version.isCurrentEqualOrHigher(Version.v1_20_R4))
-                    setTagMethod = nmsStack.getClass().getMethod(setTagName, net.minecraft.core.HolderLookup.a.class, NBTBase);
-                else
-                    setTagMethod = nmsStack.getClass().getMethod(setTagName, nbtTagCompound);
+//                if (Version.isCurrentEqualOrHigher(Version.v1_20_R4))
+//                    setTagMethod = nmsStack.getClass().getMethod(setTagName, net.minecraft.core.HolderLookup.a.class, NBTBase);
+//                else
+                setTagMethod = nmsStack.getClass().getMethod(setTagName, nbtTagCompound);
             }
         } catch (Throwable e) {
             e.printStackTrace();
@@ -1490,8 +1388,18 @@ public class CMINBT {
         }
     }
 
-    private static IRegistryCustom getRegistry() {
-        return ((org.bukkit.craftbukkit.v1_20_R4.CraftServer) Bukkit.getServer()).getServer().getDefaultRegistryAccess();
+    private static Object registry = null;
+
+    private static Object getRegistry() {
+        if (registry == null) {
+            try {
+                registry = ((DedicatedServer) CMILib.getInstance().getReflectionManager().getDedicatedServer()).getClass().getMethod("getDefaultRegistryAccess").invoke(
+                    (CMILib.getInstance().getReflectionManager().getDedicatedServer()));
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+        }
+        return registry;
     }
 
     private static Object setTag(Object nmsStack, Object tag) {
@@ -1499,10 +1407,11 @@ public class CMINBT {
             if (nmsStack == null)
                 return null;
 
-            if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
-                getSetTagMethod(nmsStack).invoke(nmsStack, getRegistry(), tag);
-            } else
-                getSetTagMethod(nmsStack).invoke(nmsStack, tag);
+//            if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
+//                getSetTagMethod(nmsStack).invoke(nmsStack, getRegistry(), tag);
+//            } else
+            getSetTagMethod(nmsStack).invoke(nmsStack, tag);
+
             return nmsStack;
         } catch (Throwable e) {
             if (Version.isCurrentEqualOrHigher(Version.v1_7_R4))
@@ -1535,9 +1444,7 @@ public class CMINBT {
                 return null;
 
             if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
-                net.minecraft.world.item.ItemStack copy = org.bukkit.craftbukkit.v1_20_R4.inventory.CraftItemStack.asNMSCopy(item);
-                net.minecraft.nbt.NBTBase gotnbt = copy.b(getRegistry());
-                return gotnbt;
+                return ((net.minecraft.world.item.ItemStack) nmsStack).b((net.minecraft.core.IRegistryCustom) getRegistry());
             }
 
             Method methTag = nmsStack.getClass().getMethod(getTagName);
@@ -1702,7 +1609,19 @@ public class CMINBT {
         return false;
     }
 
+    @Deprecated
     public static ItemStack HideFlag(ItemStack item, int state) {
+
+        if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
+            ItemMeta meta = item.getItemMeta();
+            for (ItemFlag one : ItemFlag.values()) {
+                if ((state & 1 << one.ordinal()) != 0)
+                    meta.addItemFlags(one);
+            }
+            item.setItemMeta(meta);
+            return item;
+        }
+
         Object nmsStack = asNMSCopy(item);
         try {
             Object tag = getNbt(item);
@@ -1742,15 +1661,15 @@ public class CMINBT {
 
         try {
             if (saveOptionalMethod == null) {
-                if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
-                    saveOptionalMethod = IStack.getMethod(itemSaveName, net.minecraft.core.HolderLookup.a.class);
-                } else
-                    saveOptionalMethod = IStack.getMethod(itemSaveName, nbtTagCompound);
+//                if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
+//                    saveOptionalMethod = IStack.getMethod(itemSaveName, net.minecraft.core.HolderLookup.a.class);
+//                } else
+                saveOptionalMethod = IStack.getMethod(itemSaveName, nbtTagCompound);
             }
 
-            if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
-                return saveOptionalMethod.invoke(nmsStack, getRegistry()).toString();
-            }
+//            if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
+//                return saveOptionalMethod.invoke(nmsStack, getRegistry()).toString();
+//            }
 
             return saveOptionalMethod.invoke(nmsStack, nbtTagCompound.newInstance()).toString();
         } catch (Throwable e) {
