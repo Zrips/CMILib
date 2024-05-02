@@ -17,7 +17,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
@@ -49,18 +48,10 @@ import net.Zrips.CMILib.Container.CMIServerProperties;
 import net.Zrips.CMILib.Effects.CMIEffect;
 import net.Zrips.CMILib.Effects.CMIEffectManager.CMIParticleDataType;
 import net.Zrips.CMILib.Items.CMIMaterial;
-import net.Zrips.CMILib.Locale.LC;
-import net.Zrips.CMILib.Logs.CMIDebug;
-import net.Zrips.CMILib.Messages.CMIMessages;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.RawMessages.RawMessage;
-import net.Zrips.CMILib.Version.MinecraftPlatform;
 import net.Zrips.CMILib.Version.Version;
 import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.Unit;
-import net.minecraft.world.entity.decoration.EntityArmorStand;
 
 public class Reflections {
 
@@ -68,6 +59,7 @@ public class Reflections {
     private Class<?> CraftWorldClass;
     private Class<?> WorldServerClass;
     private Object CraftServer;
+    private Object DedicatedServer;
     private Class<?> CraftStatistic;
     private Class<?> Statistics;
 //    private Class<?> TileEntitySign;
@@ -159,6 +151,9 @@ public class Reflections {
 
                 CraftServerClass = getBukkitClass("CraftServer");
                 CraftServer = CraftServerClass.cast(Bukkit.getServer());
+
+                DedicatedServer = CraftServer.getClass().getMethod("getServer").invoke(CraftServer);
+
                 CraftWorldClass = getBukkitClass("CraftWorld");
                 MinecraftServerClass = net.minecraft.server.MinecraftServer.class;
 
@@ -188,7 +183,9 @@ public class Reflections {
 
                 if (Version.isCurrentEqualOrLower(Version.v1_20_R2)) {
                     LootDeserializationContext = Class.forName("net.minecraft.advancements.critereon.LootDeserializationContext");
-                    LootDataManager = Class.forName("net.minecraft.world.level.storage.loot.LootDataManager");
+                    if (Version.isCurrentEqualOrHigher(Version.v1_20_R1)) {
+                        LootDataManager = Class.forName("net.minecraft.world.level.storage.loot.LootDataManager");
+                    }
                 }
 
                 CraftParticle = getBukkitClass("CraftParticle");
@@ -454,6 +451,7 @@ public class Reflections {
 
     Method nmsChatSerializerMethod = null;
 
+
     public Object textToIChatBaseComponent(String text) {
 
         if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
@@ -468,7 +466,7 @@ public class Reflections {
         try {
             if (nmsChatSerializerMethod == null)
                 nmsChatSerializerMethod = nmsChatSerializer.getMethod("a", String.class);
-            return nmsChatSerializerMethod.invoke(null, CMIChatColor.translate(text));
+            return nmsChatSerializerMethod.invoke(null, text);
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -1155,6 +1153,10 @@ public class Reflections {
 
     public Object getCraftServer() {
         return CraftServer;
+    }
+
+    public Object getDedicatedServer() {
+        return DedicatedServer;
     }
 
     public ItemStack getItemInMainHand(Player player) {

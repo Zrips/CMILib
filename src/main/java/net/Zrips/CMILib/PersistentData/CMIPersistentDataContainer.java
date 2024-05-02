@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.bukkit.NamespacedKey;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
@@ -18,6 +21,29 @@ public class CMIPersistentDataContainer {
 
     public CMIPersistentDataContainer() {
         this.persistentDataContainer = null;
+    }
+
+    public static CMIPersistentDataContainer get(ItemStack item) {
+        return new CMIItemPersistentDataContainer(item);
+    }
+
+    public static CMIPersistentDataContainer get(Entity entity) {
+        return new CMIEntityPersistentDataContainer(entity);
+    }
+
+    public static CMIPersistentDataContainer get(Block block) {
+        return new CMIBlockPersistentDataContainer(block);
+    }
+
+    public static @Nullable CMIPersistentDataContainer get(Object object) {
+        if (object instanceof ItemStack) {
+            return new CMIItemPersistentDataContainer((ItemStack) object);
+        } else if (object instanceof Block) {
+            return new CMIBlockPersistentDataContainer((Block) object);
+        } else if (object instanceof Entity) {
+            return new CMIEntityPersistentDataContainer((Entity) object);
+        }
+        return null;
     }
 
     void save() {

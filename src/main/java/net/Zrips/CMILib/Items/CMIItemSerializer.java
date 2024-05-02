@@ -1024,6 +1024,13 @@ public class CMIItemSerializer {
         if (flags.isEmpty())
             return false;
 
+        if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
+            ItemMeta meta = cim.getItemStack().getItemMeta();
+            meta.addItemFlags(flags.toArray(new ItemFlag[0]));
+            cim.getItemStack().setItemMeta(meta);
+            return true;
+        }
+
         int tagg = 0;
         for (ItemFlag oneF : flags) {
             tagg |= getBitModifier(oneF);

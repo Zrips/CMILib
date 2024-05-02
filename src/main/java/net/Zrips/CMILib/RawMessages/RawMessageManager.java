@@ -190,11 +190,9 @@ public class RawMessageManager {
         }
     }
 
-    public static void send(Set<Player> players, String ajson) {
-        if (players == null || players.isEmpty() || ajson == null)
+    public static void send(Set<Player> players, String json) {
+        if (players == null || players.isEmpty() || json == null)
             return;
-
-        String json = ajson;
 
         Object serialized = CMILib.getInstance().getReflectionManager().textToIChatBaseComponent(json);
 

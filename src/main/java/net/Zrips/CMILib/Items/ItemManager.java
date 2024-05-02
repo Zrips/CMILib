@@ -532,7 +532,7 @@ public class ItemManager {
                     PotionMeta meta = (PotionMeta) item.getItemMeta();
 
                     PotionType potionType = CMIPotionType.get(type);
-
+                    
                     if (potionType != null)
                         meta.setBasePotionData(new PotionData(potionType, extended, upgraded));
                     if (CMIMaterial.TIPPED_ARROW.equals(CMIMaterial.get(item))) {

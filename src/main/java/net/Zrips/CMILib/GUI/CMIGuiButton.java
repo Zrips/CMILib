@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -57,8 +58,29 @@ public class CMIGuiButton {
     }
 
     public void hideItemFlags() {
-        if (item != null)
+        if (item == null)
+            return;
+
+        if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
+            ItemMeta meta = item.getItemMeta();
+            meta.addItemFlags(
+                ItemFlag.HIDE_ARMOR_TRIM,
+                ItemFlag.HIDE_ATTRIBUTES,
+                ItemFlag.HIDE_DESTROYS,
+                ItemFlag.HIDE_DYE,
+                ItemFlag.HIDE_ENCHANTS,
+                ItemFlag.HIDE_UNBREAKABLE,
+                ItemFlag.HIDE_PLACED_ON);
+//            try {
+//                meta.addItemFlags(ItemFlag.HIDE_ITEM_SPECIFICS);
+//            } catch (Throwable e) {
+//                e.printStackTrace();
+//            }
+
+            item.setItemMeta(meta);
+        } else
             item = CMINBT.HideFlag(item, 63);
+
     }
 
     public CMIGuiButton(ItemStack item) {
