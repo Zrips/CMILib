@@ -22,7 +22,7 @@ public class CMIEffect {
 
     public CMIParticle getParticle() {
 	if (particle == null)
-	    particle = CMIParticle.COLOURED_DUST;
+	    particle = CMIParticle.DUST;
 	return particle;
     }
 
