@@ -96,6 +96,7 @@ public class CMIFoliaImpl implements CMIBaseImpl {
 
     @Override
     public CompletableFuture<Void> runAtLocation(World world, int x, int z, Runnable runnable) {
+                
         CompletableFuture<Void> future = new CompletableFuture<>();
         this.regionScheduler.execute(this.plugin, world, x, z, () -> {
             runnable.run();

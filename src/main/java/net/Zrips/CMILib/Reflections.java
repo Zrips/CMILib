@@ -48,6 +48,7 @@ import net.Zrips.CMILib.Container.CMIServerProperties;
 import net.Zrips.CMILib.Effects.CMIEffect;
 import net.Zrips.CMILib.Effects.CMIEffectManager.CMIParticleDataType;
 import net.Zrips.CMILib.Items.CMIMaterial;
+import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.RawMessages.RawMessage;
 import net.Zrips.CMILib.Version.Version;
@@ -450,7 +451,6 @@ public class Reflections {
     }
 
     Method nmsChatSerializerMethod = null;
-
 
     public Object textToIChatBaseComponent(String text) {
 
@@ -1843,16 +1843,19 @@ public class Reflections {
                         CraftParticleMethod = CraftParticle.getMethod("createParticleParam", org.bukkit.Particle.class, Object.class);
                     }
                 }
-
-                net.minecraft.network.protocol.game.PacketPlayOutWorldParticles packet = new net.minecraft.network.protocol.game.PacketPlayOutWorldParticles(
-                    (net.minecraft.core.particles.ParticleParam) CraftParticleMethod.invoke(null, particle, dd),
-                    true,
-                    location.getX(), location.getY(), location.getZ(),
-                    (float) ef.getOffset().getX(),
-                    (float) ef.getOffset().getY(),
-                    (float) ef.getOffset().getZ(),
-                    ef.getSpeed(),
-                    ef.getAmount());
+                
+                net.minecraft.network.protocol.game.PacketPlayOutWorldParticles packet =
+                    new net.minecraft.network.protocol.game.PacketPlayOutWorldParticles(
+                        (net.minecraft.core.particles.ParticleParam) CraftParticleMethod.invoke(null, particle, dd),
+                        true,
+                        location.getX(),
+                        location.getY(),
+                        location.getZ(),
+                        (float) ef.getOffset().getX(),
+                        (float) ef.getOffset().getY(),
+                        (float) ef.getOffset().getZ(),
+                        ef.getSpeed(),
+                        ef.getAmount());
 
                 sendPlayerPacket(player, packet);
 

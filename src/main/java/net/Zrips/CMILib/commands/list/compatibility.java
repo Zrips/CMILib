@@ -117,7 +117,7 @@ public class compatibility implements Cmd {
         CMIActionBar.send(player, "Action bar Test");
         CMIScoreboard.show(player, "Top line", Arrays.asList("first", "second"), 2);
 
-        plugin.getReflectionManager().playEffect(player, player.getEyeLocation(), new CMIEffect(CMIParticle.COLOURED_DUST));
+        plugin.getReflectionManager().playEffect(player, player.getEyeLocation(), new CMIEffect(CMIParticle.DUST));
 
         RawMessage rm = new RawMessage();
         rm.addText("Active container ID: " + plugin.getReflectionManager().getActiveContainerId(player));

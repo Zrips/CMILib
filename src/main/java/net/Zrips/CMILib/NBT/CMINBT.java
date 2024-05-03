@@ -1389,6 +1389,7 @@ public class CMINBT {
     }
 
     private static Object registry = null;
+    private static Method nbtMethod = null;
 
     private static Object getRegistry() {
         if (registry == null) {
@@ -1444,7 +1445,10 @@ public class CMINBT {
                 return null;
 
             if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
-                return ((net.minecraft.world.item.ItemStack) nmsStack).b((net.minecraft.core.IRegistryCustom) getRegistry());
+                if (nbtMethod == null) {
+                    nbtMethod = ((net.minecraft.world.item.ItemStack) nmsStack).getClass().getMethod("b", Class.forName("net.minecraft.core.IRegistryCustom"));
+                }
+                return nbtMethod.invoke(nmsStack, getRegistry());
             }
 
             Method methTag = nmsStack.getClass().getMethod(getTagName);
