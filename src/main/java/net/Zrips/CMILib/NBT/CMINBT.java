@@ -1408,9 +1408,11 @@ public class CMINBT {
             if (nmsStack == null)
                 return null;
 
-//            if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
+            if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
+                return nmsStack;
 //                getSetTagMethod(nmsStack).invoke(nmsStack, getRegistry(), tag);
-//            } else
+            }
+
             getSetTagMethod(nmsStack).invoke(nmsStack, tag);
 
             return nmsStack;
