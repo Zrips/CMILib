@@ -60,3 +60,38 @@ Note: Clicking on a link will open it on this page due a Markdown limitation. To
 |           [TradeMe](https://www.spigotmc.org/resources/trademe-with-api-to-create-custom-trades-1-7-10-1-19-x.7544/)           |    6.1.X     |    latest     | [Zrips](https://www.spigotmc.org/resources/authors/zrips.24572/) |
 |                                    [TryMe](https://www.spigotmc.org/resources/tryme.3330/)                                     |     7.X      |    latest     | [Zrips](https://www.spigotmc.org/resources/authors/zrips.24572/) |
 
+### Maven
+
+Add the JitPack repository to your `pom.xml`:
+
+```xml
+<repositories>
+    <repository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
+    </repository>
+</repositories>
+```
+Then, add the dependency:
+```xml
+<dependency>
+    <groupId>com.github.Zrips</groupId>
+    <artifactId>CMILib</artifactId>
+    <version>1.4.7.4</version>
+</dependency>
+```
+
+### Gradle
+Add the JitPack repository to your build.gradle file:
+
+```xml
+repositories {
+    maven { url 'https://jitpack.io' }
+}
+```
+Then, add the dependency:
+```xml
+dependencies {
+    implementation 'com.github.Zrips:CMILib:1.4.7.4'
+}
+```
