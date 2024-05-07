@@ -50,7 +50,7 @@ public class CMIPersistentDataContainer {
     }
 
     private static NamespacedKey getKey(String key) {
-        return new NamespacedKey(CMI.getInstance(), key);
+        return new NamespacedKey(CMI.getInstance(), key.replace(" ", "_"));
     }
 
     public boolean hasKey(String key) {
