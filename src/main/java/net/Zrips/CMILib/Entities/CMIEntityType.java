@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.entity.Entity;
@@ -32,22 +34,25 @@ public enum CMIEntityType {
         "ZjVlYzk2NDY0NWE4ZWZhYzc2YmUyZjE2MGQ3Yzk5NTYzNjJmMzJiNjUxNzM5MGM1OWMzMDg1MDM0ZjA1MGNmZiJ9fX0=")),
     STRAY(Arrays.asList(
         "NzhkZGY3NmU1NTVkZDVjNGFhOGEwYTVmYzU4NDUyMGNkNjNkNDg5YzI1M2RlOTY5ZjdmMjJmODVhOWEyZDU2In19fQ==")),
-    EGG("Thrown Egg"),
+    EGG("THROWN_EGG"),
     LEASH_KNOT("LEASH_HITCH"),
     PAINTING(),
     ARROW(),
     SNOWBALL(),
     FIREBALL(),
     SMALL_FIREBALL(),
-    ENDER_PEARL("Thrown Ender Pearl"),
-    ENDER_SIGNAL("End Signal"),
+    ENDER_PEARL("THROWN_ENDER_PEARL"),
+    ENDER_SIGNAL("END_SIGNAL"),
+    EYE_OF_ENDER(),
+    POTION(),
+    LIGHTNING_BOLT(),
     SPLASH_POTION(),
     EXPERIENCE_BOTTLE("THROWN_EXP_BOTTLE"),
     ITEM_FRAME(),
     WITHER_SKULL(),
     TNT("PRIMED_TNT"),
     FALLING_BLOCK(),
-    FIREWORK_ROCKET("Firework"),
+    FIREWORK_ROCKET("FIREWORK"),
     HUSK(Arrays.asList(
         "Nzc3MDY4MWQxYTI1NWZiNGY3NTQ3OTNhYTA1NWIyMjA0NDFjZGFiOWUxMTQxZGZhNTIzN2I0OTkzMWQ5YjkxYyJ9fX0=")),
     SPECTRAL_ARROW(),
@@ -79,7 +84,7 @@ public enum CMIEntityType {
     ILLUSIONER(Arrays.asList(
         "NTEyNTEyZTdkMDE2YTIzNDNhN2JmZjFhNGNkMTUzNTdhYjg1MTU3OWYxMzg5YmQ0ZTNhMjRjYmViODhiIn19fQ==",
         "MmYyODgyZGQwOTcyM2U0N2MwYWI5NjYzZWFiMDgzZDZhNTk2OTI3MzcwNjExMGM4MjkxMGU2MWJmOGE4ZjA3ZSJ9fX0=")),
-    COMMAND_BLOCK_MINECART("Command Minecart"),
+    COMMAND_BLOCK_MINECART("COMMAND_MINECART", "MINECART_COMMAND"),
     BOAT(),
     MINECART(),
     CHEST_MINECART("MINECART_CHEST"),
@@ -105,7 +110,7 @@ public enum CMIEntityType {
         "MTZhZDIwZmMyZDU3OWJlMjUwZDNkYjY1OWM4MzJkYTJiNDc4YTczYTY5OGI3ZWExMGQxOGM5MTYyZTRkOWI1In19fQ==")),
     GHAST(Arrays.asList(
         "OGI2YTcyMTM4ZDY5ZmJiZDJmZWEzZmEyNTFjYWJkODcxNTJlNGYxYzk3ZTVmOTg2YmY2ODU1NzFkYjNjYzAifX19")),
-    PIG_ZOMBIE("Zombie Pigman", Arrays.asList(
+    PIG_ZOMBIE("ZOMBIE_PIGMAN", Arrays.asList(
         "NzRlOWM2ZTk4NTgyZmZkOGZmOGZlYjMzMjJjZDE4NDljNDNmYjE2YjE1OGFiYjExY2E3YjQyZWRhNzc0M2ViIn19fQ==")),
     ENDERMAN(Arrays.asList(
         "N2E1OWJiMGE3YTMyOTY1YjNkOTBkOGVhZmE4OTlkMTgzNWY0MjQ1MDllYWRkNGU2YjcwOWFkYTUwYjljZiJ9fX0=")),
@@ -165,11 +170,11 @@ public enum CMIEntityType {
     WOLF(Arrays.asList(
         "NjlkMWQzMTEzZWM0M2FjMjk2MWRkNTlmMjgxNzVmYjQ3MTg4NzNjNmM0NDhkZmNhODcyMjMxN2Q2NyJ9fX0=",
         "Angry Wolf:c-angry:ZTk1Y2JiNGY3NWVhODc2MTdmMmY3MTNjNmQ0OWRhYzMyMDliYTFiZDRiOTM2OTY1NGIxNDU5ZWExNTMxNyJ9fX0=")),
-    MUSHROOM_COW("Mooshroom", Arrays.asList(
+    MUSHROOM_COW("MOOSHROOM", Arrays.asList(
         "ZDBiYzYxYjk3NTdhN2I4M2UwM2NkMjUwN2EyMTU3OTEzYzJjZjAxNmU3YzA5NmE0ZDZjZjFmZTFiOGRiIn19fQ==")),
-    SNOW_GOLEM("Snowman", Arrays.asList(
+    SNOW_GOLEM("SNOWMAN", Arrays.asList(
         "MWZkZmQxZjc1MzhjMDQwMjU4YmU3YTkxNDQ2ZGE4OWVkODQ1Y2M1ZWY3MjhlYjVlNjkwNTQzMzc4ZmNmNCJ9fX0=")),
-    OCELOT("Cat", Arrays.asList(
+    OCELOT("CAT", Arrays.asList(
         "YWI4ODFjMzliM2FmZGNjNzlmOTFmZTVkZTNjZGQwMTViYzMzNTM4NDNmNTkxZjRkMjNjZDMwMjdkZTRlNiJ9fX0=",
         "YTc1NWU3ZGYwNGQxOGIzMWQ2M2MxN2Y0YTdiNGM3MzkyNGJkNjI2NWRhNjllMTEzZWRkZDk3NTE2ZmM3In19fQ==",
         "ZjJhNjYyZjJhZTdkZWJlZTY1MjkyYzJiZjQyZmJiMDliOTdiMmZmYmRiMjcwNTIwYzJkYjk2ZTUxZDg5NDUifX19",
@@ -297,19 +302,19 @@ public enum CMIEntityType {
     ARMADILLO(Arrays.asList("OTE2NGVkMGUwZWY2OWIwY2U3ODE1ZTQzMDBiNDQxM2E0ODI4ZmNiMDA5MjkxODU0MzU0NWE0MThhNDhlMGMzYyJ9fX0=")),
 
     //1.21
-//    BREEZE(949, "Breeze", Arrays.asList("")),  
-//    WIND_CHARGE(950, "Wind Charge", Arrays.asList("")),   
-//    BREEZE_WIND_CHARGE(951, "Breeze Wind Charge", Arrays.asList("")),
-//    BOGGED(952, "Bogged", Arrays.asList("")),
-//    OMINOUS_ITEM_SPAWNER(953, "Ominous Item Spawner", Arrays.asList("")),
-//    FISHING_BOBBER(954, "Fishing Bobber", Arrays.asList("")),
+    BREEZE(),
+    WIND_CHARGE(),
+    BREEZE_WIND_CHARGE(),
+    BOGGED(),
+    OMINOUS_ITEM_SPAWNER(),
+    FISHING_BOBBER(),
 
     // if possible we can remove this string for each texture to save up some space
     // eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUv
     UNKNOWN();
 
     private String name;
-    private String secondaryName;
+    private List<String> secondaryNames = new ArrayList<>();
     EntityType type = null;
     private HashMap<String, MobHeadInfo> headTextures = new HashMap<String, MobHeadInfo>();
     public static HashMap<String, ItemStack> cache = new HashMap<String, ItemStack>();
@@ -322,8 +327,11 @@ public enum CMIEntityType {
             byName.put(one.toString().replace("_", "").toLowerCase(), one);
             byName.put(one.getName().replace("_", "").replace(" ", "").toLowerCase(), one);
 
-            if (one.secondaryName != null)
-                byName.put(one.secondaryName.replace("_", "").replace(" ", "").toLowerCase(), one);
+            if (one.secondaryNames != null) {
+                for (String secondaryName : one.secondaryNames) {
+                    byName.put(secondaryName.replace("_", "").replace(" ", "").toLowerCase(), one);
+                }
+            }
 
             for (String texture : one.getHeadTextures()) {
                 byTexture.put(texture, one);
@@ -335,28 +343,28 @@ public enum CMIEntityType {
     }
 
     CMIEntityType() {
-        this(null, null, new ArrayList<String>());
+        this(new ArrayList<String>(), new ArrayList<String>());
     }
 
     CMIEntityType(List<String> headTextures) {
-        this(null, null, headTextures);
+        this(new ArrayList<String>(), headTextures);
     }
 
     CMIEntityType(String secondaryName, List<String> headTextures) {
-        this(null, secondaryName, headTextures);
+        this(Arrays.asList(secondaryName), headTextures);
     }
 
     CMIEntityType(String secondaryName) {
-        this(null, secondaryName, new ArrayList<String>());
+        this(Arrays.asList(secondaryName), new ArrayList<String>());
     }
 
     CMIEntityType(String name, String secondaryName) {
-        this(name, secondaryName, new ArrayList<String>());
+        this(Arrays.asList(name, secondaryName), new ArrayList<String>());
     }
 
-    CMIEntityType(String name, String secondaryName, List<String> headTextures) {
-        this.name = name == null ? CMIText.everyFirstToUpperCase(this.toString()) : name;
-        this.secondaryName = secondaryName == null ? null : secondaryName.toUpperCase().replace(" ", "_");
+    CMIEntityType(List<String> secondaryNames, List<String> headTextures) {
+        this.name = CMIText.everyFirstToUpperCase(this.toString());
+        this.secondaryNames = secondaryNames == null ? new ArrayList<>() : secondaryNames;
         for (String one : headTextures) {
             String text = one;
 //	    if (text.length() < 150)
@@ -557,9 +565,13 @@ public enum CMIEntityType {
                 break;
             }
 
-            if (secondaryName != null && one.toString().equalsIgnoreCase(this.secondaryName)) {
-                type = one;
-                break;
+            if (secondaryNames != null) {
+                for (String oneName : secondaryNames) {
+                    if (one.toString().equalsIgnoreCase(oneName)) {
+                        type = one;
+                        break;
+                    }
+                }
             }
         }
         return type;
