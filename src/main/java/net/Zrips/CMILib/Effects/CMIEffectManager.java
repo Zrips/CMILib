@@ -240,13 +240,13 @@ public class CMIEffectManager {
 
         static {
             for (CMIParticle one : CMIParticle.values()) {
-                
+
                 if (one.equals(CMIParticle.COLOURED_DUST) && Version.isCurrentEqualOrHigher(Version.v1_20_R4))
                     continue;
-                
-                if (one.equals(CMIParticle.DUST) && Version.isCurrentEqualOrHigher(Version.v1_20_R3))
+
+                if (one.equals(CMIParticle.DUST) && Version.isCurrentEqualOrLower(Version.v1_20_R3))
                     continue;
-                
+
                 byName.put(one.toString().replace("_", "").toLowerCase(), one);
                 byName.put(one.getName().replace("_", "").replace(" ", "").toLowerCase(), one);
 
@@ -396,32 +396,23 @@ public class CMIEffectManager {
                 name = name.split(":", 2)[0];
             }
 
-            for (CMIParticle one : CMIParticle.values()) {
-                if (one.getName() != null && one.getName().replace("_", "").equalsIgnoreCase(name)) {
-                    cmiEffect = new CMIEffect(one);
-                    break;
-                }
+            CMIParticle cmiParticle = getCMIParticle(name);
 
-                if (!one.getSecondaryName().isEmpty() && one.getSecondaryName().replace("_", "").equalsIgnoreCase(name)) {
-                    cmiEffect = new CMIEffect(one);
-                    break;
-                }
-                if (one.name().replace("_", "").equalsIgnoreCase(name)) {
-                    cmiEffect = new CMIEffect(one);
-                    break;
-                }
-            }
-            if (cmiEffect != null && Version.isCurrentEqualOrHigher(Version.v1_9_R1) && cmiEffect.getParticle() == null)
-                return null;
-            if (Version.isCurrentLower(Version.v1_13_R1) && cmiEffect != null && cmiEffect.getParticle().getEffect() == null)
+            if (cmiParticle == null)
                 return null;
 
-            if (cmiEffect != null) {
-                if (color != null)
-                    cmiEffect.setColor(color);
-                if (mat != null && mat.isBlock())
-                    cmiEffect.setMaterial(mat);
-            }
+            cmiEffect = new CMIEffect(cmiParticle);
+
+            if (Version.isCurrentEqualOrHigher(Version.v1_9_R1) && cmiEffect.getParticle() == null)
+                return null;
+
+            if (Version.isCurrentLower(Version.v1_13_R1) && cmiEffect.getParticle().getEffect() == null)
+                return null;
+
+            if (color != null)
+                cmiEffect.setColor(color);
+            if (mat != null && mat.isBlock())
+                cmiEffect.setMaterial(mat);
 
             return cmiEffect;
         }
@@ -566,6 +557,7 @@ public class CMIEffectManager {
         }
 
         public org.bukkit.Particle getParticle() {
+
             if (Version.isCurrentEqualOrLower(Version.v1_8_R3))
                 return null;
 
