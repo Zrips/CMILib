@@ -1868,14 +1868,6 @@ public enum CMIMaterial {
             return mat;
         }
 
-        try {
-            mat = ItemManager.byId.get(Integer.parseInt(id));
-            if (mat != null) {
-                return mat;
-            }
-        } catch (Exception ex) {
-        }
-
         if (id.contains(":")) {
             mat = ItemManager.byName.get(id.split(":")[0]);
             if (mat != null) {
@@ -1967,19 +1959,11 @@ public enum CMIMaterial {
 
     @Deprecated
     public static CMIMaterial get(int id, int data) {
-        CMIMaterial mat = ItemManager.byName.get(id + ":" + data);
-        if (mat != null) {
-            return mat;
-        }
-        mat = ItemManager.byId.get(id);
-        return mat == null ? CMIMaterial.NONE : mat;
+        return CMIMaterial.NONE;
     }
 
     @Deprecated
     public static CMIMaterial getLegacy(int id) {
-        CMIMaterial mat = ItemManager.byId.get(id);
-        if (mat != null)
-            return mat;
         return CMIMaterial.NONE;
     }
 

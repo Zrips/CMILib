@@ -49,6 +49,7 @@ import net.Zrips.CMILib.Container.CMIText;
 import net.Zrips.CMILib.Container.LeatherAnimationType;
 import net.Zrips.CMILib.Enchants.CMIEnchantment;
 import net.Zrips.CMILib.Entities.CMIEntityType;
+import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.Skins.CMISkin;
 import net.Zrips.CMILib.Version.Version;
@@ -110,6 +111,7 @@ public class CMIItemSerializer {
     }
 
     private static CMIItemStack getItem(String name, CMIAsyncHead ahead) {
+
         if (name == null)
             return null;
 
@@ -366,35 +368,9 @@ public class CMIItemSerializer {
             cm = cmat.newCMIItemStack();
 
         if (cm == null) {
-            try {
-                Material mat = Material.matchMaterial(original);
-                if (mat != null && new CMIItemStack(mat).getItemStack() != null) {
-                    cm = new CMIItemStack(mat);
-                }
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }
-
-            if (cm == null) {
-                try {
-                    Material mat = Material.matchMaterial(original.split(":", 2)[0]);
-                    if (mat != null && (Version.isCurrentLower(Version.v1_13_R1) || !CMIMaterial.get(mat).isLegacy() && CMIMaterial.get(mat) != CMIMaterial.NONE)) {
-                        cm = new CMIItemStack(mat);
-                    }
-                } catch (Throwable e) {
-                    e.printStackTrace();
-                }
-            }
-
-            if (cm == null) {
-                try {
-                    Material mat = Material.matchMaterial(original.replace("-", "_"));
-                    if (mat != null && new CMIItemStack(mat).getItemStack() != null) {
-                        cm = new CMIItemStack(mat);
-                    }
-                } catch (Throwable e) {
-                    e.printStackTrace();
-                }
+            Material mat = ItemManager.getMaterialByName(original);
+            if (mat != null && new CMIItemStack(mat).getItemStack() != null) {
+                cm = new CMIItemStack(mat);
             }
         }
 

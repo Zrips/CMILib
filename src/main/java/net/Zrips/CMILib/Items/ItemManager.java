@@ -33,6 +33,7 @@ import net.Zrips.CMILib.Colors.CMIChatColor;
 import net.Zrips.CMILib.Enchants.CMIEnchantment;
 import net.Zrips.CMILib.Entities.CMIEntityType;
 import net.Zrips.CMILib.FileHandler.ConfigReader;
+import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Messages.CMIMessages;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.Version.Version;
@@ -43,8 +44,8 @@ public class ItemManager {
     private CMILib plugin;
 
     static HashMap<Material, CMIMaterial> byRealMaterial = new HashMap<Material, CMIMaterial>();
-    static HashMap<Integer, CMIMaterial> byId = new HashMap<Integer, CMIMaterial>();
     static HashMap<String, CMIMaterial> byName = new HashMap<String, CMIMaterial>();
+    private static HashMap<String, Material> byNameMaterial = new HashMap<String, Material>();
 
     public ItemManager(CMILib plugin) {
         this.plugin = plugin;
@@ -52,7 +53,7 @@ public class ItemManager {
 
     @Deprecated
     public HashMap<Integer, CMIMaterial> idMap() {
-        return byId;
+        return new HashMap<Integer, CMIMaterial>();
     }
 
     public HashMap<String, CMIMaterial> NameMap() {
@@ -60,6 +61,7 @@ public class ItemManager {
     }
 
     public void load() {
+
         byRealMaterial.clear();
         for (CMIMaterial one : CMIMaterial.values()) {
             if (one == null)
@@ -78,7 +80,7 @@ public class ItemManager {
             }
 
             short data = one.getLegacyData();
-            Integer legacyId = one.getLegacyId();
+
             String cmiName = one.getName().replace("_", "").replace(" ", "").toLowerCase();
             String materialName = one.toString().replace("_", "").replace(" ", "").toLowerCase();
 
@@ -122,26 +124,17 @@ public class ItemManager {
             else
                 byName.put(mojangName, one);
 
-            if (Version.isCurrentEqualOrLower(Version.v1_13_R1)) {
-                Integer id = one.getId();
-                if (byName.containsKey(String.valueOf(id)) || data > 0)
-                    byName.put(id + ":" + data, one);
-                else
-                    byName.put(String.valueOf(id), one);
-                if (!byId.containsKey(id))
-                    byId.put(id, one);
-                if (!byId.containsKey(one.getLegacyId()))
-                    byId.put(one.getLegacyId(), one);
-                if (one.getLegacyData() == 0)
-                    byId.put(one.getLegacyId(), one);
-                if (byName.containsKey(String.valueOf(legacyId)) || data > 0)
-                    byName.put(legacyId + ":" + data, one);
-                else
-                    byName.put(String.valueOf(legacyId), one);
-            }
-
             byRealMaterial.put(mat, one);
         }
+
+        CMIScheduler.runTask(() -> {
+            for (Material one : Material.values()) {
+                if (Version.isCurrentEqualOrHigher(Version.v1_14_R1))
+                    byNameMaterial.put(one.getKey().getKey().replace("_", "").replace(" ", "").toLowerCase(), one);
+                else
+                    byNameMaterial.put(one.toString().replace("_", "").replace(" ", "").toLowerCase(), one);
+            }
+        });
     }
 
     @Deprecated
@@ -448,25 +441,9 @@ public class ItemManager {
             cm = cmat.newCMIItemStack();
 
         if (cm == null) {
-            try {
-                Material match = Material.matchMaterial(original);
-                if (match != null && new CMIItemStack(match).getItemStack() != null) {
-                    cm = new CMIItemStack(match);
-                }
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }
-            if (cm == null) {
-                try {
-                    Material match = Material.matchMaterial(original.split(":", 2)[0]);
-                    if (match != null) {
-                        if (Version.isCurrentLower(Version.v1_13_R1) || !CMIMaterial.get(match).isLegacy() && CMIMaterial.get(match) != CMIMaterial.NONE) {
-                            cm = new CMIItemStack(match);
-                        }
-                    }
-                } catch (Throwable e) {
-                    e.printStackTrace();
-                }
+            Material match = getMaterialByName(original);
+            if (match != null && new CMIItemStack(match).getItemStack() != null) {
+                cm = new CMIItemStack(match);
             }
         }
 
@@ -532,7 +509,7 @@ public class ItemManager {
                     PotionMeta meta = (PotionMeta) item.getItemMeta();
 
                     PotionType potionType = CMIPotionType.get(type);
-                    
+
                     if (potionType != null)
                         meta.setBasePotionData(new PotionData(potionType, extended, upgraded));
                     if (CMIMaterial.TIPPED_ARROW.equals(CMIMaterial.get(item))) {
@@ -658,6 +635,62 @@ public class ItemManager {
         }
 
         locale.save();
+    }
+
+    public static Material getMaterialByName(String name) {
+        name = name.replace("_", "").replace(" ", "").toLowerCase();
+
+        Material mat = byNameMaterial.get(name);
+        if (mat != null)
+            return mat;
+
+        if (name.contains(":")) {
+
+            String[] split = name.split(":", 2);
+
+            mat = byNameMaterial.get(split[0]);
+            if (mat != null)
+                return mat;
+
+            mat = byNameMaterial.get(split[1]);
+
+            if (mat != null)
+                return mat;
+
+            try {
+                mat = Material.matchMaterial(split[0]);
+                if (mat != null)
+                    return mat;
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+
+            try {
+                mat = Material.matchMaterial(split[1]);
+                if (mat != null)
+                    return mat;
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+        }
+
+        try {
+            mat = Material.matchMaterial(name);
+            if (mat != null)
+                return mat;
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+
+        try {
+            mat = Material.matchMaterial(name.replace("-", "_"));
+            if (mat != null)
+                return mat;
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
 }
