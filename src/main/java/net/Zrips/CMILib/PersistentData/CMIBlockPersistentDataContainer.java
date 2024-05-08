@@ -8,6 +8,8 @@ import org.bukkit.persistence.PersistentDataType;
 
 import com.Zrips.CMI.CMI;
 
+import net.Zrips.CMILib.Logs.CMIDebug;
+
 public class CMIBlockPersistentDataContainer extends CMIPersistentDataContainer {
 
     private final Chunk chunk;
@@ -45,13 +47,15 @@ public class CMIBlockPersistentDataContainer extends CMIPersistentDataContainer 
     }
 
     @Override
-    void save() {
+    public void save() {
+
         if (persistentDataContainer == null)
             return;
-        
+
         if (persistentDataContainer.isEmpty())
             chunk.getPersistentDataContainer().remove(this.key);
-        else
+        else {
             chunk.getPersistentDataContainer().set(this.key, PersistentDataType.TAG_CONTAINER, persistentDataContainer);
+        }
     }
 }

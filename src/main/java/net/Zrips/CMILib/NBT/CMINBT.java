@@ -1365,10 +1365,10 @@ public class CMINBT {
     private static Method getSetTagMethod(Object nmsStack) {
         try {
             if (setTagMethod == null) {
-//                if (Version.isCurrentEqualOrHigher(Version.v1_20_R4))
-//                    setTagMethod = nmsStack.getClass().getMethod(setTagName, net.minecraft.core.HolderLookup.a.class, NBTBase);
-//                else
-                setTagMethod = nmsStack.getClass().getMethod(setTagName, nbtTagCompound);
+                if (Version.isCurrentEqualOrHigher(Version.v1_20_R4))
+                    setTagMethod = nmsStack.getClass().getMethod(setTagName, net.minecraft.core.HolderLookup.a.class, NBTBase);
+                else
+                    setTagMethod = nmsStack.getClass().getMethod(setTagName, nbtTagCompound);
             }
         } catch (Throwable e) {
             e.printStackTrace();
@@ -1467,7 +1467,11 @@ public class CMINBT {
 
     public static Object getNbt(Block block) {
         if (block == null)
-            return false;
+            return null;
+
+        if (Version.isCurrentEqualOrHigher(Version.v1_20_R4))
+            return null;
+
         try {
 
             Object tile = CMILib.getInstance().getReflectionManager().getTileEntityAt(block.getLocation());

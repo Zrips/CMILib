@@ -15,7 +15,7 @@ public class CMIItemPersistentDataContainer extends CMIPersistentDataContainer {
     }
 
     @Override
-    void save() {
+    public void save() {
         item.setItemMeta(meta);
     }
 }

@@ -7,8 +7,4 @@ public class CMIEntityPersistentDataContainer extends CMIPersistentDataContainer
     public CMIEntityPersistentDataContainer(Entity entity) {
         this.persistentDataContainer = entity == null ? null : entity.getPersistentDataContainer();
     }
-
-    @Override
-    void save() {
-    }
 }

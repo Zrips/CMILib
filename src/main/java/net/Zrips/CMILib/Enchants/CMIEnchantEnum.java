@@ -1,70 +1,118 @@
 package net.Zrips.CMILib.Enchants;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.bukkit.enchantments.Enchantment;
 
 public enum CMIEnchantEnum {
-    AQUA_AFFINITY("Water Worker"),
-    BANE_OF_ARTHROPODS("Damage Arthropods"),
+    AQUA_AFFINITY("WATER_WORKER"),
+    BANE_OF_ARTHROPODS("DAMAGE_ARTHROPODS"),
     BINDING_CURSE,
-    BLAST_PROTECTION("Protection Explosions"),
+    BLAST_PROTECTION("PROTECTION_EXPLOSIONS"),
     CHANNELING,
     DEPTH_STRIDER,
-    EFFICIENCY("Dig Speed"),
-    FEATHER_FALLING("Protection Fall"),
+    EFFICIENCY("DIG_SPEED"),
+    FEATHER_FALLING("PROTECTION_FALL"),
     FIRE_ASPECT,
-    FIRE_PROTECTION("Protection Fire"),
-    FLAME("Arrow Fire"),
-    FORTUNE("Loot Bonus Blocks"),
+    FIRE_PROTECTION("PROTECTION_FIRE"),
+    FLAME("ARROW_FIRE"),
+    FORTUNE("LOOT_BONUS_BLOCKS"),
     FROST_WALKER,
     IMPALING,
-    INFINITY("Arrow Infinite"),
+    INFINITY("ARROW_INFINITE"),
     KNOCKBACK,
-    LOOTING("Loot Bonus Mobs"),
+    LOOTING("LOOT_BONUS_MOBS"),
     LOYALTY,
-    LUCK_OF_THE_SEA("Luck"),
+    LUCK_OF_THE_SEA("LUCK"),
     LURE,
     MENDING,
     MULTISHOT,
     PIERCING,
-    POWER("Arrow Damage"),
-    PROJECTILE_PROTECTION("Protection Projectile"),
-    PROTECTION("Protection Environmental"),
-    PUNCH("Arrow Knockback"),
+    POWER("ARROW_DAMAGE"),
+    PROJECTILE_PROTECTION("PROTECTION_PROJECTILE"),
+    PROTECTION("PROTECTION_ENVIRONMENTAL"),
+    PUNCH("ARROW_KNOCKBACK"),
     QUICK_CHARGE,
-    RESPIRATION("Oxygen"),
+    RESPIRATION("OXYGEN"),
     RIPTIDE,
-    SHARPNESS("Damage All"),
+    SHARPNESS("DAMAGE_ALL"),
     SILK_TOUCH,
-    SMITE("Damage Undead"),
+    SMITE("DAMAGE_UNDEAD"),
     SOUL_SPEED,
-    SWEEPING("Sweeping Edge"),
+    SWEEPING("SWEEPING_EDGE"),
     SWIFT_SNEAK,
     THORNS,
-    UNBREAKING("Durability"),
+    UNBREAKING("DURABILITY"),
     VANISHING_CURSE;
 
-    private String alternative = null;
+    private List<String> alternatives = new ArrayList<>();
+    private Enchantment enchant = null;
 
     CMIEnchantEnum() {
-        this.alternative = this.toString();
     }
 
     CMIEnchantEnum(String alternative) {
-        this.alternative = alternative.replace(" ", "_").toUpperCase();
+        this.alternatives = Arrays.asList(alternative);
     }
 
     public String getName() {
         return this.toString();
     }
 
+    @Deprecated
     public String getAlternativeName() {
-        return alternative;
+        return alternatives.isEmpty() ? null : alternatives.get(0);
+    }
+
+    public List<String> getAlternativeNames() {
+        return alternatives;
+    }
+
+    private static String strip(String name) {
+        return name.replace("_", "").replace(" ", "").toLowerCase();
     }
 
     public Enchantment getEnchantment() {
-        Enchantment enchant = CMIEnchantment.getByName(this.toString());
         if (enchant != null)
             return enchant;
-        return CMIEnchantment.getByName(getAlternativeName());
+
+        enchant = Enchantment.getByName(getName());
+
+        if (enchant != null)
+            return enchant;
+
+        for (Enchantment one : Enchantment.values()) {
+            try {
+                if (one == null)
+                    continue;
+
+                String name = one.getName();
+                if (name == null)
+                    continue;
+                if (name.isEmpty())
+                    continue;
+                if (name == " ")
+                    continue;
+
+                if (strip(name).equalsIgnoreCase(strip(getName()))) {
+                    enchant = one;
+                    return enchant;
+                }
+
+                for (String oneAlternative : getAlternativeNames()) {
+                    if (strip(name).equalsIgnoreCase(strip(oneAlternative))) {
+                        enchant = one;
+                        return enchant;
+                    }
+                }
+
+            } catch (Exception | Error e) {
+                e.printStackTrace();
+            }
+        }
+
+        return enchant;
     }
 }

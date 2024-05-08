@@ -15,9 +15,66 @@ import org.jetbrains.annotations.Nullable;
 
 import com.Zrips.CMI.CMI;
 
+import net.Zrips.CMILib.Logs.CMIDebug;
+
 public class CMIPersistentDataContainer {
 
+    // 1.15+ servers only
     PersistentDataContainer persistentDataContainer;
+
+    private static Set<PersistentDataType<?, ?>> DATA_TYPES = new HashSet<>();
+
+    static {
+
+        DATA_TYPES.add(PersistentDataType.BYTE);
+        DATA_TYPES.add(PersistentDataType.SHORT);
+        DATA_TYPES.add(PersistentDataType.INTEGER);
+        DATA_TYPES.add(PersistentDataType.LONG);
+        DATA_TYPES.add(PersistentDataType.FLOAT);
+        DATA_TYPES.add(PersistentDataType.DOUBLE);
+        DATA_TYPES.add(PersistentDataType.STRING);
+        DATA_TYPES.add(PersistentDataType.BYTE_ARRAY);
+        DATA_TYPES.add(PersistentDataType.INTEGER_ARRAY);
+        DATA_TYPES.add(PersistentDataType.LONG_ARRAY);
+
+        try {
+            DATA_TYPES.add(PersistentDataType.BOOLEAN);
+        } catch (Throwable __) {
+        }
+        try {
+            DATA_TYPES.add(PersistentDataType.TAG_CONTAINER);
+        } catch (Throwable __) {
+        }
+
+        try {
+            DATA_TYPES.add(PersistentDataType.LIST.bytes());
+        } catch (Throwable __) {
+        }
+        try {
+            DATA_TYPES.add(PersistentDataType.LIST.booleans());
+        } catch (Throwable __) {
+        }
+        try {
+            DATA_TYPES.add(PersistentDataType.LIST.doubles());
+        } catch (Throwable __) {
+        }
+        try {
+            DATA_TYPES.add(PersistentDataType.LIST.floats());
+        } catch (Throwable __) {
+        }
+        try {
+            DATA_TYPES.add(PersistentDataType.LIST.integers());
+        } catch (Throwable __) {
+        }
+        try {
+            DATA_TYPES.add(PersistentDataType.LIST.strings());
+        } catch (Throwable __) {
+        }
+        try {
+            DATA_TYPES.add(PersistentDataType.LIST.shorts());
+        } catch (Throwable __) {
+        }
+    }
 
     public CMIPersistentDataContainer() {
         this.persistentDataContainer = null;
@@ -46,7 +103,19 @@ public class CMIPersistentDataContainer {
         return null;
     }
 
-    void save() {
+    public void save() {
+    }
+
+    public PersistentDataType<?, ?> getType(String key) {
+        return getType(getKey(key));
+    }
+
+    public PersistentDataType<?, ?> getType(NamespacedKey key) {
+        for (PersistentDataType<?, ?> dataType : DATA_TYPES) {
+            if (persistentDataContainer.has(key, dataType))
+                return dataType;
+        }
+        return null;
     }
 
     private static NamespacedKey getKey(String key) {
@@ -69,7 +138,6 @@ public class CMIPersistentDataContainer {
         if (persistentDataContainer == null)
             return this;
         persistentDataContainer.set(getKey(key), PersistentDataType.STRING, value);
-        save();
         return this;
     }
 
@@ -77,7 +145,6 @@ public class CMIPersistentDataContainer {
         if (persistentDataContainer == null)
             return this;
         persistentDataContainer.remove(getKey(key));
-        save();
         return this;
     }
 
@@ -89,7 +156,6 @@ public class CMIPersistentDataContainer {
         if (persistentDataContainer == null)
             return this;
         persistentDataContainer.set(getKey(key), PersistentDataType.INTEGER, value);
-        save();
         return this;
     }
 
@@ -103,7 +169,6 @@ public class CMIPersistentDataContainer {
         if (persistentDataContainer == null)
             return this;
         persistentDataContainer.set(getKey(key), PersistentDataType.LONG, value);
-        save();
         return this;
     }
 
@@ -117,7 +182,6 @@ public class CMIPersistentDataContainer {
         if (persistentDataContainer == null)
             return this;
         persistentDataContainer.set(getKey(key), PersistentDataType.LONG_ARRAY, value);
-        save();
         return this;
     }
 
@@ -131,7 +195,6 @@ public class CMIPersistentDataContainer {
         if (persistentDataContainer == null)
             return this;
         persistentDataContainer.set(getKey(key), PersistentDataType.BOOLEAN, value);
-        save();
         return this;
     }
 
@@ -145,7 +208,6 @@ public class CMIPersistentDataContainer {
         if (persistentDataContainer == null)
             return this;
         persistentDataContainer.set(getKey(key), PersistentDataType.FLOAT, value);
-        save();
         return this;
     }
 
@@ -159,7 +221,6 @@ public class CMIPersistentDataContainer {
         if (persistentDataContainer == null)
             return this;
         persistentDataContainer.set(getKey(key), PersistentDataType.SHORT, value);
-        save();
         return this;
     }
 
@@ -173,7 +234,6 @@ public class CMIPersistentDataContainer {
         if (persistentDataContainer == null)
             return this;
         persistentDataContainer.set(getKey(key), PersistentDataType.DOUBLE, value);
-        save();
         return this;
     }
 
@@ -187,7 +247,6 @@ public class CMIPersistentDataContainer {
         if (persistentDataContainer == null)
             return this;
         persistentDataContainer.set(getKey(key), PersistentDataType.BYTE_ARRAY, value);
-        save();
         return this;
     }
 
@@ -201,7 +260,6 @@ public class CMIPersistentDataContainer {
         if (persistentDataContainer == null)
             return this;
         persistentDataContainer.set(getKey(key), PersistentDataType.INTEGER_ARRAY, value);
-        save();
         return this;
     }
 
@@ -215,7 +273,6 @@ public class CMIPersistentDataContainer {
         if (persistentDataContainer == null)
             return this;
         persistentDataContainer.set(getKey(key), PersistentDataType.BYTE, value);
-        save();
         return this;
     }
 
@@ -229,7 +286,6 @@ public class CMIPersistentDataContainer {
         if (persistentDataContainer == null)
             return this;
         persistentDataContainer.set(getKey(key), PersistentDataType.LIST.strings(), value);
-        save();
         return this;
     }
 
@@ -237,5 +293,26 @@ public class CMIPersistentDataContainer {
         if (persistentDataContainer == null)
             return null;
         return persistentDataContainer.get(getKey(key), PersistentDataType.LIST.strings());
+    }
+
+    public @Nullable Object get(String key, PersistentDataType<?, ?> type) {
+        return get(getKey(key), type);
+    }
+
+    public @Nullable Object get(NamespacedKey key, PersistentDataType<?, ?> type) {
+        if (persistentDataContainer == null)
+            return null;
+        return persistentDataContainer.get(key, type);
+    }
+
+    public @Nullable Object get(String key) {
+        return get(getKey(key));
+    }
+
+    public @Nullable Object get(NamespacedKey key) {
+        PersistentDataType<?, ?> type = this.getType(key);
+        if (type == null || persistentDataContainer == null)
+            return null;
+        return persistentDataContainer.get(key, type);
     }
 }

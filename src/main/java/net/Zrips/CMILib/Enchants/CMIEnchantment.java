@@ -85,17 +85,21 @@ public class CMIEnchantment {
 
         for (CMIEnchantEnum one : CMIEnchantEnum.values()) {
 
-            Enchantment got = Enchantment.getByName(one.getName());
-
-            if (got == null && !one.getAlternativeName().equalsIgnoreCase(one.getName()))
-                got = Enchantment.getByName(one.getAlternativeName());
+            Enchantment got = one.getEnchantment();
 
             if (got == null)
                 continue;
 
             CMIEnchantment cmi = new CMIEnchantment(got, one);
 
-            eList.put(got.getName().replace("_", "").toLowerCase(), cmi);
+            eList.put(strip(one.getName()), cmi);
+            byName.putIfAbsent(strip(one.getName()), cmi);
+            byEnchant.putIfAbsent(got, cmi);
+
+            for (String oneAlternative : one.getAlternativeNames()) {
+                eList.put(strip(oneAlternative), cmi);
+                byName.putIfAbsent(strip(oneAlternative), cmi);
+            }
         }
 
         for (Enchantment one : Enchantment.values()) {
@@ -162,7 +166,7 @@ public class CMIEnchantment {
     public static Enchantment getByName(String name) {
         if (name == null)
             return null;
-        
+
         if (name.contains(":"))
             name = name.split(":", 2)[0];
 
