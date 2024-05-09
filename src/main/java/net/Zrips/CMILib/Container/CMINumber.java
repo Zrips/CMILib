@@ -27,14 +27,17 @@ public class CMINumber {
     }
 
     public static final String toRoman(int number) {
+        if (number > 3999)
+            return String.valueOf(number);
+
         Integer l = map.floorKey(number);
 
         if (l == null)
             return String.valueOf(number);
 
-        if (number == l) {
+        if (number == l)
             return map.get(number);
-        }
+
         return map.get(l) + toRoman(number - l);
     }
 
