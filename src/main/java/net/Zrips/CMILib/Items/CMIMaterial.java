@@ -6,19 +6,23 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Skull;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Container.CMIText;
 import net.Zrips.CMILib.Version.Version;
+import net.Zrips.CMILib.Version.PaperMethods.PaperLib;
 
 public enum CMIMaterial {
     NONE(),
@@ -1883,7 +1887,7 @@ public enum CMIMaterial {
     public static CMIMaterial get(Material mat) {
         if (mat == null)
             return CMIMaterial.NONE;
-        CMIMaterial m = ItemManager.byRealMaterial.get(mat);
+        CMIMaterial m = ItemManager.get(mat);
         if (m != null)
             return m;
         return get(mat.toString());
@@ -1915,7 +1919,7 @@ public enum CMIMaterial {
                 mat = ItemManager.byName.get(item.getType().toString().toLowerCase().replace("_", ""));
             }
         } else {
-            mat = ItemManager.byRealMaterial.get(item.getType());
+            mat = ItemManager.get(item.getType());
         }
 
         return mat == null ? CMIMaterial.NONE : mat;
@@ -1938,15 +1942,15 @@ public enum CMIMaterial {
             if (Version.isFolia()) {
                 // Invoke World#getChunkAtAsync to load chunk off-main
                 try {
-                    if (!block.getWorld().getChunkAtAsync(block).get().isLoaded())                        
-                    return null;
+                    if (!block.getWorld().getChunkAtAsync(block).get().isLoaded())
+                        return null;
                 } catch (Throwable e) {
                     e.printStackTrace();
                     return CMIMaterial.NONE;
                 }
             }
 
-            CMIMaterial res = ItemManager.byRealMaterial.get(block.getType());
+            CMIMaterial res = ItemManager.get(block.getType());
             return res == null ? CMIMaterial.NONE : res;
         }
 
@@ -1959,7 +1963,7 @@ public enum CMIMaterial {
         CMIMaterial mat = null;
 
         if (Version.isCurrentEqualOrHigher(Version.v1_14_R1)) {
-            mat = ItemManager.byRealMaterial.get(block.getType());
+            mat = ItemManager.get(block.getType());
         }
 
         if (mat == null) {
@@ -1970,6 +1974,55 @@ public enum CMIMaterial {
             mat = get(block.getType().getId(), Version.isCurrentEqualOrHigher(Version.v1_13_R1) ? 0 : data);
         }
         return mat == null ? CMIMaterial.NONE : mat;
+    }
+
+    public static CompletableFuture<CMIMaterial> getType(Block block) {
+        if (block == null)
+            return CompletableFuture.completedFuture(CMIMaterial.NONE);
+        return getType(block.getLocation());
+    }
+
+    public static CompletableFuture<CMIMaterial> getType(Location location) {
+        if (location == null)
+            return CompletableFuture.completedFuture(CMIMaterial.NONE);
+
+        try {
+            if (Bukkit.getWorld(location.getWorld().getUID()) == null)
+                return CompletableFuture.completedFuture(CMIMaterial.NONE);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+
+        if (Version.isCurrentEqualOrHigher(Version.v1_14_R1)) {
+            return PaperLib.getBlockType(location, true).thenApply(mat -> {
+                CMIMaterial res = CMIMaterial.get(mat);
+                return res == null ? CMIMaterial.NONE : res;
+            });
+        }
+
+        Block block = location.getBlock();
+
+        byte data = Version.isCurrentEqualOrLower(Version.v1_13_R1) ? block.getData() : 0;
+        if (block.getState() instanceof Skull) {
+            Skull skull = (Skull) block.getState();
+            data = (byte) skull.getSkullType().ordinal();
+        }
+
+        CMIMaterial mat = null;
+
+        if (Version.isCurrentEqualOrHigher(Version.v1_14_R1)) {
+            mat = ItemManager.get(block.getType());
+        }
+
+        if (mat == null) {
+            mat = ItemManager.byName.get(block.getType().toString().replace("_", "").toLowerCase());
+        }
+
+        if (mat == null && Version.isCurrentEqualOrLower(Version.v1_13_R2)) {
+            mat = get(block.getType().getId(), Version.isCurrentEqualOrHigher(Version.v1_13_R1) ? 0 : data);
+        }
+
+        return CompletableFuture.completedFuture(mat == null ? CMIMaterial.NONE : mat);
     }
 
     @Deprecated

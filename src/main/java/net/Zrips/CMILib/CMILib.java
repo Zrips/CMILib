@@ -167,7 +167,7 @@ public class CMILib extends JavaPlugin {
 
     public void defaultLocaleDownloader() {
         try {
-            List<String> lang = Arrays.asList("CN", "DE", "ES", "IT", "LT", "RU", "SK", "SL", "FR", "PL", "NO", "ZH", "TR", "CZ");
+            List<String> lang = Arrays.asList("CN", "CZ", "DE", "ES", "FR", "IT", "LT", "NO", "PL", "RU", "SK", "SL", "TR", "AU", "ZH");
             String lr = null;
 
             boolean download = true;

@@ -59,6 +59,10 @@ public class ItemManager {
         return byName;
     }
 
+    public static CMIMaterial get(Material material) {
+        return byRealMaterial.get(material);
+    }
+
     public void load() {
 
         byRealMaterial.clear();
