@@ -23,6 +23,7 @@ import net.Zrips.CMILib.Images.CMIImage;
 import net.Zrips.CMILib.Items.CMIItemStack;
 import net.Zrips.CMILib.Items.CMIMaterial;
 import net.Zrips.CMILib.Items.CMIPotionEffect;
+import net.Zrips.CMILib.Items.CMIPotionEffectType;
 import net.Zrips.CMILib.Locale.LC;
 import net.Zrips.CMILib.Messages.CMIMessages;
 import net.Zrips.CMILib.commands.CAnnotation;
@@ -349,7 +350,7 @@ public class CMILibConfig {
         CMIBiome.initialize();
         CMIEntity.initialize();
         CMIEnchantment.updateLocale();
-        CMIPotionEffect.initialize();
+        CMIPotionEffectType.loadLocalization();
         CMIWorld.initialize();
 
         // Command stuff

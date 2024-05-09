@@ -703,7 +703,7 @@ public class CMIItemSerializer {
 
         for (String one : split) {
             if (potionType == null) {
-                PotionEffectType type = CMIPotionEffect.get(one);
+                PotionEffectType type = CMIPotionEffectType.get(one);
                 if (type != null) {
                     potionType = CMIPotionType.get(type);
                     if (potionType != null)
@@ -738,6 +738,8 @@ public class CMIItemSerializer {
 
         ItemStack item = cim.getItemStack();
 
+        potionType = CMIPotionType.get(potionType, upgraded, extended);
+
         try {
             PotionMeta meta = (PotionMeta) item.getItemMeta();
 
@@ -746,10 +748,13 @@ public class CMIItemSerializer {
                     extended = false;
                 if (!potionType.isUpgradeable())
                     upgraded = false;
-                meta.setBasePotionData(new PotionData(potionType, extended, upgraded));
-            } else {
-                meta.setBasePotionData(new PotionData(potionType, extended, upgraded));
             }
+
+            if (Version.isCurrentEqualOrHigher(Version.v1_20_R4))
+                meta.setBasePotionType(potionType);
+            else
+                meta.setBasePotionData(new PotionData(potionType, extended, upgraded));
+            
             item.setItemMeta(meta);
             return true;
         } catch (Exception e) {

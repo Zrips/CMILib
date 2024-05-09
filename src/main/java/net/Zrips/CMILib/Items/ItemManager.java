@@ -33,7 +33,6 @@ import net.Zrips.CMILib.Colors.CMIChatColor;
 import net.Zrips.CMILib.Enchants.CMIEnchantment;
 import net.Zrips.CMILib.Entities.CMIEntityType;
 import net.Zrips.CMILib.FileHandler.ConfigReader;
-import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Messages.CMIMessages;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.Version.Version;
@@ -474,22 +473,16 @@ public class ItemManager {
 
             if (ncm.getCMIType().isPotion() || ncm.getCMIType().equals(CMIMaterial.SPLASH_POTION) || ncm.getCMIType().equals(CMIMaterial.TIPPED_ARROW)) {
 
-                Integer d = null;
                 PotionEffectType type = null;
                 Boolean upgraded = false;
                 Boolean extended = false;
                 String[] split = subdata.split("-");
 
                 try {
-                    d = Integer.parseInt(split.length > 0 ? split[0] : subdata);
-                    type = CMIPotionEffect.getById(d);
-                } catch (Exception e) {
-                }
-                try {
 
                     String n = (split.length > 0 ? split[0] : subdata).replace("_", "");
-                    if (type == null)
-                        type = CMIPotionEffect.get(n);
+
+                    type = CMIPotionEffectType.get(n);
 
                     if (split.length > 1) {
                         try {
