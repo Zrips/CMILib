@@ -6,8 +6,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import com.Zrips.CMI.CMI;
-
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Reflections;
 import net.Zrips.CMILib.ActionBar.CMIActionBar;

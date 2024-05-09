@@ -9,8 +9,6 @@ import org.bukkit.Color;
 import org.bukkit.Effect;
 import org.bukkit.Material;
 
-import com.Zrips.CMI.AllListeners.versionCheck;
-
 import net.Zrips.CMILib.Colors.CMIChatColor;
 import net.Zrips.CMILib.Container.CMIText;
 import net.Zrips.CMILib.Items.CMIMaterial;

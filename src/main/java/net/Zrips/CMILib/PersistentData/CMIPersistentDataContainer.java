@@ -13,9 +13,7 @@ import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.Zrips.CMI.CMI;
-
-import net.Zrips.CMILib.Logs.CMIDebug;
+import net.Zrips.CMILib.CMILib;
 
 public class CMIPersistentDataContainer {
 
@@ -119,7 +117,7 @@ public class CMIPersistentDataContainer {
     }
 
     private static NamespacedKey getKey(String key) {
-        return new NamespacedKey(CMI.getInstance(), key.replace(" ", "_"));
+        return new NamespacedKey(CMILib.getInstance(), key.replace(" ", "_"));
     }
 
     public boolean hasKey(String key) {

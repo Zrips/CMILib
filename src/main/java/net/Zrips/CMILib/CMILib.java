@@ -216,7 +216,7 @@ public class CMILib extends JavaPlugin {
 
     public void defaultItemLocaleDownloader() {
         try {
-            List<String> lang = Arrays.asList("ES");
+            List<String> lang = Arrays.asList("ES", "CN");
             String lr = null;
 
             for (String one : lang) {

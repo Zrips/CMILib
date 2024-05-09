@@ -6,9 +6,7 @@ import org.bukkit.block.Block;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
-import com.Zrips.CMI.CMI;
-
-import net.Zrips.CMILib.Logs.CMIDebug;
+import net.Zrips.CMILib.CMILib;
 
 public class CMIBlockPersistentDataContainer extends CMIPersistentDataContainer {
 
@@ -39,7 +37,7 @@ public class CMIBlockPersistentDataContainer extends CMIPersistentDataContainer 
     }
 
     private static NamespacedKey getNamespacedKey(Block block) {
-        return new NamespacedKey(CMI.getInstance(), getKey(block));
+        return new NamespacedKey(CMILib.getInstance(), getKey(block));
     }
 
     private static String getKey(Block block) {

@@ -754,7 +754,7 @@ public class CMIItemSerializer {
                 meta.setBasePotionType(potionType);
             else
                 meta.setBasePotionData(new PotionData(potionType, extended, upgraded));
-            
+
             item.setItemMeta(meta);
             return true;
         } catch (Exception e) {
