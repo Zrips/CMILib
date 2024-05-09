@@ -6,9 +6,11 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Future;
 import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Skull;
@@ -1919,6 +1921,7 @@ public enum CMIMaterial {
         return mat == null ? CMIMaterial.NONE : mat;
     }
 
+    @Deprecated
     public static CMIMaterial get(Block block) {
         if (block == null)
             return CMIMaterial.NONE;
@@ -1931,6 +1934,18 @@ public enum CMIMaterial {
         }
 
         if (Version.isCurrentEqualOrHigher(Version.v1_14_R1)) {
+
+            if (Version.isFolia()) {
+                // Invoke World#getChunkAtAsync to load chunk off-main
+                try {
+                    if (!block.getWorld().getChunkAtAsync(block).get().isLoaded())                        
+                    return null;
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                    return CMIMaterial.NONE;
+                }
+            }
+
             CMIMaterial res = ItemManager.byRealMaterial.get(block.getType());
             return res == null ? CMIMaterial.NONE : res;
         }
