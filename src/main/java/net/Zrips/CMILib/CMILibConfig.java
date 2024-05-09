@@ -22,7 +22,6 @@ import net.Zrips.CMILib.FileHandler.ConfigReader;
 import net.Zrips.CMILib.Images.CMIImage;
 import net.Zrips.CMILib.Items.CMIItemStack;
 import net.Zrips.CMILib.Items.CMIMaterial;
-import net.Zrips.CMILib.Items.CMIPotionEffect;
 import net.Zrips.CMILib.Items.CMIPotionEffectType;
 import net.Zrips.CMILib.Locale.LC;
 import net.Zrips.CMILib.Messages.CMIMessages;
@@ -38,7 +37,6 @@ public class CMILibConfig {
     public static String lang = "EN";
     public static boolean LanguageDownload = true;
     public static boolean autoUpdate = true;
-    public static boolean autoFileRemoval = true;
     public static boolean permisionOnError = true;
     public static boolean isPermisionInConsole = true;
     public static boolean monochromeConsole = true;
@@ -121,9 +119,6 @@ public class CMILibConfig {
 
         cfg.addComment("AutoUpdate", "When enabled plugin will try to keep CMILib up to date automatically");
         autoUpdate = cfg.get("AutoUpdate", false);
-
-        cfg.addComment("AutoFileRemoval", "When enabled plugin will try to clean up outdated CMILib files. This only works when autoUpdate is enabled");
-        autoFileRemoval = cfg.get("AutoFileRemoval", true);
 
         cfg.addComment("ExploitPatcher.Placeholders.blocked.checkItem",
             "By default we are blocking PAPI %checkitem_...% placeholder to avoid potential serious issues with it",

@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -126,45 +125,6 @@ public class CMILib extends JavaPlugin {
 
     private int cmiLibResourceId = 87610;
 
-    private void cleanOldFiles() {
-
-        File folder = new File("plugins");
-        if (!folder.isDirectory())
-            return;
-
-        Integer cmilibVersion = Version.convertVersion(getDescription().getVersion());
-
-        for (File one : folder.listFiles()) {
-            if (!one.isFile())
-                continue;
-            if (!one.getName().toLowerCase().startsWith("cmilib"))
-                continue;
-
-            if (!one.getName().toLowerCase().endsWith(".jar"))
-                continue;
-
-            String version = one.getName().substring("cmilib".length());
-            version = version.substring(0, version.length() - 4);
-
-            if (version.length() < 7 || !version.contains(".")) {
-                continue;
-            }
-
-            Integer oldVersion = Version.convertVersion(version);
-
-            if (oldVersion == 0 || cmilibVersion <= oldVersion) {
-                continue;
-            }
-
-            try {
-                one.delete();
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }
-        }
-
-    }
-
     public void defaultLocaleDownloader() {
         try {
             List<String> lang = Arrays.asList("CN", "CZ", "DE", "ES", "FR", "IT", "LT", "NO", "PL", "RU", "SK", "SL", "TR", "AU", "ZH");
@@ -260,9 +220,6 @@ public class CMILib extends JavaPlugin {
 
         defaultLocaleDownloader();
         defaultItemLocaleDownloader();
-
-        if (CMILibConfig.autoUpdate && CMILibConfig.autoFileRemoval)
-            cleanOldFiles();
 
         new updateChecker(this, cmiLibResourceId).getVersion(version -> {
 
