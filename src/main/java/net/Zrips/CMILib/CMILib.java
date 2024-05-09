@@ -276,7 +276,12 @@ public class CMILib extends JavaPlugin {
                     CMIMessages.consoleMessage("&2New version of CMILib was detected. Please update it");
                     return;
                 }
-                File file = new File(getDataFolder().getParent(), "CMILib" + version + ".jar");
+
+                File folder = new File(getDataFolder().getParent(), "update");
+                if (!folder.isDirectory())
+                    folder.mkdir();
+
+                File file = new File(folder, "CMILib" + version + ".jar");
                 if (!file.isFile()) {
                     FileDownloader downloader = new FileDownloader() {
                         @Override
