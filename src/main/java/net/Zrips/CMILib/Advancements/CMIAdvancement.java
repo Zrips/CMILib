@@ -270,6 +270,7 @@ public class CMIAdvancement {
         try {
             CMILib.getInstance().getReflectionManager().loadAdvancement(this, getJSON());
         } catch (IllegalArgumentException e) {
+            e.printStackTrace();
         }
         return this;
     }

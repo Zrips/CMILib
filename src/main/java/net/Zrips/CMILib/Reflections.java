@@ -48,7 +48,6 @@ import net.Zrips.CMILib.Container.CMIServerProperties;
 import net.Zrips.CMILib.Effects.CMIEffect;
 import net.Zrips.CMILib.Effects.CMIEffectManager.CMIParticleDataType;
 import net.Zrips.CMILib.Items.CMIMaterial;
-import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.RawMessages.RawMessage;
 import net.Zrips.CMILib.Version.Version;
@@ -1843,7 +1842,7 @@ public class Reflections {
                         CraftParticleMethod = CraftParticle.getMethod("createParticleParam", org.bukkit.Particle.class, Object.class);
                     }
                 }
-                
+
                 net.minecraft.network.protocol.game.PacketPlayOutWorldParticles packet =
                     new net.minecraft.network.protocol.game.PacketPlayOutWorldParticles(
                         (net.minecraft.core.particles.ParticleParam) CraftParticleMethod.invoke(null, particle, dd),
@@ -1887,6 +1886,17 @@ public class Reflections {
                 Object AdvancementData = server.getClass().getMethod("getAdvancementData").invoke(server);
                 Object REGISTRY = AdvancementData.getClass().getField("REGISTRY").get(AdvancementData);
 
+                Map<Object, Object> advs = (Map<Object, Object>) REGISTRY.getClass().getField("advancements").get(REGISTRY);
+                if (ad.getId() != null) {
+                    advs.remove(CraftNamespacedKey.getMethod("toMinecraft", NamespacedKey.class).invoke(CraftNamespacedKey, ad.getId()));
+                }
+            } catch (Exception | Error e) {
+                e.printStackTrace();
+            }
+        } else {
+            Bukkit.getUnsafe().removeAdvancement(ad.getId());
+            try {
+                Object REGISTRY = AdvancementDataWorld.getField("REGISTRY").get(AdvancementDataWorld);
                 Map<Object, Object> advs = (Map<Object, Object>) REGISTRY.getClass().getField("advancements").get(REGISTRY);
                 if (ad.getId() != null) {
                     advs.remove(CraftNamespacedKey.getMethod("toMinecraft", NamespacedKey.class).invoke(CraftNamespacedKey, ad.getId()));
@@ -2144,6 +2154,16 @@ public class Reflections {
                     Object REGISTRY = AdvancementData.getClass().getField("REGISTRY").get(AdvancementData);
                     REGISTRY.getClass().getMethod("a", Map.class).invoke(REGISTRY, Maps.newHashMap(Collections.singletonMap(minecraftkey, nms)));
                 }
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+        } else {
+            try {
+                Object minecraftkey = CraftNamespacedKey.getMethod("toMinecraft", NamespacedKey.class).invoke(CraftNamespacedKey, key);
+                Object DESERIALIZER = AdvancementDataWorld.getField("DESERIALIZER").get(AdvancementDataWorld);
+                Object nms = DESERIALIZER.getClass().getMethod("fromJson", String.class, Class.class).invoke(DESERIALIZER, advancement, SerializedAdvancement);
+                Object REGISTRY = AdvancementDataWorld.getField("REGISTRY").get(AdvancementDataWorld);
+                REGISTRY.getClass().getMethod("a", Map.class).invoke(REGISTRY, Maps.newHashMap(Collections.singletonMap(minecraftkey, nms)));
             } catch (Throwable e) {
                 e.printStackTrace();
             }
