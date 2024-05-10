@@ -7,11 +7,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Future;
 import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -1454,7 +1452,7 @@ public enum CMIMaterial {
     // 1.20.5
     ARMADILLO_SCUTE(),
     WOLF_ARMOR(CMIMC.LEATHER, CMIMC.COLORED),
-    ARMADILLO_SPAWN_EGG,
+    ARMADILLO_SPAWN_EGG(CMIMC.SPAWNEGG),
 
     // 1.21.0
 //    BOGGED_SPAWN_EGG,
@@ -1884,7 +1882,7 @@ public enum CMIMaterial {
         return CMIMaterial.NONE;
     }
 
-    public static CMIMaterial get(Material mat) {
+    public static @NotNull CMIMaterial get(Material mat) {
         if (mat == null)
             return CMIMaterial.NONE;
         CMIMaterial m = ItemManager.get(mat);
@@ -1894,7 +1892,7 @@ public enum CMIMaterial {
     }
 
     @Deprecated
-    public static CMIMaterial get(int id) {
+    public static @NotNull CMIMaterial get(int id) {
         for (CMIMaterial one : CMIMaterial.values()) {
             if (one.getMaterial() != null && one.getId() == id) {
                 return one;
@@ -1908,7 +1906,7 @@ public enum CMIMaterial {
         return CMIMaterial.NONE;
     }
 
-    public static CMIMaterial get(ItemStack item) {
+    public static @NotNull CMIMaterial get(ItemStack item) {
         if (item == null)
             return CMIMaterial.NONE;
         CMIMaterial mat = null;
@@ -1926,7 +1924,7 @@ public enum CMIMaterial {
     }
 
     @Deprecated
-    public static CMIMaterial get(Block block) {
+    public static @NotNull CMIMaterial get(Block block) {
         if (block == null)
             return CMIMaterial.NONE;
 
@@ -1943,7 +1941,7 @@ public enum CMIMaterial {
                 // Invoke World#getChunkAtAsync to load chunk off-main
                 try {
                     if (!block.getWorld().getChunkAtAsync(block).get().isLoaded())
-                        return null;
+                        return CMIMaterial.NONE;
                 } catch (Throwable e) {
                     e.printStackTrace();
                     return CMIMaterial.NONE;
@@ -1976,13 +1974,13 @@ public enum CMIMaterial {
         return mat == null ? CMIMaterial.NONE : mat;
     }
 
-    public static CompletableFuture<CMIMaterial> getType(Block block) {
+    public static CompletableFuture<@NotNull CMIMaterial> getType(Block block) {
         if (block == null)
             return CompletableFuture.completedFuture(CMIMaterial.NONE);
         return getType(block.getLocation());
     }
 
-    public static CompletableFuture<CMIMaterial> getType(Location location) {
+    public static CompletableFuture<@NotNull CMIMaterial> getType(Location location) {
         if (location == null)
             return CompletableFuture.completedFuture(CMIMaterial.NONE);
 

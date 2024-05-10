@@ -132,9 +132,10 @@ public class ItemManager {
 
         CMIScheduler.runTask(() -> {
             for (Material one : Material.values()) {
-                if (Version.isCurrentEqualOrHigher(Version.v1_14_R1))
+                if (Version.isCurrentEqualOrHigher(Version.v1_14_R1)) {
                     byNameMaterial.put(one.getKey().getKey().replace("_", "").replace(" ", "").toLowerCase(), one);
-                else
+                    byNameMaterial.put(one.getKey().toString().replace("_", "").replace(" ", "").toLowerCase().replace(":", ""), one);
+                } else
                     byNameMaterial.put(one.toString().replace("_", "").replace(" ", "").toLowerCase(), one);
             }
         });
