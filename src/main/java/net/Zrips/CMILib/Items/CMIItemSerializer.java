@@ -167,14 +167,14 @@ public class CMIItemSerializer {
 
         if (subdata != null) {
             try {
-                entityType = CMIEntityType.getById((short) Integer.parseInt(subdata));
+                entityType = CMIEntityType.get((short) Integer.parseInt(subdata));
             } catch (Exception e) {
             }
             if (subdata.equalsIgnoreCase("random") && !CMILibConfig.mysterySpawners.isEmpty()) {
                 Collections.shuffle(CMILibConfig.mysterySpawners);
-                entityType = CMIEntityType.getByName(CMILibConfig.mysterySpawners.get(0));
+                entityType = CMIEntityType.get(CMILibConfig.mysterySpawners.get(0));
             } else {
-                entityType = CMIEntityType.getByName(subdata);
+                entityType = CMIEntityType.get(subdata);
             }
             name = name.split(":")[0];
             name = name.split("-")[0];
@@ -230,7 +230,7 @@ public class CMIItemSerializer {
             SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
 
             if (Version.isCurrentEqualOrHigher(Version.v1_20_R1)) {
-                CMIEntityType type = CMIEntityType.getByName(d);
+                CMIEntityType type = CMIEntityType.get(d);
 
                 if (type != null) {
                     skullMeta = (SkullMeta) type.getHead().getItemMeta();
@@ -1089,9 +1089,8 @@ public class CMIItemSerializer {
         if (item == null)
             return str.toString();
 
-        String material = "";
         CMIMaterial cmim = CMIMaterial.get(item);
-        material += cmim.toString();
+        String material = cmim.toString();
 
         if (cmim.isPlayerHead()) {
             String base = null;
@@ -1120,7 +1119,7 @@ public class CMIItemSerializer {
             } catch (Throwable e) {
                 e.printStackTrace();
             }
-        } else if (cmim.equals(CMIMaterial.SPAWNER) || cmim.isMonsterEgg()) {
+        } else if (cmim.equals(CMIMaterial.SPAWNER)) {
             EntityType t = new CMIItemStack(item).getEntityType();
             if (t != null)
                 material += ":" + t.toString();
