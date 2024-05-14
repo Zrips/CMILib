@@ -9,6 +9,14 @@ public class CMIFutureBatcher {
     private boolean running = false;
     private int delayBetweenBatches = 0;
 
+    public CMIFutureBatcher() {
+
+    }
+
+    public CMIFutureBatcher(int delayBetweenBatches) {
+        this.delayBetweenBatches = delayBetweenBatches;
+    }
+
     public CompletableFuture<?> addBatch(CompletableFuture<?> future) {
         queue.add(future);
         processQueue();

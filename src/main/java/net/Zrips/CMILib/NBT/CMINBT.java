@@ -623,9 +623,6 @@ public class CMINBT {
 
     public List<String> getList(String path, int type) {
 
-        if (tag == null)
-            return null;
-
         if (!this.hasNBT(path))
             return null;
 
@@ -634,11 +631,13 @@ public class CMINBT {
             CMIPersistentDataContainer persistentDataContainer = CMIPersistentDataContainer.get(object);
             if (persistentDataContainer != null) {
                 List<String> v = persistentDataContainer.getListString(path);
-
                 if (v != null)
                     return v;
             }
         }
+
+        if (tag == null)
+            return null;
 
         List<String> list = new ArrayList<String>();
         try {
