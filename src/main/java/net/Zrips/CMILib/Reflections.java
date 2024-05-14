@@ -29,7 +29,6 @@ import org.bukkit.Server;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.v1_20_R4.util.CraftChatMessage;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -52,6 +51,7 @@ import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.RawMessages.RawMessage;
 import net.Zrips.CMILib.Version.Version;
 import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
+import net.minecraft.network.chat.IChatBaseComponent;
 
 public class Reflections {
 
@@ -455,7 +455,8 @@ public class Reflections {
 
         if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
             try {
-                return CraftChatMessage.fromJSON(text);
+                // fromJSON(String text)
+                return IChatBaseComponent.a(text);
             } catch (Throwable e) {
                 e.printStackTrace();
             }
@@ -1770,9 +1771,15 @@ public class Reflections {
                 if (effectConstructor == null)
                     effectConstructor = PacketPlayOutWorldParticles.getConstructor(EnumParticle, boolean.class, float.class, float.class, float.class, float.class, float.class, float.class, float.class,
                         int.class, int[].class);
-                Object newPack = effectConstructor.newInstance(particle, true, (float) location.getX(), (float) location.getY(), (float) location.getZ(), (float) ef.getOffset().getX(),
-                    (float) ef.getOffset().getY(),
-                    (float) ef.getOffset().getZ(), ef.getSpeed(), ef.getAmount(), extra);
+
+                Object newPack = null;
+                if (ef.getParticle().isColored())
+                    newPack = effectConstructor.newInstance(particle, true, (float) location.getX(), (float) location.getY(), (float) location.getZ(),
+                        ef.getColor().getRed() / 255F, ef.getColor().getGreen() / 255F, ef.getColor().getBlue() / 255F, 1, 0);
+                else
+                    newPack = effectConstructor.newInstance(particle, true, (float) location.getX(), (float) location.getY(), (float) location.getZ(), (float) ef.getOffset().getX(),
+                        (float) ef.getOffset().getY(),
+                        (float) ef.getOffset().getZ(), ef.getSpeed(), ef.getAmount(), extra);
 
                 sendPlayerPacket(player, newPack);
             } else if (Version.isCurrentEqualOrLower(Version.v1_14_R1)) {

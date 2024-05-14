@@ -506,7 +506,7 @@ public class CMIEffectManager {
                 effect = one;
                 break;
             }
-
+                        
             return effect == null ? null : effect;
 
         }
