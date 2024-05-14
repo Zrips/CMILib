@@ -456,7 +456,7 @@ public class Reflections {
         if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
             try {
                 // fromJSON(String text)
-                return IChatBaseComponent.a(text);
+                return org.bukkit.craftbukkit.v1_20_R4.util.CraftChatMessage.fromJSON(text);
             } catch (Throwable e) {
                 e.printStackTrace();
             }

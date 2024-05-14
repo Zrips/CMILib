@@ -1913,9 +1913,13 @@ public enum CMIMaterial {
         if (Version.isCurrentEqualOrLower(Version.v1_13_R2)) {
 
             mat = Version.isCurrentEqualOrHigher(Version.v1_13_R1) ? get(item.getType()) : get(item.getType().getId(), item.getData().getData());
-            if (mat == null) {
+
+            if (mat == null || mat.isNone())
                 mat = ItemManager.byName.get(item.getType().toString().toLowerCase().replace("_", ""));
-            }
+
+            if (mat == null || mat.isNone())
+                mat = get(item.getType());
+
         } else {
             mat = ItemManager.get(item.getType());
         }
@@ -2025,12 +2029,19 @@ public enum CMIMaterial {
 
     @Deprecated
     public static CMIMaterial get(int id, int data) {
-        return CMIMaterial.NONE;
+        CMIMaterial mat = ItemManager.byName.get(id + ":" + data);
+        if (mat != null)
+            return mat;
+        mat = ItemManager.byId.get(Integer.valueOf(id));
+        return (mat == null) ? NONE : mat;
     }
 
     @Deprecated
     public static CMIMaterial getLegacy(int id) {
-        return CMIMaterial.NONE;
+        CMIMaterial mat = ItemManager.byId.get(Integer.valueOf(id));
+        if (mat != null)
+            return mat;
+        return NONE;
     }
 
     public short getMaxDurability() {

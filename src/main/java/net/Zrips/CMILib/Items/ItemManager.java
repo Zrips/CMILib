@@ -46,6 +46,9 @@ public class ItemManager {
     static HashMap<String, CMIMaterial> byName = new HashMap<String, CMIMaterial>();
     private static HashMap<String, Material> byNameMaterial = new HashMap<String, Material>();
 
+    @Deprecated
+    static HashMap<Integer, CMIMaterial> byId = new HashMap<>();
+
     public ItemManager(CMILib plugin) {
         this.plugin = plugin;
     }
@@ -83,7 +86,7 @@ public class ItemManager {
             }
 
             short data = one.getLegacyData();
-
+            Integer legacyId = one.getLegacyId();
             String cmiName = one.getName().replace("_", "").replace(" ", "").toLowerCase();
             String materialName = one.toString().replace("_", "").replace(" ", "").toLowerCase();
 
@@ -126,6 +129,26 @@ public class ItemManager {
                 byName.put(mojangName + ":" + data, one);
             else
                 byName.put(mojangName, one);
+
+            if (Version.isCurrentEqualOrLower(Version.v1_13_R1)) {
+                Integer id = one.getId();
+                if (byName.containsKey(String.valueOf(id)) || data > 0) {
+                    byName.put(id + ":" + data, one);
+                } else {
+                    byName.put(String.valueOf(id), one);
+                }
+                if (!byId.containsKey(id))
+                    byId.put(id, one);
+                if (!byId.containsKey(one.getLegacyId()))
+                    byId.put(one.getLegacyId(), one);
+                if (one.getLegacyData() == 0)
+                    byId.put(one.getLegacyId(), one);
+                if (byName.containsKey(String.valueOf(legacyId)) || data > 0) {
+                    byName.put(legacyId + ":" + data, one);
+                } else {
+                    byName.put(String.valueOf(legacyId), one);
+                }
+            }
 
             byRealMaterial.put(mat, one);
         }
