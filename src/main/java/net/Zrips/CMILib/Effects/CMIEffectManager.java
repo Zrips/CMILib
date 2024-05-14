@@ -450,31 +450,65 @@ public class CMIEffectManager {
                 return effect;
             if (!isParticle())
                 return null;
-            for (Effect one : Effect.values()) {
-                if (one.toString().replace("_", "").equalsIgnoreCase(name().replace("_", ""))) {
-                    effect = one;
-                    return one;
-                }
-                if (one.toString().replace("_", "").equalsIgnoreCase(getName())) {
-                    effect = one;
-                    return one;
-                }
-            }
 
+            String n = this.toString().replace("_", "").toLowerCase();
             for (Effect one : Effect.values()) {
-                if (!one.toString().replace("_", "").equalsIgnoreCase(name.replace("_", "")))
+                if (!one.toString().toLowerCase().replace("_", "").equalsIgnoreCase(n))
                     continue;
-
-                try {
-                    if (one.getType() != org.bukkit.Effect.Type.VISUAL)
-                        return null;
-                } catch (Exception | NoSuchMethodError e) {
-                    return null;
-                }
                 effect = one;
-                return one;
+                break;
             }
-            return null;
+
+            if (effect != null)
+                return effect;
+
+            n = name().replace("_", "").toLowerCase();
+            for (Effect one : Effect.values()) {
+                if (!one.toString().toLowerCase().replace("_", "").equalsIgnoreCase(n))
+                    continue;
+                effect = one;
+                break;
+            }
+
+            if (effect != null)
+                return effect;
+
+            n = getName().replace("_", "").toLowerCase();
+            for (Effect one : Effect.values()) {
+                if (!one.toString().toLowerCase().replace("_", "").equalsIgnoreCase(n))
+                    continue;
+                effect = one;
+                break;
+            }
+
+            if (effect != null)
+                return effect;
+
+            for (String oneS : getSecondaryNames()) {
+                n = oneS.replace("_", "").toLowerCase();
+                if (n.isEmpty())
+                    return effect == null ? null : effect;
+
+                for (Effect one : Effect.values()) {
+                    if (!one.toString().toLowerCase().replace("_", "").equalsIgnoreCase(n))
+                        continue;
+                    effect = one;
+                    break;
+                }
+            }
+
+            if (effect != null)
+                return effect;
+
+            for (Effect one : Effect.values()) {
+                if (!one.toString().toLowerCase().replace("_", "").contains(n))
+                    continue;
+                effect = one;
+                break;
+            }
+
+            return effect == null ? null : effect;
+
         }
 
         public Material getIcon() {
