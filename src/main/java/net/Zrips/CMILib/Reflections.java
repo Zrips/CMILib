@@ -27,6 +27,7 @@ import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Server;
 import org.bukkit.Sound;
+import org.bukkit.Vibration.Destination;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -46,12 +47,12 @@ import net.Zrips.CMILib.Colors.CMIChatColor;
 import net.Zrips.CMILib.Container.CMIServerProperties;
 import net.Zrips.CMILib.Effects.CMIEffect;
 import net.Zrips.CMILib.Effects.CMIEffectManager.CMIParticleDataType;
+import net.Zrips.CMILib.Items.CMIItemStack;
 import net.Zrips.CMILib.Items.CMIMaterial;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.RawMessages.RawMessage;
 import net.Zrips.CMILib.Version.Version;
 import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
-import net.minecraft.network.chat.IChatBaseComponent;
 
 public class Reflections {
 
@@ -1159,38 +1160,24 @@ public class Reflections {
         return DedicatedServer;
     }
 
+    @Deprecated
     public ItemStack getItemInMainHand(Player player) {
-        if (player == null)
-            return null;
-        if (Version.isCurrentHigher(Version.v1_8_R3))
-            return player.getInventory().getItemInMainHand();
-        return player.getItemInHand();
+        return CMIItemStack.getItemInMainHand(player);
     }
 
+    @Deprecated
     public void setItemInMainHand(Player player, ItemStack item) {
-        if (player == null)
-            return;
-        if (Version.isCurrentHigher(Version.v1_8_R3))
-            player.getInventory().setItemInMainHand(item);
-        else
-            player.setItemInHand(item);
+        CMIItemStack.setItemInMainHand(player, item);
     }
 
-    public void setItemInOffHand(Player player, ItemStack item) {
-        if (player == null)
-            return;
-        if (Version.isCurrentHigher(Version.v1_8_R3))
-            player.getInventory().setItemInOffHand(item);
-        else
-            return;
-    }
-
+    @Deprecated
     public ItemStack getItemInOffHand(Player player) {
-        if (player == null)
-            return null;
-        if (Version.isCurrentLower(Version.v1_9_R1))
-            return null;
-        return player.getInventory().getItemInOffHand();
+        return CMIItemStack.getItemInOffHand(player);
+    }
+
+    @Deprecated
+    public void setItemInOffHand(Player player, ItemStack item) {
+        CMIItemStack.setItemInOffHand(player, item);
     }
 
     public Class<?> getClass(String classname) {
@@ -1814,7 +1801,7 @@ public class Reflections {
 
                 org.bukkit.Particle.DustOptions dd = null;
                 if (particle.equals(org.bukkit.Particle.REDSTONE))
-                    dd = new org.bukkit.Particle.DustOptions(ef.getColor(), ef.getSize());
+                    dd = new org.bukkit.Particle.DustOptions(ef.getColorFrom(), ef.getSize());
 
                 if (CraftParticleMethod == null)
                     CraftParticleMethod = CraftParticle.getMethod("toNMS", org.bukkit.Particle.class, Object.class);
@@ -1836,8 +1823,20 @@ public class Reflections {
 
 //		org.bukkit.Particle.DustOptions dd = null;
                 Object dd = null;
-                if (particle.equals(org.bukkit.Particle.REDSTONE)) {
-                    dd = new org.bukkit.Particle.DustOptions(ef.getColor(), ef.getSize());
+                if (ef.getParticle().getDataType().equals(CMIParticleDataType.DustOptions)) {
+                    dd = new org.bukkit.Particle.DustOptions(ef.getColorFrom(), ef.getSize());
+                } else if (ef.getParticle().getDataType().equals(CMIParticleDataType.DustTransition)) {
+                    dd = new org.bukkit.Particle.DustTransition(ef.getColorFrom(), ef.getColorTo(), ef.getSize());
+                } else if (ef.getParticle().getDataType().equals(CMIParticleDataType.Float)) {
+                    dd = ef.getSpeed();
+                } else if (ef.getParticle().getDataType().equals(CMIParticleDataType.Int)) {
+                    dd = (int) ef.getSpeed();
+                } else if (ef.getParticle().getDataType().equals(CMIParticleDataType.Vibration)) {
+                    dd = new org.bukkit.Vibration(location, new Destination.BlockDestination(location), 20);
+                } else if (ef.getParticle().getDataType().equals(CMIParticleDataType.Color)) {
+                    dd = ef.getColorFrom();
+                } else if (ef.getParticle().getDataType().equals(CMIParticleDataType.ItemStack)) {
+                    dd = ef.getMaterial() != null ? ef.getMaterial().newItemStack() : CMIMaterial.OAK_BUTTON.newItemStack();
                 } else if (ef.getParticle().getDataType().equals(CMIParticleDataType.BlockData)) {
                     dd = Bukkit.createBlockData(ef.getMaterial() == null ? CMIMaterial.STONE.getMaterial() : ef.getMaterial().getMaterial());
                 }

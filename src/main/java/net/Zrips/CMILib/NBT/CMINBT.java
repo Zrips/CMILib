@@ -746,7 +746,7 @@ public class CMINBT {
     public Object setBoolean(String path, Boolean value) {
 
         if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
-            CMIPersistentDataContainer.get(object).set(path, value);
+            CMIPersistentDataContainer.get(object).set(path, value).save();
             return object;
         }
 
@@ -777,7 +777,7 @@ public class CMINBT {
     public Object setByte(String path, Byte value) {
 
         if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
-            CMIPersistentDataContainer.get(object).set(path, value);
+            CMIPersistentDataContainer.get(object).set(path, value).save();
             return object;
         }
 
@@ -807,7 +807,7 @@ public class CMINBT {
 
     public Object setShort(String path, Short value) {
         if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
-            CMIPersistentDataContainer.get(object).set(path, value);
+            CMIPersistentDataContainer.get(object).set(path, value).save();
             return object;
         }
 
@@ -838,7 +838,7 @@ public class CMINBT {
     public Object setStringList(String path, List<String> value) {
 
         if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
-            CMIPersistentDataContainer.get(object).set(path, value);
+            CMIPersistentDataContainer.get(object).set(path, value).save();
             return object;
         }
 
@@ -901,7 +901,7 @@ public class CMINBT {
     public Object setString(String path, String value) {
 
         if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
-            CMIPersistentDataContainer.get(object).set(path, value);
+            CMIPersistentDataContainer.get(object).set(path, value).save();
             return object;
         }
 
@@ -956,7 +956,7 @@ public class CMINBT {
     public Object setInt(String path, Integer value) {
 
         if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
-            CMIPersistentDataContainer.get(object).set(path, value);
+            CMIPersistentDataContainer.get(object).set(path, value).save();
             return object;
         }
 
@@ -989,7 +989,7 @@ public class CMINBT {
     public Object setIntArray(String path, int[] value) {
 
         if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
-            CMIPersistentDataContainer.get(object).set(path, value);
+            CMIPersistentDataContainer.get(object).set(path, value).save();
             return object;
         }
 
@@ -1022,7 +1022,7 @@ public class CMINBT {
     public Object setByteArray(String path, byte[] value) {
 
         if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
-            CMIPersistentDataContainer.get(object).set(path, value);
+            CMIPersistentDataContainer.get(object).set(path, value).save();
             return object;
         }
 
@@ -1055,7 +1055,7 @@ public class CMINBT {
     public Object setLongArray(String path, long[] value) {
 
         if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
-            CMIPersistentDataContainer.get(object).set(path, value);
+            CMIPersistentDataContainer.get(object).set(path, value).save();
             return object;
         }
 
@@ -1088,7 +1088,7 @@ public class CMINBT {
     public Object setLong(String path, Long value) {
 
         if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
-            CMIPersistentDataContainer.get(object).set(path, value);
+            CMIPersistentDataContainer.get(object).set(path, value).save();
             return object;
         }
 
@@ -1131,7 +1131,7 @@ public class CMINBT {
 
     public Object setDouble(String path, Double value) {
         if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
-            CMIPersistentDataContainer.get(object).set(path, value);
+            CMIPersistentDataContainer.get(object).set(path, value).save();
             return object;
         }
 
@@ -1165,7 +1165,7 @@ public class CMINBT {
     public Object remove(String path) {
 
         if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
-            CMIPersistentDataContainer.get(object).remove(path);
+            CMIPersistentDataContainer.get(object).remove(path).save();
             return object;
         }
 

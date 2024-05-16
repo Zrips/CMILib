@@ -12,6 +12,7 @@ import org.bukkit.Material;
 import net.Zrips.CMILib.Colors.CMIChatColor;
 import net.Zrips.CMILib.Container.CMIText;
 import net.Zrips.CMILib.Items.CMIMaterial;
+import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Version.Version;
 
 public class CMIEffectManager {
@@ -21,7 +22,7 @@ public class CMIEffectManager {
     }
 
     public enum CMIParticleDataType {
-        Void, DustOptions, ItemStack, BlockData, MaterialData;
+        Void, DustOptions, ItemStack, BlockData, MaterialData, EntityData, Color, DustTransition, Vibration, Float, Int;
     }
 
     public enum CMIParticle {
@@ -186,50 +187,50 @@ public class CMIEffectManager {
         CHERRY_LEAVES(),
 
         // 1.20.5
-//        POOF("poof"),
-//        EXPLOSION_EMITTER("explosion_emitter"),
-//        FIREWORK("firework"),
-//        BUBBLE("bubble"),
-//        FISHING("fishing"),
-//        UNDERWATER("underwater"),
-//        ENCHANTED_HIT("enchanted_hit"),
-//        EFFECT("effect"),
-//        INSTANT_EFFECT("instant_effect"),
-//        ENTITY_EFFECT("entity_effect"),
-//        WITCH("witch"),
-//        DRIPPING_WATER("dripping_water"),
-//        DRIPPING_LAVA("dripping_lava"),
-//        MYCELIUM("mycelium"),
-//        ENCHANT("enchant"),
+        SMALL_GUST(),
+        TRIAL_SPAWNER_DETECTION_OMINOUS(),
+        VAULT_CONNECTION(),
+        INFESTED(),
+        ITEM_COBWEB(),
+        OMINOUS_SPAWNING(),
+        RAID_OMEN(),
+        TRIAL_OMEN(),
 
-//        ITEM_SNOWBALL("item_snowball"),
-//        ITEM_SLIME("item_slime"),
-//        ITEM("item"),
-//        BLOCK("block"),
-//        RAIN("rain"),
-//        ELDER_GUARDIAN("elder_guardian"),
-//        FALLING_DUST("falling_dust"),
-//        TOTEM_OF_UNDYING("totem_of_undying"),
-//        DUST_COLOR_TRANSITION("dust_color_transition", CMIParticleType.PARTICLE, Material.STONE, CMIParticleDataType.DustOptions),
-//        VIBRATION("vibration"),
-//        SCULK_CHARGE("sculk_charge"),
-//        SHRIEK("shriek"),
-//        EGG_CRACK("egg_crack"),
-//        DUST_PLUME("dust_plume"),
-//        WHITE_SMOKE("white_smoke"),
-//        GUST("gust"),
-//        SMALL_GUST("small_gust"),
-//        GUST_EMITTER_LARGE("gust_emitter_large"),
-//        GUST_EMITTER_SMALL("gust_emitter_small"),
-//        TRIAL_SPAWNER_DETECTION("trial_spawner_detection"),
-//        TRIAL_SPAWNER_DETECTION_OMINOUS("trial_spawner_detection_ominous"),
-//        VAULT_CONNECTION("vault_connection"),
-//        INFESTED("infested"),
-//        ITEM_COBWEB("item_cobweb"),
-//        DUST_PILLAR("dust_pillar"),
-//        OMINOUS_SPAWNING("ominous_spawning"),
-//        RAID_OMEN("raid_omen"),
-//        TRIAL_OMEN("trial_omen"),
+        POOF(),
+        EXPLOSION_EMITTER(),
+        FIREWORK(),
+        BUBBLE(),
+        FISHING(),
+        UNDERWATER(),
+        ENCHANTED_HIT(),
+        EFFECT(),
+        INSTANT_EFFECT(),
+        ENTITY_EFFECT(CMIParticleDataType.Color),
+        WITCH(),
+        DRIPPING_WATER(),
+        DRIPPING_LAVA(),
+        MYCELIUM(),
+        ENCHANT(),
+        ITEM_SNOWBALL(),
+        ITEM_SLIME(),
+        ITEM(CMIParticleDataType.ItemStack),
+        BLOCK(CMIParticleDataType.BlockData),
+        RAIN(),
+        ELDER_GUARDIAN(),
+        FALLING_DUST(CMIParticleDataType.BlockData),
+        TOTEM_OF_UNDYING(),
+        DUST_COLOR_TRANSITION(CMIParticleDataType.DustTransition),
+        VIBRATION(CMIParticleDataType.Vibration),
+        SCULK_CHARGE(CMIParticleDataType.Float),
+        SHRIEK(CMIParticleDataType.Int),
+        EGG_CRACK(),
+        DUST_PLUME(),
+        WHITE_SMOKE(),
+        GUST(),
+        GUST_EMITTER_LARGE(),
+        GUST_EMITTER_SMALL(),
+        TRIAL_SPAWNER_DETECTION(),
+        DUST_PILLAR(CMIParticleDataType.BlockData),
 
         ;
 
@@ -280,6 +281,10 @@ public class CMIEffectManager {
 
         CMIParticle(CMIParticleType type, Material icon) {
             this(new ArrayList<>(), type, icon, CMIParticleDataType.Void);
+        }
+
+        CMIParticle(CMIParticleDataType dataType) {
+            this(new ArrayList<>(), null, null, dataType);
         }
 
         CMIParticle(CMIParticleType type, Material icon, CMIParticleDataType dataType) {
@@ -506,7 +511,7 @@ public class CMIEffectManager {
                 effect = one;
                 break;
             }
-                        
+
             return effect == null ? null : effect;
 
         }
@@ -515,8 +520,12 @@ public class CMIEffectManager {
             return icon == null ? Material.STONE : icon;
         }
 
+        static List<CMIParticle> ls = new ArrayList<CMIParticle>();
+
         public static List<CMIParticle> getParticleList() {
-            List<CMIParticle> ls = new ArrayList<CMIParticle>();
+            if (!ls.isEmpty())
+                return ls;
+
             for (CMIParticle one : CMIParticle.values()) {
                 if (!one.isParticle())
                     continue;
@@ -532,6 +541,9 @@ public class CMIEffectManager {
         public CMIParticle getNextPartcileEffect() {
 
             List<CMIParticle> ls = getParticleList();
+
+            CMIParticle first = null;
+
             for (int i = 0; i < ls.size(); i++) {
                 CMIParticle next = ls.get(i);
                 if (next == null)
@@ -539,8 +551,11 @@ public class CMIEffectManager {
 
                 if (!next.isParticle())
                     continue;
+
                 if (Version.isCurrentEqualOrHigher(Version.v1_9_R1) && next.getParticle() == null)
                     continue;
+                if (first == null)
+                    first = next;
 
                 if (next.equals(this)) {
                     if (i == ls.size() - 1)
@@ -548,29 +563,36 @@ public class CMIEffectManager {
                     return ls.get(i + 1);
                 }
             }
-            return this;
+            return first == null ? this : first;
         }
 
         public CMIParticle getPrevParticleEffect() {
             List<CMIParticle> ls = getParticleList();
+
+            CMIParticle first = null;
+
             for (int i = 0; i < ls.size(); i++) {
                 CMIParticle next = ls.get(i);
 
                 if (next == null)
                     continue;
 
+                if (!next.isParticle())
+                    continue;
+
                 if (Version.isCurrentEqualOrHigher(Version.v1_9_R1) && next.getParticle() == null)
                     continue;
 
-                if (!next.isParticle())
-                    continue;
+                if (first == null)
+                    first = next;
+
                 if (next.equals(this)) {
                     if (i == 0)
                         return ls.get(ls.size() - 1);
                     return ls.get(i - 1);
                 }
             }
-            return this;
+            return first == null ? this : first;
         }
 
         @Deprecated

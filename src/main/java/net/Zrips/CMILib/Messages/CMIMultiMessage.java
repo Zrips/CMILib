@@ -18,6 +18,7 @@ import net.Zrips.CMILib.Colors.CMIChatColor;
 import net.Zrips.CMILib.Container.CMICommandSender;
 import net.Zrips.CMILib.Items.CMIMaterial;
 import net.Zrips.CMILib.Locale.Snd;
+import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.RawMessages.RawMessage;
 import net.Zrips.CMILib.TitleMessages.CMITitleMessage;
 import net.Zrips.CMILib.Version.Version;
@@ -28,6 +29,7 @@ public class CMIMultiMessage {
     private boolean updateSnd = false;
     private boolean translateColors = true;
     private boolean translatePlaceholders = true;
+    private boolean filterNewLine = true;
     private CMIMultiMessageType type = null;
     private String message;
     private List<Object> extra;
@@ -135,7 +137,10 @@ public class CMIMultiMessage {
     public boolean show(CommandSender sender) {
         if (message.isEmpty())
             return false;
-        message = CMILib.getInstance().getLM().filterNewLine(message);
+
+        if (this.isFilterNewLine())
+            message = CMILib.getInstance().getLM().filterNewLine(message);
+
         if (isTranslateColors())
             message = CMIChatColor.translate(message);
         if (isUpdateSnd())
@@ -248,6 +253,7 @@ public class CMIMultiMessage {
                 // Lets send messages in json format to bypass client side delay
                 if (Version.isCurrentEqualOrHigher(Version.v1_16_R1) && sender instanceof Player) {
                     rm = new RawMessage();
+                    rm.setDontBreakLine(!this.isFilterNewLine());
                     rm.addText(message);
                     rm.show(sender);
                 } else {
@@ -305,5 +311,13 @@ public class CMIMultiMessage {
 
     public void setType(CMIMultiMessageType type) {
         this.type = type;
+    }
+
+    public boolean isFilterNewLine() {
+        return filterNewLine;
+    }
+
+    public void setFilterNewLine(boolean filterNewLine) {
+        this.filterNewLine = filterNewLine;
     }
 }

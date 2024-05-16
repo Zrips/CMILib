@@ -846,19 +846,35 @@ public class CMIItemStack {
     }
 
     public static ItemStack getItemInMainHand(Player player) {
-        return CMILib.getInstance().getReflectionManager().getItemInMainHand(player);
+        if (player == null)
+            return null;
+        if (Version.isCurrentHigher(Version.v1_8_R3))
+            return player.getInventory().getItemInMainHand();
+        return player.getItemInHand();
     }
 
     public static ItemStack getItemInOffHand(Player player) {
-        return CMILib.getInstance().getReflectionManager().getItemInOffHand(player);
+        if (player == null)
+            return null;
+        if (Version.isCurrentLower(Version.v1_9_R1))
+            return null;
+        return player.getInventory().getItemInOffHand();
     }
 
     public static void setItemInMainHand(Player player, ItemStack item) {
-        CMILib.getInstance().getReflectionManager().setItemInMainHand(player, item);
+        if (player == null)
+            return;
+        if (Version.isCurrentHigher(Version.v1_8_R3))
+            player.getInventory().setItemInMainHand(item);
+        else
+            player.setItemInHand(item);
     }
 
     public static void setItemInOffHand(Player player, ItemStack item) {
-        CMILib.getInstance().getReflectionManager().setItemInOffHand(player, item);
+        if (player == null)
+            return;
+        if (Version.isCurrentHigher(Version.v1_8_R3))
+            player.getInventory().setItemInOffHand(item);
     }
 
     public static CMIItemStack deserialize(String input) {
