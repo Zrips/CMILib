@@ -104,7 +104,6 @@ public class GUIListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onInventoryOpenEvent(InventoryOpenEvent event) {
-
         if (!(event.getPlayer() instanceof Player))
             return;
         clearIconItems((Player) event.getPlayer());
@@ -149,14 +148,13 @@ public class GUIListener implements Listener {
         if (event.getAction().toString().equalsIgnoreCase("HOTBAR_SWAP") || event.getAction().toString().equalsIgnoreCase("HOTBAR_MOVE_AND_READD")) {
             ItemStack iioh = CMILib.getInstance().getReflectionManager().getItemInOffHand(player);
             event.setCancelled(true);
-            CMIScheduler.get().runTaskLater(() -> {
-
+            CMIScheduler.runTask(() -> {
                 try {
                     player.getInventory().setItemInOffHand(iioh);
                     player.updateInventory();
                 } catch (Throwable e) {
                 }
-            }, 1L);
+            });
         }
 
 //	if (gui != null)
@@ -190,31 +188,21 @@ public class GUIListener implements Listener {
         buttons.add(event.getRawSlot());
         if (!plugin.getGUIManager().canClick(player, buttons, event.getCursor())) {
             event.setCancelled(true);
-            if (GUIManager.usePackets) {
-                CMIScheduler.get().runTaskLater(() -> {
-                    player.setItemOnCursor(player.getItemOnCursor());
-                }, 1L);
-            }
-
+            if (GUIManager.usePackets)
+                CMIScheduler.get().runTask(() -> player.setItemOnCursor(player.getItemOnCursor()));
             gui.updateButtons();
         }
 
         if (plugin.getGUIManager().isLockedPart(player, buttons)) {
             event.setCancelled(true);
-            if (GUIManager.usePackets) {
-                CMIScheduler.get().runTaskLater(() -> {
-                    player.setItemOnCursor(player.getItemOnCursor());
-                }, 1L);
-            }
+            if (GUIManager.usePackets)
+                CMIScheduler.get().runTask(() -> player.setItemOnCursor(player.getItemOnCursor()));
         }
 
         if (plugin.getGUIManager().isLockedPart(player, buttons, event.getCursor())) {
             event.setCancelled(true);
-            if (GUIManager.usePackets) {
-                CMIScheduler.get().runTaskLater(() -> {
-                    player.setItemOnCursor(player.getItemOnCursor());
-                }, 1L);
-            }
+            if (GUIManager.usePackets)
+                CMIScheduler.get().runTask(() -> player.setItemOnCursor(player.getItemOnCursor()));
         }
 
         InventoryAction action = event.getAction();
@@ -258,8 +246,7 @@ public class GUIListener implements Listener {
             }
         }
 
-        clearIconItems(player);
-
+        CMIScheduler.get().runTask(() -> clearIconItems(player));
     }
 
 //    @EventHandler(priority = EventPriority.MONITOR)
@@ -321,7 +308,7 @@ public class GUIListener implements Listener {
             event.setCancelled(true);
 
         plugin.getGUIManager().processClick(player, buttons, plugin.getGUIManager().getClickType(true, false, null, null));
-        clearIconItems(player);
+        CMIScheduler.get().runTask(() -> clearIconItems(player));
     }
 
     @SuppressWarnings("deprecation")

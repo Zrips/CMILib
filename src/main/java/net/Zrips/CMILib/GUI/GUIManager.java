@@ -15,11 +15,9 @@ import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Items.CMIMaterial;
-import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.Permissions.CMILPerm;
 import net.Zrips.CMILib.Version.Version;
@@ -266,11 +264,11 @@ public class GUIManager {
             }
 
             if (canClick) {
-                CMIScheduler.get().runTaskLater(() -> {
+                CMIScheduler.runTask(() -> {
                     for (GUIButtonCommand oneC : button.getCommands(clickType)) {
                         CMICommand.performCommand(player, oneC.getCommand(), oneC.getVis());
                     }
-                }, 1L);
+                });
             }
 
             button.click();
@@ -482,7 +480,7 @@ public class GUIManager {
         if (topInv == null)
             return false;
 
-        if (!openInv.getTopInventory().getType().equals(gui.getInv().getType()))
+        if (!topInv.getType().equals(gui.getInv().getType()))
             return false;
 
         if (player.getOpenInventory().getTopInventory().getSize() != gui.getInv().getSize())
@@ -527,6 +525,7 @@ public class GUIManager {
 
         if (!validInventory(gui)) {
             player.closeInventory();
+            map.remove(player.getUniqueId());
             return;
         }
 

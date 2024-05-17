@@ -398,7 +398,7 @@ public class CMIItemSerializer {
         }
 
         // Outdated way
-        if (ncm.getItemStack().getItemMeta() instanceof EnchantmentStorageMeta) {
+        if (ncm.getItemStack() != null && ncm.getItemStack().getItemMeta() instanceof EnchantmentStorageMeta) {
             EnchantmentStorageMeta meta = (EnchantmentStorageMeta) ncm.getItemStack().getItemMeta();
 
             List<String> split = new ArrayList<String>();
