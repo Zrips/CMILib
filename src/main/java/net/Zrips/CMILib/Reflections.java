@@ -27,7 +27,7 @@ import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Server;
 import org.bukkit.Sound;
-import org.bukkit.Vibration.Destination;
+import org.bukkit.Vibration.Destination.BlockDestination;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -1693,6 +1693,8 @@ public class Reflections {
 
     Constructor<?> effectConstructor = null;
     Method CraftParticleMethod = null;
+    Constructor<?> vibrationConstructor = null;
+    Constructor<?> destinationConstructor = null;
 
     public void playEffect(Player player, Location location, CMIEffect ef) {
         if (location == null || ef == null || location.getWorld() == null || player == null || !player.isOnline())
@@ -1832,7 +1834,13 @@ public class Reflections {
                 } else if (ef.getParticle().getDataType().equals(CMIParticleDataType.Int)) {
                     dd = (int) ef.getSpeed();
                 } else if (ef.getParticle().getDataType().equals(CMIParticleDataType.Vibration)) {
-                    dd = new org.bukkit.Vibration(location, new Destination.BlockDestination(location), 20);
+
+                    if (destinationConstructor == null)
+                        destinationConstructor = Class.forName("org.bukkit.Vibration$Destination$BlockDestination").getConstructor(Location.class);
+                    if (vibrationConstructor == null)
+                        vibrationConstructor = Class.forName("org.bukkit.Vibration").getConstructor(Class.forName("org.bukkit.Vibration$Destination$BlockDestination"), int.class);
+
+                    dd = vibrationConstructor.newInstance(destinationConstructor.newInstance(location), 20);
                 } else if (ef.getParticle().getDataType().equals(CMIParticleDataType.Color)) {
                     dd = ef.getColorFrom();
                 } else if (ef.getParticle().getDataType().equals(CMIParticleDataType.ItemStack)) {

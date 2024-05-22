@@ -896,4 +896,8 @@ public class CMIItemStack {
     public static String serialize(ItemStack item) {
         return CMIItemSerializer.serialize(item);
     }
+
+    public static boolean valid(ItemStack item) {
+        return item != null && !CMIMaterial.isAir(item.getType());
+    }
 }
