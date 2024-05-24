@@ -81,6 +81,7 @@ public class CMIEffectManager {
         WITCH_MAGIC("SPELL_WITCH", CMIParticleType.PARTICLE, Material.SPIDER_EYE),
         NOTE(CMIParticleType.PARTICLE, Material.NOTE_BLOCK),
         PORTAL(CMIParticleType.PARTICLE, Material.OBSIDIAN),
+        @Deprecated
         FLYING_GLYPH("ENCHANTMENT_TABLE", CMIParticleType.PARTICLE, CMIMaterial.ENCHANTING_TABLE.getMaterial()),
         FLAME(CMIParticleType.PARTICLE, CMIMaterial.FIRE_CHARGE.getMaterial()),
         LAVA_POP("LAVA", CMIParticleType.PARTICLE, Material.FLINT_AND_STEEL),
@@ -210,7 +211,7 @@ public class CMIEffectManager {
         DRIPPING_WATER(),
         DRIPPING_LAVA(),
         MYCELIUM(),
-        ENCHANT(),
+        ENCHANT("FLYING_GLYPH"),
         ITEM_SNOWBALL(),
         ITEM_SLIME(),
         ITEM(CMIParticleDataType.ItemStack),
@@ -240,11 +241,15 @@ public class CMIEffectManager {
         static {
             for (CMIParticle one : CMIParticle.values()) {
 
-                if (one.equals(CMIParticle.COLOURED_DUST) && Version.isCurrentEqualOrHigher(Version.v1_20_R4))
-                    continue;
+                if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
+                    if (one.equals(CMIParticle.COLOURED_DUST) || one.equals(CMIParticle.FLYING_GLYPH))
+                        continue;
+                }
 
-                if (one.equals(CMIParticle.DUST) && Version.isCurrentEqualOrLower(Version.v1_20_R3))
-                    continue;
+                if (Version.isCurrentEqualOrLower(Version.v1_20_R3)) {
+                    if (one.equals(CMIParticle.DUST) || one.equals(CMIParticle.FLYING_GLYPH))
+                        continue;
+                }
 
                 byName.put(one.toString().replace("_", "").toLowerCase(), one);
                 byName.put(one.getName().replace("_", "").replace(" ", "").toLowerCase(), one);
@@ -289,6 +294,10 @@ public class CMIEffectManager {
 
         CMIParticle(CMIParticleType type, Material icon, CMIParticleDataType dataType) {
             this(new ArrayList<>(), type, icon, dataType);
+        }
+
+        CMIParticle(String secondaryName) {
+            this(Arrays.asList(secondaryName), null, null, null);
         }
 
         CMIParticle(String secondaryName, CMIParticleType type, Material icon) {
