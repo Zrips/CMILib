@@ -17,6 +17,7 @@ public class clearcache implements Cmd {
     public Boolean perform(CMILib plugin, CMICommandSender sender, String[] args) {
         plugin.getItemManager().clearHeadCache();
         CMIEntityType.cache.clear();
+
         return true;
     }
 }

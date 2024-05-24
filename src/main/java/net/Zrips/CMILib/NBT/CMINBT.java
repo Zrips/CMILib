@@ -1666,19 +1666,22 @@ public class CMINBT {
         if (item == null)
             return null;
 
+//        if(Version.isCurrentEqualOrHigher(Version.v1_20_R4))
+//            return item.toString();
+
         Object nmsStack = asNMSCopy(item);
 
         try {
             if (saveOptionalMethod == null) {
-//                if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
-//                    saveOptionalMethod = IStack.getMethod(itemSaveName, net.minecraft.core.HolderLookup.a.class);
-//                } else
-                saveOptionalMethod = IStack.getMethod(itemSaveName, nbtTagCompound);
+                if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
+                    saveOptionalMethod = IStack.getMethod(itemSaveName, net.minecraft.core.HolderLookup.a.class);
+                } else
+                    saveOptionalMethod = IStack.getMethod(itemSaveName, nbtTagCompound);
             }
 
-//            if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
-//                return saveOptionalMethod.invoke(nmsStack, getRegistry()).toString();
-//            }
+            if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
+                return saveOptionalMethod.invoke(nmsStack, getRegistry()).toString();
+            }
 
             return saveOptionalMethod.invoke(nmsStack, nbtTagCompound.newInstance()).toString();
         } catch (Throwable e) {
