@@ -98,10 +98,32 @@ public enum Version {
         case folia:
         case paper:
         case pufferfish:
+        case arclight:
             return true;
         case craftbukkit:
         case spigot:
             return false;
+        default:
+            break;
+        }
+        return false;
+    }
+
+    public static boolean isSpigotBranch() {
+        switch (getPlatform()) {
+        case mohist:
+            break;
+        case purpur:
+        case folia:
+        case paper:
+        case pufferfish:
+        case arclight:
+            return true;
+        case craftbukkit:
+        case spigot:
+            return false;
+        default:
+            break;
         }
         return false;
     }
@@ -119,7 +141,7 @@ public enum Version {
     }
 
     public static boolean isPaper() {
-        return getPlatform().equals(MinecraftPlatform.paper) || getPlatform().equals(MinecraftPlatform.folia) || getPlatform().equals(MinecraftPlatform.purpur);
+        return isSpigotBranch();
     }
 
     public static boolean isSpigot() {
