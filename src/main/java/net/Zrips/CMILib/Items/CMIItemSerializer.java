@@ -501,9 +501,18 @@ public class CMIItemSerializer {
         String itemName = input.contains(";") ? input.split(";", 2)[0] : input;
 
         String tag = null;
-        if (itemName.endsWith("}") && itemName.contains("{")) {
-            tag = "{" + itemName.split("\\{", 2)[1];
-            itemName = itemName.split("\\{", 2)[0];
+
+        if (Version.isCurrentEqualOrLower(Version.v1_20_R3)) {
+            if (itemName.endsWith("}") && itemName.contains("{")) {
+                tag = "{" + itemName.split("\\{", 2)[1];
+                itemName = itemName.split("\\{", 2)[0];
+            }
+        } else {
+            if (itemName.endsWith("]") && itemName.contains("[")) {
+                tag = "{" + itemName.split("\\[", 2)[1];
+                tag = tag.substring(0, tag.length() - 1) + "}";
+                itemName = itemName.split("\\[", 2)[0];
+            }
         }
 
         String itemNameUpdated = itemName.contains("-") || itemName.toLowerCase().startsWith("head:") || itemName.toLowerCase().startsWith("player_head:") ? itemName : itemName.replace(":", "-");

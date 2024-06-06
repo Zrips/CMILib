@@ -35,6 +35,7 @@ import net.Zrips.CMILib.Colors.CMIColors;
 import net.Zrips.CMILib.Enchants.CMIEnchantment;
 import net.Zrips.CMILib.Entities.CMIEntity;
 import net.Zrips.CMILib.Entities.CMIEntityType;
+import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.Recipes.CMIRecipe;
 import net.Zrips.CMILib.Recipes.CMIRecipeIngredient;
@@ -137,6 +138,14 @@ public class CMIItemStack {
     public CMIItemStack setUnbreakable(Boolean state) {
         if (state == null)
             return this;
+
+        if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
+            ItemMeta meta = this.getItemStack().getItemMeta();
+            meta.setUnbreakable(state);
+            this.getItemStack().setItemMeta(meta);
+            return this;
+        }
+
         this.item = (ItemStack) new CMINBT(this.getItemStack()).setByte("Unbreakable", state ? (byte) 1 : (byte) 0);
         return this;
     }
@@ -162,12 +171,14 @@ public class CMIItemStack {
     public CMIItemStack setTag(String tag) {
         if (tag == null || tag.isEmpty())
             return this;
+
         this.item = CMINBT.modifyItemStack(this.getItemStack(), tag);
         return this;
     }
 
     public CMIItemStack setDisplayName(String name) {
         ItemMeta meta = this.getItemStack().getItemMeta();
+
         if (meta != null) {
             if (name == null) {
                 meta.setDisplayName(null);
@@ -180,6 +191,9 @@ public class CMIItemStack {
     }
 
     public String getDisplayName() {
+        if (this.getItemStack() == null)
+            return getRealName();
+
         ItemMeta meta = this.getItemStack().getItemMeta();
         return meta == null || meta.getDisplayName() == null || meta.getDisplayName().isEmpty() ? getRealName() : meta.getDisplayName();
     }
@@ -314,13 +328,14 @@ public class CMIItemStack {
     }
 
     private void setEnt() {
-        if (cmiMaterial.isMonsterEgg()) {
+        if (cmiMaterial.isSpawnEgg()) {
             if (Version.isCurrentEqualOrHigher(Version.v1_13_R1)) {
                 this.item = this.item == null ? new ItemStack(this.getType()) : this.item;
                 this.item.setAmount(this.getAmount());
-            } else {
-                this.item = this.item == null ? new ItemStack(this.getType(), this.amount == 0 ? 1 : this.amount, data == 0 ? (short) 90 : data) : this.item;
+                return;
             }
+
+            this.item = this.item == null ? new ItemStack(this.getType(), this.amount == 0 ? 1 : this.amount, data == 0 ? (short) 90 : data) : this.item;
             if (this.getEntityType() != null) {
                 this.item = CMILib.getInstance().getReflectionManager().setEggType(this.item, this.getEntityType());
             } else {
@@ -352,44 +367,47 @@ public class CMIItemStack {
     @SuppressWarnings("deprecation")
     public ItemStack getItemStack() {
 
-        if (item == null) {
+        if (item != null)
+            return item;
 
-            try {
-                if (!this.getType().isItem()) {
-                    return null;
-                }
-            } catch (Throwable e) {
-            }
-
-            setEnt();
-
-            // Should not be null at this point if everything went how it should have, but just in case
-            if (this.item == null)
+        try {
+            if (!this.getType().isItem()) {
                 return null;
-
-            if (this.getCMIType().isPotion() || item.getType().name().contains("SPLASH_POTION") || item.getType().name().contains("TIPPED_ARROW")) {
-                PotionMeta potion = (PotionMeta) item.getItemMeta();
-                PotionEffectType effect = PotionEffectType.getById(data);
-                if (effect != null) {
-                    potion.addCustomEffect(new PotionEffect(effect, 60, 0), true);
-                }
-                item.setItemMeta(potion);
-                item.setDurability((short) 0);
-                potion = (PotionMeta) item.getItemMeta();
-                potion.setDisplayName(this.getRealName());
-                item.setItemMeta(potion);
             }
-            applyEntityType();
+        } catch (Throwable e) {
+        }
 
-            if (this.durability > 0) {
-                if (Version.isCurrentEqualOrHigher(Version.v1_13_R1)) {
-                    org.bukkit.inventory.meta.Damageable damage = (org.bukkit.inventory.meta.Damageable) item.getItemMeta();
-                    damage.setDamage(item.getType().getMaxDurability() - durability);
-                } else {
-                    this.item.setDurability(durability);
-                }
+        setEnt();
+
+        // Should not be null at this point if everything went how it should have, but just in case
+        if (this.item == null) {
+            return null;
+        }
+
+        if (this.getCMIType().isPotion() || item.getType().name().contains("SPLASH_POTION") || item.getType().name().contains("TIPPED_ARROW")) {
+            PotionMeta potion = (PotionMeta) item.getItemMeta();
+            PotionEffectType effect = PotionEffectType.getById(data);
+            if (effect != null) {
+                potion.addCustomEffect(new PotionEffect(effect, 60, 0), true);
+            }
+            item.setItemMeta(potion);
+            item.setDurability((short) 0);
+            potion = (PotionMeta) item.getItemMeta();
+            potion.setDisplayName(this.getRealName());
+            item.setItemMeta(potion);
+        }
+
+        applyEntityType();
+
+        if (this.durability > 0) {
+            if (Version.isCurrentEqualOrHigher(Version.v1_13_R1)) {
+                org.bukkit.inventory.meta.Damageable damage = (org.bukkit.inventory.meta.Damageable) item.getItemMeta();
+                damage.setDamage(item.getType().getMaxDurability() - durability);
+            } else {
+                this.item.setDurability(durability);
             }
         }
+
         return item;
     }
 
@@ -589,7 +607,7 @@ public class CMIItemStack {
 
         if (Version.isCurrentEqualOrHigher(Version.v1_8_R1) && is.getItemMeta() instanceof org.bukkit.inventory.meta.BlockStateMeta) {
 
-            if (Version.isCurrentEqualOrHigher(Version.v1_19_R3)) {
+            if (Version.isCurrentEqualOrHigher(Version.v1_19_R3) && Version.isCurrentEqualOrLower(Version.v1_20_R3)) {
                 CMINBT nbt = new CMINBT(is);
                 if (!nbt.hasNBT("BlockEntityTag"))
                     return null;
