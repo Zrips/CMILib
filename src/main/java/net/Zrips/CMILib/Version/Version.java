@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 
 import net.Zrips.CMILib.CMILib;
-import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Messages.CMIMessages;
 
 public enum Version {
@@ -90,42 +89,13 @@ public enum Version {
         return value;
     }
 
-    public static boolean isPaperBranch() {
-        switch (getPlatform()) {
-        case mohist:
-            break;
-        case purpur:
-        case folia:
-        case paper:
-        case pufferfish:
-        case arclight:
-            return true;
-        case craftbukkit:
-        case spigot:
-            return false;
-        default:
-            break;
-        }
-        return false;
+    public static boolean isAsyncProcessing() {
+        return getPlatform().isAsync();
     }
 
-    public static boolean isSpigotBranch() {
-        switch (getPlatform()) {
-        case mohist:
-            break;
-        case purpur:
-        case folia:
-        case paper:
-        case pufferfish:
-        case arclight:
-            return true;
-        case craftbukkit:
-        case spigot:
-            return false;
-        default:
-            break;
-        }
-        return false;
+    @Deprecated
+    public static boolean isPaperBranch() {
+        return getPlatform().isAsync();
     }
 
     public String getShortVersion() {
@@ -140,8 +110,9 @@ public enum Version {
         return shortVersion.replace("v", "").replace("_", ".") + "." + subVersion;
     }
 
+    @Deprecated
     public static boolean isPaper() {
-        return isSpigotBranch();
+        return isPaperBranch();
     }
 
     public static boolean isSpigot() {
@@ -160,18 +131,45 @@ public enum Version {
         if (platform != null)
             return platform;
 
-        if (Bukkit.getVersion().toLowerCase().contains("mohist")) {
+        String version = Bukkit.getVersion().toLowerCase();
+
+        if (version.contains("mohist")) {
             platform = MinecraftPlatform.mohist;
             return platform;
         }
 
-        if (Bukkit.getVersion().toLowerCase().contains("arclight")) {
+        if (version.contains("arclight")) {
             platform = MinecraftPlatform.arclight;
             return platform;
         }
 
-        if (Bukkit.getVersion().toLowerCase().contains("purpur")) {
+        if (version.contains("purpur")) {
             platform = MinecraftPlatform.purpur;
+            return platform;
+        }
+
+        if (version.contains("tuinity")) {
+            platform = MinecraftPlatform.tuinity;
+            return platform;
+        }
+
+        if (version.contains("yatopia")) {
+            platform = MinecraftPlatform.yatopia;
+            return platform;
+        }
+
+        if (version.contains("tacospigot")) {
+            platform = MinecraftPlatform.tacospigot;
+            return platform;
+        }
+
+        if (version.contains("glowstone")) {
+            platform = MinecraftPlatform.glowstone;
+            return platform;
+        }
+
+        if (version.contains("pufferfish")) {
+            platform = MinecraftPlatform.pufferfish;
             return platform;
         }
 

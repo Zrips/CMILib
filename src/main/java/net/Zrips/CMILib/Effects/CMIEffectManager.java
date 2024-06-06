@@ -112,19 +112,19 @@ public class CMIEffectManager {
         WATER_BUBBLE(),
         WATER_WAKE(),
         SUSPENDED(),
-        BARRIER(),
+        BARRIER(CMIMaterial.BARRIER),
         MOB_APPEARANCE(),
-        END_ROD(),
+        END_ROD(CMIMaterial.END_ROD),
         DAMAGE_INDICATOR(),
         SWEEP_ATTACK(),
-        TOTEM(),
+        TOTEM(CMIMaterial.TOTEM_OF_UNDYING),
         SPIT(),
-        SQUID_INK(),
+        SQUID_INK(CMIMaterial.INK_SAC),
         BUBBLE_POP(),
         CURRENT_DOWN(),
         BUBBLE_COLUMN_UP(),
-        NAUTILUS(),
-        DOLPHIN(),
+        NAUTILUS(CMIMaterial.NAUTILUS_SHELL),
+        DOLPHIN(CMIMaterial.DOLPHIN_SPAWN_EGG),
 
 //	Requires extra data when displaying
 //	ITEM_CRACK("ItemCrack"),
@@ -133,19 +133,19 @@ public class CMIEffectManager {
 
         //1.16
         WATER_SPLASH(),
-        CAMPFIRE_SIGNAL_SMOKE(),
-        CAMPFIRE_COSY_SMOKE(),
+        CAMPFIRE_SIGNAL_SMOKE(CMIMaterial.CAMPFIRE),
+        CAMPFIRE_COSY_SMOKE(CMIMaterial.CAMPFIRE),
         SNEEZE(),
-        COMPOSTER(),
+        COMPOSTER(CMIMaterial.COMPOSTER),
         FLASH(),
-        FALLING_LAVA(),
-        LANDING_LAVA(),
-        FALLING_WATER(),
-        DRIPPING_HONEY(),
-        FALLING_HONEY(),
-        LANDING_HONEY(),
-        FALLING_NECTAR(),
-        SOUL_FIRE_FLAME(),
+        FALLING_LAVA(CMIMaterial.LAVA_BUCKET),
+        LANDING_LAVA(CMIMaterial.LAVA_BUCKET),
+        FALLING_WATER(CMIMaterial.WATER_BUCKET),
+        DRIPPING_HONEY(CMIMaterial.HONEY_BOTTLE),
+        FALLING_HONEY(CMIMaterial.HONEY_BOTTLE),
+        LANDING_HONEY(CMIMaterial.HONEY_BOTTLE),
+        FALLING_NECTAR(CMIMaterial.HONEY_BOTTLE),
+        SOUL_FIRE_FLAME(CMIMaterial.SOUL_FIRE),
         ASH(),
         CRIMSON_SPORE(),
         WARPED_SPORE(),
@@ -157,14 +157,14 @@ public class CMIEffectManager {
         WHITE_ASH(),
 
         // 1.17
-        LIGHT(),
+        LIGHT(CMIMaterial.LIGHT),
 //	Requires extra data when displaying
 //	DUST_COLOR_TRANSITION("dust_color_transition"),
 //	VIBRATION("vibration"),
         FALLING_SPORE_BLOSSOM(),
         SPORE_BLOSSOM_AIR(),
         SMALL_FLAME(),
-        SNOWFLAKE(),
+        SNOWFLAKE(CMIMaterial.SNOW),
         DRIPPING_DRIPSTONE_LAVA(),
         FALLING_DRIPSTONE_LAVA(),
         DRIPPING_DRIPSTONE_WATER(),
@@ -278,6 +278,10 @@ public class CMIEffectManager {
 
         CMIParticle() {
             this(new ArrayList<>(), null, null, null);
+        }
+
+        CMIParticle(CMIMaterial material) {
+            this(new ArrayList<>(), null, material.getMaterial() == null ? Material.STONE : material.getMaterial(), null);
         }
 
         CMIParticle(CMIParticleType type) {
@@ -613,6 +617,24 @@ public class CMIEffectManager {
         public void setSecondaryName(String secondaryName) {
             this.secondaryNames.clear();
             this.secondaryNames.add(secondaryName);
+        }
+
+        public boolean is(String name) {
+
+            name = name.replace("_", "");
+
+            if (toString().replace("_", "").equalsIgnoreCase(name))
+                return true;
+
+            if (getName().replace("_", "").equalsIgnoreCase(name))
+                return true;
+
+            for (String one : this.getSecondaryNames()) {
+
+                if (one.replace("_", "").equalsIgnoreCase(name))
+                    return true;
+            }
+            return false;
         }
 
         public List<String> getSecondaryNames() {

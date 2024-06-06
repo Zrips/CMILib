@@ -49,6 +49,7 @@ import net.Zrips.CMILib.Effects.CMIEffect;
 import net.Zrips.CMILib.Effects.CMIEffectManager.CMIParticleDataType;
 import net.Zrips.CMILib.Items.CMIItemStack;
 import net.Zrips.CMILib.Items.CMIMaterial;
+import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.RawMessages.RawMessage;
 import net.Zrips.CMILib.Version.Version;
@@ -1123,9 +1124,6 @@ public class Reflections {
             case v1_13_R1:
                 ff = "create";
                 break;
-            case v1_7_R1:
-            case v1_7_R2:
-            case v1_7_R3:
             case v1_7_R4:
                 ff = "a";
                 break;
@@ -1732,11 +1730,14 @@ public class Reflections {
 
                 Object particle = ef.getParticle().getEnumParticle() == null ? null : EnumParticle.cast(ef.getParticle().getEnumParticle());
                 int[] extra = ef.getParticle().getExtra();
+
                 if (particle == null) {
+
                     for (Object p : EnumParticle.getEnumConstants()) {
-                        if (effect.name().replace("_", "").equalsIgnoreCase((p.toString().replace("_", ""))) ||
-                            ef.getParticle().getName().replace("_", "").equalsIgnoreCase((p.toString().replace("_", ""))) ||
-                            ef.getParticle().getSecondaryName().replace("_", "").equalsIgnoreCase((p.toString().replace("_", "")))) {
+
+                        String name = p.toString().replace("_", "");
+
+                        if (ef.getParticle().is(name)) {
                             particle = p;
                             if (ef.getParticle().getEffect().getData() != null) {
                                 extra = new int[] { (0 << 12) | (0 & 0xFFF) };
@@ -1763,13 +1764,31 @@ public class Reflections {
 
                 Object newPack = null;
                 if (ef.getParticle().isColored())
-                    newPack = effectConstructor.newInstance(particle, true, (float) location.getX(), (float) location.getY(), (float) location.getZ(),
-                        ef.getColor().getRed() / 255F, ef.getColor().getGreen() / 255F, ef.getColor().getBlue() / 255F, 1, 0);
+                    newPack = effectConstructor.newInstance(particle,
+                        true,
+                        (float) location.getX(),
+                        (float) location.getY(),
+                        (float) location.getZ(),
+                        ef.getColorFrom().getRed() / 255F,
+                        ef.getColorFrom().getGreen() / 255F,
+                        ef.getColorFrom().getBlue() / 255F,
+                        1,
+                        0,
+                        extra);
                 else
-                    newPack = effectConstructor.newInstance(particle, true, (float) location.getX(), (float) location.getY(), (float) location.getZ(), (float) ef.getOffset().getX(),
+                    newPack = effectConstructor.newInstance(particle,
+                        true,
+                        (float) location.getX(),
+                        (float) location.getY(),
+                        (float) location.getZ(),
+                        (float) ef.getOffset().getX(),
                         (float) ef.getOffset().getY(),
-                        (float) ef.getOffset().getZ(), ef.getSpeed(), ef.getAmount(), extra);
+                        (float) ef.getOffset().getZ(),
+                        ef.getSpeed(),
+                        ef.getAmount(),
+                        extra);
 
+                CMIDebug.d("Show 3");
                 sendPlayerPacket(player, newPack);
             } else if (Version.isCurrentEqualOrLower(Version.v1_14_R1)) {
 
