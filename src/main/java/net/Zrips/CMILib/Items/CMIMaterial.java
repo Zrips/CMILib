@@ -2707,16 +2707,16 @@ public enum CMIMaterial {
             return STRIPPED_REPLACE.matcher(newName).replaceFirst("");
         }
 
+        if (COLOR_MATCH.matcher(newName).matches()) {
+            return "color";
+        }
+
         if (DARK_LIGHT_MATCH.matcher(newName).matches()) {
             return DARK_LIGHT_REPLACE.matcher(newName).replaceFirst("");
         }
 
         if (WOOD_MATCH.matcher(newName).matches()) {
             return WOOD_REPLACE.matcher(newName).replaceFirst("");
-        }
-
-        if (COLOR_MATCH.matcher(newName).matches()) {
-            return "color";
         }
 
         return fullName;
