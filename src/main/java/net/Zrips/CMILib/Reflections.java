@@ -27,7 +27,6 @@ import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Server;
 import org.bukkit.Sound;
-import org.bukkit.Vibration.Destination.BlockDestination;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -54,6 +53,7 @@ import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.RawMessages.RawMessage;
 import net.Zrips.CMILib.Version.Version;
 import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
+import net.minecraft.resources.MinecraftKey;
 
 public class Reflections {
 
@@ -119,6 +119,7 @@ public class Reflections {
     private Class<?> SerializedAdvancement;
     private Class<?> LootDeserializationContext;
     private Class<?> LootDataManager;
+    private Class<?> CraftChatMessage;
 
     private Class<?> world;
 
@@ -191,6 +192,7 @@ public class Reflections {
                 }
 
                 CraftParticle = getBukkitClass("CraftParticle");
+                CraftChatMessage = getBukkitClass("util.CraftChatMessage");
                 ParticleParam = net.minecraft.core.particles.ParticleParam.class;
 
                 WorldServerClass = net.minecraft.server.level.WorldServer.class;
@@ -457,8 +459,11 @@ public class Reflections {
 
         if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
             try {
+                if (nmsChatSerializerMethod == null)
+                    nmsChatSerializerMethod = CraftChatMessage.getMethod("fromJSON", String.class);
                 // fromJSON(String text)
-                return org.bukkit.craftbukkit.v1_20_R4.util.CraftChatMessage.fromJSON(text);
+//                return org.bukkit.craftbukkit.v1_20_R4.util.CraftChatMessage.fromJSON(text);
+                return nmsChatSerializerMethod.invoke(null, text);
             } catch (Throwable e) {
                 e.printStackTrace();
             }
@@ -547,7 +552,9 @@ public class Reflections {
                 // PropertyManager -> Properties
 
                 Object field2 = null;
-                if (Version.isCurrentEqualOrHigher(Version.v1_20_R4))
+                if (Version.isCurrentEqualOrHigher(Version.v1_21_R1))
+                    field2 = prop.getClass().getField("ac").get(prop);
+                else if (Version.isCurrentEqualOrHigher(Version.v1_20_R4))
                     field2 = prop.getClass().getField("ab").get(prop);
                 else
                     field2 = prop.getClass().getField("Z").get(prop);
@@ -1359,7 +1366,9 @@ public class Reflections {
                 windowId = "j";
 
             // EntityHuman -> Container
-            if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
+            if (Version.isCurrentEqualOrHigher(Version.v1_21_R1)) {
+                activeContainer = "cd";
+            } else if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
                 activeContainer = "cb";
             } else if (Version.isCurrentEqualOrHigher(Version.v1_20_R2)) {
                 activeContainer = "bS";
@@ -1537,14 +1546,21 @@ public class Reflections {
             Object centity = CEntity.cast(entity);
 
             if (teleportMethod == null) {
-                if (Version.isCurrentEqualOrHigher(Version.v1_20_R4))
+                if (Version.isCurrentEqualOrHigher(Version.v1_21_R1))
+                    teleportMethod = centity.getClass().getMethod("a_", double.class, double.class, double.class);
+                else if (Version.isCurrentEqualOrHigher(Version.v1_20_R4))
                     teleportMethod = centity.getClass().getMethod("p", double.class, double.class, double.class);
                 else if (Version.isCurrentEqualOrHigher(Version.v1_18_R1))
                     teleportMethod = centity.getClass().getMethod("a", double.class, double.class, double.class);
                 else
                     teleportMethod = centity.getClass().getMethod("setPosition", double.class, double.class, double.class);
             }
+
             teleportMethod.invoke(centity, targetLoc.getX(), targetLoc.getY(), targetLoc.getZ());
+
+            if (player == null)
+                return;
+
             if (teleportPacket == null)
                 teleportPacket = PacketPlayOutEntityTeleport.getConstructor(CEntity);
 
@@ -1788,7 +1804,6 @@ public class Reflections {
                         ef.getAmount(),
                         extra);
 
-                CMIDebug.d("Show 3");
                 sendPlayerPacket(player, newPack);
             } else if (Version.isCurrentEqualOrLower(Version.v1_14_R1)) {
 
@@ -1897,6 +1912,35 @@ public class Reflections {
         }
     }
 
+    Constructor<MinecraftKey> keyConstructor = null;
+
+    private net.minecraft.resources.MinecraftKey getKey(String key) {
+        if (Version.isCurrentEqualOrHigher(Version.v1_20_R1))
+            return net.minecraft.resources.MinecraftKey.a(key);
+        return getKey(key.contains(":") ? key.split(":", 2)[0] : "minecraft", key.contains(":") ? key.split(":", 2)[1] : key);
+    }
+
+    private net.minecraft.resources.MinecraftKey getKey(String base, String key) {
+
+        if (Version.isCurrentEqualOrHigher(Version.v1_20_R1))
+            return net.minecraft.resources.MinecraftKey.a(base, key);
+
+        if (keyConstructor == null)
+            try {
+                keyConstructor = net.minecraft.resources.MinecraftKey.class.getConstructor(String.class, String.class);
+            } catch (NoSuchMethodException | SecurityException e) {
+                e.printStackTrace();
+            }
+
+        try {
+            return keyConstructor.newInstance(base, key);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
     @SuppressWarnings("unchecked")
     public void removeAdvancement(net.Zrips.CMILib.Advancements.CMIAdvancement ad) {
 
@@ -1908,7 +1952,7 @@ public class Reflections {
                 Map<net.minecraft.resources.MinecraftKey, net.minecraft.advancements.Advancement> advancements =
                     (Map<net.minecraft.resources.MinecraftKey, net.minecraft.advancements.Advancement>) advancementRegistry.getClass().getField("b").get(advancementRegistry);
                 if (ad.getId() != null)
-                    advancements.remove(new net.minecraft.resources.MinecraftKey(ad.getId().getNamespace(), ad.getId().getKey()));
+                    advancements.remove(getKey(ad.getId().getNamespace(), ad.getId().getKey()));
             } catch (Throwable e) {
                 e.printStackTrace();
             }
@@ -1950,11 +1994,11 @@ public class Reflections {
 
                 Set<net.minecraft.resources.MinecraftKey> removed = new HashSet<net.minecraft.resources.MinecraftKey>();
 
-                net.minecraft.resources.MinecraftKey minecraftkey = new net.minecraft.resources.MinecraftKey(advancement.getId().getNamespace(), advancement.getId().getKey());
+                net.minecraft.resources.MinecraftKey minecraftkey = getKey(advancement.getId().getNamespace(), advancement.getId().getKey());
 
                 removed.add(minecraftkey);
 
-                net.minecraft.resources.MinecraftKey bg = new net.minecraft.resources.MinecraftKey(advancement.getBackground().getUrl());
+                net.minecraft.resources.MinecraftKey bg = getKey(advancement.getBackground().getUrl());
                 net.minecraft.advancements.AdvancementFrameType frame = net.minecraft.advancements.AdvancementFrameType.a;
                 if (advancement.getFrame().equals(net.Zrips.CMILib.Advancements.AdvancementFrameType.GOAL))
                     frame = net.minecraft.advancements.AdvancementFrameType.c;
@@ -2007,7 +2051,7 @@ public class Reflections {
                 new HashMap<net.minecraft.resources.MinecraftKey, net.minecraft.advancements.AdvancementProgress>();
             Set<net.minecraft.resources.MinecraftKey> removed = new HashSet<net.minecraft.resources.MinecraftKey>();
 
-            net.minecraft.resources.MinecraftKey minecraftkey = new net.minecraft.resources.MinecraftKey(advancement.getId().getNamespace(), advancement.getId().getKey());
+            net.minecraft.resources.MinecraftKey minecraftkey = getKey(advancement.getId().getNamespace(), advancement.getId().getKey());
 
             removed.add(minecraftkey);
 

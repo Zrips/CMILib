@@ -366,7 +366,7 @@ public class CMIEffectManager {
             if (name == null)
                 return null;
 
-            name = name.replace("_", "").toLowerCase();
+            name = name.replace("_", "").replace(" ", "").toLowerCase();
 
             return byName.get(name);
         }

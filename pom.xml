@@ -6,7 +6,7 @@
 
 	<groupId>CMILib</groupId>
 	<artifactId>CMILib</artifactId>
-	<version>1.4.7.7</version>
+	<version>1.5.0.0</version>
 	<name>CMILib</name>
 	<url>http://maven.apache.org</url>
 	<packaging>jar</packaging>
@@ -33,13 +33,13 @@
 		<dependency>
 			<groupId>org.spigotmc</groupId>
 			<artifactId>spigot-api</artifactId>
-			<version>1.20.6-R0.1-SNAPSHOT</version>
+			<version>1.21-R0.1-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.spigotmc</groupId>
 			<artifactId>spigot</artifactId>
-			<version>1.20.6-R0.1-SNAPSHOT</version>
+			<version>1.21-R0.1-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<!-- CMI  -->
@@ -68,6 +68,11 @@
 			<artifactId>annotations</artifactId>
 			<version>24.0.0</version>
 			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>Jobs</groupId>
+			<artifactId>jobs</artifactId>
+			<version>5.2.3.0</version>
 		</dependency>
 	</dependencies>
 	<repositories>

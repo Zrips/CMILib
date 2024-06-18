@@ -117,6 +117,10 @@ public class CMIPersistentDataContainer {
     }
 
     private static NamespacedKey getKey(String key) {
+        
+        if (key.contains(":"))
+            return new NamespacedKey(key.split(":", 2)[0].toLowerCase(), key.split(":", 2)[1].replace(" ", "_"));
+
         return new NamespacedKey(CMILib.getInstance(), key.replace(" ", "_"));
     }
 

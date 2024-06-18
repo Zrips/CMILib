@@ -521,13 +521,15 @@ public class CMIItemStack {
                 EnchantmentStorageMeta meta2 = (EnchantmentStorageMeta) item.getItemStack().getItemMeta();
 
                 for (Entry<Enchantment, Integer> one : meta1.getEnchants().entrySet()) {
-                    if (!meta2.getEnchants().containsKey(one.getKey()) || meta2.getEnchants().get(one.getKey()) != one.getValue())
+                    if (!meta2.getEnchants().containsKey(one.getKey()) || meta2.getEnchants().get(one.getKey()) != one.getValue()) {
                         return false;
+                    }
                 }
 
                 for (Entry<Enchantment, Integer> one : meta1.getStoredEnchants().entrySet()) {
-                    if (!meta2.getStoredEnchants().containsKey(one.getKey()) || meta2.getStoredEnchants().get(one.getKey()) != one.getValue())
+                    if (!meta2.getStoredEnchants().containsKey(one.getKey()) || meta2.getStoredEnchants().get(one.getKey()) != one.getValue()) {
                         return false;
+                    }
                 }
             }
         } catch (Exception e) {
@@ -917,5 +919,16 @@ public class CMIItemStack {
 
     public static boolean valid(ItemStack item) {
         return item != null && !CMIMaterial.isAir(item.getType());
+    }
+
+    public static int getCustomModelData(ItemStack item) {
+        if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
+            if (!item.hasItemMeta())
+                return 0;
+            ItemMeta meta = item.getItemMeta();
+            return meta.hasCustomModelData() ? meta.getCustomModelData() : 0;
+        }
+        Integer cmd = new CMINBT(item).getInt("CustomModelData");
+        return cmd == null ? 0 : cmd;
     }
 }
