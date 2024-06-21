@@ -201,7 +201,7 @@ public enum Version {
     public static Version getCurrent() {
         if (current != null)
             return current;
-// Paper returns as of 1.20
+// Paper returns examples as of 1.20
 //        Bukkit.getServer().getClass().getPackage().getName();   org.bukkit.craftbukkit
 //        Bukkit.getBukkitVersion();                              1.21-R0.1-SNAPSHOT
 //        Bukkit.getMinecraftVersion();                           1.21
@@ -229,31 +229,50 @@ public enum Version {
             }
         }
 
-        if (current == null) {
-            String ve = Bukkit.getBukkitVersion().split("-", 2)[0];
-            main: for (Version one : values()) {
-                if (one.name().equalsIgnoreCase(ve)) {
+        if (current != null)
+            return current;
+
+        String ve = Bukkit.getBukkitVersion().split("-", 2)[0];
+        main: for (Version one : values()) {
+            if (one.name().equalsIgnoreCase(ve)) {
+                current = one;
+                break;
+            }
+            List<String> cleanVersion = one.getMinorVersions();
+            for (String cv : cleanVersion) {
+                if (ve.equalsIgnoreCase(cv)) {
                     current = one;
-                    break;
-                }
-                List<String> cleanVersion = one.getMinorVersions();
-                for (String cv : cleanVersion) {
-                    if (ve.equalsIgnoreCase(cv)) {
-                        current = one;
-                        break main;
-                    }
+                    break main;
                 }
             }
         }
 
-        if (current == null) {
-            String ve = Bukkit.getBukkitVersion().split("-", 2)[0];
-            for (Version one : values()) {
-                if (ve.startsWith(one.getSimplifiedVersion()) || ve.startsWith(one.getSimplifiedVersion().substring(0, one.getSimplifiedVersion().length() - 1))) {
-                    current = one;
-                    CMIMessages.consoleMessage("&c[CMILib] &eServer version detection needs aditional update");
-                    break;
+        if (current != null)
+            return current;
+
+        main: for (int i = 1; i < 10; i++) {
+            try {
+                Class.forName("org.bukkit.craftbukkit.v" + ve.replace(".", "_") + "_R" + i + ".entity.CraftPlayer");
+                for (Version one : values()) {
+                    if (one.name().equalsIgnoreCase("v" + ve.replace(".", "_") + "_R" + i)) {
+                        current = one;
+                        break main;
+                    }
                 }
+
+                break;
+            } catch (ClassNotFoundException e) {
+            }
+        }
+
+        if (current != null)
+            return current;
+
+        for (Version one : values()) {
+            if (ve.startsWith(one.getSimplifiedVersion()) || ve.startsWith(one.getSimplifiedVersion().substring(0, one.getSimplifiedVersion().length() - 1))) {
+                current = one;
+                CMIMessages.consoleMessage("&c[CMILib] &eServer version detection needs aditional update");
+                break;
             }
         }
 
