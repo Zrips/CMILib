@@ -32,8 +32,13 @@ public class CMIFoliaImpl implements CMIBaseImpl {
 
     @Override
     public CompletableFuture<Void> runTask(Runnable runnable) {
+        return runTask(this.plugin, runnable);
+    }
+
+    @Override
+    public CompletableFuture<Void> runTask(JavaPlugin plugin, Runnable runnable) {
         CompletableFuture<Void> future = new CompletableFuture<>();
-        this.globalRegionScheduler.execute(this.plugin, () -> {
+        this.globalRegionScheduler.execute(plugin, () -> {
             runnable.run();
             future.complete(null);
         });
@@ -42,8 +47,13 @@ public class CMIFoliaImpl implements CMIBaseImpl {
 
     @Override
     public CompletableFuture<Void> runTaskAsynchronously(Runnable runnable) {
+        return runTaskAsynchronously(this.plugin, runnable);
+    }
+
+    @Override
+    public CompletableFuture<Void> runTaskAsynchronously(JavaPlugin plugin, Runnable runnable) {
         CompletableFuture<Void> future = new CompletableFuture<>();
-        this.asyncScheduler.runNow(this.plugin, task -> {
+        this.asyncScheduler.runNow(plugin, task -> {
             runnable.run();
             future.complete(null);
         });
@@ -56,28 +66,53 @@ public class CMIFoliaImpl implements CMIBaseImpl {
 
     @Override
     public CMITask runTaskLater(Runnable runnable, long delay) {
-        return new CMIFoliaTask(this.globalRegionScheduler.runDelayed(this.plugin, task -> runnable.run(), clamp(delay)));
+        return runTaskLater(this.plugin, runnable, delay);
+    }
+
+    @Override
+    public CMITask runTaskLater(JavaPlugin plugin, Runnable runnable, long delay) {
+        return new CMIFoliaTask(this.globalRegionScheduler.runDelayed(plugin, task -> runnable.run(), clamp(delay)));
     }
 
     @Override
     public CMITask runLaterAsync(Runnable runnable, long delay) {
-        return new CMIFoliaTask(this.asyncScheduler.runDelayed(this.plugin, task -> runnable.run(), clamp(delay) * 50L, TimeUnit.MILLISECONDS));
+        return runLaterAsync(this.plugin, runnable, delay);
+    }
+
+    @Override
+    public CMITask runLaterAsync(JavaPlugin plugin, Runnable runnable, long delay) {
+        return new CMIFoliaTask(this.asyncScheduler.runDelayed(plugin, task -> runnable.run(), clamp(delay) * 50L, TimeUnit.MILLISECONDS));
     }
 
     @Override
     public CMITask scheduleSyncRepeatingTask(Runnable runnable, long delay, long period) {
-        return new CMIFoliaTask(this.globalRegionScheduler.runAtFixedRate(this.plugin, task -> runnable.run(), clamp(delay), clamp(period)));
+        return scheduleSyncRepeatingTask(this.plugin, runnable, delay, period);
+    }
+
+    @Override
+    public CMITask scheduleSyncRepeatingTask(JavaPlugin plugin, Runnable runnable, long delay, long period) {
+        return new CMIFoliaTask(this.globalRegionScheduler.runAtFixedRate(plugin, task -> runnable.run(), clamp(delay), clamp(period)));
     }
 
     @Override
     public CMITask runTimerAsync(Runnable runnable, long delay, long period) {
-        return new CMIFoliaTask(this.asyncScheduler.runAtFixedRate(this.plugin, task -> runnable.run(), clamp(delay) * 50L, clamp(period) * 50L, TimeUnit.MILLISECONDS));
+        return runTimerAsync(this.plugin, runnable, delay, period);
+    }
+
+    @Override
+    public CMITask runTimerAsync(JavaPlugin plugin, Runnable runnable, long delay, long period) {
+        return new CMIFoliaTask(this.asyncScheduler.runAtFixedRate(plugin, task -> runnable.run(), clamp(delay) * 50L, clamp(period) * 50L, TimeUnit.MILLISECONDS));
     }
 
     @Override
     public CompletableFuture<Void> runAtLocation(Location location, Runnable runnable) {
+        return runAtLocation(this.plugin, location, runnable);
+    }
+
+    @Override
+    public CompletableFuture<Void> runAtLocation(JavaPlugin plugin, Location location, Runnable runnable) {
         CompletableFuture<Void> future = new CompletableFuture<>();
-        this.regionScheduler.execute(this.plugin, location, () -> {
+        this.regionScheduler.execute(plugin, location, () -> {
             runnable.run();
             future.complete(null);
         });
@@ -86,8 +121,13 @@ public class CMIFoliaImpl implements CMIBaseImpl {
 
     @Override
     public CompletableFuture<Void> runAtLocation(Chunk chunk, Runnable runnable) {
+        return runAtLocation(this.plugin, chunk, runnable);
+    }
+
+    @Override
+    public CompletableFuture<Void> runAtLocation(JavaPlugin plugin, Chunk chunk, Runnable runnable) {
         CompletableFuture<Void> future = new CompletableFuture<>();
-        this.regionScheduler.execute(this.plugin, chunk.getWorld(), chunk.getX(), chunk.getZ(), () -> {
+        this.regionScheduler.execute(plugin, chunk.getWorld(), chunk.getX(), chunk.getZ(), () -> {
             runnable.run();
             future.complete(null);
         });
@@ -96,9 +136,14 @@ public class CMIFoliaImpl implements CMIBaseImpl {
 
     @Override
     public CompletableFuture<Void> runAtLocation(World world, int x, int z, Runnable runnable) {
-                
+        return runAtLocation(this.plugin, world, x, z, runnable);
+    }
+
+    @Override
+    public CompletableFuture<Void> runAtLocation(JavaPlugin plugin, World world, int x, int z, Runnable runnable) {
+
         CompletableFuture<Void> future = new CompletableFuture<>();
-        this.regionScheduler.execute(this.plugin, world, x, z, () -> {
+        this.regionScheduler.execute(plugin, world, x, z, () -> {
             runnable.run();
             future.complete(null);
         });
@@ -107,18 +152,33 @@ public class CMIFoliaImpl implements CMIBaseImpl {
 
     @Override
     public CMITask runAtLocationLater(Location location, Runnable runnable, long delay) {
-        return new CMIFoliaTask(regionScheduler.runDelayed(this.plugin, location, task -> runnable.run(), clamp(delay)));
+        return runAtLocationLater(this.plugin, location, runnable, delay);
+    }
+
+    @Override
+    public CMITask runAtLocationLater(JavaPlugin plugin, Location location, Runnable runnable, long delay) {
+        return new CMIFoliaTask(regionScheduler.runDelayed(plugin, location, task -> runnable.run(), clamp(delay)));
     }
 
     @Override
     public CMITask runAtLocationTimer(Location location, Runnable runnable, long delay, long period) {
-        return new CMIFoliaTask(regionScheduler.runAtFixedRate(this.plugin, location, task -> runnable.run(), clamp(delay), clamp(period)));
+        return runAtLocationTimer(this.plugin, location, runnable, delay, period);
+    }
+
+    @Override
+    public CMITask runAtLocationTimer(JavaPlugin plugin, Location location, Runnable runnable, long delay, long period) {
+        return new CMIFoliaTask(regionScheduler.runAtFixedRate(plugin, location, task -> runnable.run(), clamp(delay), clamp(period)));
     }
 
     @Override
     public CompletableFuture<CMITaskResult> runAtEntity(Entity entity, Runnable runnable) {
+        return runAtEntity(this.plugin, entity, runnable);
+    }
+
+    @Override
+    public CompletableFuture<CMITaskResult> runAtEntity(JavaPlugin plugin, Entity entity, Runnable runnable) {
         CompletableFuture<CMITaskResult> future = new CompletableFuture<>();
-        boolean success = entity.getScheduler().execute(this.plugin, () -> {
+        boolean success = entity.getScheduler().execute(plugin, () -> {
             runnable.run();
             future.complete(CMITaskResult.SUCCESS);
         }, null, 0L);
@@ -129,8 +189,12 @@ public class CMIFoliaImpl implements CMIBaseImpl {
 
     @Override
     public CompletableFuture<CMITaskResult> runAtEntityWithFallback(Entity entity, Runnable runnable, Runnable fallback) {
+        return runAtEntityWithFallback(this.plugin, entity, runnable, fallback);
+    }
+
+    public CompletableFuture<CMITaskResult> runAtEntityWithFallback(JavaPlugin plugin, Entity entity, Runnable runnable, Runnable fallback) {
         CompletableFuture<CMITaskResult> future = new CompletableFuture<>();
-        boolean success = entity.getScheduler().execute(this.plugin, () -> {
+        boolean success = entity.getScheduler().execute(plugin, () -> {
             runnable.run();
             future.complete(CMITaskResult.SUCCESS);
         }, () -> {
@@ -144,11 +208,21 @@ public class CMIFoliaImpl implements CMIBaseImpl {
 
     @Override
     public CMITask runAtEntityLater(Entity entity, Runnable runnable, long delay) {
-        return new CMIFoliaTask(entity.getScheduler().runDelayed(this.plugin, task -> runnable.run(), null, clamp(delay)));
+        return runAtEntityLater(this.plugin, entity, runnable, delay);
+    }
+
+    @Override
+    public CMITask runAtEntityLater(JavaPlugin plugin, Entity entity, Runnable runnable, long delay) {
+        return new CMIFoliaTask(entity.getScheduler().runDelayed(plugin, task -> runnable.run(), null, clamp(delay)));
     }
 
     @Override
     public CMITask runAtEntityTimer(Entity entity, Runnable runnable, long delay, long period) {
-        return new CMIFoliaTask(entity.getScheduler().runAtFixedRate(this.plugin, task -> runnable.run(), null, clamp(delay), clamp(period)));
+        return runAtEntityTimer(this.plugin, entity, runnable, delay, period);
+    }
+
+    @Override
+    public CMITask runAtEntityTimer(JavaPlugin plugin, Entity entity, Runnable runnable, long delay, long period) {
+        return new CMIFoliaTask(entity.getScheduler().runAtFixedRate(plugin, task -> runnable.run(), null, clamp(delay), clamp(period)));
     }
 }
