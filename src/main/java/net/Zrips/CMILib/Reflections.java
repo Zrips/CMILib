@@ -1545,15 +1545,15 @@ public class Reflections {
 
             Object centity = CEntity.cast(entity);
 
-            if (teleportMethod == null) {
+            if (teleportMethod == null) {                
                 if (Version.isCurrentEqualOrHigher(Version.v1_21_R1))
-                    teleportMethod = centity.getClass().getMethod("a_", double.class, double.class, double.class);
+                    teleportMethod = CEntity.getMethod("a_", double.class, double.class, double.class);
                 else if (Version.isCurrentEqualOrHigher(Version.v1_20_R4))
-                    teleportMethod = centity.getClass().getMethod("p", double.class, double.class, double.class);
+                    teleportMethod = CEntity.getMethod("p", double.class, double.class, double.class);
                 else if (Version.isCurrentEqualOrHigher(Version.v1_18_R1))
-                    teleportMethod = centity.getClass().getMethod("a", double.class, double.class, double.class);
+                    teleportMethod = CEntity.getMethod("a", double.class, double.class, double.class);
                 else
-                    teleportMethod = centity.getClass().getMethod("setPosition", double.class, double.class, double.class);
+                    teleportMethod = CEntity.getMethod("setPosition", double.class, double.class, double.class);
             }
 
             teleportMethod.invoke(centity, targetLoc.getX(), targetLoc.getY(), targetLoc.getZ());
@@ -1581,6 +1581,7 @@ public class Reflections {
             sendPlayerPacket(player, packet);
         } catch (Throwable e) {
             e.printStackTrace();
+            teleportMethod = null;
         }
     }
 

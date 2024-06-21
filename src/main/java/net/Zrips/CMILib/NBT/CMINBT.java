@@ -1632,7 +1632,7 @@ public class CMINBT {
         Object handle = null;
         try {
             if (EntityHandle == null)
-                EntityHandle = CraftEntity.cast(ent).getClass().getMethod("getHandle");
+                EntityHandle = CraftEntity.getMethod("getHandle");
             handle = EntityHandle.invoke(CraftEntity.cast(ent));
         } catch (Exception e) {
             e.printStackTrace();
