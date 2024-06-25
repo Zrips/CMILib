@@ -1,6 +1,7 @@
 package net.Zrips.CMILib.PersistentData;
 
 import org.bukkit.Chunk;
+import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -11,18 +12,22 @@ import net.Zrips.CMILib.CMILib;
 public class CMIBlockPersistentDataContainer extends CMIPersistentDataContainer {
 
     private final Chunk chunk;
-    private final Block block;
+    private final Location loc;
     private final NamespacedKey key;
 
     public CMIBlockPersistentDataContainer(Block block) {
-        this.block = block;
-        this.chunk = block == null ? null : block.getChunk();
-        this.key = block == null ? null : getNamespacedKey(block);
-        this.persistentDataContainer = block == null ? null : getDataContainer();
+        this(block.getLocation());
+    }
+
+    public CMIBlockPersistentDataContainer(Location loc) {
+        this.loc = loc;
+        this.chunk = loc == null ? null : loc.getChunk();
+        this.key = loc == null ? null : getNamespacedKey(loc);
+        this.persistentDataContainer = loc == null ? null : getDataContainer();
     }
 
     public boolean hasBlockData() {
-        return block.getChunk().getPersistentDataContainer().has(getNamespacedKey(block), PersistentDataType.TAG_CONTAINER);
+        return loc.getChunk().getPersistentDataContainer().has(getNamespacedKey(loc), PersistentDataType.TAG_CONTAINER);
     }
 
     private PersistentDataContainer getDataContainer() {
@@ -36,12 +41,12 @@ public class CMIBlockPersistentDataContainer extends CMIPersistentDataContainer 
         return blockPDC;
     }
 
-    private static NamespacedKey getNamespacedKey(Block block) {
-        return new NamespacedKey(CMILib.getInstance(), getKey(block));
+    private static NamespacedKey getNamespacedKey(Location loc) {
+        return new NamespacedKey(CMILib.getInstance(), getKey(loc));
     }
 
-    private static String getKey(Block block) {
-        return (block.getX() & 0x000F) + "." + block.getY() + "." + (block.getZ() & 0x000F);
+    private static String getKey(Location loc) {
+        return (loc.getBlockX() & 0x000F) + "." + loc.getBlockY() + "." + (loc.getBlockZ() & 0x000F);
     }
 
     @Override
