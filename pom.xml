@@ -69,11 +69,6 @@
 			<version>24.0.0</version>
 			<scope>compile</scope>
 		</dependency>
-		<dependency>
-			<groupId>Jobs</groupId>
-			<artifactId>jobs</artifactId>
-			<version>5.2.3.0</version>
-		</dependency>
 	</dependencies>
 	<repositories>
 		<repository>
@@ -113,6 +108,14 @@
 				<configuration>
 					<source>1.8</source>
 					<target>1.8</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.3.1</version>
+				<configuration>
+					<outputDirectory>D:\MC\Server 1.20.5\plugins\</outputDirectory>
 				</configuration>
 			</plugin>
 		</plugins>
