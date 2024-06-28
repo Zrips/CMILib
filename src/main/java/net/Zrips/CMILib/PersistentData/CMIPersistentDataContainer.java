@@ -117,7 +117,7 @@ public class CMIPersistentDataContainer {
     }
 
     private static NamespacedKey getKey(String key) {
-        
+
         if (key.contains(":"))
             return new NamespacedKey(key.split(":", 2)[0].toLowerCase(), key.split(":", 2)[1].replace(" ", "_"));
 
@@ -291,10 +291,23 @@ public class CMIPersistentDataContainer {
         return this;
     }
 
+    public CMIPersistentDataContainer setIntList(String key, List<Integer> value) {
+        if (persistentDataContainer == null)
+            return this;
+        persistentDataContainer.set(getKey(key), PersistentDataType.LIST.integers(), value);
+        return this;
+    }
+
     public @Nullable List<String> getListString(String key) {
         if (persistentDataContainer == null)
             return null;
         return persistentDataContainer.get(getKey(key), PersistentDataType.LIST.strings());
+    }
+
+    public @Nullable List<Integer> getListInt(String key) {
+        if (persistentDataContainer == null)
+            return null;
+        return persistentDataContainer.get(getKey(key), PersistentDataType.LIST.integers());
     }
 
     public @Nullable Object get(String key, PersistentDataType<?, ?> type) {
@@ -305,6 +318,135 @@ public class CMIPersistentDataContainer {
         if (persistentDataContainer == null)
             return null;
         return persistentDataContainer.get(key, type);
+    }
+
+    private PersistentDataContainer getSubContainer(String key) {
+
+        PersistentDataContainer container = getSubContainerIfExists(key);
+        if (container == null)
+            container = persistentDataContainer.getAdapterContext().newPersistentDataContainer();
+        return container;
+    }
+
+    private PersistentDataContainer getSubContainerIfExists(String key) {
+        if (persistentDataContainer == null)
+            return null;
+
+        if (!persistentDataContainer.has(getKey(key), PersistentDataType.TAG_CONTAINER))
+            return null;
+
+        return persistentDataContainer.get(getKey(key), PersistentDataType.TAG_CONTAINER);
+    }
+
+    public CMIPersistentDataContainer set(String key, String subKey, List<String> value) {
+        PersistentDataContainer container = getSubContainer(key);
+
+        if (container == null)
+            return this;
+
+        container.set(getKey(subKey), PersistentDataType.LIST.strings(), value);
+        persistentDataContainer.set(getKey(key), PersistentDataType.TAG_CONTAINER, container);
+        return this;
+    }
+
+    public CMIPersistentDataContainer set(String key, String subKey, long value) {
+        PersistentDataContainer container = getSubContainer(key);
+
+        if (container == null)
+            return this;
+
+        container.set(getKey(subKey), PersistentDataType.LONG, value);
+        persistentDataContainer.set(getKey(key), PersistentDataType.TAG_CONTAINER, container);
+        return this;
+    }
+
+    public CMIPersistentDataContainer set(String key, String subKey, boolean value) {
+        PersistentDataContainer container = getSubContainer(key);
+
+        if (container == null)
+            return this;
+
+        container.set(getKey(subKey), PersistentDataType.BOOLEAN, value);
+        persistentDataContainer.set(getKey(key), PersistentDataType.TAG_CONTAINER, container);
+        return this;
+    }
+
+    public CMIPersistentDataContainer set(String key, String subKey, int value) {
+        PersistentDataContainer container = getSubContainer(key);
+
+        if (container == null)
+            return this;
+
+        container.set(getKey(subKey), PersistentDataType.INTEGER, value);
+        persistentDataContainer.set(getKey(key), PersistentDataType.TAG_CONTAINER, container);
+        return this;
+    }
+
+    public CMIPersistentDataContainer setIntList(String key, String subKey, List<Integer> value) {
+        PersistentDataContainer container = getSubContainer(key);
+
+        if (container == null)
+            return this;
+
+        container.set(getKey(subKey), PersistentDataType.LIST.integers(), value);
+        persistentDataContainer.set(getKey(key), PersistentDataType.TAG_CONTAINER, container);
+        return this;
+    }
+
+    public CMIPersistentDataContainer remove(String key, String subKey) {
+        PersistentDataContainer container = getSubContainerIfExists(key);
+
+        if (container == null)
+            return this;
+
+        container.remove(getKey(subKey));
+        persistentDataContainer.set(getKey(key), PersistentDataType.TAG_CONTAINER, container);
+
+        return this;
+    }
+
+    public @Nullable List<String> getListString(String key, String subKey) {
+        if (persistentDataContainer == null)
+            return null;
+        @Nullable
+        PersistentDataContainer container = getSubContainerIfExists(key);
+        if (container == null)
+            return null;
+
+        return container.get(getKey(subKey), PersistentDataType.LIST.strings());
+    }
+
+    public @Nullable Boolean getBoolean(String key, String subKey) {
+        if (persistentDataContainer == null)
+            return null;
+        @Nullable
+        PersistentDataContainer container = getSubContainerIfExists(key);
+        if (container == null)
+            return null;
+
+        return container.get(getKey(subKey), PersistentDataType.BOOLEAN);
+    }
+
+    public @Nullable Long getLong(String key, String subKey) {
+        if (persistentDataContainer == null)
+            return null;
+        @Nullable
+        PersistentDataContainer container = getSubContainerIfExists(key);
+        if (container == null)
+            return null;
+
+        return container.get(getKey(subKey), PersistentDataType.LONG);
+    }
+
+    public @Nullable Integer getInt(String key, String subKey) {
+        if (persistentDataContainer == null)
+            return null;
+        @Nullable
+        PersistentDataContainer container = getSubContainerIfExists(key);
+        if (container == null)
+            return null;
+
+        return container.get(getKey(subKey), PersistentDataType.INTEGER);
     }
 
     public @Nullable Object get(String key) {

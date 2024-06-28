@@ -9,23 +9,19 @@ import org.bukkit.persistence.PersistentDataType;
 
 import net.Zrips.CMILib.CMILib;
 
-public class CMIBlockPersistentDataContainer extends CMIPersistentDataContainer {
+public class CMIChunkPersistentDataContainer extends CMIPersistentDataContainer {
 
     private final Chunk chunk;
     private final NamespacedKey key;
 
-    public CMIBlockPersistentDataContainer(Block block) {
-        this(block.getLocation());
+    public CMIChunkPersistentDataContainer(String key, Chunk chunk) {
+        this.chunk = chunk;
+        this.key = getNamespacedKey(key);
+        this.persistentDataContainer = chunk == null ? null : getDataContainer();
     }
 
-    public CMIBlockPersistentDataContainer(Location loc) {
-        this.chunk = loc == null ? null : loc.getChunk();
-        this.key = loc == null ? null : getNamespacedKey(loc);
-        this.persistentDataContainer = loc == null ? null : getDataContainer();
-    }
-
-    public boolean hasBlockData() {
-        return this.chunk.getPersistentDataContainer().has(key, PersistentDataType.TAG_CONTAINER);
+    public boolean hasData() {
+        return chunk.getPersistentDataContainer().has(key, PersistentDataType.TAG_CONTAINER);
     }
 
     private PersistentDataContainer getDataContainer() {
@@ -42,20 +38,14 @@ public class CMIBlockPersistentDataContainer extends CMIPersistentDataContainer 
         return blockPDC;
     }
 
-    private static NamespacedKey getNamespacedKey(Location loc) {
-        return new NamespacedKey(CMILib.getInstance(), getKey(loc));
-    }
-
-    private static String getKey(Location loc) {
-        return (loc.getBlockX() & 0x000F) + "." + loc.getBlockY() + "." + (loc.getBlockZ() & 0x000F);
+    private static NamespacedKey getNamespacedKey(String key) {
+        return new NamespacedKey(CMILib.getInstance(), key);
     }
 
     @Override
     public void save() {
-
         if (persistentDataContainer == null)
             return;
-
         if (persistentDataContainer.isEmpty())
             chunk.getPersistentDataContainer().remove(this.key);
         else {
