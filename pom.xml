@@ -48,7 +48,7 @@
 			<artifactId>CMI</artifactId>
 			<version>9.0.0.0</version>
 			<scope>system</scope>
-			<systemPath>${basedir}/libs/CMI9.0.0.0API.jar</systemPath>
+			<systemPath>${basedir}/libs/CMIAPI-9.7.4.1.jar</systemPath>
 		</dependency>
 		<!-- PlaceholderAPI -->
 		<dependency>
