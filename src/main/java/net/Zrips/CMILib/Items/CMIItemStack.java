@@ -921,14 +921,58 @@ public class CMIItemStack {
         return item != null && !CMIMaterial.isAir(item.getType());
     }
 
-    public static int getCustomModelData(ItemStack item) {
+    public static Integer getCustomModelData(ItemStack item) {
+        if (item == null)
+            return null;
+
         if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
-            if (!item.hasItemMeta())
-                return 0;
             ItemMeta meta = item.getItemMeta();
-            return meta.hasCustomModelData() ? meta.getCustomModelData() : 0;
+            return meta.hasCustomModelData() ? meta.getCustomModelData() : null;
         }
-        Integer cmd = new CMINBT(item).getInt("CustomModelData");
-        return cmd == null ? 0 : cmd;
+
+        Integer old = new CMINBT(item).getInt("CustomModelData");
+        return old == null ? null : old;
+    }
+
+    public static ItemStack setCustomModelData(ItemStack item, int data) {
+        if (item == null || data < 1)
+            return item;
+
+        if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
+            ItemMeta meta = item.getItemMeta();
+            meta.setCustomModelData(data);
+            item.setItemMeta(meta);
+            return item;
+        }
+
+        return (ItemStack) new CMINBT(item).setInt("CustomModelData", data);
+    }
+
+    public static boolean isUnbreakable(ItemStack item) {
+        if (item == null)
+            return false;
+
+        if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
+            ItemMeta meta = item.getItemMeta();
+            return meta.isUnbreakable();
+        }
+
+        CMINBT nbt = new CMINBT(item);
+        Byte b = nbt.getByte("Unbreakable");
+        return b != null && b == 1;
+    }
+
+    public static ItemStack setUnbreakable(ItemStack item, boolean state) {
+        if (item == null)
+            return item;
+
+        if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
+            ItemMeta meta = item.getItemMeta();
+            meta.setUnbreakable(state);
+            item.setItemMeta(meta);
+            return item;
+        }
+
+        return (ItemStack) new CMINBT(item).setByte("Unbreakable", (byte) (state ? 1 : 0));
     }
 }
