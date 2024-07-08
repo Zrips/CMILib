@@ -1,5 +1,6 @@
 package net.Zrips.CMILib.PersistentData;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -14,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import net.Zrips.CMILib.CMILib;
+import net.Zrips.CMILib.Version.Version;
 
 public class CMIPersistentDataContainer {
 
@@ -294,7 +296,18 @@ public class CMIPersistentDataContainer {
     public CMIPersistentDataContainer setIntList(String key, List<Integer> value) {
         if (persistentDataContainer == null)
             return this;
-        persistentDataContainer.set(getKey(key), PersistentDataType.LIST.integers(), value);
+        if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
+            persistentDataContainer.set(getKey(key), PersistentDataType.LIST.integers(), value);
+            return this;
+        }
+
+        // For older servers which doesn't support LIST type
+        int[] array = new int[value.size()];
+        for (int i = 0; i < value.size(); i++) {
+            array[i] = value.get(i);
+        }
+        persistentDataContainer.set(getKey(key), PersistentDataType.INTEGER_ARRAY, array);
+
         return this;
     }
 
@@ -307,7 +320,20 @@ public class CMIPersistentDataContainer {
     public @Nullable List<Integer> getListInt(String key) {
         if (persistentDataContainer == null)
             return null;
-        return persistentDataContainer.get(getKey(key), PersistentDataType.LIST.integers());
+
+        if (Version.isCurrentEqualOrHigher(Version.v1_20_R4))
+            return persistentDataContainer.get(getKey(key), PersistentDataType.LIST.integers());
+
+        // For older servers which doesn't support LIST type
+        int @Nullable [] array = this.getIntArray(key);
+
+        if (array == null)
+            return null;
+
+        List<Integer> list = new ArrayList<>();
+        for (int i : array)
+            list.add(i);
+        return list;
     }
 
     public @Nullable Object get(String key, PersistentDataType<?, ?> type) {
@@ -366,7 +392,14 @@ public class CMIPersistentDataContainer {
         if (container == null)
             return this;
 
-        container.set(getKey(subKey), PersistentDataType.BOOLEAN, value);
+        if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
+            container.set(getKey(subKey), PersistentDataType.BOOLEAN, value);
+            persistentDataContainer.set(getKey(key), PersistentDataType.TAG_CONTAINER, container);
+            return this;
+        }
+
+        // For older servers which doesn't support BOOLEAN type
+        container.set(getKey(subKey), PersistentDataType.BYTE, (byte) (value ? 1 : 0));
         persistentDataContainer.set(getKey(key), PersistentDataType.TAG_CONTAINER, container);
         return this;
     }
@@ -424,7 +457,13 @@ public class CMIPersistentDataContainer {
         if (container == null)
             return null;
 
+        if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) 
         return container.get(getKey(subKey), PersistentDataType.BOOLEAN);
+        
+	// For older servers which doesn't support BOOLEAN type
+        @Nullable
+        Byte b = container.get(getKey(subKey), PersistentDataType.BYTE);
+	return b == null ? null : b == 1;
     }
 
     public @Nullable Long getLong(String key, String subKey) {
