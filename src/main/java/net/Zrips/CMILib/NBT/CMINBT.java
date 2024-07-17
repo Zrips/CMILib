@@ -1602,8 +1602,7 @@ public class CMINBT {
                 return null;
 
             Method methTag = tile.getClass().getMethod(ff);
-            Object tag = methTag.invoke(tile);
-            return tag;
+            return methTag.invoke(tile);
         } catch (Exception e) {
             e.printStackTrace();
             return null;

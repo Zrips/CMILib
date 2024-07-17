@@ -1024,8 +1024,8 @@ public class Reflections {
     }
 
     @SuppressWarnings("deprecation")
-    private static org.bukkit.profile.PlayerProfile getProfile(String url) {
-        org.bukkit.profile.PlayerProfile profile = Bukkit.createPlayerProfile(UUID.nameUUIDFromBytes(url.getBytes()));
+    private static org.bukkit.profile.PlayerProfile getProfile(String name, String url) {
+        org.bukkit.profile.PlayerProfile profile = Bukkit.createPlayerProfile(UUID.nameUUIDFromBytes(url.getBytes()), name);
         org.bukkit.profile.PlayerTextures textures = profile.getTextures();
         try {
             textures.setSkin(new URL(url));
@@ -1047,10 +1047,7 @@ public class Reflections {
                 String decodedString = new String(java.util.Base64.getMimeDecoder().decode(texture)).replace("\n", "").replace(" ", "");
                 if (decodedString.contains("url\":\"")) {
                     SkullMeta meta = (SkullMeta) item.getItemMeta();
-                    meta.setOwnerProfile(getProfile(decodedString.split("url\":\"", 2)[1].split("\"", 2)[0]));
-
-//                    if (CMILibConfig.playerNameForItemStack && customProfileName != null && !customProfileName.isEmpty() && !customProfileName.contains(" ") && !customProfileName.contains("-"))
-//                        meta.setDisplayName(LC.info_playerHeadName.get("[playerName]", customProfileName));
+                    meta.setOwnerProfile(getProfile(customProfileName, decodedString.split("url\":\"", 2)[1].split("\"", 2)[0]));
                     item.setItemMeta(meta);
                 }
                 return item;
