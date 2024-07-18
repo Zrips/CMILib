@@ -1,7 +1,9 @@
 package net.Zrips.CMILib.Items;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.bukkit.potion.PotionEffectType;
@@ -19,11 +21,11 @@ public enum CMIPotionEffectType {
     BAD_OMEN,
     BLINDNESS,
     CONDUIT_POWER,
-    NAUSEA,
-    RESISTANCE,
+    NAUSEA("CONFUSION"),
+    RESISTANCE("DAMAGE_RESISTANCE"),
     DARKNESS,
     DOLPHINS_GRACE,
-    HASTE,
+    HASTE("FAST_DIGGING"),
     FIRE_RESISTANCE,
     GLOWING,
     INSTANT_DAMAGE,
@@ -31,17 +33,17 @@ public enum CMIPotionEffectType {
     HEALTH_BOOST,
     HERO_OF_THE_VILLAGE,
     HUNGER,
-    STRENGTH,
+    STRENGTH("INCREASE_DAMAGE"),
     INVISIBILITY,
-    JUMP_BOOST,
+    JUMP_BOOST("JUMP"),
     LEVITATION,
     LUCK,
     NIGHT_VISION,
     POISON,
     REGENERATION,
     SATURATION,
-    SLOWNESS,
-    MINING_FATIGUE,
+    SLOWNESS("SLOW"),
+    MINING_FATIGUE("SLOW_DIGGING"),
     SLOW_FALLING,
     SPEED,
     UNLUCK,
@@ -57,9 +59,12 @@ public enum CMIPotionEffectType {
 
     private String name = null;
     private String translatedName = null;
+    private List<String> alternativeNames = new ArrayList<String>();
     private PotionEffectType type = null;
 
-    CMIPotionEffectType() {
+    CMIPotionEffectType(String string) {
+        if (string != null)
+            alternativeNames.add(string);
         name = CMIText.everyFirstToUpperCase(this.toString());
 
         for (PotionEffectType one : PotionEffectType.values()) {
@@ -74,6 +79,22 @@ public enum CMIPotionEffectType {
             }
             type = one;
         }
+        if (type == null) {
+            for (String alternative : this.getAlternativeNames()) {
+                for (PotionEffectType one : PotionEffectType.values()) {
+                    if (one == null)
+                        continue;
+                    if (!one.getName().replace("_", "").replace(" ", "").equalsIgnoreCase(alternative.replace("_", "")))
+                        continue;
+                    type = one;
+                    break;
+                }
+            }
+        }
+    }
+
+    CMIPotionEffectType() {
+        this(null);
     }
 
     public PotionEffectType getType() {
@@ -95,12 +116,16 @@ public enum CMIPotionEffectType {
                 continue;
             byName.put(one.toString().replace(" ", "").replace("_", "").toLowerCase(), one.getType());
             byType.put(one.getType(), one);
+            for (String alternative : one.getAlternativeNames()) {
+                byName.put(alternative.replace(" ", "").replace("_", "").toLowerCase(), one.getType());
+            }
         }
         CMIScheduler.runTask(() -> {
             for (PotionEffectType one : PotionEffectType.values()) {
                 if (one == null)
                     continue;
                 byName.putIfAbsent(one.toString().replace(" ", "").replace("_", "").toLowerCase(), one);
+                byName.putIfAbsent(one.getName().replace(" ", "").replace("_", "").toLowerCase(), one);
             }
         });
     }
@@ -145,5 +170,9 @@ public enum CMIPotionEffectType {
 
     public String getTranslatedName() {
         return translatedName == null ? name : translatedName;
+    }
+
+    public List<String> getAlternativeNames() {
+        return alternativeNames;
     }
 }

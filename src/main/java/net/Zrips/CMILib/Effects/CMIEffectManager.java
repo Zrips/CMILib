@@ -82,7 +82,7 @@ public class CMIEffectManager {
         NOTE(CMIParticleType.PARTICLE, Material.NOTE_BLOCK),
         PORTAL(CMIParticleType.PARTICLE, Material.OBSIDIAN),
         @Deprecated
-        FLYING_GLYPH("ENCHANTMENT_TABLE", CMIParticleType.PARTICLE, CMIMaterial.ENCHANTING_TABLE.getMaterial()),
+        FLYING_GLYPH("ENCHANTMENT_TABLE", "ENCHANT", CMIParticleType.PARTICLE, CMIMaterial.ENCHANTING_TABLE.getMaterial()),
         FLAME(CMIParticleType.PARTICLE, CMIMaterial.FIRE_CHARGE.getMaterial()),
         LAVA_POP("LAVA", CMIParticleType.PARTICLE, Material.FLINT_AND_STEEL),
         FOOTSTEP(CMIParticleType.PARTICLE, Material.IRON_BOOTS),
@@ -211,7 +211,7 @@ public class CMIEffectManager {
         DRIPPING_WATER(),
         DRIPPING_LAVA(),
         MYCELIUM(),
-        ENCHANT("FLYING_GLYPH"),
+        ENCHANT("FLYING_GLYPH", "ENCHANTMENT_TABLE"),
         ITEM_SNOWBALL(),
         ITEM_SLIME(),
         ITEM(CMIParticleDataType.ItemStack),
@@ -298,6 +298,10 @@ public class CMIEffectManager {
 
         CMIParticle(CMIParticleType type, Material icon, CMIParticleDataType dataType) {
             this(new ArrayList<>(), type, icon, dataType);
+        }
+
+        CMIParticle(String secondaryName, String name) {
+            this(Arrays.asList(secondaryName, name), null, null, null);
         }
 
         CMIParticle(String secondaryName) {
@@ -433,45 +437,25 @@ public class CMIEffectManager {
             return cmiEffect;
         }
 
-//	public static Effect getEffect(String name) {
-//	    CMIParticle cmiEffect = getCMIParticle(name);
-////	    Bukkit.getConsoleSender().sendMessage("1 "+name);
-////	    Bukkit.getConsoleSender().sendMessage("2 "+cmiEffect);
-//
-//	    if (cmiEffect != null) {
-//		if (!cmiEffect.getType().equals(CMIParticleType.PARTICLE))
-//		    return null;
-//		for (Effect one : Effect.values()) {
-//		    if (one.toString().equalsIgnoreCase(cmiEffect.name()))
-//			return one;
-//		    if (one.toString().equalsIgnoreCase(cmiEffect.getName()))
-//			return one;
-//		}
-//	    } else {
-//		for (Effect one : Effect.values()) {
-//		    if (one.toString().replace("_", "").equalsIgnoreCase(name)) {
-//			try {
-//			    if (one.getType() != Type.VISUAL)
-//				return null;
-//			} catch (Exception | NoSuchMethodError e) {
-//			    return null;
-//			}
-//			return one;
-//		    }
-//		}
-//	    }
-//	    return null;
-//	}
-
         public Effect getEffect() {
             if (effect != null)
                 return effect;
             if (!isParticle())
                 return null;
 
-            String n = this.toString().replace("_", "").toLowerCase();
+            String n1 = this.toString().replace("_", "").toLowerCase();
+            String n2 = this.name().replace("_", "").toLowerCase();
+            String n3 = this.getName().replace("_", "").toLowerCase();
+
             for (Effect one : Effect.values()) {
-                if (!one.toString().toLowerCase().replace("_", "").equalsIgnoreCase(n))
+                String name1 = one.toString().toLowerCase().replace("_", "");
+                String name2 = one.name().toLowerCase().replace("_", "");
+                if (!name1.equalsIgnoreCase(n1) &&
+                    !name1.equalsIgnoreCase(n2) &&
+                    !name1.equalsIgnoreCase(n3) &&
+                    !name2.equalsIgnoreCase(n1) &&
+                    !name2.equalsIgnoreCase(n2) &&
+                    !name2.equalsIgnoreCase(n3))
                     continue;
                 effect = one;
                 break;
@@ -480,53 +464,20 @@ public class CMIEffectManager {
             if (effect != null)
                 return effect;
 
-            n = name().replace("_", "").toLowerCase();
-            for (Effect one : Effect.values()) {
-                if (!one.toString().toLowerCase().replace("_", "").equalsIgnoreCase(n))
-                    continue;
-                effect = one;
-                break;
-            }
-
-            if (effect != null)
-                return effect;
-
-            n = getName().replace("_", "").toLowerCase();
-            for (Effect one : Effect.values()) {
-                if (!one.toString().toLowerCase().replace("_", "").equalsIgnoreCase(n))
-                    continue;
-                effect = one;
-                break;
-            }
-
-            if (effect != null)
-                return effect;
-
-            for (String oneS : getSecondaryNames()) {
-                n = oneS.replace("_", "").toLowerCase();
+            main: for (String oneS : getSecondaryNames()) {
+                String n = oneS.replace("_", "").toLowerCase();
                 if (n.isEmpty())
-                    return effect == null ? null : effect;
+                    continue;
 
                 for (Effect one : Effect.values()) {
                     if (!one.toString().toLowerCase().replace("_", "").equalsIgnoreCase(n))
                         continue;
                     effect = one;
-                    break;
+                    break main;
                 }
             }
 
-            if (effect != null)
-                return effect;
-
-            for (Effect one : Effect.values()) {
-                if (!one.toString().toLowerCase().replace("_", "").contains(n))
-                    continue;
-                effect = one;
-                break;
-            }
-
-            return effect == null ? null : effect;
-
+            return effect;
         }
 
         public Material getIcon() {
@@ -649,9 +600,19 @@ public class CMIEffectManager {
             if (particle != null)
                 return (org.bukkit.Particle) particle;
 
-            String n = this.toString().replace("_", "").toLowerCase();
+            String n1 = this.toString().replace("_", "").toLowerCase();
+            String n2 = this.name().replace("_", "").toLowerCase();
+            String n3 = this.getName().replace("_", "").toLowerCase();
+
             for (org.bukkit.Particle one : org.bukkit.Particle.values()) {
-                if (!one.toString().toLowerCase().replace("_", "").equalsIgnoreCase(n))
+                String name1 = one.toString().toLowerCase().replace("_", "");
+                String name2 = one.name().toLowerCase().replace("_", "");
+                if (!name1.equalsIgnoreCase(n1)
+                    && !name1.equalsIgnoreCase(n2)
+                    && !name1.equalsIgnoreCase(n3)
+                    && !name2.equalsIgnoreCase(n1)
+                    && !name2.equalsIgnoreCase(n2)
+                    && !name2.equalsIgnoreCase(n3))
                     continue;
                 particle = one;
                 break;
@@ -660,49 +621,16 @@ public class CMIEffectManager {
             if (particle != null)
                 return (org.bukkit.Particle) particle;
 
-            n = name().replace("_", "").toLowerCase();
-            for (org.bukkit.Particle one : org.bukkit.Particle.values()) {
-                if (!one.toString().toLowerCase().replace("_", "").equalsIgnoreCase(n))
-                    continue;
-                particle = one;
-                break;
-            }
-
-            if (particle != null)
-                return (org.bukkit.Particle) particle;
-
-            n = getName().replace("_", "").toLowerCase();
-            for (org.bukkit.Particle one : org.bukkit.Particle.values()) {
-                if (!one.toString().toLowerCase().replace("_", "").equalsIgnoreCase(n))
-                    continue;
-                particle = one;
-                break;
-            }
-
-            if (particle != null)
-                return (org.bukkit.Particle) particle;
-
-            for (String oneS : getSecondaryNames()) {
-                n = oneS.replace("_", "").toLowerCase();
+            main: for (String oneS : getSecondaryNames()) {
+                String n = oneS.replace("_", "").toLowerCase();
                 if (n.isEmpty())
-                    return particle == null ? null : (org.bukkit.Particle) particle;
-
+                    continue;
                 for (org.bukkit.Particle one : org.bukkit.Particle.values()) {
                     if (!one.toString().toLowerCase().replace("_", "").equalsIgnoreCase(n))
                         continue;
                     particle = one;
-                    break;
+                    break main;
                 }
-            }
-
-            if (particle != null)
-                return (org.bukkit.Particle) particle;
-
-            for (org.bukkit.Particle one : org.bukkit.Particle.values()) {
-                if (!one.toString().toLowerCase().replace("_", "").contains(n))
-                    continue;
-                particle = one;
-                break;
             }
 
             return particle == null ? null : (org.bukkit.Particle) particle;

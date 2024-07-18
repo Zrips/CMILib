@@ -1,7 +1,5 @@
 package net.Zrips.CMILib.Items;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -39,8 +37,6 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
-import org.bukkit.profile.PlayerProfile;
-import org.bukkit.profile.PlayerTextures;
 
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.CMILibConfig;
@@ -53,7 +49,6 @@ import net.Zrips.CMILib.Container.CMIText;
 import net.Zrips.CMILib.Container.LeatherAnimationType;
 import net.Zrips.CMILib.Enchants.CMIEnchantment;
 import net.Zrips.CMILib.Entities.CMIEntityType;
-import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.Skins.CMISkin;
 import net.Zrips.CMILib.Version.Version;
@@ -113,7 +108,6 @@ public class CMIItemSerializer {
             return lskull;
         return CMILib.getInstance().getReflectionManager().setSkullTexture(lskull, skin.getName(), skin.getSkin());
     }
-
 
     private static CMIItemStack getItem(String name, CMIAsyncHead ahead) {
 
@@ -234,7 +228,6 @@ public class CMIItemSerializer {
             ItemStack skull = CMIMaterial.PLAYER_HEAD.newItemStack();
             SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
 
-            CMIDebug.d("this 0");
             if (Version.isCurrentEqualOrHigher(Version.v1_20_R1)) {
                 CMIEntityType type = CMIEntityType.get(d);
 
@@ -248,24 +241,9 @@ public class CMIItemSerializer {
 
                 if (ahead != null)
                     ahead.setAsyncHead(true);
-                CMIDebug.d("this 1");
                 CMIScheduler.runTaskAsynchronously(() -> {
                     CMISkin skin = CMILib.getInstance().getSkinManager().getSkin(d);
-
-                    if (skin != null) {
-//                        if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
-                        SkullMeta meta = ((SkullMeta) skull.getItemMeta());
-                        meta.setOwner(skin.getName());
-                        skull.setItemMeta(meta);
-//                        } else {
-//                            CMINBT nbt = new CMINBT(skull);
-//                            nbt.setString("SkullOwner.Name", skin.getName());
-//                        }
-                    }
-
                     ItemStack s = applySkin(skin, skull);
-
-                    CMIDebug.d("this 2");
                     if (ahead != null)
                         ahead.afterAsyncUpdate(s);
                     headCache.put(original, s);

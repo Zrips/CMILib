@@ -48,7 +48,6 @@ import net.Zrips.CMILib.Effects.CMIEffect;
 import net.Zrips.CMILib.Effects.CMIEffectManager.CMIParticleDataType;
 import net.Zrips.CMILib.Items.CMIItemStack;
 import net.Zrips.CMILib.Items.CMIMaterial;
-import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.RawMessages.RawMessage;
 import net.Zrips.CMILib.Version.Version;
@@ -1025,7 +1024,7 @@ public class Reflections {
 
     @SuppressWarnings("deprecation")
     private static org.bukkit.profile.PlayerProfile getProfile(String name, String url) {
-        org.bukkit.profile.PlayerProfile profile = Bukkit.createPlayerProfile(UUID.nameUUIDFromBytes(url.getBytes()), name);
+        org.bukkit.profile.PlayerProfile profile = Bukkit.createPlayerProfile(UUID.nameUUIDFromBytes(url.getBytes()), name == null ? name : name.replace(" ", ""));
         org.bukkit.profile.PlayerTextures textures = profile.getTextures();
         try {
             textures.setSkin(new URL(url));
@@ -1542,7 +1541,7 @@ public class Reflections {
 
             Object centity = CEntity.cast(entity);
 
-            if (teleportMethod == null) {                
+            if (teleportMethod == null) {
                 if (Version.isCurrentEqualOrHigher(Version.v1_21_R1))
                     teleportMethod = CEntity.getMethod("a_", double.class, double.class, double.class);
                 else if (Version.isCurrentEqualOrHigher(Version.v1_20_R4))
