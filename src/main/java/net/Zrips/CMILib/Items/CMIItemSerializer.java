@@ -743,6 +743,9 @@ public class CMIItemSerializer {
 
         potionType = CMIPotionType.get(potionType, upgraded, extended);
 
+        if (potionType == null)
+	    return false;
+        
         try {
             PotionMeta meta = (PotionMeta) item.getItemMeta();
 
