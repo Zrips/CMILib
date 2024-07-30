@@ -921,6 +921,10 @@ public class CMIItemStack {
         return item != null && !CMIMaterial.isAir(item.getType());
     }
 
+    public Integer getCustomModelData() {
+        return getCustomModelData(this.getItemStack());
+    }
+
     public static Integer getCustomModelData(ItemStack item) {
         if (item == null)
             return null;
@@ -932,6 +936,16 @@ public class CMIItemStack {
 
         Integer old = new CMINBT(item).getInt("CustomModelData");
         return old == null ? null : old;
+    }
+
+    public CMIItemStack setCustomModelData(int data) {
+        if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
+            setCustomModelData(this.getItemStack(), data);
+            return this;
+        }
+
+        this.setItemStack(setCustomModelData(this.getItemStack(), data));
+        return this;
     }
 
     public static ItemStack setCustomModelData(ItemStack item, int data) {

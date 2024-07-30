@@ -863,8 +863,8 @@ public class CMIItemSerializer {
         String f = value.substring(mMatch.group().length());
 
         try {
-            int data = Integer.parseInt(f);
-            cim.setNbt("CustomModelData", data);
+            int data = Integer.parseInt(f);            
+            cim.setCustomModelData(data);
             return true;
         } catch (Throwable e) {
             e.printStackTrace();

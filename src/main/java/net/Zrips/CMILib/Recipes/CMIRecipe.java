@@ -20,6 +20,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Container.CMIList;
 import net.Zrips.CMILib.Container.CMINamespacedKey;
+import net.Zrips.CMILib.Items.CMIItemStack;
 import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.Version.Version;
@@ -437,7 +438,7 @@ public class CMIRecipe {
 
         if (recipe instanceof ShapelessRecipe) {
             ShapelessRecipe rc = (ShapelessRecipe) recipe;
-            
+
             for (int i = 0; i < rc.getIngredientList().size(); i++) {
 
                 CMIRecipeIngredient CMIri = new CMIRecipeIngredient(rc.getIngredientList().get(i));
@@ -623,8 +624,7 @@ public class CMIRecipe {
                     if (meta.hasLore())
                         str.append(CMIList.listToString(meta.getLore()));
                 }
-                CMINBT nbt = new CMINBT(one.getValue().getItem());
-                Integer value = nbt.getInt("CustomModelData");
+                Integer value = CMIItemStack.getCustomModelData(one.getValue().getItem());
                 if (value != null)
                     str.append(":" + value);
             }
