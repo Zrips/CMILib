@@ -22,6 +22,7 @@ public enum AttributeType {
     private String name;
     private String preName;
     private int action;
+    private org.bukkit.attribute.Attribute attribute = null;
 
     private AttributeType(String preName, String name, int action) {
         this.preName = preName;
@@ -56,6 +57,18 @@ public enum AttributeType {
 
     public int getAction() {
         return action;
+    }
+
+    public org.bukkit.attribute.Attribute getAttribute() {
+        if (attribute == null)
+            for (org.bukkit.attribute.Attribute one : org.bukkit.attribute.Attribute.values()) {
+                if (one.toString().equalsIgnoreCase(this.getIdentificator())) {
+                    attribute = one;
+                    break;
+                }
+            }
+
+        return attribute;
     }
 
 }

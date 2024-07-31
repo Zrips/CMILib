@@ -7,9 +7,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
@@ -154,14 +156,19 @@ public class CMIItemStack {
         if (attList == null || attList.isEmpty())
             return this;
         try {
-//	    for (Attribute attribute : attList) {
-//		org.bukkit.attribute.AttributeModifier atmod =
-//		    new org.bukkit.attribute.AttributeModifier(UUID.randomUUID(), attribute.getType().getFullName(), attribute.getMod(), Operation.ADD_NUMBER, null);
-//		attribute.getType().Armor
-//		this.getItemStack().getItemMeta().addAttributeModifier(org.bukkit.attribute.Attribute., atmod);
-//	    }
-        } catch (Throwable e) {
 
+            if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
+                ItemMeta meta = this.getItemStack().getItemMeta();
+                attList.forEach(att -> {
+                    AttributeModifier attackDamage = new AttributeModifier(UUID.randomUUID(), att.getType().getFullName(), att.getMod(),
+                        att.getOperation() == 0 ? AttributeModifier.Operation.ADD_NUMBER : att.getOperation() == 1 ? AttributeModifier.Operation.ADD_SCALAR : AttributeModifier.Operation.MULTIPLY_SCALAR_1);
+                    meta.addAttributeModifier(att.getType().getAttribute(), attackDamage);
+                });
+                this.getItemStack().setItemMeta(meta);
+                return this;
+            }
+        } catch (Throwable e) {
+            e.printStackTrace();
         }
 
         this.item = CMILib.getInstance().getReflectionManager().addAttributes(attList, this.getItemStack());
