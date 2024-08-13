@@ -145,7 +145,7 @@ public class CMIEffectManager {
         FALLING_HONEY(CMIMaterial.HONEY_BOTTLE),
         LANDING_HONEY(CMIMaterial.HONEY_BOTTLE),
         FALLING_NECTAR(CMIMaterial.HONEY_BOTTLE),
-        SOUL_FIRE_FLAME(CMIMaterial.SOUL_FIRE),
+        SOUL_FIRE_FLAME(CMIMaterial.SOUL_LANTERN),
         ASH(),
         CRIMSON_SPORE(),
         WARPED_SPORE(),

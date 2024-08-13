@@ -29,6 +29,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.jetbrains.annotations.Nullable;
 
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Attributes.Attribute;
@@ -42,6 +43,8 @@ import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.Recipes.CMIRecipe;
 import net.Zrips.CMILib.Recipes.CMIRecipeIngredient;
 import net.Zrips.CMILib.Version.Version;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 
 public class CMIItemStack {
 
@@ -202,6 +205,7 @@ public class CMIItemStack {
             return getRealName();
 
         ItemMeta meta = this.getItemStack().getItemMeta();
+
         return meta == null || meta.getDisplayName() == null || meta.getDisplayName().isEmpty() ? getRealName() : meta.getDisplayName();
     }
 
@@ -956,7 +960,7 @@ public class CMIItemStack {
     }
 
     public static ItemStack setCustomModelData(ItemStack item, int data) {
-        if (item == null || data < 1)
+        if (item == null)
             return item;
 
         if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
