@@ -292,17 +292,25 @@ public class RawMessage {
         return this;
     }
 
+    public RawMessage addText(LC lc, boolean colorize) {
+        return addText(lc.getLocale(), colorize);
+    }
+
     public RawMessage addText(LC lc) {
-        return addText(lc.getLocale());
+        return addText(lc.getLocale(), true);
     }
 
     public RawMessage addText(String text) {
+        return addText(text, true);
+    }
+
+    public RawMessage addText(String text, boolean colorize) {
         if (text == null || text.isEmpty())
             return this;
         if (temp.containsKey(RawMessagePartType.Text))
             build();
 
-        onlyText.add(CMIChatColor.translate(text));
+        onlyText.add(colorize ? CMIChatColor.translate(text) : text);
 
         text = textIntoJson(text, false);
 
@@ -311,9 +319,10 @@ public class RawMessage {
             f = "\"text\":\"\"";
         else if (text.equalsIgnoreCase(" "))
             f = "\"text\":\" \"";
-        else
-            f = "\"text\":\"\",\"extra\":[" + CMIChatColor.translate(text).replace(CMIChatColor.colorHexReplacerPlaceholder, CMIChatColor.colorCodePrefix).replace(CMIChatColor.colorReplacerPlaceholder,
-                "&") + "]";
+        else {
+            text = colorize ? CMIChatColor.translate(text) : text;
+            f = "\"text\":\"\",\"extra\":[" + text.replace(CMIChatColor.colorHexReplacerPlaceholder, CMIChatColor.colorCodePrefix).replace(CMIChatColor.colorReplacerPlaceholder, "&") + "]";
+        }
         temp.put(RawMessagePartType.Text, f);
         return this;
     }

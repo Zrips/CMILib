@@ -1810,7 +1810,7 @@ public class Reflections {
                     return;
 
                 org.bukkit.Particle.DustOptions dd = null;
-                if (particle.equals(org.bukkit.Particle.REDSTONE))
+                if (particle.toString().equals("REDSTONE"))
                     dd = new org.bukkit.Particle.DustOptions(ef.getColor(), ef.getSize());
 
                 if (CraftParticleMethod == null)
@@ -1833,7 +1833,7 @@ public class Reflections {
                     return;
 
                 org.bukkit.Particle.DustOptions dd = null;
-                if (particle.equals(org.bukkit.Particle.REDSTONE))
+                if (particle.toString().equals("REDSTONE"))
                     dd = new org.bukkit.Particle.DustOptions(ef.getColorFrom(), ef.getSize());
 
                 if (CraftParticleMethod == null)

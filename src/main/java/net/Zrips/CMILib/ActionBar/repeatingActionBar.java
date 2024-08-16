@@ -8,24 +8,24 @@ public class repeatingActionBar {
     private Long until = 0L;
 
     public CMITask getScheduler() {
-	return scheduler;
+        return scheduler;
     }
 
     public void cancel() {
-	if (scheduler != null)
-	    scheduler.cancel();
+        if (scheduler != null)
+            scheduler.cancel();
     }
 
     public void setScheduler(CMITask cmiTask) {
-	this.scheduler = cmiTask;
+        this.scheduler = cmiTask;
     }
 
     public Long getUntil() {
-	return until;
+        return until;
     }
 
     public void setUntil(Long until) {
-	this.until = until;
+        this.until = until;
     }
 
 }

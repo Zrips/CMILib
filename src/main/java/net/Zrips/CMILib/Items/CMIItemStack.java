@@ -29,7 +29,6 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.jetbrains.annotations.Nullable;
 
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Attributes.Attribute;
@@ -74,6 +73,9 @@ public class CMIItemStack {
     }
 
     public CMIItemStack(ItemStack item) {
+        if (item == null)
+            item = new ItemStack(Material.AIR);
+        cmiMaterial = CMIMaterial.get(item);
         this.setItemStack(item);
     }
 
@@ -378,8 +380,9 @@ public class CMIItemStack {
     @SuppressWarnings("deprecation")
     public ItemStack getItemStack() {
 
-        if (item != null)
+        if (item != null) {
             return item;
+        }
 
         try {
             if (!this.getType().isItem()) {
@@ -442,38 +445,39 @@ public class CMIItemStack {
     @SuppressWarnings("deprecation")
     public CMIItemStack setItemStack(ItemStack item) {
         this.item = item;
-        if (item != null) {
-            this.amount = item.getAmount();
-            this.material = item.getType();
-            this.cmiMaterial = CMIMaterial.get(item);
-            if (Version.isCurrentEqualOrLower(Version.v1_13_R2)) {
-                this.id = item.getType().getId();
-                if ((this.getType().isBlock() || this.getType().isSolid())) {
-                    data = item.getData().getData();
-                }
-                if (item.getType().getMaxDurability() - item.getDurability() < 0) {
-                    data = item.getData().getData();
-                }
-            } else if (cmiMaterial != null) {
-                this.id = cmiMaterial.getId();
-            }
+        if (item == null)
+            return this;
 
-            if (item.getType().getMaxDurability() > 15) {
-                data = (short) 0;
+        this.amount = item.getAmount();
+        this.material = item.getType();
+        this.cmiMaterial = CMIMaterial.get(item);
+        if (Version.isCurrentEqualOrLower(Version.v1_13_R2)) {
+            this.id = item.getType().getId();
+            if ((this.getType().isBlock() || this.getType().isSolid())) {
+                data = item.getData().getData();
             }
-
-            if (CMIMaterial.isMonsterEgg(item.getType())) {
-                entityType = CMIEntityType.getByType(CMILib.getInstance().getReflectionManager().getEggType(item));
+            if (item.getType().getMaxDurability() - item.getDurability() < 0) {
+                data = item.getData().getData();
             }
+        } else if (cmiMaterial != null) {
+            this.id = cmiMaterial.getId();
+        }
 
-            if (item.getType() == Material.POTION || item.getType().name().contains("SPLASH_POTION") || item.getType().name().contains("TIPPED_ARROW")) {
-                PotionMeta potion = (PotionMeta) item.getItemMeta();
-                try {
-                    if (potion != null && potion.getBasePotionData() != null && potion.getBasePotionData().getType() != null && potion.getBasePotionData().getType().getEffectType() != null) {
-                        data = (short) potion.getBasePotionData().getType().getEffectType().getId();
-                    }
-                } catch (NoSuchMethodError e) {
+        if (item.getType().getMaxDurability() > 15) {
+            data = (short) 0;
+        }
+
+        if (CMIMaterial.isMonsterEgg(item.getType())) {
+            entityType = CMIEntityType.getByType(CMILib.getInstance().getReflectionManager().getEggType(item));
+        }
+
+        if (item.getType() == Material.POTION || item.getType().name().contains("SPLASH_POTION") || item.getType().name().contains("TIPPED_ARROW")) {
+            PotionMeta potion = (PotionMeta) item.getItemMeta();
+            try {
+                if (potion != null && potion.getBasePotionData() != null && potion.getBasePotionData().getType() != null && potion.getBasePotionData().getType().getEffectType() != null) {
+                    data = (short) potion.getBasePotionData().getType().getEffectType().getId();
                 }
+            } catch (NoSuchMethodError e) {
             }
         }
 
