@@ -2,15 +2,14 @@ package net.Zrips.CMILib.ActionBar;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -18,11 +17,11 @@ import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Colors.CMIChatColor;
 import net.Zrips.CMILib.Container.CMICommandSender;
 import net.Zrips.CMILib.Container.CMINumber;
-import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Messages.CMIMessages;
 import net.Zrips.CMILib.RawMessages.RawMessage;
 import net.Zrips.CMILib.Version.Version;
 import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
+import net.Zrips.CMILib.Version.Schedulers.CMITask;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 
@@ -182,7 +181,7 @@ public class CMIActionBar {
             return;
 
         keepFor--;
-        keepFor = CMINumber.clamp(keepFor, 0, keepFor);
+        keepFor = CMINumber.clamp(keepFor, 0, 60 * 60);
 
         if (Version.isCurrentEqualOrHigher(Version.v1_21_R1)) {
             simplifiedSend(receivingPacket, msg, keepFor);
@@ -228,6 +227,24 @@ public class CMIActionBar {
 
             Object packet = p;
 
+            if (keepFor < 1) {
+                for (Player player : receivingPacket) {
+                    if (player == null)
+                        continue;
+
+                    actionbarMap.remove(player.getUniqueId());
+
+                    try {
+                        Object cplayer = getHandle.invoke(player);
+                        Object connection = playerConnection.get(cplayer);
+                        sendPacket.invoke(connection, packet);
+                    } catch (Throwable e) {
+                        e.printStackTrace();
+                    }
+                }
+                return;
+            }
+
             for (Player player : receivingPacket) {
                 if (player == null)
                     continue;
@@ -235,80 +252,102 @@ public class CMIActionBar {
                 Object cplayer = getHandle.invoke(player);
                 Object connection = playerConnection.get(cplayer);
 
-                if (keepFor < 1) {
-                    CMIScheduler.get().runTaskAsynchronously(() -> {
-                        try {
-                            sendPacket.invoke(connection, packet);
-                        } catch (Throwable e) {
-                            e.printStackTrace();
-                        }
-                    });
-                    continue;
-                }
+                repeatingActionBar old = actionbarMap.computeIfAbsent(player.getUniqueId(), k -> new repeatingActionBar(player));
 
-                repeatingActionBar old = actionbarMap.computeIfAbsent(player.getUniqueId(), k -> new repeatingActionBar());
-                old.cancel();
                 old.setUntil(System.currentTimeMillis() + (keepFor * 1000L));
+                old.setConnection(connection);
+                old.setPacket(packet);
 
-                old.setScheduler(CMIScheduler.runTimerAsync(() -> {
-                    repeatingActionBar prev = actionbarMap.get(player.getUniqueId());
-                    if (prev == null)
-                        return;
-
-                    if (prev.getUntil() < System.currentTimeMillis()) {
-                        prev.cancel();
-                        return;
-                    }
-
-                    try {
-                        sendPacket.invoke(connection, packet);
-                    } catch (Throwable e) {
-                        e.printStackTrace();
-                    }
-                }, 0L, 20L));
+                try {
+                    sendPacket.invoke(connection, packet);
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
             }
+
+            runTimer();
 
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
+    static CMITask timer = null;
+
+    private static void runTimer() {
+
+        if (timer != null) {
+            return;
+        }
+
+        if (actionbarMap.isEmpty())
+            return;
+
+        timer = CMIScheduler.runTimerAsync(() -> {
+
+            Iterator<Entry<UUID, repeatingActionBar>> iter = actionbarMap.entrySet().iterator();
+            while (iter.hasNext()) {
+
+                Entry<UUID, repeatingActionBar> next = iter.next();
+                repeatingActionBar data = next.getValue();
+
+                if (data.getUntil() < System.currentTimeMillis()) {
+                    iter.remove();
+                    continue;
+                }
+
+                if (data.getMessage() != null) {
+                    spigotSend(data.getPlayer(), data.getMessage());
+                    continue;
+                }
+
+                try {
+                    sendPacket.invoke(data.getConnection(), data.getPacket());
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if (!actionbarMap.isEmpty())
+                return;
+
+            timer.cancel();
+            timer = null;
+        }, 0L, 20L);
+
+    }
+
     private static synchronized void simplifiedSend(List<Player> receivingPacket, String msg, int keepFor) {
+
+        if (keepFor < 1) {
+            for (Player player : receivingPacket) {
+                if (player == null)
+                    continue;
+
+                actionbarMap.remove(player.getUniqueId());
+                spigotSend(player, msg);
+            }
+            return;
+        }
+
         for (Player player : receivingPacket) {
             if (player == null)
                 continue;
 
-            if (keepFor < 1) {
-                CMIScheduler.runTaskAsynchronously(() -> {
-                    try {
-                        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, player.getUniqueId(), new TextComponent(CMIChatColor.translate(msg)));
-                    } catch (Throwable e) {
-                        e.printStackTrace();
-                    }
-                });
-                continue;
-            }
-
-            repeatingActionBar old = actionbarMap.computeIfAbsent(player.getUniqueId(), k -> new repeatingActionBar());
-            old.cancel();
+            repeatingActionBar old = actionbarMap.computeIfAbsent(player.getUniqueId(), k -> new repeatingActionBar(player, msg));
             old.setUntil(System.currentTimeMillis() + (keepFor * 1000L));
+            spigotSend(player, msg);
+        }
 
-            old.setScheduler(CMIScheduler.runTimerAsync(() -> {
-                repeatingActionBar prev = actionbarMap.get(player.getUniqueId());
-                if (prev == null)
-                    return;
+        if (keepFor > 0)
+            runTimer();
+    }
 
-                if (prev.getUntil() < System.currentTimeMillis()) {
-                    prev.cancel();
-                    return;
-                }
-
-                try {
-                    player.spigot().sendMessage(ChatMessageType.ACTION_BAR, player.getUniqueId(), new TextComponent(CMIChatColor.translate(msg)));
-                } catch (Throwable e) {
-                    e.printStackTrace();
-                }
-            }, 0L, 20L));
+    private static void spigotSend(Player player, String msg) {
+        try {
+            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, player.getUniqueId(), new TextComponent(CMIChatColor.translate(msg)));
+        } catch (Throwable e) {
+            e.printStackTrace();
         }
     }
 
