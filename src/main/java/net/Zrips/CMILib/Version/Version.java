@@ -1,5 +1,6 @@
 package net.Zrips.CMILib.Version;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -173,6 +174,20 @@ public enum Version {
             platform = MinecraftPlatform.pufferfish;
             return platform;
         }
+        if (version.contains("airplane")) {
+            platform = MinecraftPlatform.airplane;
+            return platform;
+        }
+
+        if (version.contains("fabric")) {
+            platform = MinecraftPlatform.fabric;
+            return platform;
+        }
+
+        if (version.contains("magma")) {
+            platform = MinecraftPlatform.magma;
+            return platform;
+        }
 
         try {
             Class.forName("io.papermc.paper.threadedregions.RegionizedServer");
@@ -183,9 +198,29 @@ public enum Version {
 
         try {
             Class.forName("com.destroystokyo.paper.PaperConfig");
-            platform = MinecraftPlatform.paper;
+
+            try {
+                String versionText = (String) Bukkit.class.getMethod("getVersionMessage").invoke(Bukkit.class);
+
+                for (MinecraftPlatform one : MinecraftPlatform.values()) {
+                    if (!one.isAsync()) {
+                        continue;
+                    }
+
+                    if (!versionText.toLowerCase().contains(one.toString().toLowerCase()))
+                        continue;
+                    platform = one;
+                }
+
+            } catch (Throwable e) {
+            }
+            
+            if (platform == null)
+                platform = MinecraftPlatform.paper;
             return platform;
-        } catch (ClassNotFoundException e) {
+        } catch (
+
+        ClassNotFoundException e) {
         }
 
         try {

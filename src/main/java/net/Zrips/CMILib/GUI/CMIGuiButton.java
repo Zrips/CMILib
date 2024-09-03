@@ -70,7 +70,7 @@ public class CMIGuiButton {
                 ItemFlag.HIDE_DYE,
                 ItemFlag.HIDE_ENCHANTS,
                 ItemFlag.HIDE_UNBREAKABLE,
-                ItemFlag.HIDE_PLACED_ON);
+                ItemFlag.HIDE_PLACED_ON); 
 //            try {
 //                meta.addItemFlags(ItemFlag.HIDE_ITEM_SPECIFICS);
 //            } catch (Throwable e) {

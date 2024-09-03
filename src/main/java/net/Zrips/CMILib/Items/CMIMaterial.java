@@ -1931,9 +1931,9 @@ public enum CMIMaterial {
         if (Version.isCurrentEqualOrHigher(Version.v1_14_R1)) {
 
             if (Version.isFolia()) {
-                // Invoke World#getChunkAtAsync to load chunk off-main
+                // Invoke World#getChunkAt to load chunk off-main
                 try {
-                    if (!block.getWorld().getChunkAtAsync(block).get().isLoaded())
+                    if (!block.getWorld().getChunkAt(block).isLoaded())
                         return CMIMaterial.NONE;
                 } catch (Throwable e) {
                     e.printStackTrace();

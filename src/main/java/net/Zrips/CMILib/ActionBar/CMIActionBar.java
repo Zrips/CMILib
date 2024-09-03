@@ -43,8 +43,8 @@ public class CMIActionBar {
     }
 
     private static void init() {
-        if (Version.isCurrentEqualOrHigher(Version.v1_21_R1))
-            return;
+//        if (Version.isCurrentEqualOrHigher(Version.v1_21_R1))
+//            return;
 
         if (Version.isCurrentEqualOrHigher(Version.v1_19_R1)) {
             try {
@@ -182,11 +182,12 @@ public class CMIActionBar {
 
         keepFor--;
         keepFor = CMINumber.clamp(keepFor, 0, 60 * 60);
-
-        if (Version.isCurrentEqualOrHigher(Version.v1_21_R1)) {
-            simplifiedSend(receivingPacket, msg, keepFor);
-            return;
-        }
+        
+// Incorrectly processes hex color codes
+//        if (Version.isCurrentEqualOrHigher(Version.v1_21_R1)) {
+//            simplifiedSend(receivingPacket, msg, keepFor);
+//            return;
+//        }
 
         try {
             if (!Version.getCurrent().isHigher(Version.v1_7_R4) || Version.isCurrentLower(Version.v1_21_R1) && nmsChatSerializer == null) {
