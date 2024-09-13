@@ -1525,7 +1525,7 @@ public class CMINBT {
                 tag = nbtTagCompound.getDeclaredConstructor().newInstance();
 
             return tag;
-        } catch (Exception e) {
+        } catch (Throwable e) {
             e.printStackTrace();
             return null;
         }
