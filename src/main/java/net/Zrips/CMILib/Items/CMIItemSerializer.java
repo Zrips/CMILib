@@ -634,6 +634,14 @@ public class CMIItemSerializer {
     private static boolean applySpecials(CMIItemStack cim, String value) {
         switch (value.toLowerCase()) {
         case "unbreakable":
+
+            if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
+                ItemMeta meta = cim.getItemStack().getItemMeta();
+                meta.setUnbreakable(true);
+                cim.getItemStack().setItemMeta(meta);
+                return true;
+            }
+
             cim.setItemStack((ItemStack) new CMINBT(cim.getItemStack()).setByte("Unbreakable", (byte) 1));
             return true;
         }
@@ -744,8 +752,8 @@ public class CMIItemSerializer {
         potionType = CMIPotionType.get(potionType, upgraded, extended);
 
         if (potionType == null)
-	    return false;
-        
+            return false;
+
         try {
             PotionMeta meta = (PotionMeta) item.getItemMeta();
 
@@ -863,7 +871,7 @@ public class CMIItemSerializer {
         String f = value.substring(mMatch.group().length());
 
         try {
-            int data = Integer.parseInt(f);            
+            int data = Integer.parseInt(f);
             cim.setCustomModelData(data);
             return true;
         } catch (Throwable e) {
