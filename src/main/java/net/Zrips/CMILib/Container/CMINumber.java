@@ -53,7 +53,7 @@ public class CMINumber {
 
     public static double sum(double number1, double number2, int precision) {
         double decimals = (int) Math.pow(10, precision);
-        return ((int) (number1 * decimals) + (int) (number2 * decimals)) / decimals;
+        return (Math.round((number1 * decimals) + (int) (number2 * decimals))) / decimals;
     }
 
     public static double clamp(double number, double min, int max) {
