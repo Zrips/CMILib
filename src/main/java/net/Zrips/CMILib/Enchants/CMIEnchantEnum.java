@@ -45,7 +45,10 @@ public enum CMIEnchantEnum {
     SWIFT_SNEAK,
     THORNS,
     UNBREAKING("DURABILITY"),
-    VANISHING_CURSE;
+    VANISHING_CURSE,
+    DENSITY,
+    BREACH,
+    WIND_BURST;
 
     private List<String> alternatives = new ArrayList<>();
     private Enchantment enchant = null;

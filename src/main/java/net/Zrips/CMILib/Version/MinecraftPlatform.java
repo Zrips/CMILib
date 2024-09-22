@@ -4,11 +4,15 @@ public enum MinecraftPlatform {
 
     paper(true),
     purpur(true),
+    leaves(true),
+    leaf(true),
     tuinity(true),
     yatopia(true),
     airplane(true),
     pufferfish(true),
-    folia(true),
+    folia(true), 
+    fabric(true),
+    magma(true),
     
     craftbukkit(false),
     spigot(false),

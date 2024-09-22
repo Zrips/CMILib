@@ -3,6 +3,7 @@ package net.Zrips.CMILib.Container;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -105,13 +106,21 @@ public class CMIWorld {
 
         if (w != null)
             return w;
-
+        String originalName = name;
         name = name.replaceAll("[_|.|-]", "");
 
         for (World one : Bukkit.getWorlds()) {
             String n = one.getName().replaceAll("[_|.|-]", "");
             if (n.equalsIgnoreCase(name))
                 return one;
+        }
+
+        if (originalName.length() == 36) {
+            try {
+                return Bukkit.getWorld(UUID.fromString(originalName));
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
         }
 
         return null;

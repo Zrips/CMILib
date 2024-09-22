@@ -2,6 +2,7 @@ package net.Zrips.CMILib.Version.Teleporters;
 
 import java.util.concurrent.CompletableFuture;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
@@ -30,14 +31,14 @@ public class CMIBukkitTeleportImpl implements CMIBaseTeleportImpl {
     @Override
     public @NotNull CompletableFuture<Boolean> teleportAsync(Entity ent, Location loc) {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
-        completableFuture.complete(ent.teleport(loc));
+        Bukkit.getScheduler().runTask(plugin, () -> completableFuture.complete(ent.teleport(loc)));
         return completableFuture;
     }
 
     @Override
     public @NotNull CompletableFuture<Boolean> teleportAsync(Entity ent, Location loc, TeleportCause cause) {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
-        completableFuture.complete(ent.teleport(loc, cause));
+        Bukkit.getScheduler().runTask(plugin, () -> completableFuture.complete(ent.teleport(loc, cause)));
         return completableFuture;
     }
 

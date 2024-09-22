@@ -16,7 +16,6 @@ import com.google.gson.JsonObject;
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Items.CMIItemStack;
 import net.Zrips.CMILib.Items.CMIMaterial;
-import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.RawMessages.RawMessage;
 import net.Zrips.CMILib.Version.Version;
 import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
@@ -124,7 +123,7 @@ public class CMIAdvancement {
         if (Version.isCurrentLower(Version.v1_13_R1))
             icon.addProperty("data", getData());
 
-        if (Version.isCurrentHigher(Version.v1_13_R1) && getCustomModelData() > 0) {
+        if (Version.isCurrentHigher(Version.v1_13_R1) && getCustomModelData() != 0) {
             icon.addProperty("nbt", "{CustomModelData:" + getCustomModelData() + "}");
         }
 

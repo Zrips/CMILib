@@ -100,7 +100,7 @@ public enum LC {
     info_variables_Online("&6Online"),
     info_variables_Offline("&cOffline"),
     info_variables_TrueColor("&2"),
-    info_variables_FalseColor("&4"),
+    info_variables_FalseColor("&c"),
     info_variables_True("&6True"),
     info_variables_False("&cFalse"),
     info_variables_Enabled("&6Enabled"),

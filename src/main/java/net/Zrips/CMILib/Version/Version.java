@@ -1,5 +1,6 @@
 package net.Zrips.CMILib.Version;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 
 import net.Zrips.CMILib.CMILib;
+import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Messages.CMIMessages;
 
 public enum Version {
@@ -44,7 +46,7 @@ public enum Version {
     v1_20_R2,
     v1_20_R3(4),
     v1_20_R4(5, 6),
-    v1_21_R1,
+    v1_21_R1(0, 1),
     v1_21_R2,
     v1_21_R3,
     v1_22_R1,
@@ -65,7 +67,7 @@ public enum Version {
 
     static {
         getCurrent();
-        CMIMessages.consoleMessage("&3Server version: " + current.toString() + " - " + current.getFormated() + " - " + getPlatform() + "  " + Bukkit.getVersion());
+        CMIMessages.consoleMessage("&3Server version: " + getCurrent().toString() + " - " + getCurrent().getFormated() + " - " + getPlatform() + "  " + Bukkit.getVersion());
 
         // Enables extra commands for test servers
         if (CMILib.getInstance().getReflectionManager().getServerName().equals("LT_Craft") && Bukkit.getWorlds().get(0).getSeed() == 1782374759)
@@ -172,6 +174,20 @@ public enum Version {
             platform = MinecraftPlatform.pufferfish;
             return platform;
         }
+        if (version.contains("airplane")) {
+            platform = MinecraftPlatform.airplane;
+            return platform;
+        }
+
+        if (version.contains("fabric")) {
+            platform = MinecraftPlatform.fabric;
+            return platform;
+        }
+
+        if (version.contains("magma")) {
+            platform = MinecraftPlatform.magma;
+            return platform;
+        }
 
         try {
             Class.forName("io.papermc.paper.threadedregions.RegionizedServer");
@@ -182,9 +198,29 @@ public enum Version {
 
         try {
             Class.forName("com.destroystokyo.paper.PaperConfig");
-            platform = MinecraftPlatform.paper;
+
+            try {
+                String versionText = (String) Bukkit.class.getMethod("getVersionMessage").invoke(Bukkit.class);
+
+                for (MinecraftPlatform one : MinecraftPlatform.values()) {
+                    if (!one.isAsync()) {
+                        continue;
+                    }
+
+                    if (!versionText.toLowerCase().contains(one.toString().toLowerCase()))
+                        continue;
+                    platform = one;
+                }
+
+            } catch (Throwable e) {
+            }
+            
+            if (platform == null)
+                platform = MinecraftPlatform.paper;
             return platform;
-        } catch (ClassNotFoundException e) {
+        } catch (
+
+        ClassNotFoundException e) {
         }
 
         try {
@@ -200,6 +236,13 @@ public enum Version {
     public static Version getCurrent() {
         if (current != null)
             return current;
+// Paper returns examples as of 1.20
+//        Bukkit.getServer().getClass().getPackage().getName();   org.bukkit.craftbukkit
+//        Bukkit.getBukkitVersion();                              1.21-R0.1-SNAPSHOT
+//        Bukkit.getMinecraftVersion();                           1.21
+//        Bukkit.getVersion();                                    1.21-4-090775e (MC: 1.21)
+//        Bukkit.getVersionMessage();                             This server is running Paper version 1.21-4-master@090775e (2024-06-18T13:42:35Z) (Implementing API version 1.21-R0.1-SNAPSHOT)
+
         String[] v = Bukkit.getServer().getClass().getPackage().getName().split("\\.");
 
         try {
@@ -221,31 +264,50 @@ public enum Version {
             }
         }
 
-        if (current == null) {
-            String ve = Bukkit.getBukkitVersion().split("-", 2)[0];
-            main: for (Version one : values()) {
-                if (one.name().equalsIgnoreCase(ve)) {
+        if (current != null)
+            return current;
+
+        String ve = Bukkit.getBukkitVersion().split("-", 2)[0];
+        main: for (Version one : values()) {
+            if (one.name().equalsIgnoreCase(ve)) {
+                current = one;
+                break;
+            }
+            List<String> cleanVersion = one.getMinorVersions();
+            for (String cv : cleanVersion) {
+                if (ve.equalsIgnoreCase(cv)) {
                     current = one;
-                    break;
-                }
-                List<String> cleanVersion = one.getMinorVersions();
-                for (String cv : cleanVersion) {
-                    if (ve.equalsIgnoreCase(cv)) {
-                        current = one;
-                        break main;
-                    }
+                    break main;
                 }
             }
         }
 
-        if (current == null) {
-            String ve = Bukkit.getBukkitVersion().split("-", 2)[0];
-            for (Version one : values()) {
-                if (ve.startsWith(one.getSimplifiedVersion())) {
-                    current = one;
-                    CMIMessages.consoleMessage("&c[CMILib] &eServer version detection needs aditional update");
-                    break;
+        if (current != null)
+            return current;
+
+        main: for (int i = 1; i < 10; i++) {
+            try {
+                Class.forName("org.bukkit.craftbukkit.v" + ve.replace(".", "_") + "_R" + i + ".entity.CraftPlayer");
+                for (Version one : values()) {
+                    if (one.name().equalsIgnoreCase("v" + ve.replace(".", "_") + "_R" + i)) {
+                        current = one;
+                        break main;
+                    }
                 }
+
+                break;
+            } catch (ClassNotFoundException e) {
+            }
+        }
+
+        if (current != null)
+            return current;
+
+        for (Version one : values()) {
+            if (ve.startsWith(one.getSimplifiedVersion()) || ve.startsWith(one.getSimplifiedVersion().substring(0, one.getSimplifiedVersion().length() - 1))) {
+                current = one;
+                CMIMessages.consoleMessage("&c[CMILib] &eServer version detection needs aditional update");
+                break;
             }
         }
 
@@ -269,23 +331,23 @@ public enum Version {
     }
 
     public static boolean isCurrentEqualOrHigher(Version v) {
-        return current.getValue() >= v.getValue();
+        return getCurrent().getValue() >= v.getValue();
     }
 
     public static boolean isCurrentHigher(Version v) {
-        return current.getValue() > v.getValue();
+        return getCurrent().getValue() > v.getValue();
     }
 
     public static boolean isCurrentLower(Version v) {
-        return current.getValue() < v.getValue();
+        return getCurrent().getValue() < v.getValue();
     }
 
     public static boolean isCurrentEqualOrLower(Version v) {
-        return current.getValue() <= v.getValue();
+        return getCurrent().getValue() <= v.getValue();
     }
 
     public static boolean isCurrentEqual(Version v) {
-        return current.getValue() == v.getValue();
+        return getCurrent().getValue() == v.getValue();
     }
 
     public static boolean isCurrentSubEqualOrHigher(int subVersion) {

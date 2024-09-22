@@ -266,7 +266,8 @@ public class ConfigReader extends YamlConfiguration {
             config.load(str);
             str.close();
 
-        } catch (FileNotFoundException e) {
+        } catch (FileNotFoundException fileNotFoundException) {
+            
         } catch (InvalidConfigurationException | IOException e) {
             e.printStackTrace();
             saveToBackup();

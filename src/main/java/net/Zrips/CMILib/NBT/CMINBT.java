@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -367,10 +368,12 @@ public class CMINBT {
             if (!path.contains("."))
                 return getMethod.invoke(tag, path);
 
+            Object t = updateLegacyTag(tag);
+
             List<String> keys = new ArrayList<String>();
             keys.addAll(Arrays.asList(path.split("\\.")));
             try {
-                Object nbtbase = met_get.invoke(tag, keys.get(0));
+                Object nbtbase = met_get.invoke(t, keys.get(0));
                 for (int i = 1; i < keys.size(); i++) {
                     if (i + 1 < keys.size()) {
                         nbtbase = met_get.invoke(nbtbase, keys.get(i));
@@ -383,7 +386,7 @@ public class CMINBT {
             } catch (Throwable e) {
             }
 
-            return getMethod.invoke(tag, path);
+            return getMethod.invoke(t, path);
         } catch (Exception e) {
         }
         return null;
@@ -629,6 +632,13 @@ public class CMINBT {
         return getList(path, -1);
     }
 
+    private Object updateLegacyTag(Object t) {
+        if (getType().equals(nmbtType.item) && Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
+            t = new CMINBT(new CMINBT(t).get("components")).get("minecraft:custom_data");
+        }
+        return t;
+    }
+
     public List<String> getList(String path, int type) {
 
         if (!this.hasNBT(path))
@@ -640,8 +650,9 @@ public class CMINBT {
             if (persistentDataContainer != null) {
                 List<String> v = persistentDataContainer.getListString(path);
                 if (v != null)
-                    return v;
+                    return new ArrayList<String>(v);
             }
+
         }
 
         if (tag == null)
@@ -650,7 +661,7 @@ public class CMINBT {
         List<String> list = new ArrayList<String>();
         try {
 
-            Object t = tag;
+            Object t = updateLegacyTag(tag);
 
             if (t != null && path.contains(".")) {
                 List<String> keys = new ArrayList<String>();
@@ -698,6 +709,7 @@ public class CMINBT {
                         list.add(met_toString.invoke(method.invoke(ls, i)).toString());
                 }
             }
+
             return list;
         } catch (Exception e) {
             e.printStackTrace();
@@ -713,7 +725,7 @@ public class CMINBT {
 
         try {
 
-            Object t = tag;
+            Object t = updateLegacyTag(tag);
 
             if (t != null && path.contains(".")) {
                 List<String> keys = new ArrayList<String>();
@@ -1316,10 +1328,12 @@ public class CMINBT {
                 return true;
         }
 
-        if (tag != null && key.contains(".")) {
+        Object t = updateLegacyTag(tag);
+
+        if (t != null && key.contains(".")) {
 
             try {
-                if ((boolean) tag.getClass().getMethod(hasKeyName, String.class).invoke(tag, key))
+                if ((boolean) t.getClass().getMethod(hasKeyName, String.class).invoke(t, key))
                     return true;
             } catch (Throwable e) {
                 e.printStackTrace();
@@ -1328,7 +1342,7 @@ public class CMINBT {
             List<String> keys = new ArrayList<String>();
             keys.addAll(Arrays.asList(key.split("\\.")));
             try {
-                Object nbtbase = met_get.invoke(tag, keys.get(0));
+                Object nbtbase = met_get.invoke(t, keys.get(0));
                 if (nbtbase == null)
                     return false;
                 for (int i = 1; i < keys.size(); i++) {
@@ -1341,14 +1355,14 @@ public class CMINBT {
                     }
                 }
 
-                return (Boolean) tag.getClass().getMethod(hasKeyName, String.class).invoke(tag, key);
+                return (Boolean) t.getClass().getMethod(hasKeyName, String.class).invoke(t, key);
             } catch (Throwable e) {
                 e.printStackTrace();
             }
             return false;
         }
         try {
-            return tag != null && (Boolean) (tag.getClass().getMethod(hasKeyName, String.class).invoke(tag, key));
+            return t != null && (Boolean) (t.getClass().getMethod(hasKeyName, String.class).invoke(t, key));
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -1374,8 +1388,11 @@ public class CMINBT {
     }
 
     public Object get(String path) {
+        Object nbt = getNbt();
+        if (nbt == null)
+            return null;
         try {
-            return met_get.invoke(getNbt(), path);
+            return met_get.invoke(nbt, path);
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -1383,8 +1400,11 @@ public class CMINBT {
     }
 
     public Object getCompound(String path) {
+        Object nbt = getNbt();
+        if (nbt == null)
+            return null;
         try {
-            return met_getCompound.invoke(getNbt(), path);
+            return met_getCompound.invoke(nbt, path);
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -1418,6 +1438,8 @@ public class CMINBT {
     }
 
     public static ItemStack setTag(ItemStack item, Object tag) {
+        if (item == null)
+            return item;
         try {
             Object nmsStack = asNMSCopy(item);
             return (ItemStack) asBukkitCopy(setTag(nmsStack, tag));
@@ -1478,8 +1500,9 @@ public class CMINBT {
     }
 
     public static Object getNbt(ItemStack item) {
-        if (item == null)
+        if (item == null || item.getType().equals(Material.AIR))
             return null;
+
         try {
 
             Object nmsStack = asNMSCopy(item);
@@ -1488,7 +1511,10 @@ public class CMINBT {
 
             if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
                 if (nbtMethod == null) {
-                    nbtMethod = ((net.minecraft.world.item.ItemStack) nmsStack).getClass().getMethod("b", Class.forName("net.minecraft.core.IRegistryCustom"));
+                    if (Version.isCurrentEqualOrHigher(Version.v1_21_R1)) {
+                        nbtMethod = ((net.minecraft.world.item.ItemStack) nmsStack).getClass().getMethod("a", Class.forName("net.minecraft.core.HolderLookup$a"));
+                    } else
+                        nbtMethod = ((net.minecraft.world.item.ItemStack) nmsStack).getClass().getMethod("b", Class.forName("net.minecraft.core.HolderLookup$a"));
                 }
                 return nbtMethod.invoke(nmsStack, getRegistry());
             }
@@ -1499,8 +1525,8 @@ public class CMINBT {
                 tag = nbtTagCompound.getDeclaredConstructor().newInstance();
 
             return tag;
-        } catch (Exception e) {
-//	    e.printStackTrace();
+        } catch (Throwable e) {
+            e.printStackTrace();
             return null;
         }
     }
@@ -1576,8 +1602,7 @@ public class CMINBT {
                 return null;
 
             Method methTag = tile.getClass().getMethod(ff);
-            Object tag = methTag.invoke(tile);
-            return tag;
+            return methTag.invoke(tile);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -1604,6 +1629,8 @@ public class CMINBT {
     private static Method asNMSCopy = null;
 
     public static Object asNMSCopy(ItemStack item) {
+        if (item == null)
+            return null;
         try {
             if (asNMSCopy == null)
                 asNMSCopy = CraftItemStack.getMethod("asNMSCopy", ItemStack.class);
@@ -1632,7 +1659,7 @@ public class CMINBT {
         Object handle = null;
         try {
             if (EntityHandle == null)
-                EntityHandle = CraftEntity.cast(ent).getClass().getMethod("getHandle");
+                EntityHandle = CraftEntity.getMethod("getHandle");
             handle = EntityHandle.invoke(CraftEntity.cast(ent));
         } catch (Exception e) {
             e.printStackTrace();

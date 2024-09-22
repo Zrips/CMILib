@@ -19,6 +19,7 @@ import net.Zrips.CMILib.Container.CMIServerProperties;
 import net.Zrips.CMILib.Effects.CMIEffect;
 import net.Zrips.CMILib.Effects.CMIEffectManager.CMIParticle;
 import net.Zrips.CMILib.FileHandler.ConfigReader;
+import net.Zrips.CMILib.Items.CMIItemStack;
 import net.Zrips.CMILib.Items.CMIMaterial;
 import net.Zrips.CMILib.Messages.CMIMessages;
 import net.Zrips.CMILib.NBT.CMINBT;
@@ -152,7 +153,7 @@ public class compatibility implements Cmd {
             .setFrame(AdvancementFrameType.TASK)
             .setTitle("Toast Test " + CMINumber.random(0, 1000));
         try {
-            advancement.setItem(CMIMaterial.LEATHER_HELMET.newItemStack());
+            advancement.setItem(CMIItemStack.deserialize("leatherhelmet;purple").getItemStack());
         } catch (Throwable e) {
         }
 

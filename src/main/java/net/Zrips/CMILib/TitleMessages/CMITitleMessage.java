@@ -119,68 +119,64 @@ public class CMITitleMessage {
     public static void send(final Player receivingPacket, final Object title, final Object subtitle, final int fadeIn, final int keep, final int fadeOut) {
         if (receivingPacket == null)
             return;
-        CMIScheduler.get().runTaskAsynchronously(new Runnable() {
-            @Override
-            public void run() {
 
-                String t = title == null ? null : CMIChatColor.translate((String) title);
-                String s = subtitle == null ? null : CMIChatColor.translate((String) subtitle);
+        CMIScheduler.runTaskAsynchronously(() -> {
+            String t = title == null ? null : CMIChatColor.translate((String) title);
+            String s = subtitle == null ? null : CMIChatColor.translate((String) subtitle);
 
-                if (Version.isCurrentEqualOrLower(Version.v1_7_R4)) {
-                    CMIActionBar.send(receivingPacket, (t == null ? "" : t) + (s == null ? "" : s));
-                    return;
-                }
+            if (Version.isCurrentEqualOrLower(Version.v1_7_R4)) {
+                CMIActionBar.send(receivingPacket, (t == null ? "" : t) + (s == null ? "" : s));
+                return;
+            }
 
-                if (simpleTitleMessages) {
-                    receivingPacket.sendMessage(t);
-                    receivingPacket.sendMessage(s);
-                    return;
-                }
-                try {
-                    switch (Version.getCurrent()) {
-                    case v1_12_R1:
-                    case v1_13_R1:
-                    case v1_13_R2:
-                    case v1_14_R1:
-                    case v1_15_R1:
-                    case v1_16_R1:
-                    default:
-                        receivingPacket.sendTitle(t, s, fadeIn, keep, fadeOut);
+            if (simpleTitleMessages) {
+                receivingPacket.sendMessage(t);
+                receivingPacket.sendMessage(s);
+                return;
+            }
+            try {
+                switch (Version.getCurrent()) {
+                case v1_12_R1:
+                case v1_13_R1:
+                case v1_13_R2:
+                case v1_14_R1:
+                case v1_15_R1:
+                case v1_16_R1:
+                default:
+                    receivingPacket.sendTitle(t, s, fadeIn, keep, fadeOut);
 //                        Timer reset packet, causes some issue
 //                        if (Version.isCurrentEqualOrHigher(Version.v1_19_R1) && timerResetPacket != null) {
 //                            sendPacket(receivingPacket, timerResetPacket);
 //                        }
 
-                        break;
-                    case v1_9_R1:
-                    case v1_9_R2:
-                    case v1_10_R1:
-                    case v1_11_R1:
-                    case v1_8_R1:
-                    case v1_8_R2:
-                    case v1_8_R3:
-                        Object packetTimes = nmsPacketPlayOutTimes.newInstance(fadeIn, keep, fadeOut);
-                        sendPacket(receivingPacket, packetTimes);
-                        if (title != null) {
-                            Object packetTitle = nmsPacketPlayOutTitle.newInstance(enumTitleAction.getField("TITLE").get(null), ((Object[]) fromString.invoke(null, t))[0]);
+                    break;
+                case v1_9_R1:
+                case v1_9_R2:
+                case v1_10_R1:
+                case v1_11_R1:
+                case v1_8_R1:
+                case v1_8_R2:
+                case v1_8_R3:
+                    Object packetTimes = nmsPacketPlayOutTimes.newInstance(fadeIn, keep, fadeOut);
+                    sendPacket(receivingPacket, packetTimes);
+                    if (title != null) {
+                        Object packetTitle = nmsPacketPlayOutTitle.newInstance(enumTitleAction.getField("TITLE").get(null), ((Object[]) fromString.invoke(null, t))[0]);
+                        sendPacket(receivingPacket, packetTitle);
+                    }
+                    if (subtitle != null) {
+                        if (title == null) {
+                            Object packetTitle = nmsPacketPlayOutTitle.newInstance(enumTitleAction.getField("TITLE").get(null), ((Object[]) fromString.invoke(null, ""))[0]);
                             sendPacket(receivingPacket, packetTitle);
                         }
-                        if (subtitle != null) {
-                            if (title == null) {
-                                Object packetTitle = nmsPacketPlayOutTitle.newInstance(enumTitleAction.getField("TITLE").get(null), ((Object[]) fromString.invoke(null, ""))[0]);
-                                sendPacket(receivingPacket, packetTitle);
-                            }
-                            Object packetSubtitle = nmsPacketPlayOutTitle.newInstance(enumTitleAction.getField("SUBTITLE").get(null), ((Object[]) fromString.invoke(null, s))[0]);
-                            sendPacket(receivingPacket, packetSubtitle);
-                        }
-                        break;
+                        Object packetSubtitle = nmsPacketPlayOutTitle.newInstance(enumTitleAction.getField("SUBTITLE").get(null), ((Object[]) fromString.invoke(null, s))[0]);
+                        sendPacket(receivingPacket, packetSubtitle);
                     }
-
-                } catch (SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchFieldException ex) {
-                    simpleTitleMessages = true;
-                    Bukkit.getLogger().log(Level.SEVERE, "Your server can't fully support title messages. They will be shown in chat instead.");
+                    break;
                 }
-                return;
+
+            } catch (Throwable ex) {
+                simpleTitleMessages = true;
+                Bukkit.getLogger().log(Level.SEVERE, "Your server can't fully support title messages. They will be shown in chat instead.");
             }
         });
     }

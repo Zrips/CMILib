@@ -307,7 +307,9 @@ public class GUIListener implements Listener {
         if (plugin.getGUIManager().isLockedPart(player, buttons, event.getCursor()))
             event.setCancelled(true);
 
-        plugin.getGUIManager().processClick(player, buttons, plugin.getGUIManager().getClickType(true, false, null, null));
+        if (!plugin.getGUIManager().processClick(player, event.getOldCursor(), buttons, plugin.getGUIManager().getClickType(true, false, null, null)))
+            event.setCancelled(true);
+
         CMIScheduler.get().runTask(() -> clearIconItems(player));
     }
 

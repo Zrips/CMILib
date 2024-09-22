@@ -7,9 +7,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
@@ -40,6 +42,8 @@ import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.Recipes.CMIRecipe;
 import net.Zrips.CMILib.Recipes.CMIRecipeIngredient;
 import net.Zrips.CMILib.Version.Version;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 
 public class CMIItemStack {
 
@@ -69,6 +73,9 @@ public class CMIItemStack {
     }
 
     public CMIItemStack(ItemStack item) {
+        if (item == null)
+            item = new ItemStack(Material.AIR);
+        cmiMaterial = CMIMaterial.get(item);
         this.setItemStack(item);
     }
 
@@ -154,14 +161,19 @@ public class CMIItemStack {
         if (attList == null || attList.isEmpty())
             return this;
         try {
-//	    for (Attribute attribute : attList) {
-//		org.bukkit.attribute.AttributeModifier atmod =
-//		    new org.bukkit.attribute.AttributeModifier(UUID.randomUUID(), attribute.getType().getFullName(), attribute.getMod(), Operation.ADD_NUMBER, null);
-//		attribute.getType().Armor
-//		this.getItemStack().getItemMeta().addAttributeModifier(org.bukkit.attribute.Attribute., atmod);
-//	    }
-        } catch (Throwable e) {
 
+            if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
+                ItemMeta meta = this.getItemStack().getItemMeta();
+                attList.forEach(att -> {
+                    AttributeModifier attackDamage = new AttributeModifier(UUID.randomUUID(), att.getType().getFullName(), att.getMod(),
+                        att.getOperation() == 0 ? AttributeModifier.Operation.ADD_NUMBER : att.getOperation() == 1 ? AttributeModifier.Operation.ADD_SCALAR : AttributeModifier.Operation.MULTIPLY_SCALAR_1);
+                    meta.addAttributeModifier(att.getType().getAttribute(), attackDamage);
+                });
+                this.getItemStack().setItemMeta(meta);
+                return this;
+            }
+        } catch (Throwable e) {
+            e.printStackTrace();
         }
 
         this.item = CMILib.getInstance().getReflectionManager().addAttributes(attList, this.getItemStack());
@@ -195,6 +207,7 @@ public class CMIItemStack {
             return getRealName();
 
         ItemMeta meta = this.getItemStack().getItemMeta();
+
         return meta == null || meta.getDisplayName() == null || meta.getDisplayName().isEmpty() ? getRealName() : meta.getDisplayName();
     }
 
@@ -367,8 +380,9 @@ public class CMIItemStack {
     @SuppressWarnings("deprecation")
     public ItemStack getItemStack() {
 
-        if (item != null)
+        if (item != null) {
             return item;
+        }
 
         try {
             if (!this.getType().isItem()) {
@@ -431,38 +445,39 @@ public class CMIItemStack {
     @SuppressWarnings("deprecation")
     public CMIItemStack setItemStack(ItemStack item) {
         this.item = item;
-        if (item != null) {
-            this.amount = item.getAmount();
-            this.material = item.getType();
-            this.cmiMaterial = CMIMaterial.get(item);
-            if (Version.isCurrentEqualOrLower(Version.v1_13_R2)) {
-                this.id = item.getType().getId();
-                if ((this.getType().isBlock() || this.getType().isSolid())) {
-                    data = item.getData().getData();
-                }
-                if (item.getType().getMaxDurability() - item.getDurability() < 0) {
-                    data = item.getData().getData();
-                }
-            } else if (cmiMaterial != null) {
-                this.id = cmiMaterial.getId();
-            }
+        if (item == null)
+            return this;
 
-            if (item.getType().getMaxDurability() > 15) {
-                data = (short) 0;
+        this.amount = item.getAmount();
+        this.material = item.getType();
+        this.cmiMaterial = CMIMaterial.get(item);
+        if (Version.isCurrentEqualOrLower(Version.v1_13_R2)) {
+            this.id = item.getType().getId();
+            if ((this.getType().isBlock() || this.getType().isSolid())) {
+                data = item.getData().getData();
             }
-
-            if (CMIMaterial.isMonsterEgg(item.getType())) {
-                entityType = CMIEntityType.getByType(CMILib.getInstance().getReflectionManager().getEggType(item));
+            if (item.getType().getMaxDurability() - item.getDurability() < 0) {
+                data = item.getData().getData();
             }
+        } else if (cmiMaterial != null) {
+            this.id = cmiMaterial.getId();
+        }
 
-            if (item.getType() == Material.POTION || item.getType().name().contains("SPLASH_POTION") || item.getType().name().contains("TIPPED_ARROW")) {
-                PotionMeta potion = (PotionMeta) item.getItemMeta();
-                try {
-                    if (potion != null && potion.getBasePotionData() != null && potion.getBasePotionData().getType() != null && potion.getBasePotionData().getType().getEffectType() != null) {
-                        data = (short) potion.getBasePotionData().getType().getEffectType().getId();
-                    }
-                } catch (NoSuchMethodError e) {
+        if (item.getType().getMaxDurability() > 15) {
+            data = (short) 0;
+        }
+
+        if (CMIMaterial.isMonsterEgg(item.getType())) {
+            entityType = CMIEntityType.getByType(CMILib.getInstance().getReflectionManager().getEggType(item));
+        }
+
+        if (item.getType() == Material.POTION || item.getType().name().contains("SPLASH_POTION") || item.getType().name().contains("TIPPED_ARROW")) {
+            PotionMeta potion = (PotionMeta) item.getItemMeta();
+            try {
+                if (potion != null && potion.getBasePotionData() != null && potion.getBasePotionData().getType() != null && potion.getBasePotionData().getType().getEffectType() != null) {
+                    data = (short) potion.getBasePotionData().getType().getEffectType().getId();
                 }
+            } catch (NoSuchMethodError e) {
             }
         }
 
@@ -521,13 +536,15 @@ public class CMIItemStack {
                 EnchantmentStorageMeta meta2 = (EnchantmentStorageMeta) item.getItemStack().getItemMeta();
 
                 for (Entry<Enchantment, Integer> one : meta1.getEnchants().entrySet()) {
-                    if (!meta2.getEnchants().containsKey(one.getKey()) || meta2.getEnchants().get(one.getKey()) != one.getValue())
+                    if (!meta2.getEnchants().containsKey(one.getKey()) || meta2.getEnchants().get(one.getKey()) != one.getValue()) {
                         return false;
+                    }
                 }
 
                 for (Entry<Enchantment, Integer> one : meta1.getStoredEnchants().entrySet()) {
-                    if (!meta2.getStoredEnchants().containsKey(one.getKey()) || meta2.getStoredEnchants().get(one.getKey()) != one.getValue())
+                    if (!meta2.getStoredEnchants().containsKey(one.getKey()) || meta2.getStoredEnchants().get(one.getKey()) != one.getValue()) {
                         return false;
+                    }
                 }
             }
         } catch (Exception e) {
@@ -917,5 +934,74 @@ public class CMIItemStack {
 
     public static boolean valid(ItemStack item) {
         return item != null && !CMIMaterial.isAir(item.getType());
+    }
+
+    public Integer getCustomModelData() {
+        return getCustomModelData(this.getItemStack());
+    }
+
+    public static Integer getCustomModelData(ItemStack item) {
+        if (item == null)
+            return null;
+
+        if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
+            ItemMeta meta = item.getItemMeta();
+            return meta.hasCustomModelData() ? meta.getCustomModelData() : null;
+        }
+
+        Integer old = new CMINBT(item).getInt("CustomModelData");
+        return old == null ? null : old;
+    }
+
+    public CMIItemStack setCustomModelData(int data) {
+        if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
+            setCustomModelData(this.getItemStack(), data);
+            return this;
+        }
+
+        this.setItemStack(setCustomModelData(this.getItemStack(), data));
+        return this;
+    }
+
+    public static ItemStack setCustomModelData(ItemStack item, int data) {
+        if (item == null)
+            return item;
+
+        if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
+            ItemMeta meta = item.getItemMeta();
+            meta.setCustomModelData(data);
+            item.setItemMeta(meta);
+            return item;
+        }
+
+        return (ItemStack) new CMINBT(item).setInt("CustomModelData", data);
+    }
+
+    public static boolean isUnbreakable(ItemStack item) {
+        if (item == null)
+            return false;
+
+        if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
+            ItemMeta meta = item.getItemMeta();
+            return meta.isUnbreakable();
+        }
+
+        CMINBT nbt = new CMINBT(item);
+        Byte b = nbt.getByte("Unbreakable");
+        return b != null && b == 1;
+    }
+
+    public static ItemStack setUnbreakable(ItemStack item, boolean state) {
+        if (item == null)
+            return item;
+
+        if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
+            ItemMeta meta = item.getItemMeta();
+            meta.setUnbreakable(state);
+            item.setItemMeta(meta);
+            return item;
+        }
+
+        return (ItemStack) new CMINBT(item).setByte("Unbreakable", (byte) (state ? 1 : 0));
     }
 }

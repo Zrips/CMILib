@@ -1044,21 +1044,27 @@ public class CMIChatColor {
         double distance = Double.MAX_VALUE;
         for (Entry<String, CMIChatColor> one : CUSTOM_BY_HEX.entrySet()) {
 
-            java.awt.Color c1 = new java.awt.Color(
-                Integer.valueOf(one.getValue().hexCode.substring(0, 2), 16),
-                Integer.valueOf(one.getValue().hexCode.substring(2, 4), 16),
-                Integer.valueOf(one.getValue().hexCode.substring(4, 6), 16));
+            try {
+                java.awt.Color c1 = new java.awt.Color(
+                    Integer.valueOf(one.getValue().hexCode.substring(0, 2), 16),
+                    Integer.valueOf(one.getValue().hexCode.substring(2, 4), 16),
+                    Integer.valueOf(one.getValue().hexCode.substring(4, 6), 16));
 
-            int red1 = c1.getRed();
-            int red2 = c2.getRed();
-            int rmean = (red1 + red2) >> 1;
-            int r = red1 - red2;
-            int g = c1.getGreen() - c2.getGreen();
-            int b = c1.getBlue() - c2.getBlue();
-            double dist = Math.sqrt((((512 + rmean) * r * r) >> 8) + 4 * g * g + (((767 - rmean) * b * b) >> 8));
-            if (dist < distance) {
-                closest = one.getValue();
-                distance = dist;
+                int red1 = c1.getRed();
+                int red2 = c2.getRed();
+                int rmean = (red1 + red2) >> 1;
+                int r = red1 - red2;
+                int g = c1.getGreen() - c2.getGreen();
+                int b = c1.getBlue() - c2.getBlue();
+                double dist = Math.sqrt((((512 + rmean) * r * r) >> 8) + 4 * g * g + (((767 - rmean) * b * b) >> 8));
+                if (dist < distance) {
+                    closest = one.getValue();
+                    distance = dist;
+                }
+            } catch (Throwable e) {
+                e.printStackTrace();
+                closest = CMIChatColor.WHITE;
+                break;
             }
         }
 

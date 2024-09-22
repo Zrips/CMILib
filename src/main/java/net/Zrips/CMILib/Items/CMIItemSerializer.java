@@ -49,7 +49,6 @@ import net.Zrips.CMILib.Container.CMIText;
 import net.Zrips.CMILib.Container.LeatherAnimationType;
 import net.Zrips.CMILib.Enchants.CMIEnchantment;
 import net.Zrips.CMILib.Entities.CMIEntityType;
-import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.Skins.CMISkin;
 import net.Zrips.CMILib.Version.Version;
@@ -242,14 +241,9 @@ public class CMIItemSerializer {
 
                 if (ahead != null)
                     ahead.setAsyncHead(true);
-
                 CMIScheduler.runTaskAsynchronously(() -> {
                     CMISkin skin = CMILib.getInstance().getSkinManager().getSkin(d);
                     ItemStack s = applySkin(skin, skull);
-                    CMINBT nbt = new CMINBT(s);
-                    if (skin != null)
-                        nbt.setString("SkullOwner.Name", skin.getName());
-
                     if (ahead != null)
                         ahead.afterAsyncUpdate(s);
                     headCache.put(original, s);
@@ -640,6 +634,14 @@ public class CMIItemSerializer {
     private static boolean applySpecials(CMIItemStack cim, String value) {
         switch (value.toLowerCase()) {
         case "unbreakable":
+
+            if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
+                ItemMeta meta = cim.getItemStack().getItemMeta();
+                meta.setUnbreakable(true);
+                cim.getItemStack().setItemMeta(meta);
+                return true;
+            }
+
             cim.setItemStack((ItemStack) new CMINBT(cim.getItemStack()).setByte("Unbreakable", (byte) 1));
             return true;
         }
@@ -748,6 +750,9 @@ public class CMIItemSerializer {
         ItemStack item = cim.getItemStack();
 
         potionType = CMIPotionType.get(potionType, upgraded, extended);
+
+        if (potionType == null)
+            return false;
 
         try {
             PotionMeta meta = (PotionMeta) item.getItemMeta();
@@ -867,7 +872,7 @@ public class CMIItemSerializer {
 
         try {
             int data = Integer.parseInt(f);
-            cim.setNbt("CustomModelData", data);
+            cim.setCustomModelData(data);
             return true;
         } catch (Throwable e) {
             e.printStackTrace();
