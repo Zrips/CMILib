@@ -310,7 +310,7 @@ public class CMIPersistentDataContainer {
         if (persistentDataContainer == null)
             return this;
 
-        if (Version.isCurrentEqualOrHigher(Version.v1_20_R3)) {
+        if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
             persistentDataContainer.set(getKey(key), PersistentDataType.LIST.integers(), value);
             return this;
         }
@@ -336,7 +336,7 @@ public class CMIPersistentDataContainer {
             return null;
 
         try {
-            if (Version.isCurrentEqualOrHigher(Version.v1_20_R3))
+            if (Version.isCurrentEqualOrHigher(Version.v1_20_R4))
                 return persistentDataContainer.get(getKey(key), PersistentDataType.LIST.integers());
         } catch (Throwable e) {
         }

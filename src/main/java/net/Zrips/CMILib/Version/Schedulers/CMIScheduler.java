@@ -4,6 +4,7 @@ import java.util.concurrent.CompletableFuture;
 
 import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -33,58 +34,72 @@ public class CMIScheduler {
         return implementation;
     }
 
+    @Deprecated
     public static CompletableFuture<Void> runTask(Runnable runnable) {
         return get().runTask(runnable);
     }
 
+    @Deprecated
     public static CompletableFuture<Void> runTaskAsynchronously(Runnable runnable) {
         return get().runTaskAsynchronously(runnable);
     }
 
+    @Deprecated
     public static CMITask runTaskLater(Runnable runnable, long delay) {
         return get().runTaskLater(runnable, delay);
     }
 
+    @Deprecated
     public static CMITask runLaterAsync(Runnable runnable, long delay) {
         return get().runLaterAsync(runnable, delay);
     }
 
+    @Deprecated
     public static CMITask scheduleSyncRepeatingTask(Runnable runnable, long delay, long period) {
         return get().scheduleSyncRepeatingTask(runnable, delay, period);
     }
 
+    @Deprecated
     public static CMITask runTimerAsync(Runnable runnable, long delay, long period) {
         return get().runTimerAsync(runnable, delay, period);
     }
 
+    @Deprecated
     public static CompletableFuture<Void> runAtLocation(Location location, Runnable runnable) {
         return get().runAtLocation(location, runnable);
     }
 
+    @Deprecated
     public static CompletableFuture<Void> runAtLocation(Chunk chunk, Runnable runnable) {
         return get().runAtLocation(chunk, runnable);
     }
 
+    @Deprecated
     public static CMITask runAtLocationLater(Location location, Runnable runnable, long delay) {
         return get().runAtLocationLater(location, runnable, delay);
     }
 
+    @Deprecated
     public static CMITask runAtLocationTimer(Location location, Runnable runnable, long delay, long period) {
         return get().runAtLocationTimer(location, runnable, delay, period);
     }
 
+    @Deprecated
     public static CompletableFuture<CMITaskResult> runAtEntity(Entity entity, Runnable runnable) {
         return get().runAtEntity(entity, runnable);
     }
 
+    @Deprecated
     public static CompletableFuture<CMITaskResult> runAtEntityWithFallback(Entity entity, Runnable runnable, Runnable fallback) {
         return get().runAtEntityWithFallback(entity, runnable, fallback);
     }
 
+    @Deprecated
     public static CMITask runAtEntityLater(Entity entity, Runnable runnable, long delay) {
         return get().runAtEntityLater(entity, runnable, delay);
     }
 
+    @Deprecated
     public static CMITask runAtEntityTimer(Entity entity, Runnable runnable, long delay, long period) {
         return get().runAtEntityTimer(entity, runnable, delay, period);
     }
@@ -121,6 +136,10 @@ public class CMIScheduler {
         return get().runAtLocation(plugin, chunk, runnable);
     }
 
+    public static CompletableFuture<Void> runAtLocation(JavaPlugin plugin, World world, int x, int z, Runnable runnable) {
+        return get().runAtLocation(plugin, world, x, z, runnable);
+    }
+
     public static CMITask runAtLocationLater(JavaPlugin plugin, Location location, Runnable runnable, long delay) {
         return get().runAtLocationLater(plugin, location, runnable, delay);
     }
@@ -138,10 +157,10 @@ public class CMIScheduler {
     }
 
     public static CMITask runAtEntityLater(JavaPlugin plugin, Entity entity, Runnable runnable, long delay) {
-        return get().runAtEntityLater(entity, runnable, delay);
+        return get().runAtEntityLater(plugin, entity, runnable, delay);
     }
 
     public static CMITask runAtEntityTimer(JavaPlugin plugin, Entity entity, Runnable runnable, long delay, long period) {
-        return get().runAtEntityTimer(entity, runnable, delay, period);
+        return get().runAtEntityTimer(plugin, entity, runnable, delay, period);
     }
 }

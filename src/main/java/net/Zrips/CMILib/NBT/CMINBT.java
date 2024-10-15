@@ -6,8 +6,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -15,9 +17,14 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.util.io.BukkitObjectInputStream;
 import org.jetbrains.annotations.Nullable;
 
+import com.google.gson.JsonElement;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.MapCodec;
 
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Entities.CMIEntityType;
@@ -25,6 +32,7 @@ import net.Zrips.CMILib.Items.CMIMaterial;
 import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.PersistentData.CMIPersistentDataContainer;
 import net.Zrips.CMILib.Version.Version;
+import net.minecraft.core.HolderLookup.a;
 import net.minecraft.nbt.DynamicOpsNBT;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.dedicated.DedicatedServer;
@@ -1715,16 +1723,41 @@ public class CMINBT {
 
     public static ItemStack modifyItemStack(ItemStack stack, String arguments) {
 
-        if (Version.isCurrentEqualOrHigher(Version.v1_20_R4))
-            return stack;
+        if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
 
-//        try {
-//            NBTTagCompound s = net.minecraft.nbt.MojangsonParser.a(arguments);
-//            net.minecraft.world.item.ItemStack item = net.minecraft.world.item.ItemStack.b.decode(DynamicOpsNBT.a, s).result().get().getFirst();
-//            ItemStack relitem = (ItemStack) item.h();
-//        } catch (CommandSyntaxException e) {
-//            e.printStackTrace();
-//        }
+            try {
+
+                try {
+                    arguments = arguments.replaceAll("\\s*=\\s*\\[", ":[");
+
+                    NBTTagCompound t = net.minecraft.nbt.MojangsonParser.a(arguments);
+
+                    net.minecraft.world.item.ItemStack nmsStack = (net.minecraft.world.item.ItemStack) asNMSCopy(stack);
+
+                    net.minecraft.nbt.NBTBase base = nmsStack.b((a) getRegistry(), t);
+
+                    Optional<net.minecraft.world.item.ItemStack> lenient = net.minecraft.world.item.ItemStack.a((a) getRegistry(), base);
+
+                    stack = (ItemStack) asBukkitCopy(lenient.get());
+
+                    return stack;
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                NBTTagCompound s = net.minecraft.nbt.MojangsonParser.a(arguments);
+                Optional<Pair<net.minecraft.world.item.ItemStack, net.minecraft.nbt.NBTBase>> ti = net.minecraft.world.item.ItemStack.b.decode(DynamicOpsNBT.a, s).result();
+                if (!ti.isPresent())
+                    return stack;
+
+                net.minecraft.world.item.ItemStack item = ti.get().getFirst();
+                return (ItemStack) item.h();
+
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+        }
 
         Object nmsStack = asNMSCopy(stack);
         try {

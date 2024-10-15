@@ -23,6 +23,8 @@ import org.bukkit.inventory.ItemStack;
 
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.GUI.GUIManager.InvType;
+import net.Zrips.CMILib.Items.CMIItemStack;
+import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
 
@@ -146,9 +148,10 @@ public class GUIListener implements Listener {
         }
 
         if (event.getAction().toString().equalsIgnoreCase("HOTBAR_SWAP") || event.getAction().toString().equalsIgnoreCase("HOTBAR_MOVE_AND_READD")) {
-            ItemStack iioh = CMILib.getInstance().getReflectionManager().getItemInOffHand(player);
+            ItemStack iioh = CMIItemStack.getItemInOffHand(player).clone();
+            CMIItemStack.setItemInOffHand(player, null);
             event.setCancelled(true);
-            CMIScheduler.runTask(() -> {
+            CMIScheduler.runTask(plugin, () -> {
                 try {
                     player.getInventory().setItemInOffHand(iioh);
                     player.updateInventory();

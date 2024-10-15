@@ -19,10 +19,11 @@ import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 
 import net.Zrips.CMILib.Items.CMIMaterial;
-import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Version.Version;
 
 public class CMILocation extends Location {
+
+    private static final String separator = ";";
 
     public CMILocation(World world, double x, double y, double z, float yaw, float pitch) {
         super(world, x, y, z, yaw, pitch);
@@ -320,7 +321,7 @@ public class CMILocation extends Location {
     }
 
     public static CMILocation fromString(String map) {
-        return fromString(map, map.contains(";") ? ";" : ":");
+        return fromString(map, map.contains(separator) ? separator : ":");
     }
 
     public static CMILocation fromString(String map, String separator) {
@@ -330,6 +331,7 @@ public class CMILocation extends Location {
         if (!map.contains(separator))
             return null;
 
+        // replace , with . for the systems using different numerical format
         String[] split = map.replace(",", ".").split(separator);
 
         Double x = null;
@@ -392,7 +394,7 @@ public class CMILocation extends Location {
     }
 
     public static List<CMILocation> fromString(List<String> map) {
-        return fromString(map, ";");
+        return fromString(map, separator);
     }
 
     public static List<CMILocation> fromString(List<String> maps, String separator) {
@@ -404,54 +406,90 @@ public class CMILocation extends Location {
     }
 
     public static String toString(Location loc) {
-        return toString(loc, ";", false, false);
+        return toString(loc, separator, false, false);
     }
 
-    public static String toString(Location loc, boolean simplified) {
-        return toString(loc, ";", simplified, false);
+    public static String toString(Location loc, boolean noPitchYaw) {
+        return toString(loc, separator, noPitchYaw, false);
     }
 
     public static String toString(Location loc, String separator) {
         return toString(loc, separator, false, false);
     }
 
-    public static String toString(Location loc, String separator, boolean simplified) {
-        return toString(loc, separator, simplified, false);
+    public static String toString(Location loc, String separator, boolean noPitchYaw) {
+        return toString(loc, separator, noPitchYaw, false);
     }
 
-    public static String toString(Location loc, String separator, boolean simplified, boolean integers) {
+    public static String toString(Location loc, String separator, boolean noPitchYaw, boolean integers) {
+        return new CMILocation(loc).toString(separator, noPitchYaw, integers);
+    }
+
+    public static String toString(CMILocation loc) {
+        return toString(loc, separator, false, false);
+    }
+
+    public static String toString(CMILocation loc, boolean noPitchYaw) {
+        return toString(loc, separator, noPitchYaw, false);
+    }
+
+    public static String toString(CMILocation loc, String separator) {
+        return toString(loc, separator, false, false);
+    }
+
+    public static String toString(CMILocation loc, String separator, boolean noPitchYaw) {
+        return toString(loc, separator, noPitchYaw, false);
+    }
+
+    public static String toString(CMILocation loc, String separator, boolean noPitchYaw, boolean integers) {
+        return loc.toString(separator, noPitchYaw, integers);
+    }
+
+    public String toString(String separator) {
+        return toString(separator, false, false);
+    }
+
+    public String toString(boolean noPitchYaw) {
+        return toString(separator, noPitchYaw, false);
+    }
+
+    public String toString(String separator, boolean noPitchYaw) {
+        return toString(separator, noPitchYaw, false);
+    }
+
+    public String toString(String separator, boolean noPitchYaw, boolean integers) {
         StringBuilder map = new StringBuilder();
         try {
-            if (loc != null && loc.getWorld() != null) {
-                map.append(loc.getWorld().getName());
+            if (this.getWorldName() != null) {
+                map.append(this.getWorldName());
                 if (integers) {
-                    map.append(separator + loc.getBlockX());
-                    map.append(separator + loc.getBlockY());
-                    map.append(separator + loc.getBlockZ());
+                    map.append(separator + getBlockX());
+                    map.append(separator + getBlockY());
+                    map.append(separator + getBlockZ());
                 } else {
-                    map.append(separator + fNumber(loc.getX()));
-                    map.append(separator + (long) (loc.getY() * 100) / 100D);
-                    map.append(separator + fNumber(loc.getZ()));
-
+                    map.append(separator + fNumber(getX()));
+                    map.append(separator + (long) (getY() * 100) / 100D);
+                    map.append(separator + fNumber(getZ()));
                 }
-                if (!simplified) {
+                if (!noPitchYaw) {
                     if (integers) {
-                        map.append(separator + (long) loc.getYaw());
-                        map.append(separator + (long) loc.getPitch());
+                        map.append(separator + (long) getYaw());
+                        map.append(separator + (long) getPitch());
                     } else {
-                        map.append(separator + (long) (loc.getYaw() * 100) / 100D);
-                        map.append(separator + (long) (loc.getPitch() * 100) / 100D);
+                        map.append(separator + (long) (getYaw() * 100) / 100D);
+                        map.append(separator + (long) (getPitch() * 100) / 100D);
                     }
                 }
             }
         } catch (Throwable e) {
             e.printStackTrace();
         }
+        // replace , with . for the systems using different numerical format
         return map.toString().replace(",", ".");
     }
 
     public static List<String> toString(List<CMILocation> loc) {
-        return toString(loc, ";");
+        return toString(loc, separator);
     }
 
     public static List<String> toString(List<CMILocation> locations, String separator) {
@@ -466,22 +504,8 @@ public class CMILocation extends Location {
         return (long) (amount * 100) / 100D;
     }
 
-    private static World getWorld(String name) {
-        World w = Bukkit.getWorld(name);
-
-        if (w != null)
-            return w;
-
-        name = name.replace("_", "").replace(".", "").replace("-", "");
-
-        for (World one : Bukkit.getWorlds()) {
-            String n = one.getName().replace("_", "").replace(".", "").replace("-", "");
-            if (!n.equalsIgnoreCase(name))
-                continue;
-            return one;
-        }
-
-        return null;
+    public static World getWorld(String name) {
+        return CMIWorld.getWorld(name);
     }
 
     public static int getMinHeight(World world) {

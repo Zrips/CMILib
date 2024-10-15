@@ -49,6 +49,7 @@ import net.Zrips.CMILib.Container.CMIText;
 import net.Zrips.CMILib.Container.LeatherAnimationType;
 import net.Zrips.CMILib.Enchants.CMIEnchantment;
 import net.Zrips.CMILib.Entities.CMIEntityType;
+import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.Skins.CMISkin;
 import net.Zrips.CMILib.Version.Version;
@@ -1043,20 +1044,29 @@ public class CMIItemSerializer {
             return false;
 
         List<String> sherds = new ArrayList<String>();
+        
         for (String oneSherd : value.split(",")) {
             if (!oneSherd.toLowerCase().endsWith("_pottery_sherd"))
                 oneSherd += "_pottery_sherd";
             CMIMaterial sherd = CMIMaterial.get(oneSherd);
-            if (sherd.toString().endsWith("_SHERD")) {
-                sherds.add("minecraft:" + sherd.toString().toLowerCase());
-            }
-        }
+            if (!sherd.containsCriteria(CMIMC.SHERD))
+                continue;
 
-        sherds.subList(4, sherds.size()).clear();
+            sherds.add("minecraft:" + sherd.toString().toLowerCase());
+        }
 
         if (sherds.isEmpty())
             return false;
+        
+        sherds.subList(4, sherds.size()).clear();
 
+        if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
+            
+            // Newer versions will need different handling
+
+            return false;            
+        }
+        
         try {
             CMINBT nbt = new CMINBT(cim.getItemStack());
             CMINBT stag = new CMINBT(nbt.getCompound("BlockEntityTag"));

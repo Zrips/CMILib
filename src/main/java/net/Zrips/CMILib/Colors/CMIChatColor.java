@@ -701,7 +701,7 @@ public class CMIChatColor {
 //	    endTest.append(prevG9);
 //	    endTest.append(t);
 //	}
-//
+
         return text;
     }
 
