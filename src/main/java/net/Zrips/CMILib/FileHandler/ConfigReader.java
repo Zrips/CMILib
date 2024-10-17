@@ -67,6 +67,10 @@ public class ConfigReader extends YamlConfiguration {
         }
     }
 
+    public void loadExistingData() {
+        this.getC().options().copyDefaults(true);
+    }
+
     @Override
     public void save(String file) throws IOException {
         if (file == null) {
@@ -267,7 +271,7 @@ public class ConfigReader extends YamlConfiguration {
             str.close();
 
         } catch (FileNotFoundException fileNotFoundException) {
-            
+
         } catch (InvalidConfigurationException | IOException e) {
             e.printStackTrace();
             saveToBackup();

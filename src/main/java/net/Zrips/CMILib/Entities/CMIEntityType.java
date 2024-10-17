@@ -170,7 +170,10 @@ public enum CMIEntityType {
     WOLF(Arrays.asList(
         "NjlkMWQzMTEzZWM0M2FjMjk2MWRkNTlmMjgxNzVmYjQ3MTg4NzNjNmM0NDhkZmNhODcyMjMxN2Q2NyJ9fX0=",
         "Angry Wolf:c-angry:ZTk1Y2JiNGY3NWVhODc2MTdmMmY3MTNjNmQ0OWRhYzMyMDliYTFiZDRiOTM2OTY1NGIxNDU5ZWExNTMxNyJ9fX0=")),
+    @Deprecated
     MUSHROOM_COW("MOOSHROOM", Arrays.asList(
+        "ZDBiYzYxYjk3NTdhN2I4M2UwM2NkMjUwN2EyMTU3OTEzYzJjZjAxNmU3YzA5NmE0ZDZjZjFmZTFiOGRiIn19fQ==")),
+    MOOSHROOM("MUSHROOM_COW", Arrays.asList(
         "ZDBiYzYxYjk3NTdhN2I4M2UwM2NkMjUwN2EyMTU3OTEzYzJjZjAxNmU3YzA5NmE0ZDZjZjFmZTFiOGRiIn19fQ==")),
     SNOW_GOLEM("SNOWMAN", Arrays.asList(
         "MWZkZmQxZjc1MzhjMDQwMjU4YmU3YTkxNDQ2ZGE4OWVkODQ1Y2M1ZWY3MjhlYjVlNjkwNTQzMzc4ZmNmNCJ9fX0=")),
@@ -315,14 +318,15 @@ public enum CMIEntityType {
     // eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUv
     UNKNOWN();
 
-    private String name;
-    private List<String> secondaryNames = new ArrayList<>();
-    EntityType type = null;
-    private HashMap<String, MobHeadInfo> headTextures = new HashMap<String, MobHeadInfo>();
     public static HashMap<String, ItemStack> cache = new HashMap<String, ItemStack>();
     static HashMap<String, CMIEntityType> byName = new HashMap<String, CMIEntityType>();
     static HashMap<EntityType, CMIEntityType> byType = new HashMap<EntityType, CMIEntityType>();
     static HashMap<String, CMIEntityType> byTexture = new HashMap<String, CMIEntityType>();
+
+    private String name;
+    private List<String> secondaryNames = new ArrayList<>();
+    EntityType type = null;
+    private HashMap<String, MobHeadInfo> headTextures = new HashMap<String, MobHeadInfo>();
 
     static {
         for (CMIEntityType one : CMIEntityType.values()) {
