@@ -39,7 +39,10 @@ public class CMITitleMessage {
                 try {
                     getHandle = Class.forName("org.bukkit.craftbukkit." + version + ".entity.CraftPlayer").getMethod("getHandle");
                     nmsIChatBaseComponent = net.minecraft.network.chat.IChatBaseComponent.class;
-                    playerConnection = net.minecraft.server.level.EntityPlayer.class.getField("c");
+                    if (Version.isCurrentEqualOrHigher(Version.v1_21_R2))
+                        playerConnection = net.minecraft.server.level.EntityPlayer.class.getField("f");
+                    else
+                        playerConnection = net.minecraft.server.level.EntityPlayer.class.getField("c");
                     sendPacket = net.minecraft.server.network.PlayerConnection.class.getMethod("a", net.minecraft.network.protocol.Packet.class);
                 } catch (Throwable e) {
                     e.printStackTrace();

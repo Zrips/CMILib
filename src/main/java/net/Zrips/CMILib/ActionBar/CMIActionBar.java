@@ -59,7 +59,10 @@ public class CMIActionBar {
 
         if (Version.isCurrentEqualOrHigher(Version.v1_20_R2)) {
             try {
-                playerConnection = Class.forName("net.minecraft.server.level.EntityPlayer").getField("c");
+                if (Version.isCurrentEqualOrHigher(Version.v1_21_R2))
+                    playerConnection = Class.forName("net.minecraft.server.level.EntityPlayer").getField("f");
+                else
+                    playerConnection = Class.forName("net.minecraft.server.level.EntityPlayer").getField("c");
                 sendPacket = Class.forName("net.minecraft.server.network.PlayerConnection").getMethod("b", net.minecraft.network.protocol.Packet.class);
             } catch (Throwable e) {
                 e.printStackTrace();
@@ -182,7 +185,7 @@ public class CMIActionBar {
 
         keepFor--;
         keepFor = CMINumber.clamp(keepFor, 0, 60 * 60);
-        
+
 // Incorrectly processes hex color codes
 //        if (Version.isCurrentEqualOrHigher(Version.v1_21_R1)) {
 //            simplifiedSend(receivingPacket, msg, keepFor);

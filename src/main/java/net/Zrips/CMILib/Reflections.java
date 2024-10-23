@@ -48,11 +48,16 @@ import net.Zrips.CMILib.Effects.CMIEffect;
 import net.Zrips.CMILib.Effects.CMIEffectManager.CMIParticleDataType;
 import net.Zrips.CMILib.Items.CMIItemStack;
 import net.Zrips.CMILib.Items.CMIMaterial;
+import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.RawMessages.RawMessage;
 import net.Zrips.CMILib.Version.Version;
 import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
 import net.minecraft.resources.MinecraftKey;
+import net.minecraft.world.entity.PositionMoveRotation;
+import net.minecraft.world.entity.Relative;
+import net.minecraft.world.level.portal.TeleportTransition;
+import net.minecraft.world.phys.Vec3D;
 
 public class Reflections {
 
@@ -221,7 +226,9 @@ public class Reflections {
                 IStack = net.minecraft.world.item.ItemStack.class;
 
                 String variable = "ax";
-                if (Version.isCurrentEqualOrHigher(Version.v1_20_R4))
+                if (Version.isCurrentEqualOrHigher(Version.v1_21_R2))
+                    variable = "aD";
+                else if (Version.isCurrentEqualOrHigher(Version.v1_20_R4))
                     variable = "aE";
                 else if (Version.isCurrentEqualOrHigher(Version.v1_20_R3))
                     variable = "aB";
@@ -236,7 +243,10 @@ public class Reflections {
 
                 Object advancementData = MinecraftServer.getClass().getMethod(variable).invoke(MinecraftServer);
 
-                advancementRegistry = advancementData.getClass().getField("c").get(advancementData);
+                if (Version.isCurrentEqualOrHigher(Version.v1_21_R2))
+                    advancementRegistry = advancementData.getClass().getField("b").get(advancementData);
+                else
+                    advancementRegistry = advancementData.getClass().getField("c").get(advancementData);
 
             } catch (Throwable e) {
                 e.printStackTrace();
@@ -539,7 +549,9 @@ public class Reflections {
             try {
                 // DedicatedServer -> DedicatedServerSettings
                 Object field1 = null;
-                if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
+                if (Version.isCurrentEqualOrHigher(Version.v1_21_R2)) {
+                    field1 = MinecraftServer.getClass().getField("s").get(MinecraftServer);
+                } else if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
                     field1 = MinecraftServer.getClass().getField("r").get(MinecraftServer);
                 } else if (Version.isCurrentEqualOrHigher(Version.v1_20_R3)) {
                     field1 = MinecraftServer.getClass().getField("s").get(MinecraftServer);
@@ -775,7 +787,9 @@ public class Reflections {
             Object handle = getPlayerHandle(player);
 
             if (getConnectionField == null) {
-                if (Version.isCurrentEqualOrHigher(Version.v1_20_R1))
+                if (Version.isCurrentEqualOrHigher(Version.v1_21_R2))
+                    getConnectionField = handle.getClass().getField("f");
+                else if (Version.isCurrentEqualOrHigher(Version.v1_20_R1))
                     getConnectionField = handle.getClass().getField("c");
                 else if (Version.isCurrentEqualOrHigher(Version.v1_17_R1))
                     getConnectionField = handle.getClass().getField("b");
@@ -1358,7 +1372,9 @@ public class Reflections {
         String windowId = "windowId";
 
         try {
-            if (Version.isCurrentEqualOrHigher(Version.v1_17_R1))
+            if (Version.isCurrentEqualOrHigher(Version.v1_21_R2))
+                windowId = "l";
+            else if (Version.isCurrentEqualOrHigher(Version.v1_17_R1))
                 windowId = "j";
 
             // EntityHuman -> Container
@@ -1538,6 +1554,16 @@ public class Reflections {
 
             if (entity == null || !CEntity.isInstance(entity))
                 return;
+
+            if (Version.isCurrentEqualOrHigher(Version.v1_21_R2)) {
+                Object craft = entity.getClass().getMethod("getBukkitEntity").invoke(entity);
+                int id = (int) craft.getClass().getMethod("getEntityId").invoke(craft);
+                Vec3D position = new net.minecraft.world.phys.Vec3D(targetLoc.toVector().getX(), targetLoc.toVector().getY(), targetLoc.toVector().getZ());
+                PositionMoveRotation r = new PositionMoveRotation(position, new net.minecraft.world.phys.Vec3D(0, 0, 0), targetLoc.getYaw(), targetLoc.getPitch());
+                net.minecraft.network.protocol.game.PacketPlayOutEntityTeleport packet = net.minecraft.network.protocol.game.PacketPlayOutEntityTeleport.a(id, r, new HashSet<>(), false);
+                sendPlayerPacket(player, packet);
+                return;
+            }
 
             Object centity = CEntity.cast(entity);
 
@@ -1985,7 +2011,7 @@ public class Reflections {
         if (!Version.isCurrentEqualOrHigher(Version.v1_20_R2))
             return;
 
-        CMIScheduler.runTaskAsynchronously(() -> {
+        CMIScheduler.runTaskAsynchronously(plugin, () -> {
 
             if (Version.isCurrentEqualOrHigher(Version.v1_20_R3)) {
 

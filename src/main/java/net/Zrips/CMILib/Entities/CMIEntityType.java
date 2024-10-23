@@ -314,6 +314,32 @@ public enum CMIEntityType {
     OMINOUS_ITEM_SPAWNER(),
     FISHING_BOBBER(),
 
+    //1.21.2
+    ACACIA_BOAT(),
+    ACACIA_CHEST_BOAT(),
+    BAMBOO_RAFT(),
+    BAMBOO_CHEST_RAFT(),
+    BIRCH_BOAT(),
+    BIRCH_CHEST_BOAT(),
+    CHERRY_BOAT(),
+    CHERRY_CHEST_BOAT(),
+    DARK_OAK_BOAT(),
+    DARK_OAK_CHEST_BOAT(),
+    JUNGLE_BOAT(),
+    JUNGLE_CHEST_BOAT(),
+    MANGROVE_BOAT(),
+    MANGROVE_CHEST_BOAT(),
+    OAK_BOAT(),
+    OAK_CHEST_BOAT(),
+    SPRUCE_BOAT(),
+    SPRUCE_CHEST_BOAT(),
+    
+    //1.22 ?
+//    PALE_OAK_BOAT(),
+//    PALE_OAK_CHEST_BOAT(),
+//    CREAKING(),
+//    CREAKING_TRANSIENT(),
+
     // if possible we can remove this string for each texture to save up some space
     // eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUv
     UNKNOWN();

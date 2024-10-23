@@ -47,14 +47,17 @@ public enum Version {
     v1_20_R3(4),
     v1_20_R4(5, 6),
     v1_21_R1(0, 1),
-    v1_21_R2,
+    v1_21_R2(2),
     v1_21_R3,
     v1_22_R1,
     v1_22_R2,
     v1_22_R3,
     v1_23_R1,
     v1_23_R2,
-    v1_23_R3;
+    v1_23_R3,
+    v1_24_R1,
+    v1_24_R2,
+    v1_24_R3;
 
     private Integer value;
     private int[] minorVersions = null;

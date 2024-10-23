@@ -114,7 +114,7 @@ public class CMILibConfig {
         lang = cfg.get("Language", locale).toUpperCase();
 
         cfg.addComment("LanguageDownload", "Defines if you want to auto download default locale files from github repository",
-            "You can disable this if you are using EN or you already have your locale setup and you dont need to have other languages being downloaded");
+            "You can disable this if you are using EN or you already have your locale setup and you don't need to have other languages being downloaded");
         LanguageDownload = cfg.get("LanguageDownload", true);
 
         cfg.addComment("AutoUpdate", "When enabled plugin will try to keep CMILib up to date automatically");
