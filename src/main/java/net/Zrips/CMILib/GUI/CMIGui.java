@@ -17,6 +17,7 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.components.ToolComponent;
 
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Colors.CMIChatColor;
@@ -327,14 +328,19 @@ public class CMIGui {
     }
 
     public void addEmptyButton(ItemStack item, int slot) {
-        ItemStack MiscInfo = item == null ? filler == null ? CMILib.getInstance().getConfigManager().getGUIEmptyField().getItemStack().clone() : filler.newItemStack() : item.clone();
+        ItemStack miscInfo = item == null ? filler == null ? CMILib.getInstance().getConfigManager().getGUIEmptyField().getItemStack().clone() : filler.newItemStack() : item.clone();
 
-        ItemMeta MiscInfoMeta = MiscInfo.getItemMeta();
-        if (MiscInfoMeta != null) {
-            MiscInfoMeta.setDisplayName(" ");
-            MiscInfo.setItemMeta(MiscInfoMeta);
+        ItemMeta miscInfoMeta = miscInfo.getItemMeta();
+        if (Version.isCurrentEqualOrHigher(Version.v1_21_R2)) {
+            miscInfoMeta.setHideTooltip(true);
+            miscInfo.setItemMeta(miscInfoMeta);
+        } else if (Version.isCurrentEqualOrHigher(Version.v1_16_R1)) {
+            if (miscInfoMeta != null) {
+                miscInfoMeta.setDisplayName(" ");
+                miscInfo.setItemMeta(miscInfoMeta);
+            }
         }
-        CMIGuiButton button = new CMIGuiButton(slot, GUIFieldType.Locked, MiscInfo);
+        CMIGuiButton button = new CMIGuiButton(slot, GUIFieldType.Locked, miscInfo);
         addButton(button);
         updateButton(button);
     }
@@ -681,16 +687,19 @@ public class CMIGui {
             if (i == 1 || i == getInvSize().getRows()) {
                 for (int x = 0; x < 9; x++) {
                     CMIGuiButton b1 = getButtons().get(x + ((i - 1) * 9));
-                    if (b1 == null)
-                        addButton(new CMIGuiButton(x + ((i - 1) * 9), CMILib.getInstance().getConfigManager().getGUIEmptyField()));
+                    if (b1 == null) {
+                        addButton(new CMIGuiButton(x + ((i - 1) * 9), CMILib.getInstance().getConfigManager().getGUIEmptyField()).hideToltip());
+                    }
                 }
             } else {
                 CMIGuiButton b1 = getButtons().get(0 + ((i - 1) * 9));
-                if (b1 == null)
-                    addButton(new CMIGuiButton(0 + ((i - 1) * 9), CMILib.getInstance().getConfigManager().getGUIEmptyField()));
+                if (b1 == null) {
+                    addButton(new CMIGuiButton(0 + ((i - 1) * 9), CMILib.getInstance().getConfigManager().getGUIEmptyField()).hideToltip());
+                }
                 b1 = getButtons().get(8 + ((i - 1) * 9));
-                if (b1 == null)
-                    addButton(new CMIGuiButton(8 + ((i - 1) * 9), CMILib.getInstance().getConfigManager().getGUIEmptyField()));
+                if (b1 == null) {
+                    addButton(new CMIGuiButton(8 + ((i - 1) * 9), CMILib.getInstance().getConfigManager().getGUIEmptyField()).hideToltip());
+                }
             }
         }
     }

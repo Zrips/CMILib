@@ -20,7 +20,7 @@ public class AsyncChunksPaper_9_12 implements AsyncChunks {
                 return null;
             });
         } else {
-            CMIScheduler.runTask(() -> {
+            CMIScheduler.runTask(CMILib.getInstance(), () -> {
                 if (Version.isCurrentEqualOrHigher(Version.v1_13_R1)) {
                     try {
                         if (world.isChunkLoaded(x, z)) {

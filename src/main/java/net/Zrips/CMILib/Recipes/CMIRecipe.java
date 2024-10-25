@@ -353,6 +353,14 @@ public class CMIRecipe {
             duration);
     }
 
+    public static Recipe makeTransmuteRecipe(ItemStack result, CMIRecipeIngredient ingredient1, String customKey) {
+        if (Version.isCurrentEqualOrLower(Version.v1_21_R1))
+            return null;
+
+        return new org.bukkit.inventory.TransmuteRecipe(new org.bukkit.NamespacedKey(CMILib.getInstance(), customKey == null ? getRecipeIdentificator(CMIRecipeType.Smoking, result, ingredient1)
+            : customKey), result.getType(), (org.bukkit.inventory.RecipeChoice) ingredient1.generateChoice(), (org.bukkit.inventory.RecipeChoice) ingredient1.generateChoice());
+    }
+
     public static Recipe makeBlastingRecipe(ItemStack result, CMIRecipeIngredient ingredient1, CMIRecipeCraftData temp) {
         return makeBlastingRecipe(result, ingredient1, temp, null);
     }

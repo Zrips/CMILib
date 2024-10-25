@@ -70,7 +70,7 @@ public class CMIGuiButton {
                 ItemFlag.HIDE_DYE,
                 ItemFlag.HIDE_ENCHANTS,
                 ItemFlag.HIDE_UNBREAKABLE,
-                ItemFlag.HIDE_PLACED_ON); 
+                ItemFlag.HIDE_PLACED_ON);
 //            try {
 //                meta.addItemFlags(ItemFlag.HIDE_ITEM_SPECIFICS);
 //            } catch (Throwable e) {
@@ -81,6 +81,16 @@ public class CMIGuiButton {
         } else
             item = CMINBT.HideFlag(item, 63);
 
+    }
+
+    public CMIGuiButton hideToltip() {
+        if (!Version.isCurrentEqualOrHigher(Version.v1_21_R2))
+            return this;
+
+        ItemMeta meta = item.getItemMeta();
+        meta.setHideTooltip(true);
+        item.setItemMeta(meta);
+        return this;
     }
 
     public CMIGuiButton(ItemStack item) {

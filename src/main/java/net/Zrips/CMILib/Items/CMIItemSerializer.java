@@ -242,7 +242,7 @@ public class CMIItemSerializer {
 
                 if (ahead != null)
                     ahead.setAsyncHead(true);
-                CMIScheduler.runTaskAsynchronously(() -> {
+                CMIScheduler.runTaskAsynchronously(CMILib.getInstance(), () -> {
                     CMISkin skin = CMILib.getInstance().getSkinManager().getSkin(d);
                     ItemStack s = applySkin(skin, skull);
                     if (ahead != null)
@@ -262,7 +262,7 @@ public class CMIItemSerializer {
                                 ahead.setAsyncHead(true);
                             }
 
-                            CMIScheduler.runTaskAsynchronously(() -> {
+                            CMIScheduler.runTaskAsynchronously(CMILib.getInstance(), () -> {
                                 OfflinePlayer offlineP = Bukkit.getOfflinePlayer(d);
                                 if (offlineP != null) {
                                     ItemStack lskull = skull;

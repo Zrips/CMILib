@@ -335,10 +335,10 @@ public enum CMIEntityType {
     SPRUCE_CHEST_BOAT(),
     
     //1.22 ?
-//    PALE_OAK_BOAT(),
-//    PALE_OAK_CHEST_BOAT(),
-//    CREAKING(),
-//    CREAKING_TRANSIENT(),
+    PALE_OAK_BOAT(),
+    PALE_OAK_CHEST_BOAT(),
+    CREAKING(),
+    CREAKING_TRANSIENT(),
 
     // if possible we can remove this string for each texture to save up some space
     // eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUv

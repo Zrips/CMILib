@@ -115,7 +115,7 @@ public class SkinManager {
                     lastUpdateRequest = System.currentTimeMillis();
                     skinCacheByUUID.put(uuid, cmiSkin);
                     skinCacheByName.put(playerName, cmiSkin);
-                    
+
 //                    CMIScheduler.runTaskAsynchronously(() -> {
 //                        if (!saving)
 //                            save(cmiSkin);
@@ -166,6 +166,9 @@ public class SkinManager {
         if (name.length() == 36) {
             onlineUUID = UUID.fromString(name);
         } else {
+
+            name = name.replaceAll("[^a-zA-Z0-9_]", "");
+
             CMISkin cache = skinCacheByName.get(name);
             if (cache != null) {
                 return cache;

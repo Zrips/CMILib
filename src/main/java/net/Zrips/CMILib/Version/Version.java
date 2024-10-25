@@ -1,6 +1,5 @@
 package net.Zrips.CMILib.Version;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -9,7 +8,6 @@ import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 
 import net.Zrips.CMILib.CMILib;
-import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Messages.CMIMessages;
 
 public enum Version {
@@ -47,7 +45,7 @@ public enum Version {
     v1_20_R3(4),
     v1_20_R4(5, 6),
     v1_21_R1(0, 1),
-    v1_21_R2(2),
+    v1_21_R2(2, 3),
     v1_21_R3,
     v1_22_R1,
     v1_22_R2,
@@ -217,7 +215,7 @@ public enum Version {
 
             } catch (Throwable e) {
             }
-            
+
             if (platform == null)
                 platform = MinecraftPlatform.paper;
             return platform;
