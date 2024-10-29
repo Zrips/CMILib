@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+import javax.annotation.Nullable;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -101,7 +103,7 @@ public class CMIWorld {
         return 256;
     }
 
-    public static World getWorld(String name) {
+    public static @Nullable World getWorld(String name) {
         World w = Bukkit.getWorld(name);
 
         if (w != null)

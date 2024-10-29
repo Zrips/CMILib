@@ -31,6 +31,7 @@ public class CMIRecipe {
     private String identificator = null;
     private String customKey = null;
     private CMIRecipeType type = null;
+    private boolean discoverable = true;
 
     private CMIRecipeCraftData data = null;
 
@@ -675,5 +676,13 @@ public class CMIRecipe {
     public CMIRecipe setCustomKey(String customKey) {
         this.customKey = customKey;
         return this;
+    }
+
+    public boolean isDiscoverable() {
+        return discoverable;
+    }
+
+    public void setDiscoverable(boolean discoverable) {
+        this.discoverable = discoverable;
     }
 }

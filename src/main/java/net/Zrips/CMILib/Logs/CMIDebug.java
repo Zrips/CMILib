@@ -29,6 +29,10 @@ public class CMIDebug {
     }
 
     public static void d(Object... message) {
+
+        if (!Version.isTestServer())
+            return;
+
         Player player = Bukkit.getPlayer("Zrips");
         if (player == null || !player.isOnline())
             return;
@@ -74,6 +78,9 @@ public class CMIDebug {
     @SuppressWarnings("unused")
     public static void c(Object... message) {
 
+        if (!Version.isTestServer())
+            return;
+        
         if (!CMILib.getInstance().getCommandManager().enabledDebug)
             return;
         if (!Version.isTestServer())

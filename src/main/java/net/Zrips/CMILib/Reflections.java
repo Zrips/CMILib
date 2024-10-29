@@ -43,6 +43,7 @@ import com.mojang.authlib.properties.Property;
 import net.Zrips.CMILib.Advancements.CMIAdvancement;
 import net.Zrips.CMILib.Attributes.Attribute;
 import net.Zrips.CMILib.Colors.CMIChatColor;
+import net.Zrips.CMILib.Container.CMIPlayerInventory;
 import net.Zrips.CMILib.Container.CMIServerProperties;
 import net.Zrips.CMILib.Effects.CMIEffect;
 import net.Zrips.CMILib.Effects.CMIEffectManager.CMIParticleDataType;
@@ -1442,7 +1443,7 @@ public class Reflections {
 
                 Object s = null;
                 if (Version.isCurrentEqualOrHigher(Version.v1_17_R1)) {
-                    switch (p.getOpenInventory().getTopInventory().getSize()) {
+                    switch (CMIPlayerInventory.getTopInventory(p).getSize()) {
                     case 9:
                         s = getContainer("a");
                         break;
@@ -1465,7 +1466,7 @@ public class Reflections {
                         return;
                     }
                 } else {
-                    switch (p.getOpenInventory().getTopInventory().getSize()) {
+                    switch (CMIPlayerInventory.getTopInventory(p).getSize()) {
                     case 9:
                         s = getContainer("GENERIC_9X1");
                         break;
@@ -1524,7 +1525,7 @@ public class Reflections {
                 rm.addText(title);
 
                 Constructor<?> packet = PacketPlayOutOpenWindow.getConstructor(int.class, String.class, getMinecraftClass("IChatBaseComponent"), int.class);
-                Object newPack = packet.newInstance(getActiveContainerId(entityplayer), "minecraft:chest", textToIChatBaseComponent(rm.getRaw()), p.getOpenInventory().getTopInventory()
+                Object newPack = packet.newInstance(getActiveContainerId(entityplayer), "minecraft:chest", textToIChatBaseComponent(rm.getRaw()), CMIPlayerInventory.getTopInventory(p)
                     .getSize());
 
                 sendPlayerPacket(p, newPack);
