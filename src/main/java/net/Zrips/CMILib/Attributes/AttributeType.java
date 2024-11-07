@@ -62,7 +62,7 @@ public enum AttributeType {
     public org.bukkit.attribute.Attribute getAttribute() {
         if (attribute == null)
             for (org.bukkit.attribute.Attribute one : org.bukkit.attribute.Attribute.values()) {
-                if (one.toString().equalsIgnoreCase(this.getIdentificator())) {
+                if (one.toString().equalsIgnoreCase(this.getIdentificator()) || one.toString().equalsIgnoreCase(name)) {
                     attribute = one;
                     break;
                 }
