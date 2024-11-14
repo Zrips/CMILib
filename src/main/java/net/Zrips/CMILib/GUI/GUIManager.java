@@ -19,6 +19,7 @@ import org.bukkit.inventory.ItemStack;
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Container.CMIPlayerInventory;
 import net.Zrips.CMILib.Items.CMIMaterial;
+import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.Permissions.CMILPerm;
 import net.Zrips.CMILib.Version.Version;
@@ -357,8 +358,16 @@ public class GUIManager {
         CMIGui gui = map.get(player.getUniqueId());
         if (gui == null)
             return false;
+
         if (player.getOpenInventory() == null)
             return false;
+
+        if (!validInventory(gui)) {
+            player.closeInventory();
+            map.remove(player.getUniqueId());
+            return false;
+        }
+
         return true;
     }
 
@@ -479,14 +488,13 @@ public class GUIManager {
         if (!topInv.getType().equals(gui.getInv().getType()))
             return false;
 
-        Inventory top = CMIPlayerInventory.getTopInventory(player);
-        if (top.getSize() != gui.getInv().getSize())
+        if (topInv.getSize() != gui.getInv().getSize())
             return false;
 
-        if (Version.isCurrentEqualOrHigher(Version.v1_9_R1) && top.getLocation() != null)
+        if (Version.isCurrentEqualOrHigher(Version.v1_9_R1) && topInv.getLocation() != null)
             return false;
 
-        return top.getHolder() == null;
+        return topInv.getHolder() == null;
     }
 
     public void updateContent(CMIGui gui) {

@@ -4,11 +4,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
-import org.bukkit.block.Biome;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
@@ -62,8 +60,6 @@ public class CMILibConfig {
 
     private ConfigReader localeFile = null;
     private ConfigReader cfg = null;
-
-    private LinkedHashMap<Biome, CMIBiome> biomeNames = new LinkedHashMap<Biome, CMIBiome>();
 
     public CMILibConfig(CMILib plugin) {
         this.plugin = plugin;
@@ -446,10 +442,6 @@ public class CMILibConfig {
 
     public CMIItemStack getGUIEmptyField() {
         return GUIEmptyField;
-    }
-
-    public HashMap<Biome, CMIBiome> getBiomeNames() {
-        return biomeNames;
     }
 
     public CMIItemStack getGUIPreviousPage() {
