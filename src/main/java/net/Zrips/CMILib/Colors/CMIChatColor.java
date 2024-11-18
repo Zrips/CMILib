@@ -14,10 +14,12 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 
 import net.Zrips.CMILib.CMILibConfig;
+import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Version.Version;
 
 public class CMIChatColor {
@@ -127,7 +129,7 @@ public class CMIChatColor {
 
     public static final String ColorFontRegex = "(\\" + colorFontPrefix + ")([a-zA-Z_]{3,})(\\" + colorCodeSuffix + ")";
 
-    public static final Pattern gradientPattern = Pattern.compile("(\\{(#[^\\{]*?)>\\})(.*?)(\\{(#.*?)<(>?)\\})");
+    public static final Pattern gradientPattern = Pattern.compile("(\\{(#[^\\{\\}]*?)>\\})(.*?)(\\{(#[^\\{\\}]*?)<(>?)\\})");
 
     public static final String hexColorDecolRegex = "(&x)(&[0-9A-Fa-f]){6}";
 
@@ -1029,8 +1031,9 @@ public class CMIChatColor {
             hex = hex.substring(1);
 
         CMIChatColor closest = CUSTOM_BY_RGB.get(hex);
-        if (closest != null)
+        if (closest != null) {
             return closest;
+        }
 
         java.awt.Color c2 = null;
         try {
