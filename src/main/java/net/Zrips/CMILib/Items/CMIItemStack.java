@@ -37,13 +37,10 @@ import net.Zrips.CMILib.Colors.CMIColors;
 import net.Zrips.CMILib.Enchants.CMIEnchantment;
 import net.Zrips.CMILib.Entities.CMIEntity;
 import net.Zrips.CMILib.Entities.CMIEntityType;
-import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.Recipes.CMIRecipe;
 import net.Zrips.CMILib.Recipes.CMIRecipeIngredient;
 import net.Zrips.CMILib.Version.Version;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 
 public class CMIItemStack {
 
@@ -510,14 +507,20 @@ public class CMIItemStack {
                 PotionMeta potion = (PotionMeta) item.getItemStack().getItemMeta();
                 PotionMeta potion2 = (PotionMeta) this.getItemStack().getItemMeta();
                 try {
-                    if (potion != null && potion.getBasePotionData() != null) {
-                        PotionData base1 = potion.getBasePotionData();
-                        if (base1.getType() != null) {
-                            if (potion2 != null && potion2.getBasePotionData() != null) {
-                                PotionData base2 = potion2.getBasePotionData();
-                                if (base2.getType() != null) {
-                                    if (base1.getType().equals(base2.getType()) && base1.isExtended() == base2.isExtended() && base1.isUpgraded() == base2.isUpgraded())
-                                        return true;
+                    if (Version.isCurrentEqualOrHigher(Version.v1_20_R1)) {
+                        if (potion.getBasePotionType() != null && potion2.getBasePotionType() != null && potion.getBasePotionType().equals(potion2.getBasePotionType())) {
+                            return true;
+                        }
+                    } else {
+                        if (potion != null && potion.getBasePotionData() != null) {
+                            PotionData base1 = potion.getBasePotionData();
+                            if (base1.getType() != null) {
+                                if (potion2 != null && potion2.getBasePotionData() != null) {
+                                    PotionData base2 = potion2.getBasePotionData();
+                                    if (base2.getType() != null) {
+                                        if (base1.getType().equals(base2.getType()) && base1.isExtended() == base2.isExtended() && base1.isUpgraded() == base2.isUpgraded())
+                                            return true;
+                                    }
                                 }
                             }
                         }

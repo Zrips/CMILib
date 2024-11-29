@@ -291,7 +291,7 @@ public class BossBarManager {
         getBossBarInfo(player).remove(bossBar.getNameOfBar().toLowerCase());
     }
 
-    public void addBossBar(Player player, BossBarInfo barInfo) {
+    public synchronized void addBossBar(Player player, BossBarInfo barInfo) {
         if (player == null || barInfo == null)
             return;
 

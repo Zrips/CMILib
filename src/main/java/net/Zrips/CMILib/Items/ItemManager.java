@@ -102,11 +102,11 @@ public class ItemManager {
                 mojangName = mat.toString();
             }
             mojangName = mojangName == null ? mat.toString().replace("_", "").replace(" ", "").toLowerCase() : mojangName.replace("_", "").replace(" ", "").toLowerCase();
-            if (one.isCanHavePotionType()) {
-                for (PotionType potType : PotionType.values()) {
-                    byName.put(cmiName + ":" + potType.toString().toLowerCase(), one);
-                }
-            }
+//            if (one.isCanHavePotionType()) {
+//                for (PotionType potType : PotionType.values()) {
+//                    byName.put(cmiName + ":" + potType.toString().toLowerCase(), one);
+//                }
+//            }
             if (byName.containsKey(cmiName) && Version.isCurrentEqualOrLower(Version.v1_13_R1)) {
                 byName.put(cmiName + ":" + data, one);
             } else
@@ -200,6 +200,7 @@ public class ItemManager {
     }
 
     public CMIItemStack getItem(String name, CMIAsyncHead ahead) {
+
         if (name == null)
             return null;
 
@@ -499,10 +500,10 @@ public class ItemManager {
             ncm.setAmount(amount);
 
         if (ncm != null && subdata != null) {
-
             if (ncm.getCMIType().isPotion() || ncm.getCMIType().equals(CMIMaterial.SPLASH_POTION) || ncm.getCMIType().equals(CMIMaterial.TIPPED_ARROW)) {
 
-                PotionEffectType type = null;
+//                PotionEffectType type = null;
+                PotionType potionType = null;
                 Boolean upgraded = false;
                 Boolean extended = false;
                 String[] split = subdata.split("-");
@@ -510,8 +511,6 @@ public class ItemManager {
                 try {
 
                     String n = (split.length > 0 ? split[0] : subdata).replace("_", "");
-
-                    type = CMIPotionEffectType.get(n);
 
                     if (split.length > 1) {
                         try {
@@ -530,17 +529,28 @@ public class ItemManager {
                         extended = false;
                     PotionMeta meta = (PotionMeta) item.getItemMeta();
 
-                    PotionType potionType = CMIPotionType.get(type);
+                    potionType = CMIPotionType.get(n, upgraded, extended);
 
-                    if (potionType != null)
-                        meta.setBasePotionData(new PotionData(potionType, extended, upgraded));
+                    if (potionType != null) {
+
+                        if (Version.isCurrentEqualOrHigher(Version.v1_20_R1)) {
+                            meta.setBasePotionType(potionType);
+                        } else {
+                            PotionData pdata = new PotionData(potionType, extended, upgraded);
+                            meta.setBasePotionData(pdata);
+                        }
+                    }
                     if (CMIMaterial.TIPPED_ARROW.equals(CMIMaterial.get(item))) {
                         if (potionType != null) {
-                            if (!potionType.isExtendable())
-                                extended = false;
-                            if (!potionType.isUpgradeable())
-                                upgraded = false;
-                            meta.setBasePotionData(new PotionData(potionType, extended, upgraded));
+                            if (Version.isCurrentEqualOrHigher(Version.v1_20_R1)) {
+                                meta.setBasePotionType(potionType);
+                            } else {
+                                if (!potionType.isExtendable())
+                                    extended = false;
+                                if (!potionType.isUpgradeable())
+                                    upgraded = false;
+                                meta.setBasePotionData(new PotionData(potionType, extended, upgraded));
+                            }
                         }
                     }
                     item.setItemMeta(meta);

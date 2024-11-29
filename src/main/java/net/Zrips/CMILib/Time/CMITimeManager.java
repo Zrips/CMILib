@@ -244,7 +244,7 @@ public class CMITimeManager {
             additional = 12;
         } else if (time.contains("am")) {
             time = time.replace("am", "");
-        } else if (time.contains("ticks")) {
+        } else if (time.contains("ticks") || !time.contains(":")) {
             time = time.replace("ticks", "");
             long ticks = -1;
             try {

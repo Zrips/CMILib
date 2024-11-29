@@ -1044,7 +1044,7 @@ public class CMIItemSerializer {
             return false;
 
         List<String> sherds = new ArrayList<String>();
-        
+
         for (String oneSherd : value.split(",")) {
             if (!oneSherd.toLowerCase().endsWith("_pottery_sherd"))
                 oneSherd += "_pottery_sherd";
@@ -1057,16 +1057,16 @@ public class CMIItemSerializer {
 
         if (sherds.isEmpty())
             return false;
-        
+
         sherds.subList(4, sherds.size()).clear();
 
         if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
-            
+
             // Newer versions will need different handling
 
-            return false;            
+            return false;
         }
-        
+
         try {
             CMINBT nbt = new CMINBT(cim.getItemStack());
             CMINBT stag = new CMINBT(nbt.getCompound("BlockEntityTag"));
@@ -1248,8 +1248,15 @@ public class CMIItemSerializer {
         } else if (item.getCMIType().isPotion() || item.getType().name().contains("TIPPED_ARROW")) {
             PotionMeta potion = (PotionMeta) item.getItemStack().getItemMeta();
             try {
-                if (potion != null && potion.getBasePotionData() != null && potion.getBasePotionData().getType() != null && potion.getBasePotionData().getType().getEffectType() != null) {
-                    liner += ":" + potion.getBasePotionData().getType().getEffectType().getName() + "-" + potion.getBasePotionData().isUpgraded() + "-" + potion.getBasePotionData().isExtended();
+
+                if (Version.isCurrentEqualOrHigher(Version.v1_21_R1)) {
+                    if (potion != null && potion.getBasePotionType() != null) {
+                        liner += ":" + potion.getBasePotionType().toString();
+                    }
+                } else {
+                    if (potion != null && potion.getBasePotionData() != null && potion.getBasePotionData().getType() != null && potion.getBasePotionData().getType().getEffectType() != null) {
+                        liner += ":" + potion.getBasePotionData().getType().toString() + "-" + potion.getBasePotionData().isUpgraded() + "-" + potion.getBasePotionData().isExtended();
+                    }
                 }
             } catch (NoSuchMethodError e) {
             }

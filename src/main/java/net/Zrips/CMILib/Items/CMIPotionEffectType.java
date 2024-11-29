@@ -7,11 +7,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.potion.PotionType;
 
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Colors.CMIChatColor;
 import net.Zrips.CMILib.Container.CMIText;
 import net.Zrips.CMILib.FileHandler.ConfigReader;
+import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Version.Version;
 import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
 
@@ -120,7 +122,7 @@ public enum CMIPotionEffectType {
                 byName.put(alternative.replace(" ", "").replace("_", "").toLowerCase(), one.getType());
             }
         }
-        CMIScheduler.runTask(() -> {
+        CMIScheduler.runTask(CMILib.getInstance(), () -> {
             for (PotionEffectType one : PotionEffectType.values()) {
                 if (one == null)
                     continue;
@@ -158,8 +160,12 @@ public enum CMIPotionEffectType {
 
         CMIPotionEffectType cmiEffect = localizedPotionEffectTypeList.get(name);
 
-        if (cmiEffect == null)
+        if (cmiEffect == null) {
+            PotionType potionType = CMIPotionType.get(name);
+            if (potionType != null)
+                return potionType.getEffectType();
             return null;
+        }
 
         return cmiEffect.getType();
     }
