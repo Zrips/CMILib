@@ -30,12 +30,12 @@ public class BossBarManager {
 
     ConcurrentHashMap<UUID, ConcurrentHashMap<String, BossBarInfo>> barMap = new ConcurrentHashMap<UUID, ConcurrentHashMap<String, BossBarInfo>>();
 
-    public void addGlobalBar(BossBarInfo binfo) {
+    public synchronized void addGlobalBar(BossBarInfo binfo) {
         if (binfo.isGlobal()) {
             BossBarInfo old = globalBars.get(binfo.getNameOfBar().replaceAll("[^a-zA-Z0-9]", ""));
             if (old != null) {
                 old.cancelAutoScheduler();
-                old.cancelHideScheduler();
+                old.cancelHideScheduler(); 
             }
             globalBars.put(binfo.getNameOfBar().replaceAll("[^a-zA-Z0-9]", ""), binfo);
         }
@@ -46,7 +46,7 @@ public class BossBarManager {
         removeGlobalBossbar(bar.getNameOfBar());
     }
 
-    public void removeGlobalBossbar(String barName) {
+    public synchronized void removeGlobalBossbar(String barName) {
         BossBarInfo ret = globalBars.remove(barName.replaceAll("[^a-zA-Z0-9]", ""));
         if (ret != null) {
             ret.cancelAutoScheduler();
@@ -54,7 +54,7 @@ public class BossBarManager {
         }
     }
 
-    public void updateGlobalBars(Player player) {
+    public synchronized void updateGlobalBars(Player player) {
 
         for (Entry<String, BossBarInfo> iter : new HashMap<String, BossBarInfo>(globalBars).entrySet()) {
             BossBarInfo binfo = iter.getValue();
@@ -65,15 +65,10 @@ public class BossBarManager {
             }
 
             BossBarInfo clone = binfo.clone(player);
-//	    clone.setNameOfBar(null);
             clone.setBar(null);
-
             getBossBarInfo(player).remove(clone.getNameOfBar().toLowerCase());
-
             addBossBar(player, clone);
-
         }
-
     }
 
     public synchronized void updateBossBars(Player player) {
