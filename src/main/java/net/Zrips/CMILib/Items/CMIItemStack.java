@@ -22,6 +22,7 @@ import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.ShapelessRecipe;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
@@ -117,12 +118,34 @@ public class CMIItemStack {
         return CMIMaterial.isArmor(this.getType());
     }
 
-    public short getDurability() {
-        return this.getItemStack().getDurability();
+    public int getDurability() {
+        return getDurability(this.getItemStack());
     }
 
-    public short getMaxDurability() {
-        return this.material.getMaxDurability();
+    public int getMaxDurability() {
+        return getMaxDurability(this.getItemStack());
+    }
+
+    public static int getDurability(ItemStack item) {
+        if (item == null)
+            return 0;
+        if (Version.isCurrentEqualOrHigher(Version.v1_13_R1) && item.getItemMeta() instanceof Damageable) {
+            Damageable meta = (Damageable) item.getItemMeta();
+            return meta.getDamage();
+        }
+        return item.getDurability();
+    }
+
+    public static int getMaxDurability(ItemStack item) {
+        if (item == null)
+            return 0;
+        if (Version.isCurrentEqualOrHigher(Version.v1_21_R1) && item.getItemMeta() instanceof Damageable) {
+            Damageable meta = (Damageable) item.getItemMeta();
+            if (!meta.hasMaxDamage())
+                return item.getType().getMaxDurability();
+            return meta.getMaxDamage();
+        }
+        return item.getType().getMaxDurability();
     }
 
     public void setData(short data) {

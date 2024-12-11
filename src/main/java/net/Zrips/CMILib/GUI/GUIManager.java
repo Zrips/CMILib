@@ -363,8 +363,9 @@ public class GUIManager {
             return false;
 
         if (!validInventory(gui)) {
-            player.closeInventory();
+            // removal should he before closing to avoid potential issues
             map.remove(player.getUniqueId());
+            player.closeInventory();
             return false;
         }
 
