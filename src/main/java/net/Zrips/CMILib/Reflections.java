@@ -1915,9 +1915,14 @@ public class Reflections {
                     }
                 }
 
-                net.minecraft.network.protocol.game.PacketPlayOutWorldParticles packet =
-                    new net.minecraft.network.protocol.game.PacketPlayOutWorldParticles(
-                        (net.minecraft.core.particles.ParticleParam) CraftParticleMethod.invoke(null, particle, dd),
+                net.minecraft.network.protocol.game.PacketPlayOutWorldParticles packet = null;
+
+                if (Version.isCurrentEqualOrLower(Version.v1_21_R2)) {
+                    if (effectConstructor == null)
+                        effectConstructor = PacketPlayOutWorldParticles.getConstructor(net.minecraft.core.particles.ParticleParam.class, boolean.class, double.class, double.class, double.class,
+                            float.class, float.class, float.class, float.class, int.class);
+
+                    packet = (net.minecraft.network.protocol.game.PacketPlayOutWorldParticles) effectConstructor.newInstance(CraftParticleMethod.invoke(null, particle, dd),
                         true,
                         location.getX(),
                         location.getY(),
@@ -1928,6 +1933,20 @@ public class Reflections {
                         ef.getSpeed(),
                         ef.getAmount());
 
+                } else {
+                    packet = new net.minecraft.network.protocol.game.PacketPlayOutWorldParticles(
+                        (net.minecraft.core.particles.ParticleParam) CraftParticleMethod.invoke(null, particle, dd),
+                        true,
+                        false,
+                        location.getX(),
+                        location.getY(),
+                        location.getZ(),
+                        (float) ef.getOffset().getX(),
+                        (float) ef.getOffset().getY(),
+                        (float) ef.getOffset().getZ(),
+                        ef.getSpeed(),
+                        ef.getAmount());
+                }
                 sendPlayerPacket(player, packet);
 
             }
