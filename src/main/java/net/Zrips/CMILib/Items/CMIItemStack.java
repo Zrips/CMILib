@@ -38,6 +38,9 @@ import net.Zrips.CMILib.Colors.CMIColors;
 import net.Zrips.CMILib.Enchants.CMIEnchantment;
 import net.Zrips.CMILib.Entities.CMIEntity;
 import net.Zrips.CMILib.Entities.CMIEntityType;
+import net.Zrips.CMILib.GUI.CMIGuiButton;
+import net.Zrips.CMILib.GUI.GUIManager.GUIClickType;
+import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.Recipes.CMIRecipe;
 import net.Zrips.CMILib.Recipes.CMIRecipeIngredient;
@@ -790,6 +793,7 @@ public class CMIItemStack {
             if (rec != null)
                 recipes.add(rec);
         }
+                
         return recipes;
     }
 

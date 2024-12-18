@@ -7,6 +7,7 @@ import java.util.List;
 public enum CMIRecipeType {
     Shaped(Arrays.asList(11, 12, 13, 20, 21, 22, 29, 30, 31)),
     Shapeless(Arrays.asList(11, 12, 13, 20, 21, 22, 29, 30, 31)),
+    Transmute(Arrays.asList(11, 12, 13, 20, 21, 22, 29, 30, 31)),
     Furnace(20, true),
     Blasting(20, true),
     Campfire(20, true),

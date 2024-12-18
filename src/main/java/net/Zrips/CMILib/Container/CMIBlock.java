@@ -297,7 +297,25 @@ public class CMIBlock {
             org.bukkit.block.data.BlockData blockData = block.getBlockData().clone();
             switch (direction) {
             case UP_DOWN:
-                if (blockData instanceof org.bukkit.block.data.Bisected) {
+
+                if (blockData instanceof org.bukkit.block.data.type.Slab) {
+
+                    org.bukkit.block.data.type.Slab slab = blockd == null || !(blockd instanceof org.bukkit.block.data.type.Slab)
+                        ? (org.bukkit.block.data.type.Slab) blockData.clone()
+                        : (org.bukkit.block.data.type.Slab) blockd;
+
+                    switch (slab.getType().toString()) {
+                    case "TOP":
+                        slab.setType(org.bukkit.block.data.type.Slab.Type.BOTTOM);
+                        break;
+                    case "BOTTOM":
+                        slab.setType(org.bukkit.block.data.type.Slab.Type.TOP);
+                        break;
+                    }
+                    if (this.blockd == null)
+                        this.blockd = slab;
+
+                } else if (blockData instanceof org.bukkit.block.data.Bisected) {
                     org.bukkit.block.data.Bisected half = blockd == null || !(blockd instanceof org.bukkit.block.data.Bisected)
                         ? (org.bukkit.block.data.Bisected) blockData.clone()
                         : (org.bukkit.block.data.Bisected) blockd;
@@ -427,57 +445,168 @@ public class CMIBlock {
             if (blockData instanceof org.bukkit.block.data.Rotatable) {
                 org.bukkit.block.data.Rotatable directional = blockd == null ? (org.bukkit.block.data.Rotatable) blockData.clone()
                     : (org.bukkit.block.data.Rotatable) blockd;
+                switch (direction) {
+                case NORTH_SOUTH:
+                    switch (directional.getRotation()) {
+                    case NORTH:
+                        directional.setRotation(BlockFace.SOUTH);
+                        break;
+                    case NORTH_NORTH_EAST:
+                        directional.setRotation(BlockFace.SOUTH_SOUTH_EAST);
+                        break;
+                    case NORTH_EAST:
+                        directional.setRotation(BlockFace.SOUTH_EAST);
+                        break;
+                    case EAST_NORTH_EAST:
+                        directional.setRotation(BlockFace.EAST_SOUTH_EAST);
+                        break;
+                    case EAST:
+                        directional.setRotation(BlockFace.EAST);
+                        break;
+                    case EAST_SOUTH_EAST:
+                        directional.setRotation(BlockFace.EAST_NORTH_EAST);
+                        break;
+                    case SOUTH_EAST:
+                        directional.setRotation(BlockFace.NORTH_EAST);
+                        break;
+                    case SOUTH_SOUTH_EAST:
+                        directional.setRotation(BlockFace.NORTH_NORTH_EAST);
+                        break;
+                    case SOUTH:
+                        directional.setRotation(BlockFace.NORTH);
+                        break;
+                    case SOUTH_SOUTH_WEST:
+                        directional.setRotation(BlockFace.NORTH_NORTH_WEST);
+                        break;
+                    case SOUTH_WEST:
+                        directional.setRotation(BlockFace.NORTH_WEST);
+                        break;
+                    case WEST_SOUTH_WEST:
+                        directional.setRotation(BlockFace.WEST_NORTH_WEST);
+                        break;
+                    case WEST:
+                        directional.setRotation(BlockFace.WEST);
+                        break;
+                    case WEST_NORTH_WEST:
+                        directional.setRotation(BlockFace.WEST_SOUTH_WEST);
+                        break;
+                    case NORTH_WEST:
+                        directional.setRotation(BlockFace.SOUTH_WEST);
+                        break;
+                    case NORTH_NORTH_WEST:
+                        directional.setRotation(BlockFace.SOUTH_SOUTH_WEST);
+                        break;
+                    default:
+                        break;
+                    }
+                    break;
 
-                switch (directional.getRotation()) {
-                case NORTH:
-                    directional.setRotation(BlockFace.SOUTH);
-                    break;
-                case NORTH_NORTH_EAST:
-                    directional.setRotation(BlockFace.SOUTH_SOUTH_WEST);
-                    break;
-                case NORTH_EAST:
-                    directional.setRotation(BlockFace.SOUTH_WEST);
-                    break;
-                case EAST_NORTH_EAST:
-                    directional.setRotation(BlockFace.WEST_SOUTH_WEST);
-                    break;
-                case EAST:
-                    directional.setRotation(BlockFace.WEST);
-                    break;
-                case EAST_SOUTH_EAST:
-                    directional.setRotation(BlockFace.WEST_NORTH_WEST);
-                    break;
-                case SOUTH_EAST:
-                    directional.setRotation(BlockFace.NORTH_WEST);
-                    break;
-                case SOUTH_SOUTH_EAST:
-                    directional.setRotation(BlockFace.NORTH_NORTH_WEST);
-                    break;
-                case SOUTH:
-                    directional.setRotation(BlockFace.NORTH);
-                    break;
-                case SOUTH_SOUTH_WEST:
-                    directional.setRotation(BlockFace.NORTH_NORTH_EAST);
-                    break;
-                case SOUTH_WEST:
-                    directional.setRotation(BlockFace.NORTH_EAST);
-                    break;
-                case WEST_SOUTH_WEST:
-                    directional.setRotation(BlockFace.EAST_NORTH_EAST);
-                    break;
-                case WEST:
-                    directional.setRotation(BlockFace.EAST);
-                    break;
-                case WEST_NORTH_WEST:
-                    directional.setRotation(BlockFace.EAST_SOUTH_EAST);
-                    break;
-                case NORTH_WEST:
-                    directional.setRotation(BlockFace.SOUTH_EAST);
-                    break;
-                case NORTH_NORTH_WEST:
-                    directional.setRotation(BlockFace.SOUTH_SOUTH_EAST);
+                case WEST_EAST:
+                    switch (directional.getRotation()) {
+                    case NORTH:
+                        directional.setRotation(BlockFace.NORTH); // No flip
+                        break;
+                    case NORTH_NORTH_EAST:
+                        directional.setRotation(BlockFace.NORTH_NORTH_WEST);
+                        break;
+                    case NORTH_EAST:
+                        directional.setRotation(BlockFace.NORTH_WEST);
+                        break;
+                    case EAST_NORTH_EAST:
+                        directional.setRotation(BlockFace.WEST_NORTH_WEST);
+                        break;
+                    case EAST:
+                        directional.setRotation(BlockFace.WEST);
+                        break;
+                    case EAST_SOUTH_EAST:
+                        directional.setRotation(BlockFace.WEST_SOUTH_WEST);
+                        break;
+                    case SOUTH_EAST:
+                        directional.setRotation(BlockFace.SOUTH_WEST);
+                        break;
+                    case SOUTH_SOUTH_EAST:
+                        directional.setRotation(BlockFace.SOUTH_SOUTH_WEST);
+                        break;
+                    case SOUTH:
+                        directional.setRotation(BlockFace.SOUTH); // No flip
+                        break;
+                    case SOUTH_SOUTH_WEST:
+                        directional.setRotation(BlockFace.SOUTH_SOUTH_EAST);
+                        break;
+                    case SOUTH_WEST:
+                        directional.setRotation(BlockFace.SOUTH_EAST);
+                        break;
+                    case WEST_SOUTH_WEST:
+                        directional.setRotation(BlockFace.EAST_SOUTH_EAST);
+                        break;
+                    case WEST:
+                        directional.setRotation(BlockFace.EAST);
+                        break;
+                    case WEST_NORTH_WEST:
+                        directional.setRotation(BlockFace.EAST_NORTH_EAST);
+                        break;
+                    case NORTH_WEST:
+                        directional.setRotation(BlockFace.NORTH_EAST);
+                        break;
+                    case NORTH_NORTH_WEST:
+                        directional.setRotation(BlockFace.NORTH_NORTH_EAST);
+                        break;
+                    default:
+                        break;
+                    }
                     break;
                 }
+
+//                switch (directional.getRotation()) {
+//                case NORTH:
+//                    directional.setRotation(BlockFace.SOUTH);
+//                    break;
+//                case NORTH_NORTH_EAST:
+//                    directional.setRotation(BlockFace.SOUTH_SOUTH_WEST);
+//                    break;
+//                case NORTH_EAST:
+//                    directional.setRotation(BlockFace.SOUTH_WEST);
+//                    break;
+//                case EAST_NORTH_EAST:
+//                    directional.setRotation(BlockFace.WEST_SOUTH_WEST);
+//                    break;
+//                case EAST:
+//                    directional.setRotation(BlockFace.WEST);
+//                    break;
+//                case EAST_SOUTH_EAST:
+//                    directional.setRotation(BlockFace.WEST_NORTH_WEST);
+//                    break;
+//                case SOUTH_EAST:
+//                    directional.setRotation(BlockFace.NORTH_WEST);
+//                    break;
+//                case SOUTH_SOUTH_EAST:
+//                    directional.setRotation(BlockFace.NORTH_NORTH_WEST);
+//                    break;
+//                case SOUTH:
+//                    directional.setRotation(BlockFace.NORTH);
+//                    break;
+//                case SOUTH_SOUTH_WEST:
+//                    directional.setRotation(BlockFace.NORTH_NORTH_EAST);
+//                    break;
+//                case SOUTH_WEST:
+//                    directional.setRotation(BlockFace.NORTH_EAST);
+//                    break;
+//                case WEST_SOUTH_WEST:
+//                    directional.setRotation(BlockFace.EAST_NORTH_EAST);
+//                    break;
+//                case WEST:
+//                    directional.setRotation(BlockFace.EAST);
+//                    break;
+//                case WEST_NORTH_WEST:
+//                    directional.setRotation(BlockFace.EAST_SOUTH_EAST);
+//                    break;
+//                case NORTH_WEST:
+//                    directional.setRotation(BlockFace.SOUTH_EAST);
+//                    break;
+//                case NORTH_NORTH_WEST:
+//                    directional.setRotation(BlockFace.SOUTH_SOUTH_EAST);
+//                    break;
+//                }
                 if (this.blockd == null)
                     this.blockd = directional;
             }
@@ -488,7 +617,6 @@ public class CMIBlock {
             }
 
             return this;
-
         }
 
         int flipX = 0;

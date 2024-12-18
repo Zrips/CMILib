@@ -1673,7 +1673,7 @@ public class Reflections {
 
     public void playSound(Player player, Location location, Sound sound, float volume, float pitch) {
         Object cPlayer = this.getCraftPlayer(player);
-        CMIScheduler.runTask(() -> {
+        CMIScheduler.runTask(plugin, () -> {
             try {
                 cPlayer.getClass().getMethod("playSound", Location.class, Sound.class, float.class, float.class).invoke(cPlayer, location, sound, volume, pitch);
             } catch (Throwable e) {

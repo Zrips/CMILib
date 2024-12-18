@@ -1,13 +1,18 @@
 package net.Zrips.CMILib.Sounds;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
+
+import javax.annotation.Nonnull;
 
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import net.Zrips.CMILib.CMILib;
+import net.Zrips.CMILib.Messages.CMIMessages;
 import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
 
 public class CMISound {
@@ -22,6 +27,31 @@ public class CMISound {
 
     public CMISound(String name) {
         this(name, 1, 1);
+    }
+
+    static {
+        try {
+            Class<?> c = Class.forName("org.bukkit.Sound");
+
+            Object[] sounds = (Object[]) c.getMethod("values").invoke(c);
+
+            for (Object sound : sounds) {
+                if (sound == null)
+                    continue;
+                String name = sound.toString();
+                try {
+                    soundsByname.put(name.toLowerCase().replace("_", ""), (Sound) sound);
+                } catch (Exception e) {
+                    CMIMessages.consoleMessage("&4Failed to recognize biome by (" + name + ") name. Skipping.");
+                }
+            }
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static @Nonnull List<String> getSoundNames() {
+        return new ArrayList<String>(soundsByname.keySet());
     }
 
     public CMISound(String name, float volume, float pitch) {
@@ -49,11 +79,6 @@ public class CMISound {
         this.pitch = pitch;
         name = name.toLowerCase().replace("_", "");
         rawName = name;
-        if (soundsByname.isEmpty()) {
-            for (Sound one : Sound.values()) {
-                soundsByname.put(one.name().toLowerCase().replace("_", ""), one);
-            }
-        }
         sound = soundsByname.get(name);
 
         if (sound == null) {
@@ -80,7 +105,7 @@ public class CMISound {
             return this;
         if (sound == null)
             return this;
-        CMIScheduler.runTask(() -> loc.getWorld().playSound(loc, sound, volume, pitch));
+        CMIScheduler.runTask(CMILib.getInstance(), () -> loc.getWorld().playSound(loc, sound, volume, pitch));
         return this;
     }
 

@@ -69,11 +69,15 @@ public class CMINamespacedKey {
             return new CMINamespacedKey(((org.bukkit.inventory.StonecuttingRecipe) recipe).getKey());
         case Smithing:
             return new CMINamespacedKey(((org.bukkit.inventory.SmithingRecipe) recipe).getKey());
-        case Furnace:
+        case Furnace:            
             if (Version.isCurrentEqualOrLower(Version.v1_12_R1)) {
                 return new CMINamespacedKey(new org.bukkit.NamespacedKey(CMILib.getInstance(), CMIRecipe.getRecipeIdentificator(CMIRecipeType.Furnace, recipe)));
             }
             return new CMINamespacedKey(((org.bukkit.inventory.FurnaceRecipe) recipe).getKey());
+        case Transmute:            
+            if (Version.isCurrentEqualOrHigher(Version.v1_21_R1)) 
+                return new CMINamespacedKey(new org.bukkit.NamespacedKey(CMILib.getInstance(), CMIRecipe.getRecipeIdentificator(CMIRecipeType.Transmute, recipe)));            
+            return null;
         case Complex:
             return new CMINamespacedKey(((org.bukkit.inventory.ComplexRecipe) recipe).getKey());
         }
