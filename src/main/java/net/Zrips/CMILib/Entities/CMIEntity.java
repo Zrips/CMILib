@@ -102,7 +102,8 @@ public class CMIEntity {
                 bsm.setDisplayName(LC.info_Spawner.getLocale("[type]", s));
             is.setItemMeta(bsm);
         } catch (Throwable e) {
-            is.setDurability(type.getTypeId());
+            if (!Version.isCurrentEqualOrHigher(Version.v1_13_R1))
+                is.setDurability(type.getTypeId());
         }
         return is;
     }

@@ -26,18 +26,22 @@ public class BossBarManager {
         this.plugin = plugin;
     }
 
-    HashMap<String, BossBarInfo> globalBars = new HashMap();
+    ConcurrentHashMap<String, BossBarInfo> globalBars = new ConcurrentHashMap<String, BossBarInfo>();
 
     ConcurrentHashMap<UUID, ConcurrentHashMap<String, BossBarInfo>> barMap = new ConcurrentHashMap<UUID, ConcurrentHashMap<String, BossBarInfo>>();
 
+    private static String cleanName(String name) {
+        return name.replaceAll("[^a-zA-Z0-9]", "");
+    }
+
     public synchronized void addGlobalBar(BossBarInfo binfo) {
         if (binfo.isGlobal()) {
-            BossBarInfo old = globalBars.get(binfo.getNameOfBar().replaceAll("[^a-zA-Z0-9]", ""));
+            BossBarInfo old = globalBars.get(cleanName(binfo.getNameOfBar()));
             if (old != null) {
                 old.cancelAutoScheduler();
-                old.cancelHideScheduler(); 
+                old.cancelHideScheduler();
             }
-            globalBars.put(binfo.getNameOfBar().replaceAll("[^a-zA-Z0-9]", ""), binfo);
+            globalBars.put(cleanName(binfo.getNameOfBar()), binfo);
         }
         Show(binfo);
     }
@@ -47,7 +51,7 @@ public class BossBarManager {
     }
 
     public synchronized void removeGlobalBossbar(String barName) {
-        BossBarInfo ret = globalBars.remove(barName.replaceAll("[^a-zA-Z0-9]", ""));
+        BossBarInfo ret = globalBars.remove(cleanName(barName));
         if (ret != null) {
             ret.cancelAutoScheduler();
             ret.cancelHideScheduler();
@@ -83,6 +87,46 @@ public class BossBarManager {
         }
     }
 
+    private void createNewBar(String name, BossBarInfo barInfo) {
+        Player player = barInfo.getPlayer();
+
+        BarColor color = barInfo.getColor();
+        if (color == null) {
+            if (player == null)
+                color = BarColor.GREEN;
+            else {
+                ConcurrentHashMap<String, BossBarInfo> info = getBossBarInfo(player);
+                int size = 1;
+                if (info != null)
+                    size = info.size();
+                switch (size) {
+                case 1:
+                    color = BarColor.GREEN;
+                    break;
+                case 2:
+                    color = BarColor.RED;
+                    break;
+                case 3:
+                    color = BarColor.WHITE;
+                    break;
+                case 4:
+                    color = BarColor.YELLOW;
+                    break;
+                case 5:
+                    color = BarColor.PINK;
+                    break;
+                case 6:
+                    color = BarColor.PURPLE;
+                    break;
+                default:
+                    color = BarColor.BLUE;
+                    break;
+                }
+            }
+        }
+        barInfo.setBar(Bukkit.createBossBar(name, color, barInfo.getStyle() != null ? barInfo.getStyle() : BarStyle.SEGMENTED_10));
+    }
+
     public synchronized void Show(final BossBarInfo barInfo) {
         if (Version.isCurrentLower(Version.v1_9_R1))
             return;
@@ -96,10 +140,11 @@ public class BossBarManager {
         barInfo.setAutoId(CMIScheduler.scheduleSyncRepeatingTask(CMILib.getInstance(), () -> {
 
             final Player player = barInfo.getPlayer();
-//		barInfo.cancelHideScheduler();
 
             if (!barInfo.isGlobal() && (player == null || !player.isOnline())) {
                 barInfo.setMakeVisible(true);
+                barInfo.remove();
+                return;
             }
 
             if (barInfo.isGlobal() && player != null && !player.isOnline()) {
@@ -115,44 +160,9 @@ public class BossBarManager {
 
             boolean isNew = true;
             if (bar == null) {
-                BarColor color = barInfo.getColor();
-                if (color == null)
-                    if (player == null)
-                        color = BarColor.GREEN;
-                    else {
-                        ConcurrentHashMap<String, BossBarInfo> info = getBossBarInfo(player);
-                        int size = 1;
-                        if (info != null)
-                            size = info.size();
-                        switch (size) {
-                        case 1:
-                            color = BarColor.GREEN;
-                            break;
-                        case 2:
-                            color = BarColor.RED;
-                            break;
-                        case 3:
-                            color = BarColor.WHITE;
-                            break;
-                        case 4:
-                            color = BarColor.YELLOW;
-                            break;
-                        case 5:
-                            color = BarColor.PINK;
-                            break;
-                        case 6:
-                            color = BarColor.PURPLE;
-                            break;
-                        default:
-                            color = BarColor.BLUE;
-                            break;
-                        }
-                    }
-                bar = Bukkit.createBossBar(name, color, barInfo.getStyle() != null ? barInfo.getStyle() : BarStyle.SEGMENTED_10);
-
-                barInfo.setBar(bar);
+                createNewBar(name, barInfo);
+                bar = barInfo.getBar();
             } else {
-
                 bar.setTitle(name);
                 if (barInfo.getStyle() != null)
                     bar.setStyle(barInfo.getStyle());
@@ -182,7 +192,7 @@ public class BossBarManager {
                             bar.setTitle(name);
                         } catch (Throwable e) {
                         }
-                        CMIScheduler.get().runTask(() -> {
+                        CMIScheduler.runTask(plugin, () -> {
                             if (!barInfo.timerRunOut())
                                 return;
 
@@ -214,8 +224,6 @@ public class BossBarManager {
                                 barInfo.setHideScheduler(null);
                             }
                         }, barInfo.getKeepFor()));
-//			barInfo.cancelAutoScheduler();
-//			return;
 
                 }
                 if (curP == null)
@@ -252,7 +260,7 @@ public class BossBarManager {
             }
 
             if (!barInfo.stillRunning() && barInfo.getHideScheduler() == null) {
-                barInfo.setHideScheduler(CMIScheduler.get().runTaskLater(() -> {
+                barInfo.setHideScheduler(CMIScheduler.runTaskLater(plugin, () -> {
                     CMIBossBarHideEvent ev = new CMIBossBarHideEvent(barInfo);
                     Bukkit.getServer().getPluginManager().callEvent(ev);
                     if (!ev.isCancelled()) {
@@ -262,9 +270,6 @@ public class BossBarManager {
                         barInfo.setHideScheduler(null);
                     }
                 }, barInfo.getKeepFor()));
-
-//		    barInfo.cancelAutoScheduler();
-//		    return;
             }
         }, 0L, barInfo.getAuto()));
 
