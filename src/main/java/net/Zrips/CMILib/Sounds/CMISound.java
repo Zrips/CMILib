@@ -40,7 +40,7 @@ public class CMISound {
                     continue;
                 String name = sound.toString();
                 try {
-                    soundsByname.put(name.toLowerCase().replace("_", ""), (Sound) sound);
+                    soundsByname.put(name.toLowerCase().replace("_", "").replace(".", ""), (Sound) sound);
                 } catch (Exception e) {
                     CMIMessages.consoleMessage("&4Failed to recognize biome by (" + name + ") name. Skipping.");
                 }
@@ -77,7 +77,7 @@ public class CMISound {
 
         this.volume = volume;
         this.pitch = pitch;
-        name = name.toLowerCase().replace("_", "");
+        name = name.toLowerCase().replace("_", "").replace(".", "");
         rawName = name;
         sound = soundsByname.get(name);
 
