@@ -35,6 +35,7 @@ import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Attributes.Attribute;
 import net.Zrips.CMILib.Colors.CMIChatColor;
 import net.Zrips.CMILib.Colors.CMIColors;
+import net.Zrips.CMILib.Container.CMINumber;
 import net.Zrips.CMILib.Enchants.CMIEnchantment;
 import net.Zrips.CMILib.Entities.CMIEntity;
 import net.Zrips.CMILib.Entities.CMIEntityType;
@@ -129,6 +130,14 @@ public class CMIItemStack {
         return getMaxDurability(this.getItemStack());
     }
 
+    public ItemStack setMaxDurability(int durability) {
+        return setMaxDurability(this.getItemStack(), durability);
+    }
+
+    public boolean hasDurability() {
+        return hasDurability(this.getItemStack());
+    }
+
     public static int getDurability(ItemStack item) {
         if (item == null)
             return 0;
@@ -137,6 +146,15 @@ public class CMIItemStack {
             return meta.getDamage();
         }
         return item.getDurability();
+    }
+
+    public static boolean hasDurability(ItemStack item) {
+        if (item == null)
+            return false;
+        if (Version.isCurrentEqualOrHigher(Version.v1_13_R1) && item.getItemMeta() instanceof Damageable) {
+            return true;
+        }
+        return item.getDurability() > 15;
     }
 
     public static int getMaxDurability(ItemStack item) {
@@ -149,6 +167,17 @@ public class CMIItemStack {
             return meta.getMaxDamage();
         }
         return item.getType().getMaxDurability();
+    }
+
+    public static ItemStack setMaxDurability(ItemStack item, int durability) {
+        if (!Version.isCurrentEqualOrHigher(Version.v1_21_R1) || !(item.getItemMeta() instanceof Damageable))
+            return item;
+
+        durability = CMINumber.clamp(durability, 0, durability);
+        Damageable meta = (Damageable) item.getItemMeta();
+        meta.setMaxDamage(durability);
+        item.setItemMeta(meta);
+        return item;
     }
 
     public void setData(short data) {
@@ -793,7 +822,7 @@ public class CMIItemStack {
             if (rec != null)
                 recipes.add(rec);
         }
-                
+
         return recipes;
     }
 

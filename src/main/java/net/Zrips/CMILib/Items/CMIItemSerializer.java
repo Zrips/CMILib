@@ -29,6 +29,7 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ArmorMeta;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
@@ -49,7 +50,6 @@ import net.Zrips.CMILib.Container.CMIText;
 import net.Zrips.CMILib.Container.LeatherAnimationType;
 import net.Zrips.CMILib.Enchants.CMIEnchantment;
 import net.Zrips.CMILib.Entities.CMIEntityType;
-import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.Skins.CMISkin;
 import net.Zrips.CMILib.Version.Version;
@@ -61,6 +61,8 @@ public class CMIItemSerializer {
     static String suffix = "}";
 
     static Pattern pname = Pattern.compile("^(?i)(name|n)\\" + prefix);
+    static Pattern dname = Pattern.compile("^(?i)(durability|dur)\\" + prefix);
+    static Pattern mdname = Pattern.compile("^(?i)(maxdurability|maxdur)\\" + prefix);
     static Pattern plore = Pattern.compile("^(?i)(lore|l)\\" + prefix);
     static Pattern pcolor = Pattern.compile("^(?i)(c)\\" + prefix);
     static Pattern penchant = Pattern.compile("^(?i)(e)\\" + prefix);
@@ -578,13 +580,18 @@ public class CMIItemSerializer {
                 if (applyEntityType(cim, one))
                     continue;
 
+                if (applyMaxDurability(cim, one))
+                    continue;
+
+                if (applyDurability(cim, one))
+                    continue;
+
                 // Should be last ones to check due to option of them not having identificators and having random text
                 if (applyName(sender, cim, one))
                     continue;
 
                 if (applyLore(sender, cim, one))
                     continue;
-
             }
         }
 
@@ -671,6 +678,112 @@ public class CMIItemSerializer {
         if (name == null)
             return false;
         cim.setDisplayName(name);
+
+        return true;
+    }
+
+    private static int parseInt(String value) {
+        try {
+            double td = Double.parseDouble(value);
+            if (td > Integer.MAX_VALUE)
+                return Integer.MAX_VALUE;
+            return (int) td;
+        } catch (Throwable e) {
+            return 0;
+        }
+    }
+
+    private static boolean applyDurability(CMIItemStack cim, String value) {
+        Matcher durabilityMatch = dname.matcher(value);
+        if (!durabilityMatch.find())
+            return false;
+
+        value = value.substring(durabilityMatch.group().length());
+
+        ItemStack item = cim.getItemStack();
+
+        int max = cim.getMaxDurability();
+        int setDurability = max;
+        int customMax = 0;
+        try {
+
+            if (value.contains("/")) {
+                String[] parts = value.split("/");
+                int v1 = Integer.parseInt(parts[0]);
+                int v2 = Integer.parseInt(parts[1]);
+
+                if (v1 >= v2) {
+                    setDurability = v2;
+                    customMax = v1;
+                } else {
+                    setDurability = v1;
+                    customMax = v2;
+                }
+            } else {
+                setDurability = parseInt(value);
+            }
+
+        } catch (Throwable e) {
+            return false;
+        }
+
+        if (customMax > 0)
+            max = customMax;
+
+        int damage = CMINumber.clamp(max - setDurability, 0, max - 1);
+
+        if (damage == 0)
+            return true;
+
+        if (Version.isCurrentEqualOrHigher(Version.v1_13_R1)) {
+            if (!(item.getItemMeta() instanceof Damageable))
+                return false;
+            Damageable damageable = (Damageable) item.getItemMeta();
+            if (customMax > 0)
+                damageable.setMaxDamage(customMax);
+            damageable.setDamage(damage);
+            item.setItemMeta(damageable);
+        } else {
+            item.setDurability((short) (damage));
+        }
+        cim.setDurability((short) (damage));
+        return true;
+    }
+
+    private static boolean applyMaxDurability(CMIItemStack cim, String value) {
+        if (!Version.isCurrentEqualOrHigher(Version.v1_21_R1))
+            return false;
+
+        Matcher durabilityMatch = mdname.matcher(value);
+        if (!durabilityMatch.find())
+            return false;
+
+        value = value.substring(durabilityMatch.group().length());
+
+        ItemStack item = cim.getItemStack();
+
+        if (!(item.getItemMeta() instanceof Damageable))
+            return false;
+
+        int originalMax = item.getType().getMaxDurability();
+
+        int setDurability = cim.getMaxDurability();
+        try {
+            double td = Double.parseDouble(value);
+            if (td > Integer.MAX_VALUE)
+                setDurability = Integer.MAX_VALUE;
+            else
+                setDurability = (int) td;
+        } catch (Throwable e) {
+            return false;
+        }
+
+        setDurability = CMINumber.clamp(setDurability, 1, setDurability);
+
+        if (setDurability == originalMax)
+            return true;
+
+        cim.setMaxDurability(setDurability);
 
         return true;
     }
@@ -1194,6 +1307,19 @@ public class CMIItemSerializer {
                     e.printStackTrace();
                 }
             }
+
+            CMIItemStack citem = new CMIItemStack(item);
+
+            if (citem.hasDurability()) {
+                if (citem.getMaxDurability() != item.getType().getMaxDurability()) {
+                    str.append(";maxdur" + prefix);
+                    str.append(citem.getMaxDurability());
+                    str.append(suffix);
+                }
+                str.append(";dur" + prefix);
+                str.append(citem.getDurability());
+                str.append(suffix);
+            }
         }
 
         if (Version.isCurrentEqualOrHigher(Version.v1_20_R1)) {
@@ -1238,6 +1364,7 @@ public class CMIItemSerializer {
         return null;
     }
 
+    @Deprecated
     public static String toOneLiner(CMIItemStack item) {
 
         String liner = item.getType().toString();
