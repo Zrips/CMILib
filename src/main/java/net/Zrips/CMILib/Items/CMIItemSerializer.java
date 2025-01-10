@@ -486,6 +486,34 @@ public class CMIItemSerializer {
     private static Random random = new Random();
     private static String tempReplacer = null;
 
+    private static String getTag(String itemName) {
+        if (Version.isCurrentEqualOrLower(Version.v1_20_R3)) {
+            if (itemName.endsWith("}") && itemName.contains("{")) {
+                return "{" + itemName.split("\\{", 2)[1];
+            }
+        } else {
+            if (itemName.endsWith("]") && itemName.contains("[")) {
+                String tag = "{" + itemName.split("\\[", 2)[1];
+                return tag.substring(0, tag.length() - 1) + "}";
+            }
+        }
+        return null;
+    }
+
+    private static String updateItemName(String itemName) {
+        if (Version.isCurrentEqualOrLower(Version.v1_20_R3)) {
+            if (itemName.endsWith("}") && itemName.contains("{")) {
+                itemName = itemName.split("\\{", 2)[0];
+            }
+        } else {
+            if (itemName.endsWith("]") && itemName.contains("[")) {
+                itemName = itemName.split("\\[", 2)[0];
+            }
+        }
+
+        return itemName.contains("-") || itemName.toLowerCase().startsWith("head:") || itemName.toLowerCase().startsWith("player_head:") ? itemName : itemName.replace(":", "-");
+    }
+
     public static CMIItemStack deserialize(CommandSender sender, String input, CMIAsyncHead ahead) {
 
         if (input == null)
@@ -497,24 +525,16 @@ public class CMIItemSerializer {
 
         String itemName = input.contains(";") ? input.split(";", 2)[0] : input;
 
-        String tag = null;
+        String tag = getTag(itemName);
 
-        if (Version.isCurrentEqualOrLower(Version.v1_20_R3)) {
-            if (itemName.endsWith("}") && itemName.contains("{")) {
-                tag = "{" + itemName.split("\\{", 2)[1];
-                itemName = itemName.split("\\{", 2)[0];
-            }
-        } else {
-            if (itemName.endsWith("]") && itemName.contains("[")) {
-                tag = "{" + itemName.split("\\[", 2)[1];
-                tag = tag.substring(0, tag.length() - 1) + "}";
-                itemName = itemName.split("\\[", 2)[0];
-            }
-        }
-
-        String itemNameUpdated = itemName.contains("-") || itemName.toLowerCase().startsWith("head:") || itemName.toLowerCase().startsWith("player_head:") ? itemName : itemName.replace(":", "-");
+        String itemNameUpdated = updateItemName(itemName);
 
         CMIItemStack cim = getItem(itemNameUpdated, ahead);
+
+        return finalize(cim, input, tag, sender);
+    }
+
+    private static CMIItemStack finalize(CMIItemStack cim, String input, String tag, CommandSender sender) {
 
         if (cim == null)
             return cim;

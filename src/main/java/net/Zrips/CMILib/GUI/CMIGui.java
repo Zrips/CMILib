@@ -331,11 +331,12 @@ public class CMIGui {
         ItemStack miscInfo = item == null ? filler == null ? CMILib.getInstance().getConfigManager().getGUIEmptyField().getItemStack().clone() : filler.newItemStack() : item.clone();
 
         ItemMeta miscInfoMeta = miscInfo.getItemMeta();
-        if (Version.isCurrentEqualOrHigher(Version.v1_21_R2)) {
-            miscInfoMeta.setHideTooltip(true);
-            miscInfo.setItemMeta(miscInfoMeta);
-        } else if (Version.isCurrentEqualOrHigher(Version.v1_16_R1)) {
-            if (miscInfoMeta != null) {
+        if (miscInfoMeta != null) {
+            if (Version.isCurrentEqualOrHigher(Version.v1_21_R2)) {
+
+                miscInfoMeta.setHideTooltip(true);
+                miscInfo.setItemMeta(miscInfoMeta);
+            } else if (Version.isCurrentEqualOrHigher(Version.v1_16_R1)) {
                 miscInfoMeta.setDisplayName(" ");
                 miscInfo.setItemMeta(miscInfoMeta);
             }
