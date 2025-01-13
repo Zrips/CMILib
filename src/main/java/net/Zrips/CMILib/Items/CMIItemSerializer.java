@@ -672,6 +672,16 @@ public class CMIItemSerializer {
 
             cim.setItemStack((ItemStack) new CMINBT(cim.getItemStack()).setByte("Unbreakable", (byte) 1));
             return true;
+        case "hidetooltip":
+
+            if (!Version.isCurrentEqualOrHigher(Version.v1_21_R2))
+                return false;
+            
+            ItemMeta meta = cim.getItemStack().getItemMeta();
+            meta.setHideTooltip(true);
+            cim.getItemStack().setItemMeta(meta);
+
+            return true;
         }
         return false;
     }

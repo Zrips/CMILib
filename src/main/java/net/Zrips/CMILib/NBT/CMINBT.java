@@ -1722,6 +1722,11 @@ public class CMINBT {
     public static ItemStack modifyItemStack(ItemStack stack, String arguments) {
 
         if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
+            
+            
+            
+            
+            
             return stack;
         }
 
