@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -149,15 +151,18 @@ public class GUIListener implements Listener {
 
         if (event.getAction().toString().equalsIgnoreCase("HOTBAR_SWAP") || event.getAction().toString().equalsIgnoreCase("HOTBAR_MOVE_AND_READD")) {
             ItemStack iioh = CMIItemStack.getItemInOffHand(player).clone();
-            CMIItemStack.setItemInOffHand(player, null);
+            // Should only fire if item isn't null which could be achieved by spamming hotbar keys to trigger multiple item transfers in one tick
+            if (iioh != null && !iioh.getType().equals(Material.AIR)) {
+                CMIItemStack.setItemInOffHand(player, null);
+                CMIScheduler.runTask(plugin, () -> {
+                    try {
+                        player.getInventory().setItemInOffHand(iioh);
+                        player.updateInventory();
+                    } catch (Throwable e) {
+                    }
+                });
+            }
             event.setCancelled(true);
-            CMIScheduler.runTask(plugin, () -> {
-                try {
-                    player.getInventory().setItemInOffHand(iioh);
-                    player.updateInventory();
-                } catch (Throwable e) {
-                }
-            });
         }
 
 //	if (gui != null)
