@@ -1895,10 +1895,17 @@ public class Reflections {
 
                     if (destinationConstructor == null)
                         destinationConstructor = Class.forName("org.bukkit.Vibration$Destination$BlockDestination").getConstructor(Location.class);
-                    if (vibrationConstructor == null)
-                        vibrationConstructor = Class.forName("org.bukkit.Vibration").getConstructor(Class.forName("org.bukkit.Vibration$Destination$BlockDestination"), int.class);
+                    if (vibrationConstructor == null) {
+                        if (Version.isCurrentEqualOrHigher(Version.v1_21_R1))
+                            vibrationConstructor = Class.forName("org.bukkit.Vibration").getConstructor(Location.class, Class.forName("org.bukkit.Vibration$Destination"), int.class);
+                        else
+                            vibrationConstructor = Class.forName("org.bukkit.Vibration").getConstructor(Class.forName("org.bukkit.Vibration$Destination$BlockDestination"), int.class);
+                    }
 
-                    dd = vibrationConstructor.newInstance(destinationConstructor.newInstance(location), 20);
+                    if (Version.isCurrentEqualOrHigher(Version.v1_21_R1))
+                        dd = vibrationConstructor.newInstance(location, destinationConstructor.newInstance(location), 20);
+                    else
+                        dd = vibrationConstructor.newInstance(destinationConstructor.newInstance(location), 20);
                 } else if (ef.getParticle().getDataType().equals(CMIParticleDataType.Color)) {
                     dd = ef.getColorFrom();
                 } else if (ef.getParticle().getDataType().equals(CMIParticleDataType.ItemStack)) {
