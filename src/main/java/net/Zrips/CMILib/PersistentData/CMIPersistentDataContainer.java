@@ -120,8 +120,7 @@ public class CMIPersistentDataContainer {
         return null;
     }
 
-    private static NamespacedKey getKey(String key) {
-
+    private static NamespacedKey getKey(String key) {        
         if (key.contains(":"))
             return new NamespacedKey(key.split(":", 2)[0].toLowerCase(), key.split(":", 2)[1].replace(" ", "_"));
 

@@ -676,7 +676,7 @@ public class CMIItemSerializer {
 
             if (!Version.isCurrentEqualOrHigher(Version.v1_21_R2))
                 return false;
-            
+
             ItemMeta meta = cim.getItemStack().getItemMeta();
             meta.setHideTooltip(true);
             cim.getItemStack().setItemMeta(meta);
@@ -762,7 +762,7 @@ public class CMIItemSerializer {
 
         int damage = CMINumber.clamp(max - setDurability, 0, max - 1);
 
-        if (damage == 0)
+        if (damage <= 0)
             return true;
 
         if (Version.isCurrentEqualOrHigher(Version.v1_13_R1)) {
@@ -1341,14 +1341,16 @@ public class CMIItemSerializer {
             CMIItemStack citem = new CMIItemStack(item);
 
             if (citem.hasDurability()) {
-                if (citem.getMaxDurability() != item.getType().getMaxDurability()) {
+                if (citem.getMaxDurability() != item.getType().getMaxDurability() && citem.getMaxDurability() > 0) {
                     str.append(";maxdur" + prefix);
                     str.append(citem.getMaxDurability());
                     str.append(suffix);
                 }
-                str.append(";dur" + prefix);
-                str.append(citem.getDurability());
-                str.append(suffix);
+                if (citem.getDurability() > 0) {
+                    str.append(";dur" + prefix);
+                    str.append(citem.getDurability());
+                    str.append(suffix);
+                }
             }
         }
 
