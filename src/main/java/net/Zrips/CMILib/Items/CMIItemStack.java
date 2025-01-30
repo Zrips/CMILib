@@ -921,9 +921,9 @@ public class CMIItemStack {
         if (texture.length() < 120)
             texture = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUv" + texture;
         ItemStack cached = CMIEntityType.cache.get(texture);
-        if (cached != null) 
+        if (cached != null)
             return cached.clone();
-        
+
         ItemStack item = CMIMaterial.PLAYER_HEAD.newItemStack();
         item = CMILib.getInstance().getReflectionManager().setSkullTexture(item, null, texture);
         CMIEntityType.cache.put(texture, item);
@@ -1005,6 +1005,10 @@ public class CMIItemStack {
 
         if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
             ItemMeta meta = item.getItemMeta();
+
+            if (meta == null)
+                return null;
+
             return meta.hasCustomModelData() ? meta.getCustomModelData() : null;
         }
 
