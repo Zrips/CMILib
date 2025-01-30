@@ -121,6 +121,8 @@ public class CMILibConfig {
             "Only disable this if you have dedicated protection for it");
         ExploitPatcherCheckItem = cfg.get("ExploitPatcher.Placeholders.blocked.checkItem", true);
 
+        plugin.getSkinManager().loadConfig();
+        
         cfg.addComment("GlobalGui.EmptyField", "Defines item type in empty fields in GUI when its needed to be filled up");
         GUIEmptyField = CMILib.getInstance().getItemManager().getItem(cfg.get("GlobalGui.EmptyField", "BLACK_STAINED_GLASS_PANE"));
         if (GUIEmptyField == null)
@@ -415,6 +417,7 @@ public class CMILibConfig {
         boolean configLoaded = load(true);
         boolean langLoaded = reloadLanguage();
         plugin.getItemManager().loadLocale();
+
         CMIEntityType.cache.clear();
         CMIWorld.onDisable();
 

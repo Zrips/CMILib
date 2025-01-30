@@ -16,17 +16,14 @@ import java.util.regex.Pattern;
 
 import javax.net.ssl.HttpsURLConnection;
 
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
-import com.mojang.util.UUIDTypeAdapter;
 
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.FileHandler.ConfigReader;
 import net.Zrips.CMILib.Logs.CMIDebug;
-import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
 
 public class SkinManager {
     public HashMap<UUID, CMISkin> skinCacheByUUID = new HashMap<UUID, CMISkin>();
@@ -36,7 +33,7 @@ public class SkinManager {
     protected HashMap<String, UUID> preFetchUUIDs = new HashMap<String, UUID>();
 
     CMILib plugin;
-    private long SkinUpdateTimer = 60;
+    private long SkinUpdateTimer = 1320;
     private long SkinRequestFrequency = 60;
 
     public SkinManager(CMILib plugin) {
@@ -80,6 +77,8 @@ public class SkinManager {
         if (checkCache(profile, uuid))
             return true;
         try {
+
+            CMIDebug.c("------ Set Skin with lookup -----", profile.getName(), profile.getId());
 
             HttpsURLConnection connection = (HttpsURLConnection) new URL(String.format("https://sessionserver.mojang.com/session/minecraft/profile/%s?unsigned=false", uuid.toString().replace("-", "")))
                 .openConnection();
@@ -211,6 +210,9 @@ public class SkinManager {
         StringBuilder response = new StringBuilder();
 
         HttpURLConnection connection = null;
+
+        CMIDebug.c("------ Get UUID lookup -----", name);
+
         try {
             URL url = new URL(target);
             connection = (HttpURLConnection) url.openConnection();
