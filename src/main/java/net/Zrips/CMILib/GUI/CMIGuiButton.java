@@ -71,16 +71,19 @@ public class CMIGuiButton {
                 ItemFlag.HIDE_ENCHANTS,
                 ItemFlag.HIDE_UNBREAKABLE,
                 ItemFlag.HIDE_PLACED_ON);
-//            try {
-//                meta.addItemFlags(ItemFlag.HIDE_ITEM_SPECIFICS);
-//            } catch (Throwable e) {
-//                e.printStackTrace();
-//            }
-
+            try {
+                meta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
+            } catch (Throwable e) {
+            }
+            try {
+                meta.addItemFlags(ItemFlag.HIDE_STORED_ENCHANTS);
+            } catch (Throwable e) {
+            }
             item.setItemMeta(meta);
-        } else
-            item = CMINBT.HideFlag(item, 63);
+            return;
+        }
 
+        item = CMINBT.HideFlag(item, 63);
     }
 
     public CMIGuiButton hideToltip() {

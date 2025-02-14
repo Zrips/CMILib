@@ -107,7 +107,6 @@ public class CMIGui {
 
         if (this.getInvType() != gui.getInvType())
             return false;
-
         return true;
     }
 
