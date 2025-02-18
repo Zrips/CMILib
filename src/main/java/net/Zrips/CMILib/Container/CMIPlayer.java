@@ -44,6 +44,13 @@ public class CMIPlayer {
 
     public static double getMaxHealth(Player player) {
         if (Version.isCurrentEqualOrHigher(Version.v1_9_R1)) {
+            return CMIAttribute.MAX_HEALTH.getValue(player);
+        }
+        return player.getMaxHealth();
+    }
+
+    public static double getBaseMaxHealth(Player player) {
+        if (Version.isCurrentEqualOrHigher(Version.v1_9_R1)) {
             return CMIAttribute.MAX_HEALTH.getBaseValue(player);
         }
         return player.getMaxHealth();
