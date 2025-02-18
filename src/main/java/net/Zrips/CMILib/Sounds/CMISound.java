@@ -1,5 +1,6 @@
 package net.Zrips.CMILib.Sounds;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -88,7 +89,11 @@ public class CMISound {
             }
         }
         if (sound != null)
-            rawName = sound.toString();
+            try {
+                rawName = (String) org.bukkit.Sound.class.getMethod("toString").invoke(sound);
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
     }
 
     public Sound getSound() {
