@@ -24,6 +24,7 @@ import com.mojang.authlib.properties.Property;
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.FileHandler.ConfigReader;
 import net.Zrips.CMILib.Logs.CMIDebug;
+import net.Zrips.CMILib.Messages.CMIMessages;
 
 public class SkinManager {
     public HashMap<UUID, CMISkin> skinCacheByUUID = new HashMap<UUID, CMISkin>();
@@ -135,7 +136,7 @@ public class SkinManager {
             if (checkCache(profile, uuid))
                 return true;
 
-            System.out.println("Connection could not be opened (Response code " + connection.getResponseCode() + ", " + connection.getResponseMessage() + ")");
+            CMIMessages.consoleMessage("Connection could not be opened (Response code " + connection.getResponseCode() + ", " + connection.getResponseMessage() + ")");
             return false;
         } catch (IOException e) {
             e.printStackTrace();
