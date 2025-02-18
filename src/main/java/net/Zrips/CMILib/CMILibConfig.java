@@ -340,7 +340,6 @@ public class CMILibConfig {
         });
 
         // Loading data
-        CMIBiome.initialize();
         CMIEntity.initialize();
         CMIEnchantment.updateLocale();
         CMIPotionEffectType.loadLocalization();
