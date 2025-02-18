@@ -78,8 +78,6 @@ public class SkinManager {
             return true;
         try {
 
-            CMIDebug.c("------ Set Skin with lookup -----", profile.getName(), profile.getId());
-
             HttpsURLConnection connection = (HttpsURLConnection) new URL(String.format("https://sessionserver.mojang.com/session/minecraft/profile/%s?unsigned=false", uuid.toString().replace("-", "")))
                 .openConnection();
             if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
@@ -210,8 +208,6 @@ public class SkinManager {
         StringBuilder response = new StringBuilder();
 
         HttpURLConnection connection = null;
-
-        CMIDebug.c("------ Get UUID lookup -----", name);
 
         try {
             URL url = new URL(target);

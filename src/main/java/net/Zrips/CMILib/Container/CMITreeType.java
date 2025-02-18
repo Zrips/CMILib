@@ -5,8 +5,6 @@ import java.util.Map.Entry;
 
 import org.bukkit.TreeType;
 
-import net.Zrips.CMILib.Container.CMIText;
-
 public enum CMITreeType {
 
     ACACIA(),
