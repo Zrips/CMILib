@@ -1,0 +1,696 @@
+# The phrases support full color (hex) code, and some variables.
+# Keep in mind that some variables will not work for certain lines.
+# Just keep them where there are now and everything will be okay :)
+# Some lines can have global variables set. For the player who will be affected. For example /heal Zrips then Zrips data will be used as variable
+# [serverName] to show server name
+# [playerName] to show target player name
+# [playerDisplayName] to show target player display name
+# [lvl] to show target player level
+# [exp] to show target player total exp
+# [hp] to show target player health
+# [maxHp] to show target player max health
+# [hunger] to show target player hunger level
+# [gameMode] to show target player gamemode
+# [prefix] to show target player prefix if possible
+# [suffix] to show target player suffix if possible
+# Sender is console or player who performs the command. For example Zrips performs /heal Zhax then Zrips data will be used
+# [senderName] to show Sender player name
+# [senderDisplayName] to show Sender player display name
+# [senderLvl] to show Sender player level
+# [senderExp] to show Sender player total exp
+# [senderHp] to show Sender player health
+# [senderMaxHp] to show Sender player max health
+# [senderHunger] to show Sender player hunger level
+# [senderGameMode] to show Sender player gamemode
+# [senderPrefix] to show Sender player prefix if possible
+# [senderSuffix] to show Sender player suffix if possible
+# Source is player which is being used for extra info. For example Zrips performs /tp Zhax Zrips then Zhax data will be used as its location is being taken for new player location
+# [sourceName] to show source player name
+# [sourceDisplayName] to show source player display name
+# [sourceLvl] to show source player level
+# [sourceExp] to show source player total exp
+# [sourceHp] to show source player health
+# [sourceMaxHp] to show source player max health
+# [sourceHunger] to show source player hunger level
+# [sourceGameMode] to show source player gamemode
+# [sourcePrefix] to show source player prefix if possible
+# [sourceSuffix] to show source player suffix if possible
+# ***********************************************
+# Some lines support the option to send them to custom places, like action bar, title, sub-title, or even create JSON/clickable messages
+# If the line starts with !toast! then player will get toast message (advancement popup, only 1.12 and up). Some extra variables can be used to define type and icon. example: !toast! -t:goal -icon:paper Hello world!
+# If the line starts with !actionbar! then player will get action bar message defined after this variable
+# If the line starts with !actionbar:[seconds]! then player will get action bar message for a defined amount of time
+# If the line starts with !broadcast! then everyone will receive message. You can add extra !toast! !actionbar! or !title! to send message for everyone to specific place, in example !broadcast!!title!
+# If the line starts with !customtext:[cTextName]! then custom text will be taken by name provided and shown for player. In case it is used after !broadcast! then everyone who is online will get this custom text message
+# If the line starts with !title! then player will get title message defined after this variable, in addition it can contain !subtitle! which will add subtitle message
+# If the line starts with !bossbar:[name]-[timer]! then player will get bossbar message defined after this variable, in addition you can define how long this message will be visible. You need to define bossbar name which can be anything you want, but lines with same name will override each other to prevent stacking
+# To include clickable messages: <T>Text</T><H>Hover text</H><C>command</C><SC>Suggested text</SC>
+# <T> and </T> required, other is optional
+# Use /n to break line
+# To have more than one JSON message use <Next>
+# <C> performs command as a player who clicked
+# <CC> performs command from console once
+# <CCI> performs command from console every time player clicks text
+# <URL> includes url
+
+info:
+  # Use !prefix! em qualquer linha de local para incluir automaticamente este prefixo
+  prefix: '&e[&aCMI&e] '
+  NoPermission: '&cVocê não tem permissão!'
+  CantHavePermission: '&cVocê não pode ter esta permissão!'
+  WrongGroup: '&cVocê está no grupo errado para isso!'
+  NoPlayerPermission: '&c[playerName] não tem permissão para: [permission]'
+  Ingame: '&cVocê só pode usar isso no jogo!'
+  NoInformation: '&cNenhuma informação encontrada!'
+  Console: '&6Servidor'
+  FromConsole: '&cVocê só pode usar isso no console!'
+  NotOnline: '&cO jogador não está online!'
+  NobodyOnline: '&cNão há ninguém online!'
+  NoPlayer: '&cNão foi possível encontrar o jogador com este nome! (&6[name]&c)'
+  NoCommand: '&cNão existe um comando com esse nome!'
+  cantFindCommand: '&5Não foi possível encontrar o comando &7[%1]&5, você quis dizer &7[%2]&5?'
+  nolocation: '&4Não foi possível encontrar uma localização adequada'
+  FeatureNotEnabled: '&cEste recurso não está habilitado!'
+  ModuleNotEnabled: '&cEste módulo não está habilitado!'
+  versionNotSupported: '&cA versão do servidor não é compatível com este recurso'
+  spigotNotSupported: '&cVocê precisa de um servidor do tipo PaperSpigot para isso funcionar'
+  bungeeNoGo: '&cEste recurso não funcionará em servidores baseados em rede Bungee'
+  clickToTeleport: '&eClique para se teletransportar'
+  UseMaterial: '&4Por favor, use os nomes dos materiais!'
+  IncorrectMaterial: '&4Nome de material incorreto!'
+  UseInteger: '&4Por favor, use números!'
+  UseBoolean: '&4Por favor, use Verdadeiro ou Falso!'
+  NoLessThan: '&4O número não pode ser menor que [amount]!'
+  NoMoreThan: '&4O valor não pode ser maior que [amount]'
+  NoWorld: '&4Não foi possível encontrar o mundo com esse nome!'
+  IncorrectLocation: '&4Localização definida incorretamente!'
+  Show: '&eMostrar'
+  Remove: '&cRemover'
+  Back: '&eVoltar'
+  Forward: '&eAvançar'
+  Update: '&eAtualizar'
+  Save: '&eSalvar'
+  Delete: '&cDeletar'
+  Click: '&eClique'
+  Preview: '&eVisualizar'
+  PasteOld: '&eColar antigo'
+  ClickToPaste: '&eClique para colar no chat'
+  CantTeleportWorld: '&eVocê não pode se teletransportar para este mundo'
+  CantTeleportNoWorld: '&cO mundo de destino não existe. Teleportação cancelada'
+  ClickToConfirmDelete: '&eClique para confirmar a remoção de &6[name]'
+  teleported: '&eVocê foi teletransportado.'
+  PlayerSpliter: '&e----- &6[playerDisplayName] &e-----'
+  Spliter: '&e--------------------------------------------------'
+  SpliterValue: '&e------------------ &6[value] &e------------------'
+  singleSpliter: '&e-'
+  SpliterMiddle: ' &6[value] '
+  ListSpliter: ', '
+  ProgressBarFill: '&2▏'
+  ProgressBarEmpty: '&e▏'
+  nothingInHand: '!actionbar!&eVocê precisa segurar um item na mão'
+  nothingInHandLeather: '&eVocê precisa segurar um item de couro na mão'
+  nothingToShow: '&eNada para mostrar'
+  noItem: '&cNão foi possível encontrar o item'
+  dontHaveItem: '&cVocê não tem &6[amount]x [itemName] &cin seu inventário'
+  wrongWorld: '&cNão pode fazer isso neste mundo'
+  differentWorld: '&cMundos diferentes'
+  HaveItem: '&cVocê tem &6[amount]x [itemName] &cin seu inventário'
+  cantDoInGamemode: '&eVocê não pode fazer isso neste modo de jogo'
+  cantDoForPlayer: '&eVocê não pode fazer isso para &6[playerDisplayName]'
+  cantDoForYourSelf: '&eVocê não pode fazer isso consigo mesmo'
+  cantDetermineMobType: '&cNão é possível determinar o tipo de mob a partir da variável &e[type] &c'
+  cantRename: '!actionbar!&eVocê não pode usar este nome'
+  confirmRedefine: '&eClique para confirmar redefinir'
+  cantEdit: '&eVocê não pode editar isso'
+  wrongName: '&cNome errado'
+  unknown: unknown
+  invalidName: '&cNome inválido'
+  alreadyexist: '&4Este nome já está em uso'
+  dontexist: '&4Nada encontrado por este nome'
+  worldDontExist: '&cO mundo de destino não pode mais ser acessado. Não foi possível teleportá-lo para lá!'
+  notSet: não configurado
+  lookAtSign: '&eOlhe para a placa'
+  lookAtBlock: '&eOlhe para o bloco'
+  lookAtEntity: '&eOlhe para a entidade'
+  noSpace: '&eEspaço livre insuficiente'
+  notOnGround: '&eVocê não pode fazer isso enquanto estiver voando'
+  bungee:
+    Online: '&6Online'
+    Offline: '&cOffline'
+    not: '&cO servidor não pertence à rede Bungee'
+    noserver: '&cNão foi possível encontrar o servidor com esse nome!'
+    server: '&eServidor: &7[name]'
+  variables:
+    am: '&eAM'
+    pm: '&ePM'
+    Online: '&6Online'
+    Offline: '&cOffline'
+    TrueColor: '&2'
+    FalseColor: '&c'
+    'True': '&6Verdadeiro'
+    'False': '&cFalso'
+    Enabled: '&6Habilitado'
+    Disabled: '&cDesabilitado'
+    survival: '&6Sobrevivência'
+    creative: '&6Criativo'
+    adventure: '&6Aventura'
+    spectator: '&6Espectador'
+    flying: '&6Voando'
+    notflying: '&6Não está voando'
+  Inventory:
+    Full: '&5Seu inventário está cheio. Não é possível adicionar o item'
+    FullDrop: '&5Nem todos os itens cabem no seu inventário. Eles foram jogados no chão'
+  TimeNotRecorded: '&e-Registro não encontrado-'
+  months: '&e[months] &6meses '
+  oneMonth: '&e[months] &6mês '
+  weeks: '&e[weeks] &6semanas '
+  oneWeek: '&e[weeks] &6semana '
+  years: '&e[years] &6anos '
+  oneYear: '&e[years] &6ano '
+  day: '&e[days] &6dias '
+  oneDay: '&e[days] &6dia '
+  hour: '&e[hours] &6horas '
+  oneHour: '&e[hours] &6hora '
+  min: '&e[mins] &6min '
+  sec: '&e[secs] &6seg '
+  nextPageConsole: '&fPara a próxima página, execute &5[command]'
+  prevPage: '&2----<< &6Anterior '
+  prevCustomPage: '&2----<< &6[value] '
+  prevPageGui: '&6Página anterior '
+  prevPageClean: '&6Anterior '
+  prevPageOff: '&2----<< &7Anterior '
+  prevCustomPageOff: '&2----<< &7[value] '
+  prevPageHover: '&7<<<'
+  firstPageHover: '&7|<'
+  nextPage: '&6 Próxima &2>>----'
+  nextCustomPage: '&6 [value] &2>>----'
+  nextPageGui: '&6Próxima Página'
+  nextPageClean: '&6 Próxima'
+  nextPageOff: '&7 Próxima &2>>----'
+  nextCustomPageOff: '&7 [value] &2>>----'
+  nextPageHover: '&7>>>'
+  lastPageHover: '&7>|'
+  pageCount: '&2[current]&7/&2[total]'
+  pageCountHover: '&e[totalEntries] entradas'
+  skullOwner: '!actionbar!&7Dono:&r [playerName]'
+  playerHeadName: '&eCabeça de &7[playerName]'
+  mobHeadName: '&eCabeça de &f[mobName]'
+  circle: '&3Círculo'
+  square: '&5Quadrado'
+  clear: '&7Limpar'
+  protectedArea: '&cÁrea protegida. Não é possível fazer isso aqui.'
+  valueToLong: '&eValor muito alto. Máximo: [max]'
+  valueToShort: '&eValor muito baixo. Mínimo: [min]'
+  pickIcon: '&8Escolher ícone'
+  Spawner: '&r[type] Gerador'
+  DamageCause:
+    block_explosion: Explosão
+    campfire: Fogueira
+    contact: Danos por bloco
+    cramming: Sobrecarga
+    custom: Desconhecido
+    dragon_breath: Sopro do dragão
+    drowning: Afogamento
+    dryout: Secagem
+    entity_attack: Ataque de entidade
+    entity_explosion: Explosão de entidade
+    entity_sweep_attack: Ataque de varredura de entidade
+    fall: Queda
+    falling_block: Bloco caindo
+    fire: Fogo
+    fire_tick: Fogo
+    fly_into_wall: Voar contra a parede
+    freeze: Congelamento
+    hot_floor: Bloco de magma
+    kill: Morte
+    lava: Lava
+    lightning: Relâmpago
+    magic: Magia
+    melting: Derretimento
+    poison: Veneno
+    projectile: Projeto
+    sonic_boom: Explosão sônica
+    starvation: Fome
+    suffocation: Sufocamento
+    suicide: Suicídio
+    thorns: Espinhos
+    void: Vazio
+    wither: Murchar
+    world_border: Limite do mundo
+  Biomes:
+    DARK_FOREST: Floresta escura
+    SNOWY_TAIGA: Taiga nevosa
+    COLD_OCEAN: Oceano frio
+    FOREST: Floresta
+    GROVE: Bosque
+    JAGGED_PEAKS: Picos irregulares
+    SOUL_SAND_VALLEY: Vale de areia da alma
+    CHERRY_GROVE: Bosque de cerejeiras
+    OLD_GROWTH_PINE_TAIGA: Taiga de pinheiros antigos
+    THE_VOID: O vazio
+    END_HIGHLANDS: Terras altas do End
+    WINDSWEPT_HILLS: Colinas varridas pelo vento
+    MUSHROOM_FIELDS: Campos de cogumelos
+    FLOWER_FOREST: Floresta de flores
+    DEEP_FROZEN_OCEAN: Oceano congelado profundo
+    STONY_PEAKS: Picos pedregosos
+    DEEP_LUKEWARM_OCEAN: Oceano morno profundo
+    PLAINS: Planícies
+    WARPED_FOREST: Floresta distorcida
+    BADLANDS: Terras áridas
+    CRIMSON_FOREST: Floresta carmesim
+    LUSH_CAVES: Cavernas exuberantes
+    END_MIDLANDS: Terras médias do End
+    WINDSWEPT_GRAVELLY_HILLS: Colinas arenosas varridas pelo vento
+    DEEP_OCEAN: Oceano profundo
+    STONY_SHORE: Costa pedregosa
+    DEEP_COLD_OCEAN: Oceano gelado profundo
+    JUNGLE: Selva
+    TAIGA: Taiga
+    FROZEN_PEAKS: Picos congelados
+    WARM_OCEAN: Oceano quente
+    END_BARRENS: Estepes do End
+    MANGROVE_SWAMP: Pântano de manguezais
+    FROZEN_OCEAN: Oceano congelado
+    NETHER_WASTES: Desperdício do Nether
+    WINDSWEPT_SAVANNA: Savana varrida pelo vento
+    OLD_GROWTH_SPRUCE_TAIGA: Taiga de abetos antigos
+    DEEP_DARK: Escuridão profunda
+    SUNFLOWER_PLAINS: Planícies de girassóis
+    DESERT: Deserto
+    BEACH: Praia
+    BIRCH_FOREST: Floresta de bétulas
+    WOODED_BADLANDS: Terras áridas arborizadas
+    FROZEN_RIVER: Rio congelado
+    WINDSWEPT_FOREST: Floresta varrida pelo vento
+    SNOWY_BEACH: Praia nevada
+    SNOWY_SLOPES: Encostas nevadas
+    SAVANNA: Savana
+    ICE_SPIKES: Espinhos de gelo
+    LUKEWARM_OCEAN: Oceano morno
+    SWAMP: Pântano
+    BASALT_DELTAS: Deltas de basalto
+    SPARSE_JUNGLE: Selva esparsa
+    OCEAN: Oceano
+    MEADOW: Prado
+    RIVER: Rio
+    ERODED_BADLANDS: Terras áridas erodidas
+    SAVANNA_PLATEAU: Planalto da savana
+    DRIPSTONE_CAVES: Cavernas de estalagmites
+    OLD_GROWTH_BIRCH_FOREST: Floresta de bétulas antigas
+    SNOWY_PLAINS: Planícies nevadas
+    BAMBOO_JUNGLE: Selva de bambu
+    SMALL_END_ISLANDS: Pequenas ilhas do End
+    THE_END: O fim
+  EntityType:
+    acacia_boat: Barco de acácia
+    acacia_chest_boat: Barco de acácia com baú
+    allay: Allay
+    area_effect_cloud: Nuvem de efeito de área
+    armadillo: Armadillo
+    armor_stand: Suporte de armadura
+    arrow: Flecha
+    axolotl: Axolotl
+    bamboo_chest_raft: Balsa de bambu com baú
+    bamboo_raft: Balsa de bambu
+    bat: Morcego
+    bee: Abelha
+    birch_boat: Barco de bétula
+    birch_chest_boat: Barco de bétula com baú
+    blaze: Blaze
+    block_display: Exibição de bloco
+    bogged: Atolado
+    breeze: Brisa
+    breeze_wind_charge: Carga de vento da brisa
+    camel: Camelo
+    cat: Gato
+    cave_spider: Aranha cavernosa
+    cherry_boat: Barco de cerejeira
+    cherry_chest_boat: Barco de cerejeira com baú
+    chest_minecart: Minecart com baú
+    chicken: Galinha
+    cod: Bacalhau
+    command_block_minecart: Minecart com bloco de comando
+    cow: Vaca
+    creaking: Rangido
+    creaking_transient: Rangido transitório
+    creeper: Creeper
+    dark_oak_boat: Barco de carvalho escuro
+    dark_oak_chest_boat: Barco de carvalho escuro com baú
+    dolphin: Golfinho
+    donkey: Burro
+    dragon_fireball: Bola de fogo do dragão
+    drowned: Afogado
+    egg: Ovo
+    elder_guardian: Guardião ancião
+    enderman: Enderman
+    endermite: Endermite
+    ender_dragon: Dragão do End
+    ender_pearl: Pérola do Ender
+    end_crystal: Cristal do End
+    evoker: Evocador
+    evoker_fangs: Presas do Evocador
+    experience_bottle: Garrafa de experiência
+    experience_orb: Orbe de experiência
+    eye_of_ender: Olho do Ender
+    falling_block: Bloco caindo
+    fireball: Bola de fogo
+    firework_rocket: Foguete de fogos de artifício
+    fishing_bobber: Isca de pesca
+    fox: Raposa
+    frog: Sapo
+    furnace_minecart: Minecart de forno
+    ghast: Ghast
+    giant: Gigante
+    glow_item_frame: Moldura de item brilhante
+    glow_squid: Lula luminosa
+    goat: Cabra
+    guardian: Guardião
+    hoglin: Hoglin
+    hopper_minecart: Minecart com funil
+    horse: Cavalo
+    husk: Husk
+    illusioner: Ilusionista
+    interaction: Interação
+    iron_golem: Golem de ferro
+    item: Item
+    item_display: Exibição de item
+    item_frame: Moldura de item
+    jungle_boat: Barco de selva
+    jungle_chest_boat: Barco de selva com baú
+    leash_knot: Nó da coleira
+    lightning_bolt: Raio
+    llama: Lhama
+    llama_spit: Cuspir da lhama
+    magma_cube: Cubo de magma
+    mangrove_boat: Barco de mangue
+    mangrove_chest_boat: Barco de mangue com baú
+    marker: Marcador
+    minecart: Minecart
+    mooshroom: Mooshroom
+    mule: Mula
+    oak_boat: Barco de carvalho
+    oak_chest_boat: Barco de carvalho com baú
+    ocelot: Ocelote
+    ominous_item_spawner: Gerador de item ominoso
+    painting: Pintura
+    pale_oak_boat: Barco de carvalho pálido
+    pale_oak_chest_boat: Barco de carvalho pálido com baú
+    panda: Panda
+    parrot: Papagaio
+    phantom: Fantasma
+    pig: Porco
+    piglin: Piglin
+    piglin_brute: Piglin bruto
+    pillager: Pillager
+    player: Jogador
+    polar_bear: Urso polar
+    potion: Poção
+    pufferfish: Peixe-balão
+    rabbit: Coelho
+    ravager: Ravager
+    salmon: Salmão
+    sheep: Ovelha
+    shulker: Shulker
+    shulker_bullet: Bala de shulker
+    silverfish: Peixe-prata
+    skeleton: Esqueleto
+    skeleton_horse: Cavalo esqueleto
+    slime: Slime
+    small_fireball: Pequena bola de fogo
+    sniffer: Sniffer
+    snowball: Bola de neve
+    snow_golem: Golem de neve
+    spawner_minecart: Minecart de gerador
+    spectral_arrow: Flecha espectral
+    spider: Aranha
+    spruce_boat: Barco de abeto
+    spruce_chest_boat: Barco de abeto com baú
+    squid: Lula
+    stray: Stray
+    strider: Strider
+    tadpole: Girino
+    text_display: Exibição de texto
+    tnt: TNT
+    tnt_minecart: Minecart de TNT
+    trader_llama: Lhama comerciante
+    trident: Tridente
+    tropical_fish: Peixe tropical
+    turtle: Tartaruga
+    unknown: Desconhecido
+    vex: Vex
+    villager: Aldeão
+    vindicator: Vingador
+    wandering_trader: Comerciante ambulante
+    warden: Guardião
+    wind_charge: Carga de vento
+    witch: Bruxa
+    wither: Wither
+    wither_skeleton: Esqueleto com wither
+    wither_skull: Crânio de wither
+    wolf: Lobo
+    zoglin: Zoglin
+    zombie: Zumbi
+    zombie_horse: Cavalo zumbi
+    zombie_villager: Aldeão zumbi
+    zombified_piglin: Piglin zombificado
+  # Evite adicionar códigos de cores ao nome da encantamento
+  EnchantNames:
+    dig_speed: Velocidade de escavação
+    sweeping_edge: Corte amplo
+    loot_bonus_mobs: Bônus de saque de mobs
+    quick_charge: Carga rápida
+    silk_touch: Toque suave
+    soul_speed: Velocidade da alma
+    density: Densidade
+    breach: Brecha
+    arrow_fire: Flecha de fogo
+    loot_bonus_blocks: Bônus de saque de blocos
+    water_worker: Trabalhador da água
+    multishot: Multidisparo
+    channeling: Canalização
+    loyalty: Lealdade
+    binding_curse: Maldição da ligação
+    arrow_knockback: Repulsão da flecha
+    arrow_damage: Dano da flecha
+    protection_projectile: Proteção contra projéteis
+    damage_all: Dano a todos
+    frost_walker: Andarilho do gelo
+    protection_fire: Proteção contra fogo
+    impaling: Empalamento
+    luck: Sorte
+    riptide: Correnteza
+    mending: Reparo
+    protection_environmental: Proteção ambiental
+    oxygen: Oxigênio
+    piercing: Perfurante
+    protection_fall: Proteção contra quedas
+    swift_sneak: Furtividade ágil
+    durability: Durabilidade
+    fire_aspect: Aspecto de fogo
+    lure: Isca
+    damage_undead: Dano a mortos-vivos
+    knockback: Repulsão
+    depth_strider: Andarilho das profundezas
+    wind_burst: Explosão de vento
+    arrow_infinite: Flecha infinita
+    vanishing_curse: Maldição do desaparecimento
+    damage_arthropods: Dano a artrópodes
+    protection_explosions: Proteção contra explosões
+    thorns: Espinhos
+  PotionEffectAliases:
+    instanthealth:
+    - Saúde instantânea
+    invisibility:
+    - Invisibilidade
+    waterbreathing:
+    - Respiração aquática
+    resistance:
+    - Resistência
+    unluck:
+    - Azar
+    blindness:
+    - Cegueira
+    haste:
+    - Agilidade
+    poison:
+    - Veneno
+    slowness:
+    - Lentidão
+    hunger:
+    - Fome
+    slowfalling:
+    - Queda lenta
+    weaving:
+    - Trançado
+    fireresistance:
+    - Resistência ao fogo
+    saturation:
+    - Saturação
+    raidomen:
+    - Presságio de invasão
+    jumpboost:
+    - Aumento de pulo
+    dolphinsgrace:
+    - Graça dos golfinhos
+    miningfatigue:
+    - Fadiga de mineração
+    healthboost:
+    - Aumento de saúde
+    regeneration:
+    - Regeneração
+    conduitpower:
+    - Poder do conduto
+    badomen:
+    - Mau presságio
+    luck:
+    - Sorte
+    speed:
+    - Velocidade
+    trialomen:
+    - Presságio de julgamento
+    strength:
+    - Força
+    darkness:
+    - Escuridão
+    heroofthevillage:
+    - Herói da vila
+    levitation:
+    - Levitação
+    instantdamage:
+    - Dano instantâneo
+    oozing:
+    - Vazamento
+    weakness:
+    - Fraqueza
+    nausea:
+    - Náusea
+    windcharged:
+    - Carregado pelo vento
+    absorption:
+    - Absorção
+    wither:
+    - Wither
+    glowing:
+    - Brilho
+    infested:
+    - Infestado
+    nightvision:
+    - Visão noturna
+direction:
+  n: Norte
+  ne: Nordeste
+  e: Leste
+  se: Sudeste
+  s: Sul
+  sw: Sudoeste
+  w: Oeste
+  nw: Noroeste
+modify:
+  middlemouse: '&2Clique com o botão do meio para editar'
+  qButtonEdit: '&2Clique em Q para editar'
+  newItem: '&7Coloque um novo item aqui'
+  newLine: '&2<Nova linha>'
+  newLineHover: '&2Adicionar nova linha'
+  newPage: '&2<Nova página>'
+  newPageHover: '&2Criar nova página'
+  removePage: '&c<Remover página>'
+  removePageHover: '&cRemover página'
+  deleteSymbol: ' &c[X]'
+  deleteSymbolHover: '&cExcluir &e[texto]'
+  extraEditSymbol: ' &6!'
+  addSymbol: '&2[+]'
+  addSymbolHover: '&2Adicionar novo'
+  cancelSymbol: ' &7&l[X]'
+  cancelSymbolHover: '&aCancelar'
+  acceptSymbol: ' &2&l[✔]'
+  acceptSymbolHover: '&aAceitar'
+  denySymbol: ' &4&l[X]'
+  denySymbolHover: '&cNegar'
+  enabledSymbol: '&2[+]'
+  disabledSymbol: '&c[-]'
+  enabled: '&2Habilitado'
+  disabled: '&cDesabilitado'
+  running: '&2Em execução'
+  paused: '&cPausado'
+  editSymbol: '&e✎'
+  editSymbolHover: '&eEditar &6[texto]'
+  editLineColor: '&f'
+  listUpSymbol: '&6⇑'
+  listUpSymbolHover: '&ePara cima'
+  listDownSymbol: '&6⇓'
+  listDownSymbolHover: '&ePara baixo'
+  listNumbering: '&e[número]. '
+  listAlign: '&80'
+  ChangeHover: '&eClique para mudar'
+  ChangeCommands: '&eComandos'
+  enabledColor: '&6'
+  disabledColor: '&7'
+  commandTitle: ' &e--- &6[nome] &e---'
+  commandList: ' &e[comando]  '
+  emptyLine: '&7[Linha vazia]'
+  commandEdit: '&eEditar lista'
+  nameAddInfo: '&eDigite um novo nome. Digite &6cancelar &epara cancelar'
+  lineAddInfo: '&eDigite uma nova linha. Digite &6cancelar &epara cancelar'
+  commandAddInfo: '&eDigite um novo comando. Digite &6cancelar &epara cancelar'
+  commandAddInformationHover: "&e[playerName] pode ser usado para obter o nome do jogador \n&ePara incluir atraso nos comandos: \n&edelay! 5 \n&eComandos especializados são suportados.\n&eMais informações em \n&ehttps://www.zrips.net/cmi/commands/specialized/"
+  commandEditInfo: '&eClique para colar o texto antigo. Digite &6cancelar &epara cancelar a ação'
+  listLimit: '&eA lista não pode ser maior que &6[quantidade] &eentradas'
+  commandEditInfoHover: '&eClique para colar o texto antigo'
+teleportation:
+  relocation: '!actionbar!&4Sua localização de teletransporte foi obstruída. Você foi teletransportado para um local seguro.'
+
+econ:
+  noMoney: '&cVocê não tem dinheiro'
+  charged: '!actionbar!&fCobrado: &6[quantidade]'
+  notEnoughMoney: '&cVocê não tem dinheiro suficiente. Necessário (&6[quantidade]&c)'
+  tooMuchMoney: '&cVocê tem dinheiro demais'
+Selection:
+  SelectPoints: '&cSelecione 2 pontos com a ferramenta de seleção! AKA: &6[tool]'
+  PrimaryPoint: '&ePonto &6Primário &eSelecionado [ponto]'
+  SecondaryPoint: '&ePonto &6Secundário &eSelecionado [ponto]'
+  CoordsTop: '&eX:&6[x] &eY:&6[y] &eZ:&6[z]'
+  CoordsBottom: '&eX:&6[x] &eY:&6[y] &eZ:&6[z]'
+  Area: '&7[mundo] &f(&6[x1]:[y1]:[z1] &e[x2]:[y2]:[z2]&f)'
+Location:
+  Title: '&8Localização do jogador'
+  Killer: '&eAssassino: &6[killer]'
+  OneLiner: '&eLocalização: &6[localização]'
+  DeathReason: '&eRazão da Morte: &6[razão]'
+  Full: '&7[mundo] &f[x]&7:&f[y]&7:&f[z]'
+  World: '&eMundo: &6[mundo]'
+  X: '&eX: &6[x]'
+  Y: '&eY: &6[y]'
+  Z: '&eZ: &6[z]'
+  Pitch: '&ePitch: &6[angle]'
+  Yaw: '&eYaw: &6[angulos]'
+  WorldNames:
+  - Spawn-&2Spawn
+  - Spawn_nether-&2Spawn Nether
+  - Spawn_the_end-&2Spawn The End
+Locations: '&7Localizações: '
+command:
+  help:
+    output:
+      usage: '&eUso: &7%uso%'
+      cmdInfoFormat: '[comando] &f- &e[descrição]'
+      cmdFormat: '&6/[comando]&f[argumentos]'
+      helpPageDescription: '&e* [descrição]'
+      explanation: '&e * [explicação]'
+      title: '&e------ ======= &6Ajuda&e &e======= ------'
+  nocmd:
+    help:
+      info: '&eExibe todos os comandos disponíveis'
+      args: ''
+  clearcache:
+    help:
+      info: '&eLimpa o cache'
+      args: ''
+  reload:
+    help:
+      info: '&eRecarrega a configuração e os arquivos de localidade dos plugins'
+      args: ''
+    info:
+      feedback: '&6Arquivos de configuração e localidade do CMIL recarregados! Levou [ms]ms'
+      failedConfig: '&4Falha ao carregar o arquivo de configuração! Verifique a ortografia!'
+      failedLocale: '&4Falha ao carregar o arquivo de localidade! Verifique a ortografia!'
