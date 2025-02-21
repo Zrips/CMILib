@@ -1,6 +1,5 @@
 package net.Zrips.CMILib.Sounds;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -158,7 +157,7 @@ public class CMISound {
 
     @Override
     public String toString() {
-        return sound == null ? "Unknown" : sound.toString() + ":" + fmt(volume) + ":" + fmt(pitch);
+        return sound == null ? "Unknown" : getRawName() + ":" + fmt(volume) + ":" + fmt(pitch);
     }
 
     private static String fmt(float d) {
