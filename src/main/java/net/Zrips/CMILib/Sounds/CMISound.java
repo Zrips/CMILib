@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Messages.CMIMessages;
+import net.Zrips.CMILib.Version.Version;
 import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
 
 public class CMISound {
@@ -87,8 +88,18 @@ public class CMISound {
                     sound = one.getValue();
             }
         }
-        if (sound != null)
-            rawName = sound.toString();
+        if (sound != null) {
+            // Changed to interface from class
+            if (Version.isCurrentEqualOrHigher(Version.v1_21_R2)) {
+                rawName = sound.toString();
+            } else {
+                try {
+                    rawName = (String) org.bukkit.Sound.class.getMethod("toString").invoke(sound);
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     public Sound getSound() {
@@ -146,7 +157,7 @@ public class CMISound {
 
     @Override
     public String toString() {
-        return sound == null ? "Unknown" : sound.toString() + ":" + fmt(volume) + ":" + fmt(pitch);
+        return sound == null ? "Unknown" : getRawName() + ":" + fmt(volume) + ":" + fmt(pitch);
     }
 
     private static String fmt(float d) {

@@ -232,7 +232,7 @@ public class CMILib extends JavaPlugin {
             if (cmilVersion > cmilibVersion) {
 
                 if (!CMILibConfig.autoUpdate) {
-                    CMIMessages.consoleMessage("&2New version of CMILib was detected. Please update it");
+                    CMIMessages.consoleMessage("&2New version of CMILib was detected. Please update it (" + getDescription().getVersion() + " -> " + version + ")");
                     return;
                 }
 
