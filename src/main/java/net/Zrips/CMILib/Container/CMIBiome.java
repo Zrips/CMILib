@@ -1,10 +1,12 @@
 package net.Zrips.CMILib.Container;
 
 import java.awt.Color;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Set;
 
 import net.Zrips.CMILib.CMILib;
+import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Messages.CMIMessages;
 
 public class CMIBiome {
@@ -47,6 +49,11 @@ public class CMIBiome {
 
     public static CMIBiome get(String name) {
         return cmiBiomeMap.get(name.toLowerCase().replace("_", ""));
+    }
+
+    public static String getName(Object biome) {
+        CMIBiome b = cmiBiomeMap.get(biome.toString().toLowerCase().replace("_", ""));
+        return b == null ? CMIText.firstToUpperCase(biome.toString()) : b.getName();
     }
 
     public Color getColor() {

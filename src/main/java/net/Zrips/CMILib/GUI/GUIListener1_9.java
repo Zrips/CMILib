@@ -2,6 +2,7 @@ package net.Zrips.CMILib.GUI;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 
@@ -14,7 +15,7 @@ public class GUIListener1_9 implements Listener {
         this.plugin = plugin;
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void playerInteractEvent(PlayerSwapHandItemsEvent event) {
 
         if (event.isCancelled())
