@@ -241,6 +241,10 @@ public class CMIActionBar {
                     try {
                         Object cplayer = getHandle.invoke(player);
                         Object connection = playerConnection.get(cplayer);
+                        
+                        if (connection == null)
+                            continue;
+                        
                         sendPacket.invoke(connection, packet);
                     } catch (Throwable e) {
                         e.printStackTrace();
@@ -255,6 +259,9 @@ public class CMIActionBar {
 
                 Object cplayer = getHandle.invoke(player);
                 Object connection = playerConnection.get(cplayer);
+
+                if (connection == null)
+                    continue;
 
                 repeatingActionBar old = actionbarMap.computeIfAbsent(player.getUniqueId(), k -> new repeatingActionBar(player));
 
