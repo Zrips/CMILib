@@ -4,11 +4,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
-import org.bukkit.block.Biome;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
@@ -63,8 +61,6 @@ public class CMILibConfig {
     private ConfigReader localeFile = null;
     private ConfigReader cfg = null;
 
-    private LinkedHashMap<Biome, CMIBiome> biomeNames = new LinkedHashMap<Biome, CMIBiome>();
-
     public CMILibConfig(CMILib plugin) {
         this.plugin = plugin;
     }
@@ -114,7 +110,7 @@ public class CMILibConfig {
         lang = cfg.get("Language", locale).toUpperCase();
 
         cfg.addComment("LanguageDownload", "Defines if you want to auto download default locale files from github repository",
-            "You can disable this if you are using EN or you already have your locale setup and you dont need to have other languages being downloaded");
+            "You can disable this if you are using EN or you already have your locale setup and you don't need to have other languages being downloaded");
         LanguageDownload = cfg.get("LanguageDownload", true);
 
         cfg.addComment("AutoUpdate", "When enabled plugin will try to keep CMILib up to date automatically");
@@ -125,6 +121,8 @@ public class CMILibConfig {
             "Only disable this if you have dedicated protection for it");
         ExploitPatcherCheckItem = cfg.get("ExploitPatcher.Placeholders.blocked.checkItem", true);
 
+        plugin.getSkinManager().loadConfig();
+        
         cfg.addComment("GlobalGui.EmptyField", "Defines item type in empty fields in GUI when its needed to be filled up");
         GUIEmptyField = CMILib.getInstance().getItemManager().getItem(cfg.get("GlobalGui.EmptyField", "BLACK_STAINED_GLASS_PANE"));
         if (GUIEmptyField == null)
@@ -342,7 +340,6 @@ public class CMILibConfig {
         });
 
         // Loading data
-        CMIBiome.initialize();
         CMIEntity.initialize();
         CMIEnchantment.updateLocale();
         CMIPotionEffectType.loadLocalization();
@@ -419,6 +416,7 @@ public class CMILibConfig {
         boolean configLoaded = load(true);
         boolean langLoaded = reloadLanguage();
         plugin.getItemManager().loadLocale();
+
         CMIEntityType.cache.clear();
         CMIWorld.onDisable();
 
@@ -446,10 +444,6 @@ public class CMILibConfig {
 
     public CMIItemStack getGUIEmptyField() {
         return GUIEmptyField;
-    }
-
-    public HashMap<Biome, CMIBiome> getBiomeNames() {
-        return biomeNames;
     }
 
     public CMIItemStack getGUIPreviousPage() {

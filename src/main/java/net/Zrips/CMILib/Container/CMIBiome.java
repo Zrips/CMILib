@@ -1,63 +1,83 @@
 package net.Zrips.CMILib.Container;
 
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-
-import org.bukkit.block.Biome;
+import java.awt.Color;
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Set;
 
 import net.Zrips.CMILib.CMILib;
+import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Messages.CMIMessages;
 
 public class CMIBiome {
 
-    private static LinkedHashMap<Biome, CMIBiome> biomeNames = new LinkedHashMap<Biome, CMIBiome>();
+    private CMIBiomeType type;
+    private String name;
+    private String localized;
 
-    private Biome biome;
-    private String name = null;
+    static HashMap<String, CMIBiome> cmiBiomeMap = new HashMap<>();
 
-    public static void initialize() {
-	Arrays.stream(Biome.values()).map(Biome::toString).sorted().filter(name -> name != null).forEach(name -> {
-	    try {
-		Biome biome = null;
-		for (Biome bio : Biome.values()) {
-		    if (bio.toString().equalsIgnoreCase(name)) {
-			biome = bio;
-			break;
-		    }
-		}
-		if (biome == null)
-		    return;
-		biomeNames.put(biome, new CMIBiome(biome, CMILib.getInstance().getConfigManager().getLocaleConfig().get("info.Biomes." + biome.toString(), CMIText.firstToUpperCase(biome.toString()))));
-	    } catch (Exception e) {
-		CMIMessages.consoleMessage("&4Failed to recognize biome by (" + name + ") name. Skipping.");
-	    }
-	});
+    static {
+
+        try {
+            Class<?> c = Class.forName("org.bukkit.block.Biome");
+
+            Object[] biomes = (Object[]) c.getMethod("values").invoke(c);
+
+            for (Object biome : biomes) {
+                if (biome == null)
+                    continue;
+                String name = biome.toString();
+                try {
+                    CMIBiome cbiome = new CMIBiome(name, CMILib.getInstance().getConfigManager().getLocaleConfig().get("info.Biomes." + name, CMIText.firstToUpperCase(name)));
+                    cbiome.type = CMIBiomeType.get(name);
+                    cmiBiomeMap.put(name.toLowerCase().replace("_", "").replace(" ", ""), cbiome);
+                } catch (Exception e) {
+                    CMIMessages.consoleMessage("&4Failed to recognize biome by (" + name + ") name. Skipping.");
+                }
+            }
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+
     }
 
-    public CMIBiome(Biome biome) {
-	this.biome = biome;
-	CMIBiome n = biomeNames.get(biome);
-	if (n != null)
-	    name = n.getBiomeName();
+    CMIBiome(String name, String localized) {
+        this.name = name;
+        this.localized = localized;
     }
 
-    public CMIBiome(Biome biome, String name) {
-	this.biome = biome;
-	this.name = name;
+    public static CMIBiome get(String name) {
+        return cmiBiomeMap.get(name.toLowerCase().replace("_", ""));
     }
 
-    public CMIBiome getBiome(Biome biome) {
-	return biomeNames.get(biome);
+    public static String getName(Object biome) {
+        CMIBiome b = cmiBiomeMap.get(biome.toString().toLowerCase().replace("_", ""));
+        return b == null ? CMIText.firstToUpperCase(biome.toString()) : b.getName();
     }
 
-    public Biome getBiome() {
-	return biome;
+    public Color getColor() {
+        if (type == null)
+            return new Color(0, 0, 0);
+        return type.getColor();
     }
 
-    public String getBiomeName() {
-	if (name == null) {
-	    name = CMIText.firstToUpperCase(biome.toString());
-	}
-	return name;
+    public int getId() {
+        if (type == null)
+            return 0;
+        return type.getId();
     }
+
+    public String getLocalized() {
+        return localized;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public static Set<String> values() {
+        return cmiBiomeMap.keySet();
+    }
+
 }

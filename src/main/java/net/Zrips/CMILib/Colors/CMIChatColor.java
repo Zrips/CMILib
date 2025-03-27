@@ -127,7 +127,7 @@ public class CMIChatColor {
 
     public static final String ColorFontRegex = "(\\" + colorFontPrefix + ")([a-zA-Z_]{3,})(\\" + colorCodeSuffix + ")";
 
-    public static final Pattern gradientPattern = Pattern.compile("(\\{(#[^\\{]*?)>\\})(.*?)(\\{(#.*?)<(>?)\\})");
+    public static final Pattern gradientPattern = Pattern.compile("(\\{(#[^\\{\\}]*?)>\\})(.*?)(\\{(#[^\\{\\}]*?)<(>?)\\})");
 
     public static final String hexColorDecolRegex = "(&x)(&[0-9A-Fa-f]){6}";
 
@@ -701,7 +701,7 @@ public class CMIChatColor {
 //	    endTest.append(prevG9);
 //	    endTest.append(t);
 //	}
-//
+
         return text;
     }
 
@@ -1029,8 +1029,9 @@ public class CMIChatColor {
             hex = hex.substring(1);
 
         CMIChatColor closest = CUSTOM_BY_RGB.get(hex);
-        if (closest != null)
+        if (closest != null) {
             return closest;
+        }
 
         java.awt.Color c2 = null;
         try {

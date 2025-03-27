@@ -73,7 +73,7 @@ info:
   FeatureNotEnabled: '&cЦя функція не увімкнена!'
   ModuleNotEnabled: '&cЦей модуль не увімкнутий!'
   versionNotSupported: '&cВерсія сервера не підтримує цю функцію'
-  spigotNotSupported: '&cYou need PaperSpigot branch type server for this to work'
+  spigotNotSupported: '&cДля цього вам потрібен сервер типу PaperSpigot'
   bungeeNoGo: '&cЦя функція не буде працювати на серверах, пов`язаних з bungee'
   clickToTeleport: '&fНатисніть, щоб телепортуватися'
   UseMaterial: '&cБудь ласка, використовуйте назви матеріалів!'
@@ -92,7 +92,7 @@ info:
   Save: '&7Зберегти'
   Delete: '&cВидалити'
   Click: '&7Натиснути'
-  Preview: '&ePreview'
+  Preview: '&eПопередній перегляд'
   PasteOld: '&7Вставити старий текст'
   ClickToPaste: '&7Натисніть, щоб вставити в чат'
   CantTeleportWorld: '&cВи не можете телепортуватися в цей світ'
@@ -123,7 +123,7 @@ info:
   confirmRedefine: '&eНатисніть, щоб підтвердити перевизначення'
   cantEdit: '&eВи не можете редагувати це'
   wrongName: '&cНеправильне ім`я'
-  unknown: unknown
+  unknown: невідомо
   invalidName: '&cНеправильне ім`я'
   alreadyexist: '&cЦе ім`я вже кимось зайняте'
   dontexist: '&cНічого не знайдено за цим ім`ям'
@@ -439,7 +439,7 @@ info:
     area_effect_cloud: Хмара ефектів
     armor_stand: Стійка для броні
     arrow: Стріла
-    axolotl: Axolotl
+    axolotl: Аксолотль
     bat: Кажан
     bee: Бджола
     blaze: Іфрит
@@ -475,7 +475,7 @@ info:
     giant: Гігант
     glow_item_frame: Сяюча рамка
     glow_squid: Сяючий спрут
-    goat: Goat
+    goat: Козел
     guardian: Страж
     hoglin: Гоґлін
     horse: Кінь
@@ -570,7 +570,7 @@ info:
     vanishing_curse:
     - Прокляття_втрати
     durability:
-    - Unbreaking
+    - Незламність
     knockback:
     - Віддача
     luck:
@@ -604,7 +604,7 @@ info:
     channeling:
     - Громовержець
     glowing:
-    - Glowing
+    - Світіння
     sweeping_edge:
     - Разючий клинок
     thorns:
@@ -673,9 +673,9 @@ info:
     health_boost:
     - Зміцнення здоров'я
     absorption:
-    - Absorption
+    - Поглинання
     saturation:
-    - Saturation
+    - Насиченість
     glowing:
     - Світіння
     levitation:
@@ -687,11 +687,11 @@ info:
     slow_falling:
     - Падіння снігу
     conduit_power:
-    - Conduit power
+    - Сила кабелю
     dolphins_grace:
     - Грація дельфінів
     bad_omen:
-    - Bad omen
+    - Погана прикмета
     hero_of_the_village:
     - Герой села
 direction:
@@ -793,7 +793,7 @@ Location:
   - world_the_end-&2World The End
   - spawn-&2Spawn
   - Arena-&2Arena
-Locations: '&7Locations: '
+Locations: '&7Локації: '
 warp:
   list: '&7[pos]. &c[warpName] &f- &7[worldName] ([x]:[y]:[z])'
 afk:
@@ -808,26 +808,26 @@ Potion:
   List: '&7[PotionName] [PotionAmplifier] &7Тривалість: &7[LeftDuration] &7сек'
   NoPotions: '&7Ні'
 Information:
-  Title: '&8Players information'
-  Health: '&eHealth: &6[Health]/[maxHealth]'
-  Hunger: '&eHunger: &6[Hunger]'
-  Saturation: '&eSaturation: &6[Saturation]'
-  Exp: '&eExp: &6[Exp]'
-  NotEnoughExp: '&eNot enough exp: &6[Exp]'
-  NotEnoughExpNeed: '&eNot enough exp: &6[Exp]/[need]'
-  tooMuchExp: '&eToo much exp: &6[Exp]/[need]'
-  NotEnoughVotes: '&eNot enough votes: &6[votes]'
-  TooMuchVotes: '&eToo many votes: &6[votes]'
-  BadGameMode: '&cYou can''t do this in your current game mode'
-  BadArea: '&cYou can''t perform this action in this area'
-  GameMode: '&eGameMode: &6[GameMode]'
-  Flying: '&eFlying: &6[Flying]'
+  Title: '&8Інформація про гравців'
+  Health: '&eЗдоров''я: &6[Health]/[maxHealth]'
+  Hunger: '&eГолод: &6[Hunger]'
+  Saturation: '&eНасиченість: &6[Saturation]'
+  Exp: '&eДосвід: &6[Exp]'
+  NotEnoughExp: '&eНедостатньо досвіду: &6[Exp]'
+  NotEnoughExpNeed: '&eНедостатньо досвіду: &6[Exp]/[need]'
+  tooMuchExp: '&eЗанадто великий ризик: &6[Exp]/[need]'
+  NotEnoughVotes: '&eНедостатньо голосів: &6[votes]'
+  TooMuchVotes: '&eЗанадто багато голосів: &6[votes]'
+  BadGameMode: '&cВи не можете зробити це в поточному режимі гри'
+  BadArea: '&cВи не можете виконати цю дію в цій області'
+  GameMode: '&eРежим гри: &6[GameMode]'
+  Flying: '&eЛітання: &6[Flying]'
   Uuid: '&6[uuid]'
-  FirstConnection: '&eFirst connection: &6[time]'
-  Lastseen: '&eLast seen: &6[time]'
-  Onlinesince: '&eOnline since: &6[time]'
-  Money: '&eBalance: &6[money]'
-  Group: '&eGroup: &6[group]'
+  FirstConnection: '&eПерше з''єднання: &6[time]'
+  Lastseen: '&eОстанній раз заходив: &6[time]'
+  Onlinesince: '&eОнлайн з: &6[time]'
+  Money: '&eБаланс: &6[money]'
+  Group: '&eГрупа: &6[group]'
 Elytra:
   Speed: '&7Швидкість: &c[speed]&7км/ч'
   SpeedBoost: '&a+'
@@ -861,7 +861,7 @@ Chat:
 command:
   help:
     output:
-      usage: '&eUsage: &7%usage%'
+      usage: '&eВикористання: &7%usage%'
       cmdInfoFormat: '[command] &f- &e[description]'
       cmdFormat: '&6/[command]&f[arguments]'
       helpPageDescription: '&e* [description]'

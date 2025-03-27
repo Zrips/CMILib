@@ -855,6 +855,13 @@ public class RawMessage {
         rm.addHover(message.replaceAll(".*\\<H>|\\</H>.*", ""));
     }
 
+    private static void processCommand(RawMessage rm, String message) {
+        if (!message.contains("<C>"))
+            return;
+
+        rm.addCommand(message.replaceAll(".*\\<C>|\\</C>.*", ""));
+    }
+
     public static RawMessage translateRawMessage(CommandSender sender, String textLine, boolean book) {
 
         RawMessage rm = new RawMessage();
@@ -884,6 +891,7 @@ public class RawMessage {
 
             processText(rm, message);
             processHover(rm, message);
+            processCommand(rm, message);
 
             if (message.contains("<ITEM>")) {
                 String st = message.replaceAll(".*\\<ITEM>|\\</ITEM>.*", "");
@@ -901,30 +909,25 @@ public class RawMessage {
                     rm.addItem(stack.getItemStack());
             }
 
-            String command = null;
-            if (message.contains("<C>")) {
-                command = message.replaceAll(".*\\<C>|\\</C>.*", "");
-            }
-
             if (message.contains("<URL>")) {
                 rm.addUrl(message.replaceAll(".*\\<URL>|\\</URL>.*", ""));
             }
 
-            String consoleCommand = null;
+            String command = null;
+
             if (sender instanceof Player) {
+                Player player = (Player) sender;
+
                 if (message.contains("<CC>")) {
-                    Player player = (Player) sender;
-                    consoleCommand = message.replaceAll(".*\\<CC>|\\</CC>.*", "");
+                    String consoleCommand = message.replaceAll(".*\\<CC>|\\</CC>.*", "");
                     String id = ShadowCommand.addShadowCmd(player, consoleCommand, false, ShadowCommandType.Console);
                     command = CommandsHandler.getLabel() + " shadowcmd " + id + " (" + consoleCommand + ")";
                     if (book)
                         command = consoleCommand;
                 }
                 if (message.contains("<CCI>")) {
-                    Player player = (Player) sender;
-                    consoleCommand = message.replaceAll(".*\\<CCI>|\\</CCI>.*", "");
+                    String consoleCommand = message.replaceAll(".*\\<CCI>|\\</CCI>.*", "");
                     String id = ShadowCommand.addShadowCmd(player, consoleCommand, true, ShadowCommandType.Console);
-
                     command = CommandsHandler.getLabel() + " shadowcmd " + id + " (" + consoleCommand + ")";
                     if (book)
                         command = consoleCommand;

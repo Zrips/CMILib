@@ -1,5 +1,6 @@
 package net.Zrips.CMILib.RawMessages;
 
+import java.awt.TrayIcon.MessageType;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -16,10 +17,12 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import net.Zrips.CMILib.CMILib;
+import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Messages.CMIMessages;
 import net.Zrips.CMILib.Version.Version;
 import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
 import net.Zrips.CMILib.commands.CommandsHandler;
+import net.kyori.adventure.identity.Identity;
 
 public class RawMessageManager {
 
@@ -102,7 +105,10 @@ public class RawMessageManager {
         if (Version.isCurrentEqualOrHigher(Version.v1_20_R2)) {
             try {
                 getHandle = Class.forName("org.bukkit.craftbukkit." + version + ".entity.CraftPlayer").getMethod("getHandle");
-                playerConnection = net.minecraft.server.level.EntityPlayer.class.getField("c");
+                if (Version.isCurrentEqualOrHigher(Version.v1_21_R2))
+                    playerConnection = net.minecraft.server.level.EntityPlayer.class.getField("f");
+                else
+                    playerConnection = net.minecraft.server.level.EntityPlayer.class.getField("c");
                 sendPacket = net.minecraft.server.network.PlayerConnection.class.getMethod("b", net.minecraft.network.protocol.Packet.class);
                 constructor = net.minecraft.network.protocol.game.ClientboundSystemChatPacket.class.getConstructor(net.minecraft.network.chat.IChatBaseComponent.class, boolean.class);
             } catch (Throwable e) {

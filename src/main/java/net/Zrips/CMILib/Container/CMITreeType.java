@@ -5,8 +5,6 @@ import java.util.Map.Entry;
 
 import org.bukkit.TreeType;
 
-import net.Zrips.CMILib.Container.CMIText;
-
 public enum CMITreeType {
 
     ACACIA(),
@@ -14,24 +12,26 @@ public enum CMITreeType {
     BIG_TREE("Large oak", "bigoak", "big"),
     BIRCH("white", "whitebark"),
     BROWN_MUSHROOM("browngiantmushroom"),
+    CHERRY(),
     CHORUS_PLANT("chorus"),
     COCOA_TREE("Cocoa"),
     CRIMSON_FUNGUS(),
-    CHERRY(),
     DARK_OAK(),
     JUNGLE(),
     JUNGLE_BUSH("jungleshrub"),
+    MANGROVE(),
     MEGA_REDWOOD("Large spruce"),
+    PALE_OAK,
+    PALE_OAK_CREAKING,
     RED_MUSHROOM("redgiantmushroom"),
     REDWOOD("Spruce", "sequoia", "sequoioideae"),
     SMALL_JUNGLE(),
     SWAMP("swamptree"),
     TALL_BIRCH(),
-    TALL_REDWOOD("Tall spruce", "bigspruce", "tallsequoia", "tallsequoioideae"),
     TALL_MANGROVE(),
+    TALL_REDWOOD("Tall spruce", "bigspruce", "tallsequoia", "tallsequoioideae"),
     TREE("Oak", "regular"),
-    WARPED_FUNGUS(),
-    MANGROVE();
+    WARPED_FUNGUS();
 
     private String name;
     private String[] identifiers;

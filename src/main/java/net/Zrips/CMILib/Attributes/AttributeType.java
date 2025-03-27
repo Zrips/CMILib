@@ -1,5 +1,6 @@
 package net.Zrips.CMILib.Attributes;
 
+import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Version.Version;
 
 public enum AttributeType {
@@ -28,6 +29,7 @@ public enum AttributeType {
         this.preName = preName;
         this.name = name;
         this.action = action;
+        getAttribute();
     }
 
     public String getPreName() {
@@ -60,13 +62,15 @@ public enum AttributeType {
     }
 
     public org.bukkit.attribute.Attribute getAttribute() {
-        if (attribute == null)
-            for (org.bukkit.attribute.Attribute one : org.bukkit.attribute.Attribute.values()) {
-                if (one.toString().equalsIgnoreCase(this.getIdentificator())) {
-                    attribute = one;
-                    break;
-                }
+        if (attribute != null)
+            return attribute;
+
+        for (org.bukkit.attribute.Attribute one : org.bukkit.attribute.Attribute.values()) {
+            if (one.toString().equalsIgnoreCase(this.getIdentificator()) || one.toString().equalsIgnoreCase(name)) {
+                attribute = one;
+                break;
             }
+        }
 
         return attribute;
     }

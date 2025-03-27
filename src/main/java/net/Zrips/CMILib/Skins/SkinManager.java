@@ -16,17 +16,15 @@ import java.util.regex.Pattern;
 
 import javax.net.ssl.HttpsURLConnection;
 
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
-import com.mojang.util.UUIDTypeAdapter;
 
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.FileHandler.ConfigReader;
 import net.Zrips.CMILib.Logs.CMIDebug;
-import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
+import net.Zrips.CMILib.Messages.CMIMessages;
 
 public class SkinManager {
     public HashMap<UUID, CMISkin> skinCacheByUUID = new HashMap<UUID, CMISkin>();
@@ -36,7 +34,7 @@ public class SkinManager {
     protected HashMap<String, UUID> preFetchUUIDs = new HashMap<String, UUID>();
 
     CMILib plugin;
-    private long SkinUpdateTimer = 60;
+    private long SkinUpdateTimer = 1320;
     private long SkinRequestFrequency = 60;
 
     public SkinManager(CMILib plugin) {
@@ -115,7 +113,7 @@ public class SkinManager {
                     lastUpdateRequest = System.currentTimeMillis();
                     skinCacheByUUID.put(uuid, cmiSkin);
                     skinCacheByName.put(playerName, cmiSkin);
-                    
+
 //                    CMIScheduler.runTaskAsynchronously(() -> {
 //                        if (!saving)
 //                            save(cmiSkin);
@@ -138,7 +136,7 @@ public class SkinManager {
             if (checkCache(profile, uuid))
                 return true;
 
-            System.out.println("Connection could not be opened (Response code " + connection.getResponseCode() + ", " + connection.getResponseMessage() + ")");
+            CMIMessages.consoleMessage("Connection could not be opened (Response code " + connection.getResponseCode() + ", " + connection.getResponseMessage() + ")");
             return false;
         } catch (IOException e) {
             e.printStackTrace();
@@ -166,6 +164,9 @@ public class SkinManager {
         if (name.length() == 36) {
             onlineUUID = UUID.fromString(name);
         } else {
+
+            name = name.replaceAll("[^a-zA-Z0-9_]", "");
+
             CMISkin cache = skinCacheByName.get(name);
             if (cache != null) {
                 return cache;
@@ -208,6 +209,7 @@ public class SkinManager {
         StringBuilder response = new StringBuilder();
 
         HttpURLConnection connection = null;
+
         try {
             URL url = new URL(target);
             connection = (HttpURLConnection) url.openConnection();

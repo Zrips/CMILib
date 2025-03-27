@@ -21,8 +21,6 @@ import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Container.CMIList;
 import net.Zrips.CMILib.Container.CMINamespacedKey;
 import net.Zrips.CMILib.Items.CMIItemStack;
-import net.Zrips.CMILib.Logs.CMIDebug;
-import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.Version.Version;
 
 public class CMIRecipe {
@@ -31,6 +29,7 @@ public class CMIRecipe {
     private String identificator = null;
     private String customKey = null;
     private CMIRecipeType type = null;
+    private boolean discoverable = true;
 
     private CMIRecipeCraftData data = null;
 
@@ -353,6 +352,14 @@ public class CMIRecipe {
             duration);
     }
 
+    public static Recipe makeTransmuteRecipe(ItemStack result, CMIRecipeIngredient ingredient1, String customKey) {
+        if (Version.isCurrentEqualOrLower(Version.v1_21_R1))
+            return null;
+
+        return new org.bukkit.inventory.TransmuteRecipe(new org.bukkit.NamespacedKey(CMILib.getInstance(), customKey == null ? getRecipeIdentificator(CMIRecipeType.Smoking, result, ingredient1)
+            : customKey), result.getType(), (org.bukkit.inventory.RecipeChoice) ingredient1.generateChoice(), (org.bukkit.inventory.RecipeChoice) ingredient1.generateChoice());
+    }
+
     public static Recipe makeBlastingRecipe(ItemStack result, CMIRecipeIngredient ingredient1, CMIRecipeCraftData temp) {
         return makeBlastingRecipe(result, ingredient1, temp, null);
     }
@@ -667,5 +674,13 @@ public class CMIRecipe {
     public CMIRecipe setCustomKey(String customKey) {
         this.customKey = customKey;
         return this;
+    }
+
+    public boolean isDiscoverable() {
+        return discoverable;
+    }
+
+    public void setDiscoverable(boolean discoverable) {
+        this.discoverable = discoverable;
     }
 }

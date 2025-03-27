@@ -80,7 +80,7 @@ public enum CMIEntityType {
     VEX(Arrays.asList(
         "NWU3MzMwYzdkNWNkOGEwYTU1YWI5ZTk1MzIxNTM1YWM3YWUzMGZlODM3YzM3ZWE5ZTUzYmVhN2JhMmRlODZiIn19fQ==")),
     VINDICATOR(Arrays.asList(
-        "YTAwZDNmZmYxNmMyZGNhNTliOWM1OGYwOTY1MjVjODY5NzExNjZkYmFlMTMzYjFiMDUwZTVlZTcxNjQ0MyJ9fX0=")),
+        "ZGFlZWQ5ZDhlZDE3NjllNzdlM2NmZTExZGMxNzk2NjhlZDBkYjFkZTZjZTI5ZjFjOGUwZDVmZTVlNjU3M2I2MCJ9fX0=")),
     ILLUSIONER(Arrays.asList(
         "NTEyNTEyZTdkMDE2YTIzNDNhN2JmZjFhNGNkMTUzNTdhYjg1MTU3OWYxMzg5YmQ0ZTNhMjRjYmViODhiIn19fQ==",
         "MmYyODgyZGQwOTcyM2U0N2MwYWI5NjYzZWFiMDgzZDZhNTk2OTI3MzcwNjExMGM4MjkxMGU2MWJmOGE4ZjA3ZSJ9fX0=")),
@@ -170,7 +170,10 @@ public enum CMIEntityType {
     WOLF(Arrays.asList(
         "NjlkMWQzMTEzZWM0M2FjMjk2MWRkNTlmMjgxNzVmYjQ3MTg4NzNjNmM0NDhkZmNhODcyMjMxN2Q2NyJ9fX0=",
         "Angry Wolf:c-angry:ZTk1Y2JiNGY3NWVhODc2MTdmMmY3MTNjNmQ0OWRhYzMyMDliYTFiZDRiOTM2OTY1NGIxNDU5ZWExNTMxNyJ9fX0=")),
+    @Deprecated
     MUSHROOM_COW("MOOSHROOM", Arrays.asList(
+        "ZDBiYzYxYjk3NTdhN2I4M2UwM2NkMjUwN2EyMTU3OTEzYzJjZjAxNmU3YzA5NmE0ZDZjZjFmZTFiOGRiIn19fQ==")),
+    MOOSHROOM("MUSHROOM_COW", Arrays.asList(
         "ZDBiYzYxYjk3NTdhN2I4M2UwM2NkMjUwN2EyMTU3OTEzYzJjZjAxNmU3YzA5NmE0ZDZjZjFmZTFiOGRiIn19fQ==")),
     SNOW_GOLEM("SNOWMAN", Arrays.asList(
         "MWZkZmQxZjc1MzhjMDQwMjU4YmU3YTkxNDQ2ZGE4OWVkODQ1Y2M1ZWY3MjhlYjVlNjkwNTQzMzc4ZmNmNCJ9fX0=")),
@@ -303,26 +306,53 @@ public enum CMIEntityType {
 
     //1.21
     BREEZE(Arrays.asList(
-        "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTI3NTcyOGFmN2U2YTI5Yzg4MTI1YjY3NWEzOWQ4OGFlOTkxOWJiNjFmZGMyMDAzMzdmZWQ2YWIwYzQ5ZDY1YyJ9fX0=")),
+        "YTI3NTcyOGFmN2U2YTI5Yzg4MTI1YjY3NWEzOWQ4OGFlOTkxOWJiNjFmZGMyMDAzMzdmZWQ2YWIwYzQ5ZDY1YyJ9fX0=")),
     WIND_CHARGE(),
     BREEZE_WIND_CHARGE(),
     BOGGED(Arrays.asList(
-        "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTNiOTAwM2JhMmQwNTU2MmM3NTExOWI4YTYyMTg1YzY3MTMwZTkyODJmN2FjYmFjNGJjMjgyNGMyMWViOTVkOSJ9fX0=")),
+        "YTNiOTAwM2JhMmQwNTU2MmM3NTExOWI4YTYyMTg1YzY3MTMwZTkyODJmN2FjYmFjNGJjMjgyNGMyMWViOTVkOSJ9fX0=")),
     OMINOUS_ITEM_SPAWNER(),
     FISHING_BOBBER(),
+
+    //1.21.2
+    ACACIA_BOAT(),
+    ACACIA_CHEST_BOAT(),
+    BAMBOO_RAFT(),
+    BAMBOO_CHEST_RAFT(),
+    BIRCH_BOAT(),
+    BIRCH_CHEST_BOAT(),
+    CHERRY_BOAT(),
+    CHERRY_CHEST_BOAT(),
+    DARK_OAK_BOAT(),
+    DARK_OAK_CHEST_BOAT(),
+    JUNGLE_BOAT(),
+    JUNGLE_CHEST_BOAT(),
+    MANGROVE_BOAT(),
+    MANGROVE_CHEST_BOAT(),
+    OAK_BOAT(),
+    OAK_CHEST_BOAT(),
+    SPRUCE_BOAT(),
+    SPRUCE_CHEST_BOAT(),
+    
+    //1.22 ?
+    PALE_OAK_BOAT(),
+    PALE_OAK_CHEST_BOAT(),
+    CREAKING(Arrays.asList("ZGUzNzNmYTUzNGM3YzNmOTM0MGQzM2MzMmMyMTM0MDJhMmNmODkxN2U3NTBlYjhiYzg3MTBmY2QzZWU5YTE1ZCJ9fX0=")),
+    CREAKING_TRANSIENT(),
 
     // if possible we can remove this string for each texture to save up some space
     // eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUv
     UNKNOWN();
 
-    private String name;
-    private List<String> secondaryNames = new ArrayList<>();
-    EntityType type = null;
-    private HashMap<String, MobHeadInfo> headTextures = new HashMap<String, MobHeadInfo>();
     public static HashMap<String, ItemStack> cache = new HashMap<String, ItemStack>();
     static HashMap<String, CMIEntityType> byName = new HashMap<String, CMIEntityType>();
     static HashMap<EntityType, CMIEntityType> byType = new HashMap<EntityType, CMIEntityType>();
     static HashMap<String, CMIEntityType> byTexture = new HashMap<String, CMIEntityType>();
+
+    private String name;
+    private List<String> secondaryNames = new ArrayList<>();
+    EntityType type = null;
+    private HashMap<String, MobHeadInfo> headTextures = new HashMap<String, MobHeadInfo>();
 
     static {
         for (CMIEntityType one : CMIEntityType.values()) {

@@ -1,13 +1,19 @@
 package net.Zrips.CMILib.Sounds;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
+
+import javax.annotation.Nonnull;
 
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import net.Zrips.CMILib.CMILib;
+import net.Zrips.CMILib.Messages.CMIMessages;
+import net.Zrips.CMILib.Version.Version;
 import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
 
 public class CMISound {
@@ -22,6 +28,31 @@ public class CMISound {
 
     public CMISound(String name) {
         this(name, 1, 1);
+    }
+
+    static {
+        try {
+            Class<?> c = Class.forName("org.bukkit.Sound");
+
+            Object[] sounds = (Object[]) c.getMethod("values").invoke(c);
+
+            for (Object sound : sounds) {
+                if (sound == null)
+                    continue;
+                String name = sound.toString();
+                try {
+                    soundsByname.put(name.toLowerCase().replace("_", "").replace(".", ""), (Sound) sound);
+                } catch (Exception e) {
+                    CMIMessages.consoleMessage("&4Failed to recognize biome by (" + name + ") name. Skipping.");
+                }
+            }
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static @Nonnull List<String> getSoundNames() {
+        return new ArrayList<String>(soundsByname.keySet());
     }
 
     public CMISound(String name, float volume, float pitch) {
@@ -47,13 +78,8 @@ public class CMISound {
 
         this.volume = volume;
         this.pitch = pitch;
-        name = name.toLowerCase().replace("_", "");
+        name = name.toLowerCase().replace("_", "").replace(".", "");
         rawName = name;
-        if (soundsByname.isEmpty()) {
-            for (Sound one : Sound.values()) {
-                soundsByname.put(one.name().toLowerCase().replace("_", ""), one);
-            }
-        }
         sound = soundsByname.get(name);
 
         if (sound == null) {
@@ -62,8 +88,18 @@ public class CMISound {
                     sound = one.getValue();
             }
         }
-        if (sound != null)
-            rawName = sound.toString();
+        if (sound != null) {
+            // Changed to interface from class
+            if (Version.isCurrentEqualOrHigher(Version.v1_21_R2)) {
+                rawName = sound.toString();
+            } else {
+                try {
+                    rawName = (String) org.bukkit.Sound.class.getMethod("toString").invoke(sound);
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     public Sound getSound() {
@@ -80,7 +116,7 @@ public class CMISound {
             return this;
         if (sound == null)
             return this;
-        CMIScheduler.runTask(() -> loc.getWorld().playSound(loc, sound, volume, pitch));
+        CMIScheduler.runTask(CMILib.getInstance(), () -> loc.getWorld().playSound(loc, sound, volume, pitch));
         return this;
     }
 
@@ -121,7 +157,7 @@ public class CMISound {
 
     @Override
     public String toString() {
-        return sound == null ? "Unknown" : sound.toString() + ":" + fmt(volume) + ":" + fmt(pitch);
+        return sound == null ? "Unknown" : getRawName() + ":" + fmt(volume) + ":" + fmt(pitch);
     }
 
     private static String fmt(float d) {

@@ -29,6 +29,7 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ArmorMeta;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
@@ -60,6 +61,8 @@ public class CMIItemSerializer {
     static String suffix = "}";
 
     static Pattern pname = Pattern.compile("^(?i)(name|n)\\" + prefix);
+    static Pattern dname = Pattern.compile("^(?i)(durability|dur)\\" + prefix);
+    static Pattern mdname = Pattern.compile("^(?i)(maxdurability|maxdur)\\" + prefix);
     static Pattern plore = Pattern.compile("^(?i)(lore|l)\\" + prefix);
     static Pattern pcolor = Pattern.compile("^(?i)(c)\\" + prefix);
     static Pattern penchant = Pattern.compile("^(?i)(e)\\" + prefix);
@@ -241,7 +244,7 @@ public class CMIItemSerializer {
 
                 if (ahead != null)
                     ahead.setAsyncHead(true);
-                CMIScheduler.runTaskAsynchronously(() -> {
+                CMIScheduler.runTaskAsynchronously(CMILib.getInstance(), () -> {
                     CMISkin skin = CMILib.getInstance().getSkinManager().getSkin(d);
                     ItemStack s = applySkin(skin, skull);
                     if (ahead != null)
@@ -261,7 +264,7 @@ public class CMIItemSerializer {
                                 ahead.setAsyncHead(true);
                             }
 
-                            CMIScheduler.runTaskAsynchronously(() -> {
+                            CMIScheduler.runTaskAsynchronously(CMILib.getInstance(), () -> {
                                 OfflinePlayer offlineP = Bukkit.getOfflinePlayer(d);
                                 if (offlineP != null) {
                                     ItemStack lskull = skull;
@@ -483,6 +486,34 @@ public class CMIItemSerializer {
     private static Random random = new Random();
     private static String tempReplacer = null;
 
+    private static String getTag(String itemName) {
+        if (Version.isCurrentEqualOrLower(Version.v1_20_R3)) {
+            if (itemName.endsWith("}") && itemName.contains("{")) {
+                return "{" + itemName.split("\\{", 2)[1];
+            }
+        } else {
+            if (itemName.endsWith("]") && itemName.contains("[")) {
+                String tag = "{" + itemName.split("\\[", 2)[1];
+                return tag.substring(0, tag.length() - 1) + "}";
+            }
+        }
+        return null;
+    }
+
+    private static String updateItemName(String itemName) {
+        if (Version.isCurrentEqualOrLower(Version.v1_20_R3)) {
+            if (itemName.endsWith("}") && itemName.contains("{")) {
+                itemName = itemName.split("\\{", 2)[0];
+            }
+        } else {
+            if (itemName.endsWith("]") && itemName.contains("[")) {
+                itemName = itemName.split("\\[", 2)[0];
+            }
+        }
+
+        return itemName.contains("-") || itemName.toLowerCase().startsWith("head:") || itemName.toLowerCase().startsWith("player_head:") ? itemName : itemName.replace(":", "-");
+    }
+
     public static CMIItemStack deserialize(CommandSender sender, String input, CMIAsyncHead ahead) {
 
         if (input == null)
@@ -494,24 +525,16 @@ public class CMIItemSerializer {
 
         String itemName = input.contains(";") ? input.split(";", 2)[0] : input;
 
-        String tag = null;
+        String tag = getTag(itemName);
 
-        if (Version.isCurrentEqualOrLower(Version.v1_20_R3)) {
-            if (itemName.endsWith("}") && itemName.contains("{")) {
-                tag = "{" + itemName.split("\\{", 2)[1];
-                itemName = itemName.split("\\{", 2)[0];
-            }
-        } else {
-            if (itemName.endsWith("]") && itemName.contains("[")) {
-                tag = "{" + itemName.split("\\[", 2)[1];
-                tag = tag.substring(0, tag.length() - 1) + "}";
-                itemName = itemName.split("\\[", 2)[0];
-            }
-        }
-
-        String itemNameUpdated = itemName.contains("-") || itemName.toLowerCase().startsWith("head:") || itemName.toLowerCase().startsWith("player_head:") ? itemName : itemName.replace(":", "-");
+        String itemNameUpdated = updateItemName(itemName);
 
         CMIItemStack cim = getItem(itemNameUpdated, ahead);
+
+        return finalize(cim, input, tag, sender);
+    }
+
+    private static CMIItemStack finalize(CMIItemStack cim, String input, String tag, CommandSender sender) {
 
         if (cim == null)
             return cim;
@@ -577,13 +600,18 @@ public class CMIItemSerializer {
                 if (applyEntityType(cim, one))
                     continue;
 
+                if (applyMaxDurability(cim, one))
+                    continue;
+
+                if (applyDurability(cim, one))
+                    continue;
+
                 // Should be last ones to check due to option of them not having identificators and having random text
                 if (applyName(sender, cim, one))
                     continue;
 
                 if (applyLore(sender, cim, one))
                     continue;
-
             }
         }
 
@@ -644,6 +672,16 @@ public class CMIItemSerializer {
 
             cim.setItemStack((ItemStack) new CMINBT(cim.getItemStack()).setByte("Unbreakable", (byte) 1));
             return true;
+        case "hidetooltip":
+
+            if (!Version.isCurrentEqualOrHigher(Version.v1_21_R2))
+                return false;
+
+            ItemMeta meta = cim.getItemStack().getItemMeta();
+            meta.setHideTooltip(true);
+            cim.getItemStack().setItemMeta(meta);
+
+            return true;
         }
         return false;
     }
@@ -670,6 +708,112 @@ public class CMIItemSerializer {
         if (name == null)
             return false;
         cim.setDisplayName(name);
+
+        return true;
+    }
+
+    private static int parseInt(String value) {
+        try {
+            double td = Double.parseDouble(value);
+            if (td > Integer.MAX_VALUE)
+                return Integer.MAX_VALUE;
+            return (int) td;
+        } catch (Throwable e) {
+            return 0;
+        }
+    }
+
+    private static boolean applyDurability(CMIItemStack cim, String value) {
+        Matcher durabilityMatch = dname.matcher(value);
+        if (!durabilityMatch.find())
+            return false;
+
+        value = value.substring(durabilityMatch.group().length());
+
+        ItemStack item = cim.getItemStack();
+
+        int max = cim.getMaxDurability();
+        int setDurability = max;
+        int customMax = 0;
+        try {
+
+            if (value.contains("/")) {
+                String[] parts = value.split("/");
+                int v1 = Integer.parseInt(parts[0]);
+                int v2 = Integer.parseInt(parts[1]);
+
+                if (v1 >= v2) {
+                    setDurability = v2;
+                    customMax = v1;
+                } else {
+                    setDurability = v1;
+                    customMax = v2;
+                }
+            } else {
+                setDurability = parseInt(value);
+            }
+
+        } catch (Throwable e) {
+            return false;
+        }
+
+        if (customMax > 0)
+            max = customMax;
+
+        int damage = CMINumber.clamp(max - setDurability, 0, max - 1);
+
+        if (damage <= 0)
+            return true;
+
+        if (Version.isCurrentEqualOrHigher(Version.v1_13_R1)) {
+            if (!(item.getItemMeta() instanceof Damageable))
+                return false;
+            Damageable damageable = (Damageable) item.getItemMeta();
+            if (customMax > 0)
+                damageable.setMaxDamage(customMax);
+            damageable.setDamage(damage);
+            item.setItemMeta(damageable);
+        } else {
+            item.setDurability((short) (damage));
+        }
+        cim.setDurability((short) (damage));
+        return true;
+    }
+
+    private static boolean applyMaxDurability(CMIItemStack cim, String value) {
+        if (!Version.isCurrentEqualOrHigher(Version.v1_21_R1))
+            return false;
+
+        Matcher durabilityMatch = mdname.matcher(value);
+        if (!durabilityMatch.find())
+            return false;
+
+        value = value.substring(durabilityMatch.group().length());
+
+        ItemStack item = cim.getItemStack();
+
+        if (!(item.getItemMeta() instanceof Damageable))
+            return false;
+
+        int originalMax = item.getType().getMaxDurability();
+
+        int setDurability = cim.getMaxDurability();
+        try {
+            double td = Double.parseDouble(value);
+            if (td > Integer.MAX_VALUE)
+                setDurability = Integer.MAX_VALUE;
+            else
+                setDurability = (int) td;
+        } catch (Throwable e) {
+            return false;
+        }
+
+        setDurability = CMINumber.clamp(setDurability, 1, setDurability);
+
+        if (setDurability == originalMax)
+            return true;
+
+        cim.setMaxDurability(setDurability);
 
         return true;
     }
@@ -1043,19 +1187,28 @@ public class CMIItemSerializer {
             return false;
 
         List<String> sherds = new ArrayList<String>();
+
         for (String oneSherd : value.split(",")) {
             if (!oneSherd.toLowerCase().endsWith("_pottery_sherd"))
                 oneSherd += "_pottery_sherd";
             CMIMaterial sherd = CMIMaterial.get(oneSherd);
-            if (sherd.toString().endsWith("_SHERD")) {
-                sherds.add("minecraft:" + sherd.toString().toLowerCase());
-            }
-        }
+            if (!sherd.containsCriteria(CMIMC.SHERD))
+                continue;
 
-        sherds.subList(4, sherds.size()).clear();
+            sherds.add("minecraft:" + sherd.toString().toLowerCase());
+        }
 
         if (sherds.isEmpty())
             return false;
+
+        sherds.subList(4, sherds.size()).clear();
+
+        if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
+
+            // Newer versions will need different handling
+
+            return false;
+        }
 
         try {
             CMINBT nbt = new CMINBT(cim.getItemStack());
@@ -1184,6 +1337,21 @@ public class CMIItemSerializer {
                     e.printStackTrace();
                 }
             }
+
+            CMIItemStack citem = new CMIItemStack(item);
+
+            if (citem.hasDurability()) {
+                if (citem.getMaxDurability() != item.getType().getMaxDurability() && citem.getMaxDurability() > 0) {
+                    str.append(";maxdur" + prefix);
+                    str.append(citem.getMaxDurability());
+                    str.append(suffix);
+                }
+                if (citem.getDurability() > 0) {
+                    str.append(";dur" + prefix);
+                    str.append(citem.getDurability());
+                    str.append(suffix);
+                }
+            }
         }
 
         if (Version.isCurrentEqualOrHigher(Version.v1_20_R1)) {
@@ -1228,6 +1396,7 @@ public class CMIItemSerializer {
         return null;
     }
 
+    @Deprecated
     public static String toOneLiner(CMIItemStack item) {
 
         String liner = item.getType().toString();
@@ -1238,8 +1407,15 @@ public class CMIItemSerializer {
         } else if (item.getCMIType().isPotion() || item.getType().name().contains("TIPPED_ARROW")) {
             PotionMeta potion = (PotionMeta) item.getItemStack().getItemMeta();
             try {
-                if (potion != null && potion.getBasePotionData() != null && potion.getBasePotionData().getType() != null && potion.getBasePotionData().getType().getEffectType() != null) {
-                    liner += ":" + potion.getBasePotionData().getType().getEffectType().getName() + "-" + potion.getBasePotionData().isUpgraded() + "-" + potion.getBasePotionData().isExtended();
+
+                if (Version.isCurrentEqualOrHigher(Version.v1_21_R1)) {
+                    if (potion != null && potion.getBasePotionType() != null) {
+                        liner += ":" + potion.getBasePotionType().toString();
+                    }
+                } else {
+                    if (potion != null && potion.getBasePotionData() != null && potion.getBasePotionData().getType() != null && potion.getBasePotionData().getType().getEffectType() != null) {
+                        liner += ":" + potion.getBasePotionData().getType().toString() + "-" + potion.getBasePotionData().isUpgraded() + "-" + potion.getBasePotionData().isExtended();
+                    }
                 }
             } catch (NoSuchMethodError e) {
             }

@@ -44,15 +44,21 @@ public class CMIPlayer {
 
     public static double getMaxHealth(Player player) {
         if (Version.isCurrentEqualOrHigher(Version.v1_9_R1)) {
-            return player.getAttribute(org.bukkit.attribute.Attribute.GENERIC_MAX_HEALTH).getBaseValue();
+            return CMIAttribute.MAX_HEALTH.getValue(player);
+        }
+        return player.getMaxHealth();
+    }
+
+    public static double getBaseMaxHealth(Player player) {
+        if (Version.isCurrentEqualOrHigher(Version.v1_9_R1)) {
+            return CMIAttribute.MAX_HEALTH.getBaseValue(player);
         }
         return player.getMaxHealth();
     }
 
     public static void setMaxHealth(Player player, double amount) {
         if (Version.isCurrentEqualOrHigher(Version.v1_9_R1)) {
-            org.bukkit.attribute.AttributeInstance ati = player.getAttribute(org.bukkit.attribute.Attribute.GENERIC_MAX_HEALTH);
-            ati.setBaseValue(amount);
+            CMIAttribute.MAX_HEALTH.setBaseValue(player, amount);
         } else {
             player.setMaxHealth(amount);
         }

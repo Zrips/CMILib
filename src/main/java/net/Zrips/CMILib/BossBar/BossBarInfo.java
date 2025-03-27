@@ -294,6 +294,9 @@ public class BossBarInfo {
 
     public boolean stillRunning() {
 
+        if (this.getKeepFor() < 0)
+	    return true;
+        
         if (getPercentage() < 1 && getAdjustPerc() != null && getAdjustPerc() > 0)
             return true;
 

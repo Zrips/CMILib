@@ -17,7 +17,9 @@ import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 
 import net.Zrips.CMILib.CMILib;
+import net.Zrips.CMILib.Container.CMIPlayerInventory;
 import net.Zrips.CMILib.Items.CMIMaterial;
+import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.Permissions.CMILPerm;
 import net.Zrips.CMILib.Version.Version;
@@ -239,7 +241,7 @@ public class GUIManager {
         int clicks = 0;
 
         try {
-            if (!gui.getInv().equals(player.getOpenInventory().getTopInventory()) || gui.getInv().getHolder() != null) {
+            if (!gui.getInv().equals(CMIPlayerInventory.getTopInventory(player)) || gui.getInv().getHolder() != null) {
                 player.closeInventory();
                 map.remove(player.getUniqueId());
                 return false;
@@ -356,8 +358,17 @@ public class GUIManager {
         CMIGui gui = map.get(player.getUniqueId());
         if (gui == null)
             return false;
+
         if (player.getOpenInventory() == null)
             return false;
+
+        if (!validInventory(gui)) {
+            // removal should he before closing to avoid potential issues
+            map.remove(player.getUniqueId());
+            player.closeInventory();
+            return false;
+        }
+
         return true;
     }
 
@@ -367,7 +378,7 @@ public class GUIManager {
         CMIGui removed = map.remove(player.getUniqueId());
         if (removed == null)
             return false;
-        if (player.getOpenInventory() != null && player.getOpenInventory().getTopInventory().equals(removed.getInv()))
+        if (player.getOpenInventory() != null && CMIPlayerInventory.getTopInventory(player).equals(removed.getInv()))
             player.closeInventory();
 
 //	removed.processClose();
@@ -470,12 +481,7 @@ public class GUIManager {
 
         Player player = gui.getPlayer();
 
-        InventoryView openInv = player.getOpenInventory();
-
-        if (openInv == null)
-            return false;
-
-        Inventory topInv = openInv.getTopInventory();
+        Inventory topInv = CMIPlayerInventory.getTopInventory(player);
 
         if (topInv == null)
             return false;
@@ -483,13 +489,13 @@ public class GUIManager {
         if (!topInv.getType().equals(gui.getInv().getType()))
             return false;
 
-        if (player.getOpenInventory().getTopInventory().getSize() != gui.getInv().getSize())
+        if (topInv.getSize() != gui.getInv().getSize())
             return false;
 
-        if (Version.isCurrentEqualOrHigher(Version.v1_9_R1) && player.getOpenInventory().getTopInventory().getLocation() != null)
+        if (Version.isCurrentEqualOrHigher(Version.v1_9_R1) && topInv.getLocation() != null)
             return false;
 
-        return player.getOpenInventory().getTopInventory().getHolder() == null;
+        return topInv.getHolder() == null;
     }
 
     public void updateContent(CMIGui gui) {
@@ -502,9 +508,9 @@ public class GUIManager {
             return;
         }
 
-        player.getOpenInventory().getTopInventory().setContents(gui.getInv().getContents());
+        CMIPlayerInventory.getTopInventory(player).setContents(gui.getInv().getContents());
         player.updateInventory();
-        gui.setInv(player.getOpenInventory().getTopInventory());
+        gui.setInv(CMIPlayerInventory.getTopInventory(player));
 
         if (gui.getInv().getHolder() != null) {
 
@@ -531,16 +537,17 @@ public class GUIManager {
 
 //	plugin.getNMS().updateInventoryTitle(player, gui.getTitle());
 
-        for (int i = 0; i < player.getOpenInventory().getTopInventory().getSize(); i++) {
+        Inventory top = CMIPlayerInventory.getTopInventory(player);
+        for (int i = 0; i < top.getSize(); i++) {
             CMIGuiButton button = gui.getButtons().get(i);
             if (button == null)
                 continue;
             if (!button.isLocked())
                 continue;
 
-            player.getOpenInventory().getTopInventory().setItem(i, button.getItem(gui.getPlayer()));
+            top.setItem(i, button.getItem(gui.getPlayer()));
         }
-        gui.setInv(player.getOpenInventory().getTopInventory());
+        gui.setInv(top);
         map.put(player.getUniqueId(), gui);
         player.updateInventory();
     }

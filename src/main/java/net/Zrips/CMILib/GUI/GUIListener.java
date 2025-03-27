@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -23,6 +24,7 @@ import org.bukkit.inventory.ItemStack;
 
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.GUI.GUIManager.InvType;
+import net.Zrips.CMILib.Items.CMIItemStack;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
 
@@ -146,15 +148,19 @@ public class GUIListener implements Listener {
         }
 
         if (event.getAction().toString().equalsIgnoreCase("HOTBAR_SWAP") || event.getAction().toString().equalsIgnoreCase("HOTBAR_MOVE_AND_READD")) {
-            ItemStack iioh = CMILib.getInstance().getReflectionManager().getItemInOffHand(player);
+            ItemStack iioh = CMIItemStack.getItemInOffHand(player).clone();
+            // Should only fire if item isn't null which could be achieved by spamming hotbar keys to trigger multiple item transfers in one tick
+            if (iioh != null && !iioh.getType().equals(Material.AIR)) {
+                CMIItemStack.setItemInOffHand(player, null);
+                CMIScheduler.runTask(plugin, () -> {
+                    try {
+                        player.getInventory().setItemInOffHand(iioh);
+                        player.updateInventory();
+                    } catch (Throwable e) {
+                    }
+                });
+            }
             event.setCancelled(true);
-            CMIScheduler.runTask(() -> {
-                try {
-                    player.getInventory().setItemInOffHand(iioh);
-                    player.updateInventory();
-                } catch (Throwable e) {
-                }
-            });
         }
 
 //	if (gui != null)

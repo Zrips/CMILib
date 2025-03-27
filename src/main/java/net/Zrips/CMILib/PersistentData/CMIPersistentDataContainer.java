@@ -120,8 +120,7 @@ public class CMIPersistentDataContainer {
         return null;
     }
 
-    private static NamespacedKey getKey(String key) {
-
+    private static NamespacedKey getKey(String key) {        
         if (key.contains(":"))
             return new NamespacedKey(key.split(":", 2)[0].toLowerCase(), key.split(":", 2)[1].replace(" ", "_"));
 
@@ -310,7 +309,7 @@ public class CMIPersistentDataContainer {
         if (persistentDataContainer == null)
             return this;
 
-        if (Version.isCurrentEqualOrHigher(Version.v1_20_R3)) {
+        if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
             persistentDataContainer.set(getKey(key), PersistentDataType.LIST.integers(), value);
             return this;
         }
@@ -336,7 +335,7 @@ public class CMIPersistentDataContainer {
             return null;
 
         try {
-            if (Version.isCurrentEqualOrHigher(Version.v1_20_R3))
+            if (Version.isCurrentEqualOrHigher(Version.v1_20_R4))
                 return persistentDataContainer.get(getKey(key), PersistentDataType.LIST.integers());
         } catch (Throwable e) {
         }

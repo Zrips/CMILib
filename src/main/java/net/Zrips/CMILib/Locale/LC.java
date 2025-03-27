@@ -150,7 +150,7 @@ public enum LC {
     info_pageCountHover("&e[totalEntries] entries"),
 
     info_skullOwner("!actionbar!&7Owner:&r [playerName]"),
-    info_playerHeadName("&eHead of &7[playerName]"),
+//    info_playerHeadName("&eHead of &7[playerName]"),
     info_mobHeadName("&eHead of &f[mobName]"),
 
     info_circle("&3Circle"),
@@ -234,7 +234,7 @@ public enum LC {
     teleportation_relocation("!actionbar!&4Your teleport location was obstructed. You have been teleported to a safe location."),
     econ_noMoney("&cYou have no money"),
     econ_charged("!actionbar!&fCharged: &6[amount]"),
-    econ_notEnoughMoney("&cYou dont have enough money. Required (&6[amount]&c)"),
+    econ_notEnoughMoney("&cYou don't have enough money. Required (&6[amount]&c)"),
     econ_tooMuchMoney("&cYou have too much money"),
 
     Selection_SelectPoints("&cSelect 2 points with selection tool! AKA: &6[tool]"),

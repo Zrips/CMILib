@@ -6,9 +6,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import java.util.regex.Matcher;
 
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -17,7 +21,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.Nullable;
 
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+import com.mojang.serialization.DataResult;
 
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Entities.CMIEntityType;
@@ -25,9 +31,13 @@ import net.Zrips.CMILib.Items.CMIMaterial;
 import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.PersistentData.CMIPersistentDataContainer;
 import net.Zrips.CMILib.Version.Version;
+import net.minecraft.core.HolderLookup.a;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.DynamicOpsNBT;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.dedicated.DedicatedServer;
+import net.minecraft.world.item.component.CustomData;
 
 public class CMINBT {
 
@@ -1691,9 +1701,24 @@ public class CMINBT {
 
         if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
             ItemMeta meta = item.getItemMeta();
+
+            if (Version.isPaperBranch()) {
+                // Paper doesn't initialize this for some reason
+                try {
+                    Multimap<Attribute, AttributeModifier> modifiers = meta.getAttributeModifiers();
+                    if (modifiers == null) {
+                        modifiers = HashMultimap.create();
+                        meta.setAttributeModifiers(modifiers);
+                    }
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
+            }
+
             for (ItemFlag one : ItemFlag.values()) {
-                if ((state & 1 << one.ordinal()) != 0)
+                if ((state & 1 << one.ordinal()) != 0) {
                     meta.addItemFlags(one);
+                }
             }
             item.setItemMeta(meta);
             return item;
@@ -1715,16 +1740,10 @@ public class CMINBT {
 
     public static ItemStack modifyItemStack(ItemStack stack, String arguments) {
 
-        if (Version.isCurrentEqualOrHigher(Version.v1_20_R4))
-            return stack;
+        if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
 
-//        try {
-//            NBTTagCompound s = net.minecraft.nbt.MojangsonParser.a(arguments);
-//            net.minecraft.world.item.ItemStack item = net.minecraft.world.item.ItemStack.b.decode(DynamicOpsNBT.a, s).result().get().getFirst();
-//            ItemStack relitem = (ItemStack) item.h();
-//        } catch (CommandSyntaxException e) {
-//            e.printStackTrace();
-//        }
+            return stack;
+        }
 
         Object nmsStack = asNMSCopy(stack);
         try {

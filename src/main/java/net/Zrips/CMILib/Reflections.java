@@ -43,16 +43,22 @@ import com.mojang.authlib.properties.Property;
 import net.Zrips.CMILib.Advancements.CMIAdvancement;
 import net.Zrips.CMILib.Attributes.Attribute;
 import net.Zrips.CMILib.Colors.CMIChatColor;
+import net.Zrips.CMILib.Container.CMIPlayerInventory;
 import net.Zrips.CMILib.Container.CMIServerProperties;
 import net.Zrips.CMILib.Effects.CMIEffect;
 import net.Zrips.CMILib.Effects.CMIEffectManager.CMIParticleDataType;
 import net.Zrips.CMILib.Items.CMIItemStack;
 import net.Zrips.CMILib.Items.CMIMaterial;
+import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.RawMessages.RawMessage;
 import net.Zrips.CMILib.Version.Version;
 import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
 import net.minecraft.resources.MinecraftKey;
+import net.minecraft.world.entity.PositionMoveRotation;
+import net.minecraft.world.entity.Relative;
+import net.minecraft.world.level.portal.TeleportTransition;
+import net.minecraft.world.phys.Vec3D;
 
 public class Reflections {
 
@@ -221,7 +227,9 @@ public class Reflections {
                 IStack = net.minecraft.world.item.ItemStack.class;
 
                 String variable = "ax";
-                if (Version.isCurrentEqualOrHigher(Version.v1_20_R4))
+                if (Version.isCurrentEqualOrHigher(Version.v1_21_R2))
+                    variable = "aD";
+                else if (Version.isCurrentEqualOrHigher(Version.v1_20_R4))
                     variable = "aE";
                 else if (Version.isCurrentEqualOrHigher(Version.v1_20_R3))
                     variable = "aB";
@@ -236,7 +244,10 @@ public class Reflections {
 
                 Object advancementData = MinecraftServer.getClass().getMethod(variable).invoke(MinecraftServer);
 
-                advancementRegistry = advancementData.getClass().getField("c").get(advancementData);
+                if (Version.isCurrentEqualOrHigher(Version.v1_21_R2))
+                    advancementRegistry = advancementData.getClass().getField("b").get(advancementData);
+                else
+                    advancementRegistry = advancementData.getClass().getField("c").get(advancementData);
 
             } catch (Throwable e) {
                 e.printStackTrace();
@@ -539,7 +550,9 @@ public class Reflections {
             try {
                 // DedicatedServer -> DedicatedServerSettings
                 Object field1 = null;
-                if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
+                if (Version.isCurrentEqualOrHigher(Version.v1_21_R2)) {
+                    field1 = MinecraftServer.getClass().getField("s").get(MinecraftServer);
+                } else if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
                     field1 = MinecraftServer.getClass().getField("r").get(MinecraftServer);
                 } else if (Version.isCurrentEqualOrHigher(Version.v1_20_R3)) {
                     field1 = MinecraftServer.getClass().getField("s").get(MinecraftServer);
@@ -775,7 +788,9 @@ public class Reflections {
             Object handle = getPlayerHandle(player);
 
             if (getConnectionField == null) {
-                if (Version.isCurrentEqualOrHigher(Version.v1_20_R1))
+                if (Version.isCurrentEqualOrHigher(Version.v1_21_R2))
+                    getConnectionField = handle.getClass().getField("f");
+                else if (Version.isCurrentEqualOrHigher(Version.v1_20_R1))
                     getConnectionField = handle.getClass().getField("c");
                 else if (Version.isCurrentEqualOrHigher(Version.v1_17_R1))
                     getConnectionField = handle.getClass().getField("b");
@@ -1358,7 +1373,9 @@ public class Reflections {
         String windowId = "windowId";
 
         try {
-            if (Version.isCurrentEqualOrHigher(Version.v1_17_R1))
+            if (Version.isCurrentEqualOrHigher(Version.v1_21_R2))
+                windowId = "l";
+            else if (Version.isCurrentEqualOrHigher(Version.v1_17_R1))
                 windowId = "j";
 
             // EntityHuman -> Container
@@ -1426,7 +1443,7 @@ public class Reflections {
 
                 Object s = null;
                 if (Version.isCurrentEqualOrHigher(Version.v1_17_R1)) {
-                    switch (p.getOpenInventory().getTopInventory().getSize()) {
+                    switch (CMIPlayerInventory.getTopInventory(p).getSize()) {
                     case 9:
                         s = getContainer("a");
                         break;
@@ -1449,7 +1466,7 @@ public class Reflections {
                         return;
                     }
                 } else {
-                    switch (p.getOpenInventory().getTopInventory().getSize()) {
+                    switch (CMIPlayerInventory.getTopInventory(p).getSize()) {
                     case 9:
                         s = getContainer("GENERIC_9X1");
                         break;
@@ -1508,7 +1525,7 @@ public class Reflections {
                 rm.addText(title);
 
                 Constructor<?> packet = PacketPlayOutOpenWindow.getConstructor(int.class, String.class, getMinecraftClass("IChatBaseComponent"), int.class);
-                Object newPack = packet.newInstance(getActiveContainerId(entityplayer), "minecraft:chest", textToIChatBaseComponent(rm.getRaw()), p.getOpenInventory().getTopInventory()
+                Object newPack = packet.newInstance(getActiveContainerId(entityplayer), "minecraft:chest", textToIChatBaseComponent(rm.getRaw()), CMIPlayerInventory.getTopInventory(p)
                     .getSize());
 
                 sendPlayerPacket(p, newPack);
@@ -1538,6 +1555,16 @@ public class Reflections {
 
             if (entity == null || !CEntity.isInstance(entity))
                 return;
+
+            if (Version.isCurrentEqualOrHigher(Version.v1_21_R2)) {
+                Object craft = entity.getClass().getMethod("getBukkitEntity").invoke(entity);
+                int id = (int) craft.getClass().getMethod("getEntityId").invoke(craft);
+                Vec3D position = new net.minecraft.world.phys.Vec3D(targetLoc.toVector().getX(), targetLoc.toVector().getY(), targetLoc.toVector().getZ());
+                PositionMoveRotation r = new PositionMoveRotation(position, new net.minecraft.world.phys.Vec3D(0, 0, 0), targetLoc.getYaw(), targetLoc.getPitch());
+                net.minecraft.network.protocol.game.PacketPlayOutEntityTeleport packet = net.minecraft.network.protocol.game.PacketPlayOutEntityTeleport.a(id, r, new HashSet<>(), false);
+                sendPlayerPacket(player, packet);
+                return;
+            }
 
             Object centity = CEntity.cast(entity);
 
@@ -1646,7 +1673,7 @@ public class Reflections {
 
     public void playSound(Player player, Location location, Sound sound, float volume, float pitch) {
         Object cPlayer = this.getCraftPlayer(player);
-        CMIScheduler.runTask(() -> {
+        CMIScheduler.runTask(plugin, () -> {
             try {
                 cPlayer.getClass().getMethod("playSound", Location.class, Sound.class, float.class, float.class).invoke(cPlayer, location, sound, volume, pitch);
             } catch (Throwable e) {
@@ -1868,10 +1895,17 @@ public class Reflections {
 
                     if (destinationConstructor == null)
                         destinationConstructor = Class.forName("org.bukkit.Vibration$Destination$BlockDestination").getConstructor(Location.class);
-                    if (vibrationConstructor == null)
-                        vibrationConstructor = Class.forName("org.bukkit.Vibration").getConstructor(Class.forName("org.bukkit.Vibration$Destination$BlockDestination"), int.class);
+                    if (vibrationConstructor == null) {
+                        if (Version.isCurrentEqualOrHigher(Version.v1_21_R1))
+                            vibrationConstructor = Class.forName("org.bukkit.Vibration").getConstructor(Location.class, Class.forName("org.bukkit.Vibration$Destination"), int.class);
+                        else
+                            vibrationConstructor = Class.forName("org.bukkit.Vibration").getConstructor(Class.forName("org.bukkit.Vibration$Destination$BlockDestination"), int.class);
+                    }
 
-                    dd = vibrationConstructor.newInstance(destinationConstructor.newInstance(location), 20);
+                    if (Version.isCurrentEqualOrHigher(Version.v1_21_R1))
+                        dd = vibrationConstructor.newInstance(location, destinationConstructor.newInstance(location), 20);
+                    else
+                        dd = vibrationConstructor.newInstance(destinationConstructor.newInstance(location), 20);
                 } else if (ef.getParticle().getDataType().equals(CMIParticleDataType.Color)) {
                     dd = ef.getColorFrom();
                 } else if (ef.getParticle().getDataType().equals(CMIParticleDataType.ItemStack)) {
@@ -1888,9 +1922,14 @@ public class Reflections {
                     }
                 }
 
-                net.minecraft.network.protocol.game.PacketPlayOutWorldParticles packet =
-                    new net.minecraft.network.protocol.game.PacketPlayOutWorldParticles(
-                        (net.minecraft.core.particles.ParticleParam) CraftParticleMethod.invoke(null, particle, dd),
+                net.minecraft.network.protocol.game.PacketPlayOutWorldParticles packet = null;
+
+                if (Version.isCurrentEqualOrLower(Version.v1_21_R2)) {
+                    if (effectConstructor == null)
+                        effectConstructor = PacketPlayOutWorldParticles.getConstructor(net.minecraft.core.particles.ParticleParam.class, boolean.class, double.class, double.class, double.class,
+                            float.class, float.class, float.class, float.class, int.class);
+
+                    packet = (net.minecraft.network.protocol.game.PacketPlayOutWorldParticles) effectConstructor.newInstance(CraftParticleMethod.invoke(null, particle, dd),
                         true,
                         location.getX(),
                         location.getY(),
@@ -1901,6 +1940,20 @@ public class Reflections {
                         ef.getSpeed(),
                         ef.getAmount());
 
+                } else {
+                    packet = new net.minecraft.network.protocol.game.PacketPlayOutWorldParticles(
+                        (net.minecraft.core.particles.ParticleParam) CraftParticleMethod.invoke(null, particle, dd),
+                        true,
+                        false,
+                        location.getX(),
+                        location.getY(),
+                        location.getZ(),
+                        (float) ef.getOffset().getX(),
+                        (float) ef.getOffset().getY(),
+                        (float) ef.getOffset().getZ(),
+                        ef.getSpeed(),
+                        ef.getAmount());
+                }
                 sendPlayerPacket(player, packet);
 
             }
@@ -1985,7 +2038,7 @@ public class Reflections {
         if (!Version.isCurrentEqualOrHigher(Version.v1_20_R2))
             return;
 
-        CMIScheduler.runTaskAsynchronously(() -> {
+        CMIScheduler.runTaskAsynchronously(plugin, () -> {
 
             if (Version.isCurrentEqualOrHigher(Version.v1_20_R3)) {
 

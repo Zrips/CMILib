@@ -16,6 +16,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BlockStateMeta;
 
 import net.Zrips.CMILib.CMILib;
+import net.Zrips.CMILib.Container.CMIAttribute;
 import net.Zrips.CMILib.Container.CMIText;
 import net.Zrips.CMILib.Locale.LC;
 import net.Zrips.CMILib.Version.Version;
@@ -102,7 +103,8 @@ public class CMIEntity {
                 bsm.setDisplayName(LC.info_Spawner.getLocale("[type]", s));
             is.setItemMeta(bsm);
         } catch (Throwable e) {
-            is.setDurability(type.getTypeId());
+            if (!Version.isCurrentEqualOrHigher(Version.v1_13_R1))
+                is.setDurability(type.getTypeId());
         }
         return is;
     }
@@ -136,7 +138,8 @@ public class CMIEntity {
         LivingEntity lentity = (LivingEntity) entity;
 
         if (Version.isCurrentEqualOrHigher(Version.v1_12_R1)) {
-            org.bukkit.attribute.AttributeInstance attr = lentity.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+
+            org.bukkit.attribute.AttributeInstance attr = CMIAttribute.MAX_HEALTH.get(lentity);
             return attr == null ? 0d : attr.getBaseValue();
         }
 

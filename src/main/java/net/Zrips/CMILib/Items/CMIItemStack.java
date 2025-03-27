@@ -22,6 +22,7 @@ import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.ShapelessRecipe;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
@@ -34,16 +35,17 @@ import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Attributes.Attribute;
 import net.Zrips.CMILib.Colors.CMIChatColor;
 import net.Zrips.CMILib.Colors.CMIColors;
+import net.Zrips.CMILib.Container.CMINumber;
 import net.Zrips.CMILib.Enchants.CMIEnchantment;
 import net.Zrips.CMILib.Entities.CMIEntity;
 import net.Zrips.CMILib.Entities.CMIEntityType;
+import net.Zrips.CMILib.GUI.CMIGuiButton;
+import net.Zrips.CMILib.GUI.GUIManager.GUIClickType;
 import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.Recipes.CMIRecipe;
 import net.Zrips.CMILib.Recipes.CMIRecipeIngredient;
 import net.Zrips.CMILib.Version.Version;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 
 public class CMIItemStack {
 
@@ -120,12 +122,62 @@ public class CMIItemStack {
         return CMIMaterial.isArmor(this.getType());
     }
 
-    public short getDurability() {
-        return this.getItemStack().getDurability();
+    public int getDurability() {
+        return getDurability(this.getItemStack());
     }
 
-    public short getMaxDurability() {
-        return this.material.getMaxDurability();
+    public int getMaxDurability() {
+        return getMaxDurability(this.getItemStack());
+    }
+
+    public ItemStack setMaxDurability(int durability) {
+        return setMaxDurability(this.getItemStack(), durability);
+    }
+
+    public boolean hasDurability() {
+        return hasDurability(this.getItemStack());
+    }
+
+    public static int getDurability(ItemStack item) {
+        if (item == null)
+            return 0;
+        if (Version.isCurrentEqualOrHigher(Version.v1_13_R1) && item.getItemMeta() instanceof Damageable) {
+            Damageable meta = (Damageable) item.getItemMeta();
+            return meta.getDamage();
+        }
+        return item.getDurability();
+    }
+
+    public static boolean hasDurability(ItemStack item) {
+        if (item == null)
+            return false;
+        if (Version.isCurrentEqualOrHigher(Version.v1_13_R1) && item.getItemMeta() instanceof Damageable) {
+            return true;
+        }
+        return item.getDurability() > 15;
+    }
+
+    public static int getMaxDurability(ItemStack item) {
+        if (item == null)
+            return 0;
+        if (Version.isCurrentEqualOrHigher(Version.v1_21_R1) && item.getItemMeta() instanceof Damageable) {
+            Damageable meta = (Damageable) item.getItemMeta();
+            if (!meta.hasMaxDamage())
+                return item.getType().getMaxDurability();
+            return meta.getMaxDamage();
+        }
+        return item.getType().getMaxDurability();
+    }
+
+    public static ItemStack setMaxDurability(ItemStack item, int durability) {
+        if (!Version.isCurrentEqualOrHigher(Version.v1_21_R1) || !(item.getItemMeta() instanceof Damageable))
+            return item;
+
+        durability = CMINumber.clamp(durability, 0, durability);
+        Damageable meta = (Damageable) item.getItemMeta();
+        meta.setMaxDamage(durability);
+        item.setItemMeta(meta);
+        return item;
     }
 
     public void setData(short data) {
@@ -510,14 +562,20 @@ public class CMIItemStack {
                 PotionMeta potion = (PotionMeta) item.getItemStack().getItemMeta();
                 PotionMeta potion2 = (PotionMeta) this.getItemStack().getItemMeta();
                 try {
-                    if (potion != null && potion.getBasePotionData() != null) {
-                        PotionData base1 = potion.getBasePotionData();
-                        if (base1.getType() != null) {
-                            if (potion2 != null && potion2.getBasePotionData() != null) {
-                                PotionData base2 = potion2.getBasePotionData();
-                                if (base2.getType() != null) {
-                                    if (base1.getType().equals(base2.getType()) && base1.isExtended() == base2.isExtended() && base1.isUpgraded() == base2.isUpgraded())
-                                        return true;
+                    if (Version.isCurrentEqualOrHigher(Version.v1_20_R1)) {
+                        if (potion.getBasePotionType() != null && potion2.getBasePotionType() != null && potion.getBasePotionType().equals(potion2.getBasePotionType())) {
+                            return true;
+                        }
+                    } else {
+                        if (potion != null && potion.getBasePotionData() != null) {
+                            PotionData base1 = potion.getBasePotionData();
+                            if (base1.getType() != null) {
+                                if (potion2 != null && potion2.getBasePotionData() != null) {
+                                    PotionData base2 = potion2.getBasePotionData();
+                                    if (base2.getType() != null) {
+                                        if (base1.getType().equals(base2.getType()) && base1.isExtended() == base2.isExtended() && base1.isUpgraded() == base2.isUpgraded())
+                                            return true;
+                                    }
                                 }
                             }
                         }
@@ -764,6 +822,7 @@ public class CMIItemStack {
             if (rec != null)
                 recipes.add(rec);
         }
+
         return recipes;
     }
 
@@ -862,9 +921,9 @@ public class CMIItemStack {
         if (texture.length() < 120)
             texture = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUv" + texture;
         ItemStack cached = CMIEntityType.cache.get(texture);
-        if (cached != null) {
+        if (cached != null)
             return cached.clone();
-        }
+
         ItemStack item = CMIMaterial.PLAYER_HEAD.newItemStack();
         item = CMILib.getInstance().getReflectionManager().setSkullTexture(item, null, texture);
         CMIEntityType.cache.put(texture, item);
@@ -946,6 +1005,10 @@ public class CMIItemStack {
 
         if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
             ItemMeta meta = item.getItemMeta();
+
+            if (meta == null)
+                return null;
+
             return meta.hasCustomModelData() ? meta.getCustomModelData() : null;
         }
 

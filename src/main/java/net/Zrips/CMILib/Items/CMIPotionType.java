@@ -6,6 +6,7 @@ import java.util.Map;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 
+import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Container.CMIText;
 import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
 
@@ -75,7 +76,6 @@ public enum CMIPotionType {
                 continue;
             type = one;
         }
-
     }
 
     public PotionType getType() {
@@ -95,7 +95,7 @@ public enum CMIPotionType {
             byName.put(one.toString().replace(" ", "").replace("_", "").toLowerCase(), one.getType());
             byType.put(one.getType(), one);
         }
-        CMIScheduler.runTask(() -> {
+        CMIScheduler.runTask(CMILib.getInstance(), () -> {
             for (PotionType one : PotionType.values()) {
                 if (one == null)
                     continue;
@@ -139,6 +139,48 @@ public enum CMIPotionType {
             return by;
 
         return get(type.getName());
+
+    }
+
+    public static PotionType get(PotionEffectType type, boolean upgraded, boolean extended) {
+        PotionType by = PotionType.getByEffect(type);
+        String name = by == null ? type.toString() : by.toString();
+        if (upgraded && !name.startsWith(upgradedPrefix))
+            name = upgradedPrefix + name;
+        if (extended && !name.startsWith(extendedPrefix))
+            name = extendedPrefix + name;
+        return get(name);
+    }
+
+    public static PotionType get(String type, boolean upgraded, boolean extended) {
+        
+        switch(type.toLowerCase().replace("_", "")) {
+        case "slow":
+            type = "slowness";
+	    break;
+	case "speed":
+	    type = "swiftness";
+            break;
+        case "jump":
+            type = "leaping";
+            break;
+        case "heal":
+            type = "healing";
+            break;
+        case "harm":
+            type = "harming";
+            break;
+        case "increasedamage":
+            type = "strength";
+            break;
+        }
+        
+        
+        if (upgraded && !type.startsWith(upgradedPrefix))
+            type = upgradedPrefix + type;
+        if (extended && !type.startsWith(extendedPrefix))
+            type = extendedPrefix + type;
+        return get(type);
 
     }
 

@@ -10,6 +10,7 @@ import org.bukkit.event.server.ServerCommandEvent;
 
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Locale.Snd;
+import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
 
 public class ShadowCommandListener implements Listener {
 
@@ -49,7 +50,7 @@ public class ShadowCommandListener implements Listener {
             CMILib.getInstance().getServer().getPluginManager().callEvent(e);
             if (e.isCancelled())
                 return;
-            CMILib.getInstance().getServer().dispatchCommand(CMILib.getInstance().getServer().getConsoleSender(), e.getCommand());
+            CMIScheduler.runTask(CMILib.getInstance(), () -> CMILib.getInstance().getServer().dispatchCommand(CMILib.getInstance().getServer().getConsoleSender(), e.getCommand()));
             break;
         case Player:
             command = CMILib.getInstance().getPlaceholderAPIManager().translateOwnPlaceHolder(player, command);

@@ -7,6 +7,7 @@ import java.util.List;
 public enum CMIRecipeType {
     Shaped(Arrays.asList(11, 12, 13, 20, 21, 22, 29, 30, 31)),
     Shapeless(Arrays.asList(11, 12, 13, 20, 21, 22, 29, 30, 31)),
+    Transmute(Arrays.asList(11, 12, 13, 20, 21, 22, 29, 30, 31)),
     Furnace(20, true),
     Blasting(20, true),
     Campfire(20, true),
@@ -44,9 +45,9 @@ public enum CMIRecipeType {
 
     public static CMIRecipeType getByName(String name) {
         name = name.toLowerCase();
-        name = name.endsWith("recipe") ? name.substring(0, name.length() - 6) : name;
-        name = name.startsWith("craft") ? name.substring(5, name.length()) : name;
-        name = name.endsWith("transform") ? name.substring(0, name.length() - 9) : name;
+        name = name.endsWith("recipe") ? name.substring(0, name.length() - "recipe".length()) : name;
+        name = name.startsWith("craft") ? name.substring("craft".length(), name.length()) : name;
+        name = name.endsWith("transform") ? name.substring(0, name.length() - "transform".length()) : name;
         for (CMIRecipeType one : CMIRecipeType.values()) {
             if (one.name().equalsIgnoreCase(name))
                 return one;

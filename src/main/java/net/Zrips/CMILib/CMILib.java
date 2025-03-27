@@ -17,6 +17,7 @@ import net.Zrips.CMILib.BossBar.BossBarManager;
 import net.Zrips.CMILib.Chat.ChatEditorListener;
 import net.Zrips.CMILib.Enchants.CMIEnchantment;
 import net.Zrips.CMILib.GUI.GUIListener;
+import net.Zrips.CMILib.GUI.GUIListener1_9;
 import net.Zrips.CMILib.GUI.GUIManager;
 import net.Zrips.CMILib.Items.ItemManager;
 import net.Zrips.CMILib.Locale.Language;
@@ -231,7 +232,7 @@ public class CMILib extends JavaPlugin {
             if (cmilVersion > cmilibVersion) {
 
                 if (!CMILibConfig.autoUpdate) {
-                    CMIMessages.consoleMessage("&2New version of CMILib was detected. Please update it");
+                    CMIMessages.consoleMessage("&2New version of CMILib was detected. Please update it (" + getDescription().getVersion() + " -> " + version + ")");
                     return;
                 }
 
@@ -281,6 +282,7 @@ public class CMILib extends JavaPlugin {
         pm.registerEvents(new ChatEditorListener(this), this);
         pm.registerEvents(new BossBarListener(this), this);
         pm.registerEvents(new GUIListener(this), this);
+        pm.registerEvents(new GUIListener1_9(this), this);
         pm.registerEvents(new RawMessageListener(), this);
         pm.registerEvents(new ShadowCommandListener(), this);
         getCommandManager().fillCommands();
