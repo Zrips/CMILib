@@ -145,7 +145,7 @@ public class CMIActionBar {
 
     public static void send(CommandSender receivingPacket, String msg) {
         if (receivingPacket instanceof Player)
-            send((Player) receivingPacket, msg);
+            send(Arrays.asList((Player) receivingPacket), msg, 0);
         else
             receivingPacket.sendMessage(msg);
     }
@@ -164,7 +164,7 @@ public class CMIActionBar {
     static ConcurrentHashMap<UUID, repeatingActionBar> actionbarMap = new ConcurrentHashMap<UUID, repeatingActionBar>();
 
     public static void send(Player receivingPacket, String msg) {
-        send(receivingPacket, msg, 0);
+        send(Arrays.asList(receivingPacket), msg, 0);
     }
 
     public static void send(Player receivingPacket, String msg, int keepFor) {

@@ -3,8 +3,11 @@ package net.Zrips.CMILib.Effects;
 import org.bukkit.Color;
 import org.bukkit.util.Vector;
 
+import net.Zrips.CMILib.Colors.CMIChatColor;
 import net.Zrips.CMILib.Effects.CMIEffectManager.CMIParticle;
+import net.Zrips.CMILib.Effects.CMIEffectManager.CMIParticleDataType;
 import net.Zrips.CMILib.Items.CMIMaterial;
+import net.Zrips.CMILib.Version.Version;
 
 public class CMIEffect {
 
@@ -16,6 +19,7 @@ public class CMIEffect {
     private int size = 1;
     private int amount = 1;
     private float speed = 0;
+    private int duration = 1;
 
     public CMIEffect(CMIParticle particle) {
         this.particle = particle;
@@ -97,4 +101,118 @@ public class CMIEffect {
         this.material = material;
     }
 
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
+
+    public static CMIEffect get(String name) {
+        CMIEffect cmiEffect = null;
+        if (name == null)
+            return null;
+        name = name.replace("_", "").toLowerCase();
+        CMIMaterial mat = CMIMaterial.NONE;
+        Color colorFrom = null;
+        Color colorTo = null;
+        int duration = 0;
+        int size = 0;
+
+        String sub = null;
+
+        if (name.contains(":")) {
+            sub = name.split(":", 2)[1];
+            name = name.split(":", 2)[0];
+        }
+        
+        CMIParticle cmiParticle = CMIParticle.get(name);
+
+        if (cmiParticle == null)
+            return null;
+
+        if (sub != null) {
+            for (String one : sub.split(":")) {
+
+                if (cmiParticle.isColored() && colorFrom == null) {
+                    colorFrom = processColor(one);
+                    if (colorFrom != null)
+                        continue;
+                }
+
+                if (cmiParticle.getDataType().equals(CMIParticleDataType.DustTransition) && colorTo == null && colorFrom != null) {
+                    colorTo = processColor(one);
+                    if (colorTo != null)
+                        continue;
+                }
+
+                if (mat.equals(CMIMaterial.NONE) && (cmiParticle.getDataType().equals(CMIParticleDataType.BlockData) || cmiParticle.getDataType().equals(CMIParticleDataType.MaterialData))) {
+                    mat = CMIMaterial.get(one);
+                    if (!mat.equals(CMIMaterial.NONE))
+                        continue;
+                }
+
+                if (duration == 0 && (cmiParticle.getDataType().equals(CMIParticleDataType.Trail))) {
+                    try {
+                        duration = Integer.parseInt(one);
+                        continue;
+                    } catch (Throwable e) {
+                    }
+                }
+                if (size == 0 && (cmiParticle.getDataType().equals(CMIParticleDataType.DustOptions) || cmiParticle.getDataType().equals(CMIParticleDataType.DustTransition))) {
+                    try {
+                        size = Integer.parseInt(one);
+                        continue;
+                    } catch (Throwable e) {
+                    }
+                }
+            }
+        }
+
+        cmiEffect = new CMIEffect(cmiParticle);
+
+        if (Version.isCurrentEqualOrHigher(Version.v1_9_R1) && cmiEffect.getParticle() == null)
+            return null;
+
+        if (Version.isCurrentLower(Version.v1_13_R1) && cmiEffect.getParticle().getEffect() == null)
+            return null;
+
+        if (!mat.equals(CMIMaterial.NONE))
+            cmiEffect.setMaterial(mat);
+
+        if (colorFrom != null)
+            cmiEffect.setColorFrom(colorFrom);
+        if (colorTo != null)
+            cmiEffect.setColorTo(colorTo);
+
+        cmiEffect.setDuration(duration);
+
+        if (size > 0)
+            cmiEffect.setSize(size);
+
+        return cmiEffect;
+    }
+
+    private static Color processColor(String colorString) {
+        if (colorString.contains(",")) {
+            String[] split = colorString.split(",");
+            try {
+                return Color.fromRGB(Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]));
+            } catch (Throwable e) {
+
+            }
+        }
+
+        CMIChatColor c = CMIChatColor.getColor(colorString);
+        if (c != null)
+            return c.getRGBColor();
+
+        CMIChatColor cmicolor = CMIChatColor.getColor(colorString);
+        if (cmicolor != null) {
+            return Color.fromRGB(cmicolor.getRed(), cmicolor.getGreen(), cmicolor.getBlue());
+        }
+
+        return null;
+    }
 }

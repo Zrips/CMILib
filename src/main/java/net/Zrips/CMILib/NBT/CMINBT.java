@@ -8,7 +8,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.regex.Matcher;
 
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
@@ -23,21 +22,13 @@ import org.jetbrains.annotations.Nullable;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import com.mojang.serialization.DataResult;
 
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Entities.CMIEntityType;
 import net.Zrips.CMILib.Items.CMIMaterial;
-import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.PersistentData.CMIPersistentDataContainer;
 import net.Zrips.CMILib.Version.Version;
-import net.minecraft.core.HolderLookup.a;
-import net.minecraft.core.component.DataComponentMap;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.nbt.DynamicOpsNBT;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.dedicated.DedicatedServer;
-import net.minecraft.world.item.component.CustomData;
 
 public class CMINBT {
 
@@ -267,6 +258,30 @@ public class CMINBT {
             setTagName = "b";
         }
 
+        if (Version.isCurrentEqualOrHigher(Version.v1_21_R4)) {
+            getListName = "o";
+            itemSaveName = "a";
+
+            saveName = "h";
+
+            getName = "a";
+            hasKeyName = "b";
+
+            getStringName = "i";
+            getIntName = "e";
+            getByteName = "c";
+            getLongName = "f";
+            getBooleanName = "q";
+            getFloatName = "g";
+            getShortName = "d";
+            getDoubleName = "h";
+            getByteArrayName = "j";
+            getIntArrayName = "k";
+            getLongArrayName = "l";
+
+            listGetName = "c";
+        }
+
         try {
             met_getString = nbtTagCompound.getMethod(getStringName, String.class);
             met_getInt = nbtTagCompound.getMethod(getIntName, String.class);
@@ -277,7 +292,10 @@ public class CMINBT {
             met_getShort = nbtTagCompound.getMethod(getShortName, String.class);
             met_getDouble = nbtTagCompound.getMethod(getDoubleName, String.class);
 
-            met_getList = nbtTagCompound.getMethod(getListName, String.class, int.class);
+            if (Version.isCurrentEqualOrHigher(Version.v1_21_R4)) {
+                met_getList = nbtTagCompound.getMethod(getListName, String.class);
+            } else
+                met_getList = nbtTagCompound.getMethod(getListName, String.class, int.class);
 
             met_getByteArray = nbtTagCompound.getMethod(getByteArrayName, String.class);
             met_getIntArray = nbtTagCompound.getMethod(getIntArrayName, String.class);
@@ -417,7 +435,7 @@ public class CMINBT {
         }
 
         try {
-            Object res = get(path, met_getInt);
+            Object res = getFromOptional(get(path, met_getInt));
             return res == null ? null : (Integer) res;
         } catch (Exception e) {
         }
@@ -439,7 +457,7 @@ public class CMINBT {
         }
 
         try {
-            Object res = get(path, met_getByte);
+            Object res = getFromOptional(get(path, met_getByte));
             return res == null ? null : (Byte) res;
         } catch (Exception e) {
         }
@@ -462,7 +480,7 @@ public class CMINBT {
         }
 
         try {
-            Object res = get(path, met_getLong);
+            Object res = getFromOptional(get(path, met_getLong));
             return res == null ? null : (Long) res;
         } catch (Exception e) {
         }
@@ -485,7 +503,7 @@ public class CMINBT {
         }
 
         try {
-            Object res = get(path, met_getBoolean);
+            Object res = getFromOptional(get(path, met_getBoolean));
             return res == null ? null : (Boolean) res;
         } catch (Exception e) {
         }
@@ -508,7 +526,7 @@ public class CMINBT {
         }
 
         try {
-            Object res = get(path, met_getFloat);
+            Object res = getFromOptional(get(path, met_getFloat));
             return res == null ? 0.0F : (Float) res;
         } catch (Exception e) {
         }
@@ -531,7 +549,7 @@ public class CMINBT {
             return null;
 
         try {
-            Object res = get(path, met_getShort);
+            Object res = getFromOptional(get(path, met_getShort));
             return res == null ? null : (Short) res;
         } catch (Exception e) {
         }
@@ -554,7 +572,7 @@ public class CMINBT {
         }
 
         try {
-            Object res = get(path, met_getDouble);
+            Object res = getFromOptional(get(path, met_getDouble));
             return res == null ? 0.0D : (Double) res;
         } catch (Exception e) {
         }
@@ -577,7 +595,7 @@ public class CMINBT {
         }
 
         try {
-            Object res = get(path, met_getByteArray);
+            Object res = getFromOptional(get(path, met_getByteArray));
             return res == null ? new byte[0] : (byte[]) res;
         } catch (Exception e) {
         }
@@ -589,7 +607,7 @@ public class CMINBT {
             return new int[0];
 
         try {
-            Object res = get(path, met_getIntArray);
+            Object res = getFromOptional(get(path, met_getIntArray));
             return res == null ? new int[0] : (int[]) res;
         } catch (Exception e) {
         }
@@ -604,7 +622,7 @@ public class CMINBT {
             return new long[0];
 
         try {
-            Object res = get(path, met_getLongArray);
+            Object res = getFromOptional(get(path, met_getLongArray));
             return res == null ? new long[0] : (long[]) res;
         } catch (Exception e) {
         }
@@ -631,7 +649,7 @@ public class CMINBT {
             return null;
 
         try {
-            Object res = get(path, met_getString);
+            Object res = getFromOptional(get(path, met_getString));
             return res == null ? null : (String) res;
         } catch (Exception e) {
         }
@@ -649,6 +667,14 @@ public class CMINBT {
         return t;
     }
 
+    private static Object getFromOptional(Object optional) {
+        if (Version.isCurrentEqualOrLower(Version.v1_21_R3))
+            return optional;
+        if (optional instanceof Optional)
+            return ((Optional) optional).isPresent() ? ((Optional) optional).get() : null;
+        return optional;
+    }
+
     public List<String> getList(String path, int type) {
 
         if (!this.hasNBT(path))
@@ -662,7 +688,6 @@ public class CMINBT {
                 if (v != null)
                     return new ArrayList<String>(v);
             }
-
         }
 
         if (tag == null)
@@ -694,11 +719,11 @@ public class CMINBT {
             if (t == null)
                 return list;
 
-            Object ls = met_getList.invoke(t, path, type < 0 ? 8 : type);
+            Object ls = getFromOptional(Version.isCurrentEqualOrLower(Version.v1_21_R3) ? met_getList.invoke(t, path, type < 0 ? 8 : type) : met_getList.invoke(t, path));
             int size = (int) ls.getClass().getMethod("size").invoke(ls);
 
             if (size == 0 && type < 0) {
-                ls = met_getList.invoke(t, path, type < 0 ? 10 : 8);
+                ls = getFromOptional(Version.isCurrentEqualOrLower(Version.v1_21_R3) ? met_getList.invoke(t, path, type < 0 ? 10 : 8) : met_getList.invoke(t, path));
                 size = (int) ls.getClass().getMethod("size").invoke(ls);
             }
 
@@ -707,16 +732,19 @@ public class CMINBT {
             if (Version.isCurrentEqualOrLower(Version.v1_12_R1)) {
                 method = ls.getClass().getMethod("getString", int.class);
                 for (int i = 0; i < size; i++) {
-                    Object ress = method.invoke(ls, i);
+                    Object ress = getFromOptional(method.invoke(ls, i));
                     String line = (String) ress;
                     list.add(line);
                 }
             } else {
                 for (int i = 0; i < size; i++) {
+                    Object ress = null;
                     if (Version.isCurrentEqualOrHigher(Version.v1_20_R2)) {
-                        list.add(method.invoke(ls, i).toString());
-                    } else
-                        list.add(met_toString.invoke(method.invoke(ls, i)).toString());
+                        ress = getFromOptional(method.invoke(ls, i));
+                    } else {
+                        ress = getFromOptional(met_toString.invoke(method.invoke(ls, i)));
+                    }
+                    list.add(ress == null ? "" : ress.toString());
                 }
             }
 
@@ -734,7 +762,6 @@ public class CMINBT {
             return null;
 
         try {
-
             Object t = updateLegacyTag(tag);
 
             if (t != null && path.contains(".")) {
@@ -758,11 +785,11 @@ public class CMINBT {
             if (t == null)
                 return null;
 
-            Object ls = met_getList.invoke(t, path, type < 0 ? 8 : type);
+            Object ls = getFromOptional(Version.isCurrentEqualOrLower(Version.v1_21_R3) ? met_getList.invoke(t, path, type < 0 ? 8 : type) : met_getList.invoke(t, path));
             int size = (int) ls.getClass().getMethod("size").invoke(ls);
 
             if (size == 0 && type < 0) {
-                ls = met_getList.invoke(t, path, 10);
+                ls = getFromOptional(Version.isCurrentEqualOrLower(Version.v1_21_R3) ? met_getList.invoke(t, path, 10) : met_getList.invoke(t, path));
                 size = (int) ls.getClass().getMethod("size").invoke(ls);
             }
 

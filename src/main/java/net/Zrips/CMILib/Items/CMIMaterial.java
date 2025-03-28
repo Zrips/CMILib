@@ -3,6 +3,7 @@ package net.Zrips.CMILib.Items;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -1592,6 +1593,19 @@ public enum CMIMaterial {
     RESIN_BRICK_WALL(CMIMC.WALL),
     RESIN_CLUMP,
 
+    // 1.21.5
+    BLUE_EGG (CMIMC.EGG),
+    BROWN_EGG (CMIMC.EGG),
+    BUSH (CMIMC.NOCOLLISIONBOX),
+    CACTUS_FLOWER (CMIMC.NOCOLLISIONBOX),
+    FIREFLY_BUSH (CMIMC.NOCOLLISIONBOX),
+    LEAF_LITTER(CMIMC.NOCOLLISIONBOX),
+    SHORT_DRY_GRASS(CMIMC.NOCOLLISIONBOX),
+    TALL_DRY_GRASS(CMIMC.NOCOLLISIONBOX),
+    WILDFLOWERS(CMIMC.NOCOLLISIONBOX),
+    TEST_BLOCK,
+    TEST_INSTANCE_BLOCK,
+
     // Legacy
     SIGN(323, CMIMC.NOCOLLISIONBOX),
     GRASS(31, 1, CMIMC.NOCOLLISIONBOX),
@@ -1702,9 +1716,8 @@ public enum CMIMaterial {
 
     @Deprecated
     public Integer getId() {
-        if (Version.isCurrentEqualOrHigher(Version.v1_13_R1)) {
+        if (Version.isCurrentEqualOrHigher(Version.v1_13_R1))
             return -1;
-        }
         return getLegacyId();
     }
 
@@ -1830,7 +1843,15 @@ public enum CMIMaterial {
         return legacyData;
     }
 
+    private static HashMap<CMIMaterial, List<CMIMaterial>> randomMap = new HashMap<CMIMaterial, List<CMIMaterial>>();
+
     public static CMIMaterial getRandom(CMIMaterial mat) {
+
+        List<CMIMaterial> cached = randomMap.get(mat);
+        if (cached != null) {
+            Collections.shuffle(cached);
+            return cached.isEmpty() ? CMIMaterial.NONE : cached.get(0);
+        }
 
         List<CMIMaterial> ls = new ArrayList<CMIMaterial>();
 
@@ -1853,6 +1874,8 @@ public enum CMIMaterial {
             }
         }
 
+        randomMap.put(mat, ls);
+
         Collections.shuffle(ls);
 
         return ls.isEmpty() ? CMIMaterial.NONE : ls.get(0);
@@ -1862,9 +1885,16 @@ public enum CMIMaterial {
         return getByColorId(this, id);
     }
 
+    private static HashMap<Integer, CMIMaterial> colorMap = new HashMap<Integer, CMIMaterial>();
+
     public static CMIMaterial getByColorId(CMIMaterial mat, int id) {
         if (mat == null)
             return CMIMaterial.NONE;
+
+        CMIMaterial cached = colorMap.get(id);
+        if (cached != null)
+            return cached;
+
         for (CMIMaterial one : CMIMaterial.values()) {
             if (one.getLegacyId() == null)
                 continue;
@@ -1873,6 +1903,8 @@ public enum CMIMaterial {
             if (one.getLegacyData() == id)
                 return one;
         }
+
+        colorMap.put(id, mat);
 
         return mat;
     }
@@ -1941,18 +1973,35 @@ public enum CMIMaterial {
         return get(mat.toString());
     }
 
+    private static HashMap<Integer, CMIMaterial> idMap = new HashMap<Integer, CMIMaterial>();
+
     @Deprecated
     public static @NotNull CMIMaterial get(int id) {
+
+        CMIMaterial cached = idMap.get(id);
+        if (cached != null)
+            return cached;
+
+        CMIMaterial mat = CMIMaterial.NONE;
+
         for (CMIMaterial one : CMIMaterial.values()) {
-            if (one.getMaterial() != null && one.getId() == id) {
-                return one;
-            }
+            if (one.getMaterial() == null || one.getId() != id)
+                continue;
+
+            mat = one;
+            break;
         }
-        for (CMIMaterial one : CMIMaterial.values()) {
-            if (one.getLegacyId() == id) {
-                return one;
+
+        if (mat.equals(CMIMaterial.NONE))
+            for (CMIMaterial one : CMIMaterial.values()) {
+                if (one.getLegacyId() != id)
+                    continue;
+
+                mat = one;
+                break;
             }
-        }
+
+        idMap.put(id, mat);
         return CMIMaterial.NONE;
     }
 

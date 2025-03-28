@@ -22,7 +22,7 @@ public class CMIEffectManager {
     }
 
     public enum CMIParticleDataType {
-        Void, DustOptions, ItemStack, BlockData, MaterialData, EntityData, Color, DustTransition, Vibration, Float, Int;
+        Void, DustOptions, ItemStack, BlockData, MaterialData, EntityData, Color, DustTransition, Vibration, Float, Int, Trail;
     }
 
     public enum CMIParticle {
@@ -71,42 +71,42 @@ public class CMIEffectManager {
         BAT_TAKEOFF(CMIParticleType.SOUND),
         END_GATEWAY_SPAWN(CMIParticleType.VISUAL),
         ENDERDRAGON_GROWL(CMIParticleType.SOUND),
-        FIREWORKS_SPARK(CMIParticleType.PARTICLE, CMIMaterial.FIRE_CHARGE.getMaterial()),
-        CRIT(CMIParticleType.PARTICLE, Material.IRON_SWORD),
-        MAGIC_CRIT("CRIT_MAGIC", CMIParticleType.PARTICLE, Material.POTION),
-        POTION_SWIRL("MOB_SPELL", "SPELL_MOB", CMIParticleType.PARTICLE, Material.BLAZE_ROD),
-        POTION_SWIRL_TRANSPARENT("MOB_SPELL_AMBIENT", "SPELL_MOB_AMBIENT", CMIParticleType.PARTICLE, Material.BLAZE_POWDER),
-        SPELL(CMIParticleType.PARTICLE, Material.MILK_BUCKET),
-        INSTANT_SPELL("SPELL_INSTANT", CMIParticleType.PARTICLE, Material.GLASS_BOTTLE),
-        WITCH_MAGIC("SPELL_WITCH", CMIParticleType.PARTICLE, Material.SPIDER_EYE),
-        NOTE(CMIParticleType.PARTICLE, Material.NOTE_BLOCK),
-        PORTAL(CMIParticleType.PARTICLE, Material.OBSIDIAN),
+        FIREWORKS_SPARK(CMIMaterial.FIRE_CHARGE),
+        CRIT(CMIMaterial.IRON_SWORD),
+        MAGIC_CRIT("CRIT_MAGIC", CMIMaterial.POTION),
+        POTION_SWIRL("MOB_SPELL", "SPELL_MOB", CMIMaterial.BLAZE_ROD),
+        POTION_SWIRL_TRANSPARENT("MOB_SPELL_AMBIENT", "SPELL_MOB_AMBIENT", CMIMaterial.BLAZE_POWDER),
+        SPELL(CMIMaterial.MILK_BUCKET),
+        INSTANT_SPELL("SPELL_INSTANT", CMIMaterial.GLASS_BOTTLE),
+        WITCH_MAGIC("SPELL_WITCH", CMIMaterial.SPIDER_EYE),
+        NOTE(CMIMaterial.NOTE_BLOCK),
+        PORTAL(CMIMaterial.OBSIDIAN),
         @Deprecated
-        FLYING_GLYPH("ENCHANTMENT_TABLE", "ENCHANT", CMIParticleType.PARTICLE, CMIMaterial.ENCHANTING_TABLE.getMaterial()),
-        FLAME(CMIParticleType.PARTICLE, CMIMaterial.FIRE_CHARGE.getMaterial()),
-        LAVA_POP("LAVA", CMIParticleType.PARTICLE, Material.FLINT_AND_STEEL),
-        FOOTSTEP(CMIParticleType.PARTICLE, Material.IRON_BOOTS),
-        SPLASH("WATER_SPLASH", CMIParticleType.PARTICLE, Material.STICK),
-        PARTICLE_SMOKE("SMOKE", "SMOKE_NORMAL", CMIParticleType.PARTICLE, Material.ANVIL),
-        EXPLOSION_HUGE("HUGE_EXPLOSION", CMIParticleType.PARTICLE, Material.FURNACE),
-        EXPLOSION_LARGE("LARGE_EXPLODE", CMIParticleType.PARTICLE, Material.FURNACE),
-        EXPLOSION("EXPLODE", "EXPLOSION_NORMAL", CMIParticleType.PARTICLE, Material.TNT),
-        VOID_FOG("DEPTH_SUSPEND", "SUSPENDED_DEPTH", CMIParticleType.PARTICLE, CMIMaterial.SALMON.getMaterial()),
-        SMALL_SMOKE("TOWN_AURA", CMIParticleType.PARTICLE, CMIMaterial.MYCELIUM.getMaterial()),
-        CLOUD(CMIParticleType.PARTICLE, CMIMaterial.COBWEB.getMaterial()),
+        FLYING_GLYPH("ENCHANTMENT_TABLE", "ENCHANT", CMIMaterial.ENCHANTING_TABLE),
+        FLAME(CMIMaterial.FIRE_CHARGE),
+        LAVA_POP("LAVA", CMIMaterial.FLINT_AND_STEEL),
+        FOOTSTEP(CMIMaterial.IRON_BOOTS),
+        SPLASH("WATER_SPLASH", CMIMaterial.STICK),
+        PARTICLE_SMOKE("SMOKE", "SMOKE_NORMAL", CMIMaterial.ANVIL),
+        EXPLOSION_HUGE("HUGE_EXPLOSION", CMIMaterial.FURNACE),
+        EXPLOSION_LARGE("LARGE_EXPLODE", CMIMaterial.FURNACE),
+        EXPLOSION("EXPLODE", "EXPLOSION_NORMAL", CMIMaterial.TNT),
+        VOID_FOG("DEPTH_SUSPEND", "SUSPENDED_DEPTH", CMIMaterial.SALMON),
+        SMALL_SMOKE("TOWN_AURA", CMIMaterial.MYCELIUM),
+        CLOUD(CMIMaterial.COBWEB),
         @Deprecated
-        COLOURED_DUST(Arrays.asList("RED_DUST", "REDSTONE"), CMIParticleType.PARTICLE, Material.REDSTONE, CMIParticleDataType.DustOptions),
-        DUST(Arrays.asList("RED_DUST", "REDSTONE", "COLOURED_DUST"), CMIParticleType.PARTICLE, Material.REDSTONE, CMIParticleDataType.DustOptions),
-        SNOWBALL_BREAK("SNOW_BALL_POOF", "SNOW_BALL", CMIParticleType.PARTICLE, CMIMaterial.SNOWBALL.getMaterial()),
-        WATERDRIP("DRIP_WATER", "WATER_DROP", CMIParticleType.PARTICLE, Material.WATER_BUCKET),
-        LAVADRIP("DRIP_LAVA", CMIParticleType.PARTICLE, Material.LAVA_BUCKET),
-        SNOW_SHOVEL(CMIParticleType.PARTICLE, CMIMaterial.DIAMOND_SHOVEL.getMaterial()),
-        SLIME(CMIParticleType.PARTICLE, Material.SLIME_BALL),
-        HEART(CMIParticleType.PARTICLE, CMIMaterial.ROSE_RED.getMaterial()),
-        VILLAGER_THUNDERCLOUD("ANGRY_VILLAGER", "VILLAGER_ANGRY", CMIParticleType.PARTICLE, Material.EMERALD),
-        HAPPY_VILLAGER("VILLAGER_HAPPY", CMIParticleType.PARTICLE, Material.BOOK),
-        LARGE_SMOKE("SMOKE_LARGE", CMIParticleType.PARTICLE, Material.FURNACE),
-        ITEM_BREAK("ICON_CRACK", CMIParticleType.NONE, Material.DIAMOND_BOOTS),
+        COLOURED_DUST(Arrays.asList("RED_DUST", "REDSTONE"), CMIMaterial.REDSTONE, CMIParticleDataType.DustOptions),
+        DUST(Arrays.asList("RED_DUST", "REDSTONE", "COLOURED_DUST"), CMIMaterial.REDSTONE, CMIParticleDataType.DustOptions),
+        SNOWBALL_BREAK("SNOW_BALL_POOF", "SNOW_BALL", CMIMaterial.SNOWBALL),
+        WATERDRIP("DRIP_WATER", "WATER_DROP", CMIMaterial.WATER_BUCKET),
+        LAVADRIP("DRIP_LAVA", CMIMaterial.LAVA_BUCKET),
+        SNOW_SHOVEL(CMIMaterial.DIAMOND_SHOVEL),
+        SLIME(CMIMaterial.SLIME_BALL),
+        HEART(CMIMaterial.ROSE_RED),
+        VILLAGER_THUNDERCLOUD("ANGRY_VILLAGER", "VILLAGER_ANGRY", CMIParticleType.PARTICLE, CMIMaterial.EMERALD),
+        HAPPY_VILLAGER("VILLAGER_HAPPY", CMIParticleType.PARTICLE, CMIMaterial.BOOK),
+        LARGE_SMOKE("SMOKE_LARGE", CMIParticleType.PARTICLE, CMIMaterial.FURNACE),
+        ITEM_BREAK("ICON_CRACK", CMIParticleType.NONE, CMIMaterial.DIAMOND_BOOTS),
 
         // 1.13
         WATER_BUBBLE(),
@@ -177,7 +177,7 @@ public class CMIEffectManager {
         SCRAPE(),
 
         // 1.18
-        BLOCK_MARKER(CMIParticleType.PARTICLE, CMIMaterial.BARRIER.getMaterial(), CMIParticleDataType.BlockData),
+        BLOCK_MARKER(CMIParticleDataType.BlockData),
 
         // 1.19
         SONIC_BOOM(),
@@ -233,7 +233,11 @@ public class CMIEffectManager {
         TRIAL_SPAWNER_DETECTION(),
         DUST_PILLAR(CMIParticleDataType.BlockData),
 
-        ;
+        PALE_OAK_LEAVES(CMIMaterial.PALE_OAK_LEAVES),
+        TINTED_LEAVES(CMIParticleDataType.Color, CMIMaterial.LEAF_LITTER),
+        BLOCK_CRUMBLE(CMIParticleDataType.BlockData),
+        TRAIL(CMIParticleDataType.Trail),
+        FIREFLY(CMIMaterial.FIREFLY_BUSH),;
 
         static HashMap<String, CMIParticle> byName = new HashMap<String, CMIParticle>();
         static HashMap<Object, CMIParticle> byType = new HashMap<Object, CMIParticle>();
@@ -269,7 +273,7 @@ public class CMIEffectManager {
         private List<String> secondaryNames = new ArrayList<>();
 
         private CMIParticleType type;
-        private Material icon;
+        private CMIMaterial icon;
         private Object particle;
         private Effect effect;
         private Object EnumParticle;
@@ -281,22 +285,26 @@ public class CMIEffectManager {
         }
 
         CMIParticle(CMIMaterial material) {
-            this(new ArrayList<>(), null, material.getMaterial() == null ? Material.STONE : material.getMaterial(), null);
+            this(new ArrayList<>(), null, material.getMaterial() == null ? CMIMaterial.STONE : material, null);
         }
 
         CMIParticle(CMIParticleType type) {
             this(new ArrayList<>(), type, null, null);
         }
 
-        CMIParticle(CMIParticleType type, Material icon) {
+        CMIParticle(CMIParticleType type, CMIMaterial icon) {
             this(new ArrayList<>(), type, icon, CMIParticleDataType.Void);
         }
 
+        CMIParticle(CMIParticleDataType dataType, CMIMaterial icon) {
+            this(new ArrayList<>(), null, icon, dataType);
+        }
+        
         CMIParticle(CMIParticleDataType dataType) {
             this(new ArrayList<>(), null, null, dataType);
         }
 
-        CMIParticle(CMIParticleType type, Material icon, CMIParticleDataType dataType) {
+        CMIParticle(CMIParticleType type, CMIMaterial icon, CMIParticleDataType dataType) {
             this(new ArrayList<>(), type, icon, dataType);
         }
 
@@ -308,20 +316,32 @@ public class CMIEffectManager {
             this(Arrays.asList(secondaryName), null, null, null);
         }
 
-        CMIParticle(String secondaryName, CMIParticleType type, Material icon) {
+        CMIParticle(String secondaryName, CMIMaterial icon) {
+            this(Arrays.asList(secondaryName), null, icon, null);
+        }
+
+        CMIParticle(String secondaryName, CMIParticleType type, CMIMaterial icon) {
             this(Arrays.asList(secondaryName), type, icon, null);
         }
 
-        CMIParticle(String name, String secondaryName, CMIParticleType type, Material icon) {
+        CMIParticle(String name, String secondaryName, CMIParticleType type, CMIMaterial icon) {
             this(Arrays.asList(name, secondaryName), type, icon, CMIParticleDataType.Void);
         }
 
-        CMIParticle(List<String> secondaryNames, CMIParticleType type, Material icon, CMIParticleDataType dataType) {
+        CMIParticle(String name, String secondaryName, CMIMaterial icon) {
+            this(Arrays.asList(name, secondaryName), null, icon, CMIParticleDataType.Void);
+        }
+
+        CMIParticle(List<String> secondaryNames, CMIMaterial icon, CMIParticleDataType dataType) {
+            this(secondaryNames, null, icon, dataType);
+        }
+
+        CMIParticle(List<String> secondaryNames, CMIParticleType type, CMIMaterial icon, CMIParticleDataType dataType) {
             this.name = name == null ? CMIText.everyFirstToUpperCase(this.toString()) : name;
             this.secondaryNames = secondaryNames;
 
             this.type = type == null ? CMIParticleType.PARTICLE : type;
-            this.icon = icon == null ? Material.STONE : icon;
+            this.icon = icon == null ? CMIMaterial.STONE : icon;
             this.dataType = dataType == null ? CMIParticleDataType.Void : dataType;
         }
 
@@ -343,20 +363,21 @@ public class CMIEffectManager {
         }
 
         public boolean isColored() {
-            return this.equals(DUST);
+            return this.equals(DUST) || dataType == CMIParticleDataType.Color || dataType == CMIParticleDataType.Trail || dataType == CMIParticleDataType.DustTransition
+                || dataType == CMIParticleDataType.DustOptions;
         }
 
         public static boolean isParticle(Effect effect) {
             if (effect == null)
                 return false;
-            CMIParticle cmiEffect = getCMIParticle(effect.toString());
+            CMIParticle cmiEffect = get(effect.toString());
             if (cmiEffect == null)
                 return false;
             return cmiEffect.isParticle();
         }
 
         public static Material getSafeIcon(Effect effect) {
-            CMIParticle cmiEffect = getCMIParticle(effect.toString());
+            CMIParticle cmiEffect = get(effect.toString());
             if (cmiEffect == null)
                 return Material.STONE;
             return cmiEffect.getIcon() == null ? Material.STONE : cmiEffect.getIcon();
@@ -366,7 +387,12 @@ public class CMIEffectManager {
             return getIcon() == null ? Material.STONE : getIcon();
         }
 
+        @Deprecated
         public static CMIParticle getCMIParticle(String name) {
+            return get(name);
+        }
+
+        public static CMIParticle get(String name) {
             if (name == null)
                 return null;
 
@@ -376,65 +402,7 @@ public class CMIEffectManager {
         }
 
         public static CMIEffect getCMIEffect(String name) {
-            CMIEffect cmiEffect = null;
-            if (name == null)
-                return null;
-            name = name.replace("_", "").toLowerCase();
-            CMIMaterial mat = null;
-            Color color = null;
-            if (name.contains(":")) {
-                String sub = name.split(":", 2)[1];
-
-                for (String one : sub.split(":")) {
-                    if (color == null) {
-                        if (one.contains(",")) {
-                            String[] split = one.split(",");
-                            try {
-                                color = Color.fromRGB(Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]));
-                            } catch (Throwable e) {
-
-                            }
-                        }
-                        if (color == null) {
-                            CMIChatColor c = CMIChatColor.getColor(one);
-                            if (c != null) {
-                                color = c.getRGBColor();
-                            }
-                        }
-                        if (color == null) {
-                            CMIChatColor cmicolor = CMIChatColor.getColor(one);
-                            if (cmicolor != null) {
-                                color = Color.fromRGB(cmicolor.getRed(), cmicolor.getGreen(), cmicolor.getBlue());
-                            }
-                        }
-                        if (color != null)
-                            continue;
-                    }
-                    mat = CMIMaterial.get(one);
-                }
-
-                name = name.split(":", 2)[0];
-            }
-
-            CMIParticle cmiParticle = getCMIParticle(name);
-
-            if (cmiParticle == null)
-                return null;
-
-            cmiEffect = new CMIEffect(cmiParticle);
-
-            if (Version.isCurrentEqualOrHigher(Version.v1_9_R1) && cmiEffect.getParticle() == null)
-                return null;
-
-            if (Version.isCurrentLower(Version.v1_13_R1) && cmiEffect.getParticle().getEffect() == null)
-                return null;
-
-            if (color != null)
-                cmiEffect.setColor(color);
-            if (mat != null && mat.isBlock())
-                cmiEffect.setMaterial(mat);
-
-            return cmiEffect;
+            return CMIEffect.get(name);
         }
 
         public Effect getEffect() {
@@ -481,7 +449,7 @@ public class CMIEffectManager {
         }
 
         public Material getIcon() {
-            return icon == null ? Material.STONE : icon;
+            return icon == null ? Material.STONE : icon.getMaterial();
         }
 
         static List<CMIParticle> ls = new ArrayList<CMIParticle>();

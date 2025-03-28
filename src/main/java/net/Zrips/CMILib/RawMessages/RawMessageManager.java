@@ -1,6 +1,5 @@
 package net.Zrips.CMILib.RawMessages;
 
-import java.awt.TrayIcon.MessageType;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -17,12 +16,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import net.Zrips.CMILib.CMILib;
-import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Messages.CMIMessages;
 import net.Zrips.CMILib.Version.Version;
 import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
 import net.Zrips.CMILib.commands.CommandsHandler;
-import net.kyori.adventure.identity.Identity;
 
 public class RawMessageManager {
 
@@ -228,7 +225,7 @@ public class RawMessageManager {
             } catch (Exception ex) {
                 ex.printStackTrace();
                 CMIMessages.consoleMessage("Failed to show json message with packets, using command approach");
-                CMIScheduler.get().runTask(() -> {
+                CMIScheduler.runTask(CMILib.getInstance(), () -> {
                     Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "minecraft:tellraw \"" + receivingPacket.getName() + "\" " + json);
                 });
             }

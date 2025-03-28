@@ -12,6 +12,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -25,6 +26,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Particle.Trail;
 import org.bukkit.Server;
 import org.bukkit.Sound;
 import org.bukkit.World;
@@ -54,6 +56,7 @@ import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.RawMessages.RawMessage;
 import net.Zrips.CMILib.Version.Version;
 import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
+import net.minecraft.advancements.AdvancementDisplay;
 import net.minecraft.resources.MinecraftKey;
 import net.minecraft.world.entity.PositionMoveRotation;
 import net.minecraft.world.entity.Relative;
@@ -457,7 +460,7 @@ public class Reflections {
         try {
             Object serialized = textToIChatBaseComponent(text);
             return (String) serialized.getClass().getMethod("e").invoke(serialized);
-        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+        } catch (Throwable e) {
             e.printStackTrace();
         }
         return text;
@@ -1361,7 +1364,7 @@ public class Reflections {
     public Integer getActiveContainerId(Player player) {
         try {
             return getActiveContainerId(CraftPlayer.getMethod("getHandle").invoke(player));
-        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+        } catch (Throwable e) {
             e.printStackTrace();
         }
         return null;
@@ -1380,6 +1383,8 @@ public class Reflections {
 
             // EntityHuman -> Container
             if (Version.isCurrentEqualOrHigher(Version.v1_21_R1)) {
+                activeContainer = "bR";
+            } else if (Version.isCurrentEqualOrHigher(Version.v1_21_R1)) {
                 activeContainer = "cd";
             } else if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
                 activeContainer = "cb";
@@ -1885,14 +1890,13 @@ public class Reflections {
                 Object dd = null;
                 if (ef.getParticle().getDataType().equals(CMIParticleDataType.DustOptions)) {
                     dd = new org.bukkit.Particle.DustOptions(ef.getColorFrom(), ef.getSize());
-                } else if (ef.getParticle().getDataType().equals(CMIParticleDataType.DustTransition)) {
+                } else if (ef.getParticle().getDataType().equals(CMIParticleDataType.DustTransition)) {                                       
                     dd = new org.bukkit.Particle.DustTransition(ef.getColorFrom(), ef.getColorTo(), ef.getSize());
                 } else if (ef.getParticle().getDataType().equals(CMIParticleDataType.Float)) {
                     dd = ef.getSpeed();
                 } else if (ef.getParticle().getDataType().equals(CMIParticleDataType.Int)) {
                     dd = (int) ef.getSpeed();
                 } else if (ef.getParticle().getDataType().equals(CMIParticleDataType.Vibration)) {
-
                     if (destinationConstructor == null)
                         destinationConstructor = Class.forName("org.bukkit.Vibration$Destination$BlockDestination").getConstructor(Location.class);
                     if (vibrationConstructor == null) {
@@ -1901,7 +1905,6 @@ public class Reflections {
                         else
                             vibrationConstructor = Class.forName("org.bukkit.Vibration").getConstructor(Class.forName("org.bukkit.Vibration$Destination$BlockDestination"), int.class);
                     }
-
                     if (Version.isCurrentEqualOrHigher(Version.v1_21_R1))
                         dd = vibrationConstructor.newInstance(location, destinationConstructor.newInstance(location), 20);
                     else
@@ -1912,6 +1915,8 @@ public class Reflections {
                     dd = ef.getMaterial() != null ? ef.getMaterial().newItemStack() : CMIMaterial.OAK_BUTTON.newItemStack();
                 } else if (ef.getParticle().getDataType().equals(CMIParticleDataType.BlockData)) {
                     dd = Bukkit.createBlockData(ef.getMaterial() == null ? CMIMaterial.STONE.getMaterial() : ef.getMaterial().getMaterial());
+                } else if (ef.getParticle().getDataType().equals(CMIParticleDataType.Trail)) {                    
+                    dd = new Trail(location, ef.getColorFrom(), ef.getDuration());
                 }
 
                 if (CraftParticleMethod == null) {
@@ -2034,6 +2039,9 @@ public class Reflections {
         }
     }
 
+    private Constructor toastAdvancementDisplay = null;
+    private Constructor toastPacketPlayOutAdvancements = null;
+
     public void showToast(CMIAdvancement advancement, Player... players) {
         if (!Version.isCurrentEqualOrHigher(Version.v1_20_R2))
             return;
@@ -2048,22 +2056,54 @@ public class Reflections {
 
                 removed.add(minecraftkey);
 
-                net.minecraft.resources.MinecraftKey bg = getKey(advancement.getBackground().getUrl());
                 net.minecraft.advancements.AdvancementFrameType frame = net.minecraft.advancements.AdvancementFrameType.a;
                 if (advancement.getFrame().equals(net.Zrips.CMILib.Advancements.AdvancementFrameType.GOAL))
                     frame = net.minecraft.advancements.AdvancementFrameType.c;
                 else if (advancement.getFrame().equals(net.Zrips.CMILib.Advancements.AdvancementFrameType.CHALLENGE))
                     frame = net.minecraft.advancements.AdvancementFrameType.b;
 
-                net.minecraft.advancements.AdvancementDisplay display = new net.minecraft.advancements.AdvancementDisplay(
-                    (net.minecraft.world.item.ItemStack) CMINBT.asNMSCopy(advancement.getItem()),
-                    (net.minecraft.network.chat.IChatBaseComponent) textToIChatBaseComponent(new RawMessage().addText(advancement.getTitle()).getRaw()),
-                    (net.minecraft.network.chat.IChatBaseComponent) textToIChatBaseComponent(new RawMessage().addText(advancement.getDescription()).getRaw()),
-                    java.util.Optional.of(bg),
-                    frame,
-                    true,
-                    false,
-                    false);
+                net.minecraft.advancements.AdvancementDisplay display = null;
+
+                if (Version.isCurrentEqualOrHigher(Version.v1_21_R4)) {
+                    display = new net.minecraft.advancements.AdvancementDisplay(
+                        (net.minecraft.world.item.ItemStack) CMINBT.asNMSCopy(advancement.getItem()),
+                        (net.minecraft.network.chat.IChatBaseComponent) textToIChatBaseComponent(new RawMessage().addText(advancement.getTitle()).getRaw()),
+                        (net.minecraft.network.chat.IChatBaseComponent) textToIChatBaseComponent(new RawMessage().addText(advancement.getDescription()).getRaw()),
+                        java.util.Optional.empty(),
+                        frame,
+                        true,
+                        false,
+                        false);
+                } else {
+                    net.minecraft.resources.MinecraftKey bg = getKey(advancement.getBackground().getUrl());
+                    try {
+                        if (toastAdvancementDisplay == null)
+                            toastAdvancementDisplay = net.minecraft.advancements.AdvancementDisplay.class.getConstructor(net.minecraft.world.item.ItemStack.class,
+                                net.minecraft.network.chat.IChatBaseComponent.class,
+                                net.minecraft.network.chat.IChatBaseComponent.class,
+                                java.util.Optional.class,
+                                net.minecraft.advancements.AdvancementFrameType.class,
+                                boolean.class,
+                                boolean.class,
+                                boolean.class);
+                    } catch (Throwable e) {
+                        e.printStackTrace();
+                        return;
+                    }
+                    try {
+                        display = (AdvancementDisplay) toastAdvancementDisplay.newInstance(
+                            CMINBT.asNMSCopy(advancement.getItem()),
+                            textToIChatBaseComponent(new RawMessage().addText(advancement.getTitle()).getRaw()),
+                            textToIChatBaseComponent(new RawMessage().addText(advancement.getDescription()).getRaw()),
+                            java.util.Optional.of(bg),
+                            frame,
+                            true,
+                            false,
+                            false);
+                    } catch (Throwable e) {
+                        e.printStackTrace();
+                    }
+                }
 
                 ArrayList<List<String>> adreq = new ArrayList<List<String>>();
                 adreq.add(Arrays.asList(CMIAdvancement.identificator));
@@ -2085,13 +2125,33 @@ public class Reflections {
 
                 addedMap.add(add.b(minecraftkey));
 
-                for (Player player : players) {
-                    Object connection = CMILib.getInstance().getReflectionManager().getPlayerConnection(player);
+                if (Version.isCurrentEqualOrHigher(Version.v1_21_R4)) {
+                    for (Player player : players) {
+                        Object connection = CMILib.getInstance().getReflectionManager().getPlayerConnection(player);
+                        sendPacket(connection, new net.minecraft.network.protocol.game.PacketPlayOutAdvancements(false, addedMap, new HashSet<net.minecraft.resources.MinecraftKey>(), progressMap, true));
+                        sendPacket(connection, new net.minecraft.network.protocol.game.PacketPlayOutAdvancements(false, new HashSet<net.minecraft.advancements.AdvancementHolder>(), removed,
+                            new HashMap<net.minecraft.resources.MinecraftKey, net.minecraft.advancements.AdvancementProgress>(), true));
+                    }
+                } else {
 
-                    sendPacket(connection, new net.minecraft.network.protocol.game.PacketPlayOutAdvancements(false, addedMap, new HashSet<net.minecraft.resources.MinecraftKey>(), progressMap));
+                    try {
+                        if (toastPacketPlayOutAdvancements == null)
+                            toastPacketPlayOutAdvancements = net.minecraft.network.protocol.game.PacketPlayOutAdvancements.class.getConstructor(boolean.class, Collection.class, Set.class, Map.class);
+                    } catch (Throwable e) {
+                        e.printStackTrace();
+                        return;
+                    }
 
-                    sendPacket(connection, new net.minecraft.network.protocol.game.PacketPlayOutAdvancements(false, new HashSet<net.minecraft.advancements.AdvancementHolder>(), removed,
-                        new HashMap<net.minecraft.resources.MinecraftKey, net.minecraft.advancements.AdvancementProgress>()));
+                    for (Player player : players) {
+                        Object connection = CMILib.getInstance().getReflectionManager().getPlayerConnection(player);
+                        try {
+                            sendPacket(connection, toastPacketPlayOutAdvancements.newInstance(false, addedMap, new HashSet<net.minecraft.resources.MinecraftKey>(), progressMap));
+                            sendPacket(connection, toastPacketPlayOutAdvancements.newInstance(false, new HashSet<net.minecraft.advancements.AdvancementHolder>(), removed,
+                                new HashMap<net.minecraft.resources.MinecraftKey, net.minecraft.advancements.AdvancementProgress>()));
+                        } catch (Throwable e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
 
                 return;
@@ -2123,13 +2183,24 @@ public class Reflections {
                 e.printStackTrace();
             }
 
+            try {
+                if (toastPacketPlayOutAdvancements == null)
+                    toastPacketPlayOutAdvancements = net.minecraft.network.protocol.game.PacketPlayOutAdvancements.class.getConstructor(boolean.class, Set.class, Set.class, Map.class);
+            } catch (Throwable e) {
+                e.printStackTrace();
+                return;
+            }
+
             for (Player player : players) {
                 Object connection = CMILib.getInstance().getReflectionManager().getPlayerConnection(player);
 
-                sendPacket(connection, new net.minecraft.network.protocol.game.PacketPlayOutAdvancements(false, addedMap, new HashSet<net.minecraft.resources.MinecraftKey>(), progressMap));
-
-                sendPacket(connection, new net.minecraft.network.protocol.game.PacketPlayOutAdvancements(false, new HashSet<net.minecraft.advancements.AdvancementHolder>(), removed,
-                    new HashMap<net.minecraft.resources.MinecraftKey, net.minecraft.advancements.AdvancementProgress>()));
+                try {
+                    sendPacket(connection, toastPacketPlayOutAdvancements.newInstance(false, addedMap, new HashSet<net.minecraft.resources.MinecraftKey>(), progressMap));
+                    sendPacket(connection, toastPacketPlayOutAdvancements.newInstance(false, new HashSet<net.minecraft.advancements.AdvancementHolder>(), removed,
+                        new HashMap<net.minecraft.resources.MinecraftKey, net.minecraft.advancements.AdvancementProgress>()));
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
             }
         });
     }

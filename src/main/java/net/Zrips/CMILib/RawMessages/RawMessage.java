@@ -184,7 +184,7 @@ public class RawMessage {
 
         if (finalText.toString().isEmpty())
             return "";
-        return "{" + finalText.toString() + "}";
+        return finalText.toString();
     }
 
     @Deprecated
@@ -321,7 +321,7 @@ public class RawMessage {
             f = "\"text\":\" \"";
         else {
             text = colorize ? CMIChatColor.translate(text) : text;
-            f = "\"text\":\"\",\"extra\":[" + text.replace(CMIChatColor.colorHexReplacerPlaceholder, CMIChatColor.colorCodePrefix).replace(CMIChatColor.colorReplacerPlaceholder, "&") + "]";
+            f = "\"text\":\"\",\"extra\":[{" + text.replace(CMIChatColor.colorHexReplacerPlaceholder, CMIChatColor.colorCodePrefix).replace(CMIChatColor.colorReplacerPlaceholder, "&") + "}]";
         }
         temp.put(RawMessagePartType.Text, f);
         return this;
@@ -355,8 +355,13 @@ public class RawMessage {
             f = "\"text\":\"\"";
         else if (hover.equalsIgnoreCase(" "))
             f = "\"text\":\" \"";
-        else
-            f = "\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":[" + CMIChatColor.translate(hover).replace(CMIChatColor.colorReplacerPlaceholder, "&") + "]}}";
+        else {
+            hover = CMIChatColor.translate(hover).replace(CMIChatColor.colorReplacerPlaceholder, "&");
+            if (Version.isCurrentEqualOrHigher(Version.v1_21_R4))
+                f = "\"hover_event\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":[{" + hover + "}]}}";
+            else
+                f = "\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":[{" + hover + "}]}}";
+        }
         temp.put(RawMessagePartType.HoverText, f);
         return this;
     }
@@ -374,8 +379,13 @@ public class RawMessage {
         if (!command.startsWith("/"))
             command = "/" + command;
         command = escape(command, true);
-        String f = "\"clickEvent\":{\"action\":\"run_command\",\"value\":\"" + CMIChatColor.deColorize(command).replace(CMIChatColor.colorReplacerPlaceholder, "&") + "\"}";
-        temp.put(RawMessagePartType.ClickCommand, f);
+        command = CMIChatColor.deColorize(command).replace(CMIChatColor.colorReplacerPlaceholder, "&");
+
+        if (Version.isCurrentEqualOrHigher(Version.v1_21_R4))
+            temp.put(RawMessagePartType.ClickCommand, "\"click_event\":{\"action\":\"run_command\",\"command\":\"" + command + "\"}");
+        else
+            temp.put(RawMessagePartType.ClickCommand, "\"clickEvent\":{\"action\":\"run_command\",\"value\":\"" + command + "\"}");
+
         return this;
     }
 
@@ -383,8 +393,13 @@ public class RawMessage {
         if (suggestion == null || suggestion.isEmpty())
             return this;
         suggestion = escape(suggestion, true);
-        String f = "\"clickEvent\":{\"action\":\"suggest_command\",\"value\":\"" + CMIChatColor.deColorize(suggestion, false).replace(CMIChatColor.colorReplacerPlaceholder, "&") + "\"}";
-        temp.put(RawMessagePartType.ClickSuggestion, f);
+        suggestion = CMIChatColor.deColorize(suggestion, false).replace(CMIChatColor.colorReplacerPlaceholder, "&");
+
+        if (Version.isCurrentEqualOrHigher(Version.v1_21_R4))
+            temp.put(RawMessagePartType.ClickSuggestion, "\"click_event\":{\"action\":\"suggest_command\",\"command\":\"" + suggestion + "\"}");
+        else
+            temp.put(RawMessagePartType.ClickSuggestion, "\"clickEvent\":{\"action\":\"suggest_command\",\"value\":\"" + suggestion + "\"}");
+
         return this;
     }
 
@@ -450,9 +465,14 @@ public class RawMessage {
             e.printStackTrace();
         }
 
-        String f = "\"hoverEvent\":{\"action\":\"show_item\",\"value\":\"" + escape(res, true) + "\"}";
-
-        temp.put(RawMessagePartType.HoverItem, f);
+        if (Version.isCurrentEqualOrHigher(Version.v1_21_R4)) {
+            CMIDebug.c(res);
+            res = res.substring(1, res.length() - 1);
+            CMIDebug.c(res);
+            
+            temp.put(RawMessagePartType.HoverItem, "\"hover_event\":{\"action\":\"show_item\"," + res + "}");
+        } else
+            temp.put(RawMessagePartType.HoverItem, "\"hoverEvent\":{\"action\":\"show_item\",\"value\":\"" + escape(res, true) + "\"}");
         return this;
     }
 
@@ -467,10 +487,13 @@ public class RawMessage {
         url = url.replace("\'", "");
 
         url = escape(url, true);
+        url = CMIChatColor.deColorize(url).replace(CMIChatColor.colorReplacerPlaceholder, "&");
 
-        String f = "\"clickEvent\":{\"action\":\"open_url\",\"value\":\"" + CMIChatColor.deColorize(url).replace(CMIChatColor.colorReplacerPlaceholder, "&") + "\"}";
+        if (Version.isCurrentEqualOrHigher(Version.v1_21_R4))
+            temp.put(RawMessagePartType.ClickLink, "\"click_event\":{\"action\":\"open_url\",\"url\":\"" + url + "\"}");
+        else
+            temp.put(RawMessagePartType.ClickLink, "\"clickEvent\":{\"action\":\"open_url\",\"value\":\"" + url + "\"}");
 
-        temp.put(RawMessagePartType.ClickLink, f);
         return this;
     }
 

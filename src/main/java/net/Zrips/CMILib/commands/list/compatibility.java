@@ -5,6 +5,7 @@ import java.util.Arrays;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.joml.Math;
 
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Reflections;
@@ -118,10 +119,15 @@ public class compatibility implements Cmd {
 
         plugin.getReflectionManager().playEffect(player, player.getEyeLocation(), new CMIEffect(CMIParticle.DUST));
 
-        RawMessage rm = new RawMessage();
-        rm.addText("Active container ID: " + plugin.getReflectionManager().getActiveContainerId(player));
-        rm.addHover("Hover text");
-        rm.show(player);
+        try {
+            RawMessage rm = new RawMessage();
+            rm.addText("Active container ID: " + plugin.getReflectionManager().getActiveContainerId(player));
+            rm.addHover("Hover text");
+            rm.addCommand("cmi heal");
+            rm.show(player);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
 
         try {
             CMILib.getInstance().getReflectionManager().setServerProperties(CMIServerProperties.max_players, Bukkit.getMaxPlayers(), true);
@@ -138,9 +144,12 @@ public class compatibility implements Cmd {
 //        } catch (Throwable e) {
 //            e.printStackTrace();
 //        }
-        BossBarInfo bossbar = new BossBarInfo(player, "Compatibility");
+
+        BossBarInfo bossbar = plugin.getBossBarManager().getBossBar(player, "Compatibility");
+        if (bossbar == null)
+            bossbar = new BossBarInfo(player, "Compatibility");
         bossbar.setTitleOfBar("Test");
-        bossbar.setPercentage(0.33);
+        bossbar.setPercentage(Math.random());
         plugin.getBossBarManager().Show(bossbar);
 
         CMIAdvancement advancement = new CMIAdvancement()
@@ -155,6 +164,7 @@ public class compatibility implements Cmd {
         try {
             advancement.setItem(CMIItemStack.deserialize("leatherhelmet;purple").getItemStack());
         } catch (Throwable e) {
+            e.printStackTrace();
         }
 
         advancement.show(player);

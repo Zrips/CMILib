@@ -363,7 +363,7 @@ public class GUIManager {
             return false;
 
         if (!validInventory(gui)) {
-            // removal should he before closing to avoid potential issues
+            // removal should be before closing to avoid potential issues
             map.remove(player.getUniqueId());
             player.closeInventory();
             return false;
@@ -392,35 +392,32 @@ public class GUIManager {
     }
 
     public void generateInventory(CMIGui gui) {
-        Inventory GuiInv = null;
+        Inventory guiInv = null;
 
         if (gui.getInvSize() != null) {
-            GuiInv = Bukkit.createInventory(null, gui.getInvSize().getFields(), gui.getTitle());
+            guiInv = Bukkit.createInventory(null, gui.getInvSize().getFields(), gui.getTitle());
         } else {
-            GuiInv = Bukkit.createInventory(null, gui.getInvType(), gui.getTitle());
+            guiInv = Bukkit.createInventory(null, gui.getInvType(), gui.getTitle());
         }
 
-        if (GuiInv == null)
+        if (guiInv == null)
             return;
 
-        if (!usePackets) {
+//        if (!usePackets) {
             for (Entry<Integer, CMIGuiButton> one : gui.getButtons().entrySet()) {
-                if (one.getKey() > GuiInv.getSize())
+                if (one.getKey() > guiInv.getSize())
                     continue;
                 try {
                     ItemStack item = one.getValue().getItem(gui.getPlayer());
-                    item = item == null ? null : item.clone();
-                    if (item != null && one.getValue().isLocked() && !CMIMaterial.isAir(item.getType()))
-                        item = (ItemStack) new CMINBT(item).setString(CMIGUIIcon, LIProtection);
 
-                    if (one.getKey() < GuiInv.getSize())
-                        GuiInv.setItem(one.getKey(), item);
+                    if (one.getKey() < guiInv.getSize())
+                        guiInv.setItem(one.getKey(), item);
                 } catch (Throwable e) {
                     e.printStackTrace();
                     break;
                 }
             }
-        } else {
+//        } else {
 //	    for (Entry<Integer, CMIGuiButton> one : gui.getButtons().entrySet()) {
 //		if (one.getKey() > GuiInv.getSize())
 //		    continue;
@@ -435,8 +432,8 @@ public class GUIManager {
 //		    break;
 //		}
 //	    }
-        }
-        gui.setInv(GuiInv);
+//        }
+        gui.setInv(guiInv);
     }
 
     public void openGui(CMIGui gui) {
@@ -486,10 +483,10 @@ public class GUIManager {
         if (topInv == null)
             return false;
 
-        if (!topInv.getType().equals(gui.getInv().getType()))
+        if (!topInv.getType().equals(gui.getInvType()))
             return false;
 
-        if (topInv.getSize() != gui.getInv().getSize())
+        if (topInv.getSize() != gui.getInvSize().getFields())
             return false;
 
         if (Version.isCurrentEqualOrHigher(Version.v1_9_R1) && topInv.getLocation() != null)

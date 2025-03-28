@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.Nullable;
 
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Colors.CMIChatColor;
@@ -27,6 +28,7 @@ import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.Version.Version;
 import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
 import net.Zrips.CMILib.Version.Schedulers.CMITask;
+import net.kyori.adventure.text.Component;
 
 public class CMIGuiButton {
 
@@ -290,19 +292,21 @@ public class CMIGuiButton {
         if (this.item == null)
             return this;
         ItemMeta meta = this.item.getItemMeta();
-        if (meta != null) {
-            if (name.contains("\n")) {
-                String[] split = name.split("\\n");
-                meta.setDisplayName(CMIChatColor.translate(split[0]));
-                this.item.setItemMeta(meta);
-                for (int i = 1; i < split.length; i++) {
-                    addLore(split[i]);
-                }
-            } else {
-                meta.setDisplayName(CMIChatColor.translate(name));
-                this.item.setItemMeta(meta);
+        if (meta == null)
+            return this;
+
+        if (name.contains("\n")) {
+            String[] split = name.split("\\n");
+            meta.setDisplayName(CMIChatColor.translate(split[0]));
+            this.item.setItemMeta(meta);
+            for (int i = 1; i < split.length; i++) {
+                addLore(split[i]);
             }
+        } else {
+            meta.setDisplayName(CMIChatColor.translate(name));
+            this.item.setItemMeta(meta);
         }
+
         return this;
     }
 
@@ -319,26 +323,29 @@ public class CMIGuiButton {
             return this;
         ItemMeta meta = this.item.getItemMeta();
 
-        if (meta != null) {
-            List<String> lore = meta.getLore();
-            if (lore == null)
-                lore = new ArrayList<String>();
+        if (meta == null)
+            return this;
 
-            if (l.contains("\\n")) {
-                String[] split = l.split("\\\\n");
-                for (String one : split) {
-                    lore.add(CMIChatColor.translate(one));
-                }
-            } else if (l.contains("\n")) {
-                String[] split = l.split("\\n");
-                for (String one : split) {
-                    lore.add(CMIChatColor.translate(one));
-                }
-            } else
-                lore.add(CMIChatColor.translate(l));
-            meta.setLore(lore);
-            this.item.setItemMeta(meta);
-        }
+        List<String> lore = meta.getLore();
+        if (lore == null)
+            lore = new ArrayList<String>();
+
+        if (l.contains("\\n")) {
+            String[] split = l.split("\\\\n");
+            for (String one : split) {
+                lore.add(CMIChatColor.translate(one));
+            }
+        } else if (l.contains("\n")) {
+            String[] split = l.split("\\n");
+            for (String one : split) {
+                lore.add(CMIChatColor.translate(one));
+            }
+        } else
+            lore.add(CMIChatColor.translate(l));
+
+        meta.setLore(lore);
+        this.item.setItemMeta(meta);
+
         return this;
     }
 
@@ -414,38 +421,37 @@ public class CMIGuiButton {
 
     public ItemStack getItem(Player player) {
 
-        if (item != null) {
-            ItemStack i = item.clone();
+        if (item == null)
+            return null;
 
-            if (this.isLocked() && !CMIMaterial.isAir(i.getType()))
-                i = (ItemStack) new CMINBT(i).setString(GUIManager.CMIGUIIcon, GUIManager.LIProtection);
+        ItemStack i = item.clone();
 
-            ItemMeta meta = i.hasItemMeta() ? i.getItemMeta() : null;
+        if (this.isLocked() && !CMIMaterial.isAir(i.getType()))
+            i = (ItemStack) new CMINBT(i).setString(GUIManager.CMIGUIIcon, GUIManager.LIProtection);
 
-            if (meta == null) {
-                try {
-                    meta = i.getItemMeta();
-                } catch (Throwable e) {
-                    e.printStackTrace();
-                }
+        ItemMeta meta = i.hasItemMeta() ? i.getItemMeta() : null;
+
+        if (meta == null) {
+            try {
+                meta = i.getItemMeta();
+            } catch (Throwable e) {
+                e.printStackTrace();
             }
-
-            if (meta != null && meta.hasDisplayName()) {
-                meta.setDisplayName(CMILib.getInstance().getPlaceholderAPIManager().updatePlaceHolders(player, meta.getDisplayName()));
-            }
-
-            if (meta != null && meta.hasLore()) {
-                meta.setLore(CMILib.getInstance().getPlaceholderAPIManager().updatePlaceHolders(player, meta.getLore()));
-            }
-
-            if (meta != null) {
-                i.setItemMeta(meta);
-            }
-
-            return i;
         }
 
-        return item;
+        if (meta != null && meta.hasDisplayName()) {
+            meta.setDisplayName(CMILib.getInstance().getPlaceholderAPIManager().updatePlaceHolders(player, meta.getDisplayName()));
+        }
+
+        if (meta != null && meta.hasLore()) {
+            meta.setLore(CMILib.getInstance().getPlaceholderAPIManager().updatePlaceHolders(player, meta.getLore()));
+        }
+
+        if (meta != null) {
+            i.setItemMeta(meta);
+        }
+
+        return i;
     }
 
     public CMIGuiButton setItem(CMIMaterial material) {
