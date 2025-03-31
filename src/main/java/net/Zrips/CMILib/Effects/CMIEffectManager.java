@@ -1,18 +1,25 @@
 package net.Zrips.CMILib.Effects;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-import org.bukkit.Color;
+import org.bukkit.Bukkit;
 import org.bukkit.Effect;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle.Trail;
+import org.bukkit.entity.Player;
 
-import net.Zrips.CMILib.Colors.CMIChatColor;
+import net.Zrips.CMILib.CMILib;
+import net.Zrips.CMILib.Reflections;
 import net.Zrips.CMILib.Container.CMIText;
 import net.Zrips.CMILib.Items.CMIMaterial;
-import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Version.Version;
 
 public class CMIEffectManager {
@@ -22,7 +29,32 @@ public class CMIEffectManager {
     }
 
     public enum CMIParticleDataType {
-        Void, DustOptions, ItemStack, BlockData, MaterialData, EntityData, Color, DustTransition, Vibration, Float, Int, Trail;
+        Void,
+        DustOptions(CMIEffectDataValueTypes.ColorFrom, CMIEffectDataValueTypes.Size),
+        ItemStack(CMIEffectDataValueTypes.Material),
+        BlockData(CMIEffectDataValueTypes.Material),
+        MaterialData(CMIEffectDataValueTypes.Material),
+        EntityData,
+        Color(CMIEffectDataValueTypes.ColorFrom),
+        DustTransition(CMIEffectDataValueTypes.ColorFrom, CMIEffectDataValueTypes.ColorTo, CMIEffectDataValueTypes.Size),
+        Vibration(CMIEffectDataValueTypes.Duration, CMIEffectDataValueTypes.Location),
+        Float(CMIEffectDataValueTypes.Speed),
+        Int(CMIEffectDataValueTypes.Speed),
+        Trail(CMIEffectDataValueTypes.ColorFrom, CMIEffectDataValueTypes.Duration, CMIEffectDataValueTypes.Location);
+
+        private Set<CMIEffectDataValueTypes> dataTypes = new HashSet<>();
+
+        private CMIParticleDataType(CMIEffectDataValueTypes... cmiEffectDataValueTypes) {
+            this.dataTypes.addAll(Arrays.asList(cmiEffectDataValueTypes));
+        }
+
+        public Set<CMIEffectDataValueTypes> getDataTypes() {
+            return dataTypes;
+        }
+
+        public boolean contains(CMIEffectDataValueTypes type) {
+            return dataTypes.contains(type);
+        }
     }
 
     public enum CMIParticle {
@@ -109,135 +141,127 @@ public class CMIEffectManager {
         ITEM_BREAK("ICON_CRACK", CMIParticleType.NONE, CMIMaterial.DIAMOND_BOOTS),
 
         // 1.13
-        WATER_BUBBLE(),
-        WATER_WAKE(),
-        SUSPENDED(),
+        WATER_BUBBLE(CMIMaterial.PRISMARINE_CRYSTALS),
+        WATER_WAKE(CMIMaterial.SEAGRASS),
+        SUSPENDED(CMIMaterial.KELP),
         BARRIER(CMIMaterial.BARRIER),
-        MOB_APPEARANCE(),
+        MOB_APPEARANCE(CMIMaterial.ZOMBIE_HEAD),
         END_ROD(CMIMaterial.END_ROD),
-        DAMAGE_INDICATOR(),
-        SWEEP_ATTACK(),
+        DAMAGE_INDICATOR(CMIMaterial.RED_DYE),
+        SWEEP_ATTACK(CMIMaterial.IRON_SWORD),
         TOTEM(CMIMaterial.TOTEM_OF_UNDYING),
-        SPIT(),
+        SPIT(CMIMaterial.LLAMA_SPAWN_EGG),
         SQUID_INK(CMIMaterial.INK_SAC),
-        BUBBLE_POP(),
-        CURRENT_DOWN(),
-        BUBBLE_COLUMN_UP(),
+        BUBBLE_POP(CMIMaterial.PUFFERFISH),
+        CURRENT_DOWN(CMIMaterial.HEART_OF_THE_SEA),
+        BUBBLE_COLUMN_UP(CMIMaterial.CONDUIT),
         NAUTILUS(CMIMaterial.NAUTILUS_SHELL),
         DOLPHIN(CMIMaterial.DOLPHIN_SPAWN_EGG),
 
-//	Requires extra data when displaying
-//	ITEM_CRACK("ItemCrack"),
-//	BLOCK_DUST("block_dust"),
-//	FALLING_DUST("falling_dust"),
-
         //1.16
-        WATER_SPLASH(),
-        CAMPFIRE_SIGNAL_SMOKE(CMIMaterial.CAMPFIRE),
+        WATER_SPLASH(CMIMaterial.SPLASH_POTION),
+        CAMPFIRE_SIGNAL_SMOKE(CMIMaterial.SOUL_CAMPFIRE),
         CAMPFIRE_COSY_SMOKE(CMIMaterial.CAMPFIRE),
-        SNEEZE(),
-        COMPOSTER(CMIMaterial.COMPOSTER),
-        FLASH(),
-        FALLING_LAVA(CMIMaterial.LAVA_BUCKET),
-        LANDING_LAVA(CMIMaterial.LAVA_BUCKET),
+        SNEEZE(CMIMaterial.SLIME_BALL),
+        COMPOSTER(CMIMaterial.BONE_MEAL),
+        FLASH(CMIMaterial.GLOWSTONE),
+        FALLING_LAVA(CMIMaterial.MAGMA_BLOCK),
+        LANDING_LAVA(CMIMaterial.BLAZE_POWDER),
         FALLING_WATER(CMIMaterial.WATER_BUCKET),
-        DRIPPING_HONEY(CMIMaterial.HONEY_BOTTLE),
-        FALLING_HONEY(CMIMaterial.HONEY_BOTTLE),
+        DRIPPING_HONEY(CMIMaterial.HONEYCOMB),
+        FALLING_HONEY(CMIMaterial.HONEY_BLOCK),
         LANDING_HONEY(CMIMaterial.HONEY_BOTTLE),
-        FALLING_NECTAR(CMIMaterial.HONEY_BOTTLE),
-        SOUL_FIRE_FLAME(CMIMaterial.SOUL_LANTERN),
-        ASH(),
-        CRIMSON_SPORE(),
-        WARPED_SPORE(),
-        SOUL(),
-        DRIPPING_OBSIDIAN_TEAR(),
-        FALLING_OBSIDIAN_TEAR(),
-        LANDING_OBSIDIAN_TEAR(),
-        REVERSE_PORTAL(),
-        WHITE_ASH(),
+        FALLING_NECTAR(CMIMaterial.BEEHIVE),
+        SOUL_FIRE_FLAME(CMIMaterial.SOUL_TORCH),
+        ASH(CMIMaterial.BLACK_DYE),
+        CRIMSON_SPORE(CMIMaterial.CRIMSON_FUNGUS),
+        WARPED_SPORE(CMIMaterial.WARPED_FUNGUS),
+        SOUL(CMIMaterial.SOUL_SOIL),
+        DRIPPING_OBSIDIAN_TEAR(CMIMaterial.CRYING_OBSIDIAN),
+        FALLING_OBSIDIAN_TEAR(CMIMaterial.ANCIENT_DEBRIS),
+        LANDING_OBSIDIAN_TEAR(CMIMaterial.RESPAWN_ANCHOR),
+        REVERSE_PORTAL(CMIMaterial.OBSIDIAN),
+        WHITE_ASH(CMIMaterial.QUARTZ),
 
         // 1.17
         LIGHT(CMIMaterial.LIGHT),
-//	Requires extra data when displaying
-//	DUST_COLOR_TRANSITION("dust_color_transition"),
-//	VIBRATION("vibration"),
-        FALLING_SPORE_BLOSSOM(),
-        SPORE_BLOSSOM_AIR(),
-        SMALL_FLAME(),
-        SNOWFLAKE(CMIMaterial.SNOW),
-        DRIPPING_DRIPSTONE_LAVA(),
-        FALLING_DRIPSTONE_LAVA(),
-        DRIPPING_DRIPSTONE_WATER(),
-        FALLING_DRIPSTONE_WATER(),
-        GLOW_SQUID_INK(),
-        GLOW(),
-        WAX_ON(),
-        WAX_OFF(),
-        ELECTRIC_SPARK(),
-        SCRAPE(),
+        FALLING_SPORE_BLOSSOM(CMIMaterial.SPORE_BLOSSOM),
+        SPORE_BLOSSOM_AIR(CMIMaterial.FLOWERING_AZALEA_LEAVES),
+        SMALL_FLAME(CMIMaterial.FLINT_AND_STEEL),
+        SNOWFLAKE(CMIMaterial.SNOWBALL),
+        DRIPPING_DRIPSTONE_LAVA(CMIMaterial.DRIPSTONE_BLOCK),
+        FALLING_DRIPSTONE_LAVA(CMIMaterial.POINTED_DRIPSTONE),
+        DRIPPING_DRIPSTONE_WATER(CMIMaterial.DRIPSTONE_BLOCK),
+        FALLING_DRIPSTONE_WATER(CMIMaterial.POINTED_DRIPSTONE),
+        GLOW_SQUID_INK(CMIMaterial.GLOW_INK_SAC),
+        GLOW(CMIMaterial.GLOW_BERRIES),
+        WAX_ON(CMIMaterial.HONEYCOMB_BLOCK),
+        WAX_OFF(CMIMaterial.COPPER_BLOCK),
+        ELECTRIC_SPARK(CMIMaterial.AMETHYST_SHARD),
+        SCRAPE(CMIMaterial.COPPER_INGOT),
 
         // 1.18
-        BLOCK_MARKER(CMIParticleDataType.BlockData),
+        BLOCK_MARKER(CMIParticleDataType.BlockData, CMIMaterial.REINFORCED_DEEPSLATE),
 
         // 1.19
-        SONIC_BOOM(),
-        SCULK_SOUL(),
-//	SCULK_CHARGE(),
-        SCULK_CHARGE_POP(),
-//	SHRIEK("shriek"),        
-        CHERRY_LEAVES(),
+        SONIC_BOOM(CMIMaterial.SCULK_SHRIEKER),
+        SCULK_SOUL(CMIMaterial.SCULK_SENSOR),
+        SCULK_CHARGE_POP(CMIMaterial.SCULK_CATALYST),
+        CHERRY_LEAVES(CMIMaterial.CHERRY_LEAVES),
 
         // 1.20.5
-        SMALL_GUST(),
-        TRIAL_SPAWNER_DETECTION_OMINOUS(),
-        VAULT_CONNECTION(),
-        INFESTED(),
-        ITEM_COBWEB(),
-        OMINOUS_SPAWNING(),
-        RAID_OMEN(),
-        TRIAL_OMEN(),
+        SMALL_GUST(CMIMaterial.FEATHER),
+        TRIAL_SPAWNER_DETECTION_OMINOUS(CMIMaterial.OAK_TRAPDOOR),
+        VAULT_CONNECTION(CMIMaterial.ENDER_CHEST),
+        INFESTED(CMIMaterial.INFESTED_STONE),
+        ITEM_COBWEB(CMIMaterial.COBWEB),
+        OMINOUS_SPAWNING(CMIMaterial.WITHER_SKELETON_SKULL),
+        RAID_OMEN(CMIMaterial.RAISER_ARMOR_TRIM_SMITHING_TEMPLATE),
+        TRIAL_OMEN(CMIMaterial.BREEZE_SPAWN_EGG),
 
-        POOF(),
-        EXPLOSION_EMITTER(),
-        FIREWORK(),
-        BUBBLE(),
-        FISHING(),
-        UNDERWATER(),
-        ENCHANTED_HIT(),
-        EFFECT(),
-        INSTANT_EFFECT(),
-        ENTITY_EFFECT(CMIParticleDataType.Color),
-        WITCH(),
-        DRIPPING_WATER(),
-        DRIPPING_LAVA(),
-        MYCELIUM(),
-        ENCHANT("FLYING_GLYPH", "ENCHANTMENT_TABLE"),
-        ITEM_SNOWBALL(),
-        ITEM_SLIME(),
+        // 1.21
+        POOF(CMIMaterial.FIREWORK_STAR),
+        EXPLOSION_EMITTER(CMIMaterial.TNT),
+        FIREWORK(CMIMaterial.FIREWORK_ROCKET),
+        BUBBLE(CMIMaterial.BUBBLE_CORAL),
+        FISHING(CMIMaterial.FISHING_ROD),
+        UNDERWATER(CMIMaterial.TURTLE_EGG),
+        ENCHANTED_HIT(CMIMaterial.ENCHANTED_BOOK),
+        EFFECT(CMIMaterial.POTION),
+        INSTANT_EFFECT(CMIMaterial.GOLDEN_APPLE),
+        ENTITY_EFFECT(CMIParticleDataType.Color, CMIMaterial.GLOWSTONE_DUST),
+        WITCH(CMIMaterial.POTION),
+        DRIPPING_WATER(CMIMaterial.ICE),
+        DRIPPING_LAVA(CMIMaterial.BASALT),
+        MYCELIUM(CMIMaterial.MYCELIUM),
+        ENCHANT("FLYING_GLYPH", "ENCHANTMENT_TABLE", CMIMaterial.ENCHANTED_BOOK),
+        ITEM_SNOWBALL(CMIMaterial.SNOWBALL),
+        ITEM_SLIME(CMIMaterial.SLIME_BALL),
         ITEM(CMIParticleDataType.ItemStack),
         BLOCK(CMIParticleDataType.BlockData),
-        RAIN(),
-        ELDER_GUARDIAN(),
+        RAIN(CMIMaterial.BLUE_STAINED_GLASS),
+        ELDER_GUARDIAN(CMIMaterial.PRISMARINE_SHARD),
         FALLING_DUST(CMIParticleDataType.BlockData),
-        TOTEM_OF_UNDYING(),
+        TOTEM_OF_UNDYING(CMIMaterial.TOTEM_OF_UNDYING),
         DUST_COLOR_TRANSITION(CMIParticleDataType.DustTransition),
         VIBRATION(CMIParticleDataType.Vibration),
         SCULK_CHARGE(CMIParticleDataType.Float),
         SHRIEK(CMIParticleDataType.Int),
-        EGG_CRACK(),
-        DUST_PLUME(),
-        WHITE_SMOKE(),
-        GUST(),
-        GUST_EMITTER_LARGE(),
-        GUST_EMITTER_SMALL(),
-        TRIAL_SPAWNER_DETECTION(),
-        DUST_PILLAR(CMIParticleDataType.BlockData),
+        EGG_CRACK(CMIMaterial.TURTLE_EGG),
+        DUST_PLUME(CMIMaterial.BREEZE_ROD),
+        WHITE_SMOKE(CMIMaterial.HEAVY_CORE),
+        GUST(CMIMaterial.OMINOUS_BOTTLE),
+        GUST_EMITTER_LARGE(CMIMaterial.POLISHED_TUFF_STAIRS),
+        GUST_EMITTER_SMALL(CMIMaterial.POLISHED_TUFF_WALL),
+        TRIAL_SPAWNER_DETECTION(CMIMaterial.TRIAL_SPAWNER),
+        DUST_PILLAR(CMIParticleDataType.BlockData, CMIMaterial.RESIN_CLUMP),
 
+        // 1.21.5
         PALE_OAK_LEAVES(CMIMaterial.PALE_OAK_LEAVES),
         TINTED_LEAVES(CMIParticleDataType.Color, CMIMaterial.LEAF_LITTER),
-        BLOCK_CRUMBLE(CMIParticleDataType.BlockData),
-        TRAIL(CMIParticleDataType.Trail),
-        FIREFLY(CMIMaterial.FIREFLY_BUSH),;
+        BLOCK_CRUMBLE(CMIParticleDataType.BlockData, CMIMaterial.BROWN_EGG),
+        TRAIL(CMIParticleDataType.Trail, CMIMaterial.BUSH),
+        FIREFLY(CMIMaterial.FIREFLY_BUSH);
 
         static HashMap<String, CMIParticle> byName = new HashMap<String, CMIParticle>();
         static HashMap<Object, CMIParticle> byType = new HashMap<Object, CMIParticle>();
@@ -276,7 +300,9 @@ public class CMIEffectManager {
         private CMIMaterial icon;
         private Object particle;
         private Effect effect;
+        @Deprecated
         private Object EnumParticle;
+        @Deprecated
         private int[] extra;
         private CMIParticleDataType dataType = CMIParticleDataType.Void;
 
@@ -299,7 +325,7 @@ public class CMIEffectManager {
         CMIParticle(CMIParticleDataType dataType, CMIMaterial icon) {
             this(new ArrayList<>(), null, icon, dataType);
         }
-        
+
         CMIParticle(CMIParticleDataType dataType) {
             this(new ArrayList<>(), null, null, dataType);
         }
@@ -363,8 +389,7 @@ public class CMIEffectManager {
         }
 
         public boolean isColored() {
-            return this.equals(DUST) || dataType == CMIParticleDataType.Color || dataType == CMIParticleDataType.Trail || dataType == CMIParticleDataType.DustTransition
-                || dataType == CMIParticleDataType.DustOptions;
+            return dataType.contains(CMIEffectDataValueTypes.ColorFrom);
         }
 
         public static boolean isParticle(Effect effect) {
@@ -472,47 +497,37 @@ public class CMIEffectManager {
 
         public CMIParticle getNextPartcileEffect() {
 
-            List<CMIParticle> ls = getParticleList();
+            List<CMIParticle> list = getParticleList();
 
             CMIParticle first = null;
 
-            for (int i = 0; i < ls.size(); i++) {
-                CMIParticle next = ls.get(i);
-                if (next == null)
+            for (int i = 0; i < list.size(); i++) {
+                CMIParticle next = list.get(i);
+
+                if (next == null || !next.isParticle() || Version.isCurrentEqualOrHigher(Version.v1_9_R1) && next.getParticle() == null)
                     continue;
 
-                if (!next.isParticle())
-                    continue;
-
-                if (Version.isCurrentEqualOrHigher(Version.v1_9_R1) && next.getParticle() == null)
-                    continue;
                 if (first == null)
                     first = next;
 
                 if (next.equals(this)) {
-                    if (i == ls.size() - 1)
-                        return ls.get(0);
-                    return ls.get(i + 1);
+                    if (i == list.size() - 1)
+                        return list.get(0);
+                    return list.get(i + 1);
                 }
             }
             return first == null ? this : first;
         }
 
         public CMIParticle getPrevParticleEffect() {
-            List<CMIParticle> ls = getParticleList();
+            List<CMIParticle> list = getParticleList();
 
             CMIParticle first = null;
 
-            for (int i = 0; i < ls.size(); i++) {
-                CMIParticle next = ls.get(i);
+            for (int i = 0; i < list.size(); i++) {
+                CMIParticle next = list.get(i);
 
-                if (next == null)
-                    continue;
-
-                if (!next.isParticle())
-                    continue;
-
-                if (Version.isCurrentEqualOrHigher(Version.v1_9_R1) && next.getParticle() == null)
+                if (next == null || !next.isParticle() || Version.isCurrentEqualOrHigher(Version.v1_9_R1) && next.getParticle() == null)
                     continue;
 
                 if (first == null)
@@ -520,8 +535,8 @@ public class CMIEffectManager {
 
                 if (next.equals(this)) {
                     if (i == 0)
-                        return ls.get(ls.size() - 1);
-                    return ls.get(i - 1);
+                        return list.get(list.size() - 1);
+                    return list.get(i - 1);
                 }
             }
             return first == null ? this : first;
@@ -583,13 +598,10 @@ public class CMIEffectManager {
                     && !name2.equalsIgnoreCase(n3))
                     continue;
                 particle = one;
-                break;
+                return one;
             }
 
-            if (particle != null)
-                return (org.bukkit.Particle) particle;
-
-            main: for (String oneS : getSecondaryNames()) {
+            for (String oneS : getSecondaryNames()) {
                 String n = oneS.replace("_", "").toLowerCase();
                 if (n.isEmpty())
                     continue;
@@ -597,25 +609,29 @@ public class CMIEffectManager {
                     if (!one.toString().toLowerCase().replace("_", "").equalsIgnoreCase(n))
                         continue;
                     particle = one;
-                    break main;
+                    return one;
                 }
             }
 
             return particle == null ? null : (org.bukkit.Particle) particle;
         }
 
+        @Deprecated
         public Object getEnumParticle() {
             return EnumParticle;
         }
 
+        @Deprecated
         public void setEnumParticle(Object enumParticle) {
             EnumParticle = enumParticle;
         }
 
+        @Deprecated
         public int[] getExtra() {
             return extra;
         }
 
+        @Deprecated
         public void setExtra(int[] extra) {
             this.extra = extra;
         }
@@ -625,4 +641,331 @@ public class CMIEffectManager {
         }
     }
 
+    private CMILib plugin;
+    private static Class<?> PacketPlayOutWorldParticles;
+    private static Class<?> EnumParticle;
+    private static Class<?> CraftParticle;
+    private static Class<?> ParticleParam;
+
+    private static Constructor<?> effectConstructor = null;
+    private static Method CraftParticleMethod = null;
+    private static Constructor<?> vibrationConstructor = null;
+    private static Constructor<?> destinationConstructor = null;
+
+    public CMIEffectManager(CMILib plugin) {
+        this.plugin = plugin;
+    }
+
+    static {
+        if (Version.isCurrentEqualOrHigher(Version.v1_17_R1)) {
+            PacketPlayOutWorldParticles = net.minecraft.network.protocol.game.PacketPlayOutWorldParticles.class;
+            CraftParticle = Reflections.getBukkitClass("CraftParticle");
+            ParticleParam = net.minecraft.core.particles.ParticleParam.class;
+        } else {
+            try {
+                PacketPlayOutWorldParticles = CMILib.getInstance().getReflectionManager().getMinecraftClass("PacketPlayOutWorldParticles");
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+            try {
+                if (Version.isCurrentEqualOrLower(Version.v1_12_R1))
+                    EnumParticle = CMILib.getInstance().getReflectionManager().getMinecraftClass("EnumParticle");
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+            if (Version.isCurrentHigher(Version.v1_12_R1)) {
+                try {
+                    CraftParticle = Reflections.getBukkitClass("CraftParticle");
+                } catch (Throwable e) {
+                }
+                try {
+                    ParticleParam = CMILib.getInstance().getReflectionManager().getMinecraftClass("ParticleParam");
+                } catch (Throwable e) {
+                }
+            }
+        }
+    }
+
+    private static void playFor1_17Up(Player player, Location location, CMIEffect ef) {
+
+        org.bukkit.Particle particle = ef.getParticle().getParticle();
+
+        if (particle == null)
+            return;
+
+        try {
+            Object dd = null;
+
+            switch (ef.getParticle().getDataType()) {
+            case BlockData:
+                dd = Bukkit.createBlockData(ef.getMaterial() == null ? CMIMaterial.STONE.getMaterial() : ef.getMaterial().getMaterial());
+                break;
+            case Color:
+                dd = ef.getColorFrom();
+                break;
+            case DustOptions:
+                dd = new org.bukkit.Particle.DustOptions(ef.getColorFrom(), ef.getSize());
+                break;
+            case DustTransition:
+                dd = new org.bukkit.Particle.DustTransition(ef.getColorFrom(), ef.getColorTo(), ef.getSize());
+                break;
+            case EntityData:
+                break;
+            case Float:
+                dd = ef.getSpeed();
+                break;
+            case Int:
+                dd = (int) ef.getSpeed();
+                break;
+            case ItemStack:
+                dd = ef.getMaterial() != null ? ef.getMaterial().newItemStack() : CMIMaterial.OAK_BUTTON.newItemStack();
+                break;
+            case MaterialData:
+                break;
+            case Trail:
+                dd = new Trail(location, ef.getColorFrom(), ef.getDuration());
+                break;
+            case Vibration:
+                if (destinationConstructor == null)
+                    destinationConstructor = Class.forName("org.bukkit.Vibration$Destination$BlockDestination").getConstructor(Location.class);
+                if (vibrationConstructor == null) {
+                    if (Version.isCurrentEqualOrHigher(Version.v1_21_R1))
+                        vibrationConstructor = org.bukkit.Vibration.class.getConstructor(Location.class, Class.forName("org.bukkit.Vibration$Destination"), int.class);
+                    else
+                        vibrationConstructor = org.bukkit.Vibration.class.getConstructor(Class.forName("org.bukkit.Vibration$Destination$BlockDestination"), int.class);
+                }
+
+                if (Version.isCurrentEqualOrHigher(Version.v1_21_R1))
+                    dd = vibrationConstructor.newInstance(location, destinationConstructor.newInstance(location), 20);
+                else
+                    dd = vibrationConstructor.newInstance(destinationConstructor.newInstance(location), 20);
+                break;
+            case Void:
+                break;
+            default:
+                break;
+            }
+
+            if (CraftParticleMethod == null) {
+                try {
+                    CraftParticleMethod = CraftParticle.getMethod("toNMS", org.bukkit.Particle.class, Object.class);
+                } catch (Throwable e) {
+                    CraftParticleMethod = CraftParticle.getMethod("createParticleParam", org.bukkit.Particle.class, Object.class);
+                }
+            }
+
+            net.minecraft.network.protocol.game.PacketPlayOutWorldParticles packet = null;
+
+            if (Version.isCurrentEqualOrLower(Version.v1_21_R2)) {
+                if (effectConstructor == null)
+                    effectConstructor = PacketPlayOutWorldParticles.getConstructor(net.minecraft.core.particles.ParticleParam.class, boolean.class, double.class, double.class, double.class,
+                        float.class, float.class, float.class, float.class, int.class);
+
+                packet = (net.minecraft.network.protocol.game.PacketPlayOutWorldParticles) effectConstructor.newInstance(CraftParticleMethod.invoke(null, particle, dd),
+                    true,
+                    location.getX(),
+                    location.getY(),
+                    location.getZ(),
+                    (float) ef.getOffset().getX(),
+                    (float) ef.getOffset().getY(),
+                    (float) ef.getOffset().getZ(),
+                    ef.getSpeed(),
+                    ef.getAmount());
+
+            } else {
+                packet = new net.minecraft.network.protocol.game.PacketPlayOutWorldParticles(
+                    (net.minecraft.core.particles.ParticleParam) CraftParticleMethod.invoke(null, particle, dd),
+                    true,
+                    false,
+                    location.getX(),
+                    location.getY(),
+                    location.getZ(),
+                    (float) ef.getOffset().getX(),
+                    (float) ef.getOffset().getY(),
+                    (float) ef.getOffset().getZ(),
+                    ef.getSpeed(),
+                    ef.getAmount());
+            }
+            CMILib.getInstance().getReflectionManager().sendPlayerPacket(player, packet);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void playEffect(Player player, Location location, CMIEffect ef) {
+        if (location == null || ef == null || location.getWorld() == null || player == null || !player.isOnline())
+            return;
+
+        if (!location.getWorld().equals(player.getWorld()))
+            return;
+
+        if (ef.getParticle() == null)
+            return;
+
+        if (!ef.getParticle().isParticle())
+            return;
+
+        try {
+
+            if (Version.isCurrentEqualOrHigher(Version.v1_17_R1)) {
+                playFor1_17Up(player, location, ef);
+            } else if (Version.isCurrentEqualOrHigher(Version.v1_14_R2)) {
+                playFor1_14Up(player, location, ef);
+            } else if (Version.isCurrentEqualOrHigher(Version.v1_13_R1)) {
+                playFor1_13Up(player, location, ef);
+            } else if (Version.isCurrentEqualOrHigher(Version.v1_8_R1)) {
+                playFor1_8Up(player, location, ef);
+            } else {
+                playForAncient(player, location, ef);
+            }
+
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void playForAncient(Player player, Location location, CMIEffect ef) {
+        Effect effect = ef.getParticle().getEffect();
+
+        if (effect == null)
+            return;
+
+        try {
+            if (effectConstructor == null)
+                effectConstructor = PacketPlayOutWorldParticles.getConstructor(String.class, float.class, float.class, float.class, float.class, float.class, float.class, float.class, int.class);
+            Object newPack = effectConstructor.newInstance(effect.name(), (float) location.getX(), (float) location.getY(), (float) location.getZ(), (float) ef.getOffset().getX(),
+                (float) ef.getOffset().getY(), (float) ef.getOffset().getZ(), ef.getSpeed(), ef.getAmount());
+            CMILib.getInstance().getReflectionManager().sendPlayerPacket(player, newPack);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void playFor1_8Up(Player player, Location location, CMIEffect ef) {
+
+        Effect effect = ef.getParticle().getEffect();
+
+        if (effect == null)
+            return;
+
+        try {
+            Object particle = ef.getParticle().getEnumParticle() == null ? null : EnumParticle.cast(ef.getParticle().getEnumParticle());
+            int[] extra = ef.getParticle().getExtra();
+
+            if (particle == null) {
+
+                for (Object p : EnumParticle.getEnumConstants()) {
+
+                    String name = p.toString().replace("_", "");
+
+                    if (ef.getParticle().is(name)) {
+                        particle = p;
+                        if (ef.getParticle().getEffect().getData() != null) {
+                            extra = new int[] { (0 << 12) | (0 & 0xFFF) };
+                        }
+                        break;
+                    }
+                }
+                if (extra == null) {
+                    extra = new int[0];
+                }
+            }
+
+            if (particle == null)
+                return;
+
+            if (ef.getParticle().getEnumParticle() == null) {
+                ef.getParticle().setEnumParticle(particle);
+                ef.getParticle().setExtra(extra);
+            }
+
+            if (effectConstructor == null)
+                effectConstructor = PacketPlayOutWorldParticles.getConstructor(EnumParticle, boolean.class, float.class, float.class, float.class, float.class, float.class, float.class, float.class,
+                    int.class, int[].class);
+
+            Object newPack = null;
+            if (ef.getParticle().isColored())
+                newPack = effectConstructor.newInstance(particle,
+                    true,
+                    (float) location.getX(),
+                    (float) location.getY(),
+                    (float) location.getZ(),
+                    ef.getColorFrom().getRed() / 255F,
+                    ef.getColorFrom().getGreen() / 255F,
+                    ef.getColorFrom().getBlue() / 255F,
+                    1,
+                    0,
+                    extra);
+            else
+                newPack = effectConstructor.newInstance(particle,
+                    true,
+                    (float) location.getX(),
+                    (float) location.getY(),
+                    (float) location.getZ(),
+                    (float) ef.getOffset().getX(),
+                    (float) ef.getOffset().getY(),
+                    (float) ef.getOffset().getZ(),
+                    ef.getSpeed(),
+                    ef.getAmount(),
+                    extra);
+
+            CMILib.getInstance().getReflectionManager().sendPlayerPacket(player, newPack);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void playFor1_13Up(Player player, Location location, CMIEffect ef) {
+
+        org.bukkit.Particle particle = ef.getParticle().getParticle();
+
+        if (particle == null)
+            return;
+        try {
+            org.bukkit.Particle.DustOptions dd = null;
+            if (particle.toString().equals("REDSTONE"))
+                dd = new org.bukkit.Particle.DustOptions(ef.getColor(), ef.getSize());
+
+            if (CraftParticleMethod == null)
+                CraftParticleMethod = CraftParticle.getMethod("toNMS", org.bukkit.Particle.class, Object.class);
+
+            if (effectConstructor == null)
+                effectConstructor = PacketPlayOutWorldParticles.getConstructor(ParticleParam, boolean.class, float.class, float.class, float.class, float.class, float.class, float.class,
+                    float.class, int.class);
+
+            Object param = CraftParticleMethod.invoke(null, particle, dd);
+            Object packet = effectConstructor.newInstance(param, true, (float) location.getX(), (float) location.getY(), (float) location.getZ(), (float) ef
+                .getOffset().getX(), (float) ef.getOffset().getY(), (float) ef.getOffset().getZ(), ef.getSpeed(), ef.getAmount());
+            CMILib.getInstance().getReflectionManager().sendPlayerPacket(player, packet);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void playFor1_14Up(Player player, Location location, CMIEffect ef) {
+
+        org.bukkit.Particle particle = ef.getParticle().getParticle();
+
+        if (particle == null)
+            return;
+
+        try {
+            org.bukkit.Particle.DustOptions dd = null;
+            if (particle.toString().equals("REDSTONE"))
+                dd = new org.bukkit.Particle.DustOptions(ef.getColorFrom(), ef.getSize());
+
+            if (CraftParticleMethod == null)
+                CraftParticleMethod = CraftParticle.getMethod("toNMS", org.bukkit.Particle.class, Object.class);
+
+            if (effectConstructor == null)
+                effectConstructor = PacketPlayOutWorldParticles.getConstructor(ParticleParam, boolean.class, double.class, double.class, double.class, float.class, float.class, float.class,
+                    float.class, int.class);
+
+            Object packet = effectConstructor.newInstance(CraftParticleMethod.invoke(null, particle, dd), true, location.getX(), location.getY(), location.getZ(), (float) ef
+                .getOffset().getX(), (float) ef.getOffset().getY(), (float) ef.getOffset().getZ(), ef.getSpeed(), ef.getAmount());
+            CMILib.getInstance().getReflectionManager().sendPlayerPacket(player, packet);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
 }

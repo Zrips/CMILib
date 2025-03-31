@@ -48,10 +48,9 @@ import net.Zrips.CMILib.Colors.CMIChatColor;
 import net.Zrips.CMILib.Container.CMIPlayerInventory;
 import net.Zrips.CMILib.Container.CMIServerProperties;
 import net.Zrips.CMILib.Effects.CMIEffect;
-import net.Zrips.CMILib.Effects.CMIEffectManager.CMIParticleDataType;
+import net.Zrips.CMILib.Effects.CMIEffectManager;
 import net.Zrips.CMILib.Items.CMIItemStack;
 import net.Zrips.CMILib.Items.CMIMaterial;
-import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.RawMessages.RawMessage;
 import net.Zrips.CMILib.Version.Version;
@@ -59,8 +58,6 @@ import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
 import net.minecraft.advancements.AdvancementDisplay;
 import net.minecraft.resources.MinecraftKey;
 import net.minecraft.world.entity.PositionMoveRotation;
-import net.minecraft.world.entity.Relative;
-import net.minecraft.world.level.portal.TeleportTransition;
 import net.minecraft.world.phys.Vec3D;
 
 public class Reflections {
@@ -70,58 +67,33 @@ public class Reflections {
     private Class<?> WorldServerClass;
     private Object CraftServer;
     private Object DedicatedServer;
-    private Class<?> CraftStatistic;
-    private Class<?> Statistics;
-//    private Class<?> TileEntitySign;
     private Class<?> MinecraftServerClass;
     private Class<?> PropertyManagerClass;
     private Object MinecraftServer;
-    private Class<?> ServerStatisticManager;
-//    private Class<?> MojangsonParser;
-//    private Class<?> PlayerList;
 
     private Class<?> EntityHuman;
-//    private Class<?> EntityPlayer;
-//    private Class<?> EnumGameMode;
     private Class<?> CraftPlayer;
     private Class<?> CraftEntity;
     private Class<?> CEntity;
     private Class<?> nbtTagCompound;
-//    private Class<?> nbtTagList;
-    private Class<?> NBTBase;
     private Class<?> EntityLiving;
     private Class<?> BlockPosition;
-//    private Class<?> EnumHand;
     private Class<?> CraftBeehive;
     private Class<?> CraftNamespacedKey;
-//    private Class<?> TileEntityBeehive;
-
-//    private Class<?> IChatBaseComponent$ChatSerializer;
-//    private Class<?> CraftMetaBook;
-//    private Class<?> CraftItemStack;
     private Class<?> Item;
     private Class<?> IStack;
     private Class<?> nmsChatSerializer;
-//    private Class<?> IChatBaseComponent;
     private Class<?> dimensionManager;
-//    private Class<?> PacketPlayOutAnimation;
 
     private Class<?> CraftContainer;
     private Class<?> CraftContainers;
     private Class<?> PacketPlayOutOpenWindow;
-//    private Class<?> PacketPlayOutWindowItems;
     private Class<?> PacketPlayOutEntityTeleport;
-//    private Class<?> PacketPlayOutGameStateChange;
     private Class<?> PacketPlayOutSpawnEntityLiving;
     private Class<?> PacketPlayOutEntityMetadata;
     private Class<?> PacketPlayOutSetSlot;
     private Class<?> DataWatcher;
-//    private Field playerConnection;
     private Method sendPacket;
-    private Class<?> PacketPlayOutWorldParticles;
-    private Class<?> EnumParticle;
-    private Class<?> ParticleParam;
-    private Class<?> CraftParticle;
     private Class<?> AdvancementDataWorld;
     private Class<?> ChatDeserializer;
     private Class<?> SerializedAdvancement;
@@ -183,7 +155,6 @@ public class Reflections {
                 PacketPlayOutEntityMetadata = net.minecraft.network.protocol.game.PacketPlayOutEntityMetadata.class;
                 PacketPlayOutSetSlot = net.minecraft.network.protocol.game.PacketPlayOutSetSlot.class;
                 PacketPlayOutOpenWindow = net.minecraft.network.protocol.game.PacketPlayOutOpenWindow.class;
-                PacketPlayOutWorldParticles = net.minecraft.network.protocol.game.PacketPlayOutWorldParticles.class;
                 CraftContainer = net.minecraft.world.inventory.Container.class;
                 CraftContainers = net.minecraft.world.inventory.Containers.class;
                 DataWatcher = net.minecraft.network.syncher.DataWatcher.class;
@@ -199,9 +170,7 @@ public class Reflections {
                     }
                 }
 
-                CraftParticle = getBukkitClass("CraftParticle");
                 CraftChatMessage = getBukkitClass("util.CraftChatMessage");
-                ParticleParam = net.minecraft.core.particles.ParticleParam.class;
 
                 WorldServerClass = net.minecraft.server.level.WorldServer.class;
                 dimensionManager = net.minecraft.world.level.dimension.DimensionManager.class;
@@ -213,18 +182,13 @@ public class Reflections {
 
                 MinecraftServer = CraftServer.getClass().getMethod("getServer").invoke(CraftServer);
 
-                CraftStatistic = getBukkitClass("CraftStatistic");
                 CraftPlayer = getBukkitClass("entity.CraftPlayer");
                 CraftEntity = getBukkitClass("entity.CraftEntity");
-                Statistics = net.minecraft.stats.Statistic.class;
-                ServerStatisticManager = net.minecraft.stats.ServerStatisticManager.class;
                 PropertyManagerClass = net.minecraft.server.dedicated.PropertyManager.class;
 
                 CEntity = net.minecraft.world.entity.Entity.class;
 
                 nbtTagCompound = net.minecraft.nbt.NBTTagCompound.class;
-                NBTBase = net.minecraft.nbt.NBTBase.class;
-
                 EntityLiving = net.minecraft.world.entity.EntityLiving.class;
                 Item = net.minecraft.world.item.Item.class;
                 IStack = net.minecraft.world.item.ItemStack.class;
@@ -272,11 +236,6 @@ public class Reflections {
             } catch (Throwable e) {
             }
             try {
-                PacketPlayOutWorldParticles = getMinecraftClass("PacketPlayOutWorldParticles");
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }
-            try {
                 CraftNamespacedKey = getBukkitClass("util.CraftNamespacedKey");
             } catch (Throwable e) {
             }
@@ -305,22 +264,6 @@ public class Reflections {
             try {
                 CraftContainers = getMinecraftClass("Containers");
             } catch (Throwable e) {
-            }
-            try {
-                if (Version.isCurrentEqualOrLower(Version.v1_12_R1))
-                    EnumParticle = getMinecraftClass("EnumParticle");
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }
-            if (Version.isCurrentHigher(Version.v1_12_R1)) {
-                try {
-                    CraftParticle = getBukkitClass("CraftParticle");
-                } catch (Throwable e) {
-                }
-                try {
-                    ParticleParam = getMinecraftClass("ParticleParam");
-                } catch (Throwable e) {
-                }
             }
             try {
                 PacketPlayOutEntityTeleport = getMinecraftClass("PacketPlayOutEntityTeleport");
@@ -389,21 +332,6 @@ public class Reflections {
                 e.printStackTrace();
             }
             try {
-                CraftStatistic = getBukkitClass("CraftStatistic");
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }
-            try {
-                Statistics = getMinecraftClass("Statistic");
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }
-            try {
-                ServerStatisticManager = getMinecraftClass("ServerStatisticManager");
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }
-            try {
 
                 PropertyManagerClass = getMinecraftClass("PropertyManager");
             } catch (Throwable e) {
@@ -431,11 +359,6 @@ public class Reflections {
                 e.printStackTrace();
             }
 
-            try {
-                NBTBase = getMinecraftClass("NBTBase");
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }
             try {
                 EntityLiving = getMinecraftClass("EntityLiving");
             } catch (Throwable e) {
@@ -1734,237 +1657,9 @@ public class Reflections {
         return 5;
     }
 
-    Constructor<?> effectConstructor = null;
-    Method CraftParticleMethod = null;
-    Constructor<?> vibrationConstructor = null;
-    Constructor<?> destinationConstructor = null;
-
-    public void playEffect(Player player, Location location, CMIEffect ef) {
-        if (location == null || ef == null || location.getWorld() == null || player == null || !player.isOnline())
-            return;
-
-        if (!location.getWorld().equals(player.getWorld()))
-            return;
-
-        if (ef.getParticle() == null)
-            return;
-
-        if (!ef.getParticle().isParticle())
-            return;
-
-        try {
-
-            if (Version.isCurrentEqualOrLower(Version.v1_7_R4)) {
-
-                Effect effect = ef.getParticle().getEffect();
-
-                if (effect == null)
-                    return;
-
-                if (effectConstructor == null)
-                    effectConstructor = PacketPlayOutWorldParticles.getConstructor(String.class, float.class, float.class, float.class, float.class, float.class, float.class, float.class, int.class);
-                Object newPack = effectConstructor.newInstance(effect.name(), (float) location.getX(), (float) location.getY(), (float) location.getZ(), (float) ef.getOffset().getX(),
-                    (float) ef.getOffset().getY(), (float) ef.getOffset().getZ(), ef.getSpeed(), ef.getAmount());
-                sendPlayerPacket(player, newPack);
-            } else if (Version.isCurrentEqualOrLower(Version.v1_12_R1)) {
-
-                Effect effect = ef.getParticle().getEffect();
-
-                if (effect == null)
-                    return;
-
-                Object particle = ef.getParticle().getEnumParticle() == null ? null : EnumParticle.cast(ef.getParticle().getEnumParticle());
-                int[] extra = ef.getParticle().getExtra();
-
-                if (particle == null) {
-
-                    for (Object p : EnumParticle.getEnumConstants()) {
-
-                        String name = p.toString().replace("_", "");
-
-                        if (ef.getParticle().is(name)) {
-                            particle = p;
-                            if (ef.getParticle().getEffect().getData() != null) {
-                                extra = new int[] { (0 << 12) | (0 & 0xFFF) };
-                            }
-                            break;
-                        }
-                    }
-                    if (extra == null) {
-                        extra = new int[0];
-                    }
-                }
-
-                if (particle == null)
-                    return;
-
-                if (ef.getParticle().getEnumParticle() == null) {
-                    ef.getParticle().setEnumParticle(particle);
-                    ef.getParticle().setExtra(extra);
-                }
-
-                if (effectConstructor == null)
-                    effectConstructor = PacketPlayOutWorldParticles.getConstructor(EnumParticle, boolean.class, float.class, float.class, float.class, float.class, float.class, float.class, float.class,
-                        int.class, int[].class);
-
-                Object newPack = null;
-                if (ef.getParticle().isColored())
-                    newPack = effectConstructor.newInstance(particle,
-                        true,
-                        (float) location.getX(),
-                        (float) location.getY(),
-                        (float) location.getZ(),
-                        ef.getColorFrom().getRed() / 255F,
-                        ef.getColorFrom().getGreen() / 255F,
-                        ef.getColorFrom().getBlue() / 255F,
-                        1,
-                        0,
-                        extra);
-                else
-                    newPack = effectConstructor.newInstance(particle,
-                        true,
-                        (float) location.getX(),
-                        (float) location.getY(),
-                        (float) location.getZ(),
-                        (float) ef.getOffset().getX(),
-                        (float) ef.getOffset().getY(),
-                        (float) ef.getOffset().getZ(),
-                        ef.getSpeed(),
-                        ef.getAmount(),
-                        extra);
-
-                sendPlayerPacket(player, newPack);
-            } else if (Version.isCurrentEqualOrLower(Version.v1_14_R1)) {
-
-                org.bukkit.Particle particle = ef.getParticle().getParticle();
-
-                if (particle == null)
-                    return;
-
-                org.bukkit.Particle.DustOptions dd = null;
-                if (particle.toString().equals("REDSTONE"))
-                    dd = new org.bukkit.Particle.DustOptions(ef.getColor(), ef.getSize());
-
-                if (CraftParticleMethod == null)
-                    CraftParticleMethod = CraftParticle.getMethod("toNMS", org.bukkit.Particle.class, Object.class);
-
-                if (effectConstructor == null)
-                    effectConstructor = PacketPlayOutWorldParticles.getConstructor(ParticleParam, boolean.class, float.class, float.class, float.class, float.class, float.class, float.class,
-                        float.class, int.class);
-
-                Object param = CraftParticleMethod.invoke(null, particle, dd);
-                Object packet = effectConstructor.newInstance(param, true, (float) location.getX(), (float) location.getY(), (float) location.getZ(), (float) ef
-                    .getOffset().getX(), (float) ef.getOffset().getY(), (float) ef.getOffset().getZ(), ef.getSpeed(), ef.getAmount());
-                sendPlayerPacket(player, packet);
-
-            } else if (Version.isCurrentEqualOrLower(Version.v1_16_R3)) {
-
-                org.bukkit.Particle particle = ef.getParticle().getParticle();
-
-                if (particle == null)
-                    return;
-
-                org.bukkit.Particle.DustOptions dd = null;
-                if (particle.toString().equals("REDSTONE"))
-                    dd = new org.bukkit.Particle.DustOptions(ef.getColorFrom(), ef.getSize());
-
-                if (CraftParticleMethod == null)
-                    CraftParticleMethod = CraftParticle.getMethod("toNMS", org.bukkit.Particle.class, Object.class);
-
-                if (effectConstructor == null)
-                    effectConstructor = PacketPlayOutWorldParticles.getConstructor(ParticleParam, boolean.class, double.class, double.class, double.class, float.class, float.class, float.class,
-                        float.class, int.class);
-
-                Object packet = effectConstructor.newInstance(CraftParticleMethod.invoke(null, particle, dd), true, location.getX(), location.getY(), location.getZ(), (float) ef
-                    .getOffset().getX(), (float) ef.getOffset().getY(), (float) ef.getOffset().getZ(), ef.getSpeed(), ef.getAmount());
-                sendPlayerPacket(player, packet);
-
-            } else {
-
-                org.bukkit.Particle particle = ef.getParticle().getParticle();
-
-                if (particle == null)
-                    return;
-
-//		org.bukkit.Particle.DustOptions dd = null;
-                Object dd = null;
-                if (ef.getParticle().getDataType().equals(CMIParticleDataType.DustOptions)) {
-                    dd = new org.bukkit.Particle.DustOptions(ef.getColorFrom(), ef.getSize());
-                } else if (ef.getParticle().getDataType().equals(CMIParticleDataType.DustTransition)) {                                       
-                    dd = new org.bukkit.Particle.DustTransition(ef.getColorFrom(), ef.getColorTo(), ef.getSize());
-                } else if (ef.getParticle().getDataType().equals(CMIParticleDataType.Float)) {
-                    dd = ef.getSpeed();
-                } else if (ef.getParticle().getDataType().equals(CMIParticleDataType.Int)) {
-                    dd = (int) ef.getSpeed();
-                } else if (ef.getParticle().getDataType().equals(CMIParticleDataType.Vibration)) {
-                    if (destinationConstructor == null)
-                        destinationConstructor = Class.forName("org.bukkit.Vibration$Destination$BlockDestination").getConstructor(Location.class);
-                    if (vibrationConstructor == null) {
-                        if (Version.isCurrentEqualOrHigher(Version.v1_21_R1))
-                            vibrationConstructor = Class.forName("org.bukkit.Vibration").getConstructor(Location.class, Class.forName("org.bukkit.Vibration$Destination"), int.class);
-                        else
-                            vibrationConstructor = Class.forName("org.bukkit.Vibration").getConstructor(Class.forName("org.bukkit.Vibration$Destination$BlockDestination"), int.class);
-                    }
-                    if (Version.isCurrentEqualOrHigher(Version.v1_21_R1))
-                        dd = vibrationConstructor.newInstance(location, destinationConstructor.newInstance(location), 20);
-                    else
-                        dd = vibrationConstructor.newInstance(destinationConstructor.newInstance(location), 20);
-                } else if (ef.getParticle().getDataType().equals(CMIParticleDataType.Color)) {
-                    dd = ef.getColorFrom();
-                } else if (ef.getParticle().getDataType().equals(CMIParticleDataType.ItemStack)) {
-                    dd = ef.getMaterial() != null ? ef.getMaterial().newItemStack() : CMIMaterial.OAK_BUTTON.newItemStack();
-                } else if (ef.getParticle().getDataType().equals(CMIParticleDataType.BlockData)) {
-                    dd = Bukkit.createBlockData(ef.getMaterial() == null ? CMIMaterial.STONE.getMaterial() : ef.getMaterial().getMaterial());
-                } else if (ef.getParticle().getDataType().equals(CMIParticleDataType.Trail)) {                    
-                    dd = new Trail(location, ef.getColorFrom(), ef.getDuration());
-                }
-
-                if (CraftParticleMethod == null) {
-                    try {
-                        CraftParticleMethod = CraftParticle.getMethod("toNMS", org.bukkit.Particle.class, Object.class);
-                    } catch (Throwable e) {
-                        CraftParticleMethod = CraftParticle.getMethod("createParticleParam", org.bukkit.Particle.class, Object.class);
-                    }
-                }
-
-                net.minecraft.network.protocol.game.PacketPlayOutWorldParticles packet = null;
-
-                if (Version.isCurrentEqualOrLower(Version.v1_21_R2)) {
-                    if (effectConstructor == null)
-                        effectConstructor = PacketPlayOutWorldParticles.getConstructor(net.minecraft.core.particles.ParticleParam.class, boolean.class, double.class, double.class, double.class,
-                            float.class, float.class, float.class, float.class, int.class);
-
-                    packet = (net.minecraft.network.protocol.game.PacketPlayOutWorldParticles) effectConstructor.newInstance(CraftParticleMethod.invoke(null, particle, dd),
-                        true,
-                        location.getX(),
-                        location.getY(),
-                        location.getZ(),
-                        (float) ef.getOffset().getX(),
-                        (float) ef.getOffset().getY(),
-                        (float) ef.getOffset().getZ(),
-                        ef.getSpeed(),
-                        ef.getAmount());
-
-                } else {
-                    packet = new net.minecraft.network.protocol.game.PacketPlayOutWorldParticles(
-                        (net.minecraft.core.particles.ParticleParam) CraftParticleMethod.invoke(null, particle, dd),
-                        true,
-                        false,
-                        location.getX(),
-                        location.getY(),
-                        location.getZ(),
-                        (float) ef.getOffset().getX(),
-                        (float) ef.getOffset().getY(),
-                        (float) ef.getOffset().getZ(),
-                        ef.getSpeed(),
-                        ef.getAmount());
-                }
-                sendPlayerPacket(player, packet);
-
-            }
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
+    @Deprecated // Use CMIEffectManager    
+    public void playEffect(Player player, Location location, CMIEffect ef) {        
+        CMIEffectManager.playEffect(player, location, ef);        
     }
 
     Constructor<MinecraftKey> keyConstructor = null;
