@@ -1382,7 +1382,7 @@ public class Reflections {
                 windowId = "j";
 
             // EntityHuman -> Container
-            if (Version.isCurrentEqualOrHigher(Version.v1_21_R1)) {
+            if (Version.isCurrentEqualOrHigher(Version.v1_21_R4)) {
                 activeContainer = "bR";
             } else if (Version.isCurrentEqualOrHigher(Version.v1_21_R1)) {
                 activeContainer = "cd";
