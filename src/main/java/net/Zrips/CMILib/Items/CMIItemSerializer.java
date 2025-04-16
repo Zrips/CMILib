@@ -60,13 +60,13 @@ public class CMIItemSerializer {
     static String prefix = "{";
     static String suffix = "}";
 
-    static Pattern pname = Pattern.compile("^(?i)(name|n)\\" + prefix);
-    static Pattern dname = Pattern.compile("^(?i)(durability|dur)\\" + prefix);
-    static Pattern mdname = Pattern.compile("^(?i)(maxdurability|maxdur)\\" + prefix);
-    static Pattern plore = Pattern.compile("^(?i)(lore|l)\\" + prefix);
-    static Pattern pcolor = Pattern.compile("^(?i)(c)\\" + prefix);
-    static Pattern penchant = Pattern.compile("^(?i)(e)\\" + prefix);
-    static Pattern pmodel = Pattern.compile("^(?i)(custommodeldata|custommodel|cm|cmd)\\" + prefix);
+    public static Pattern pname = Pattern.compile("^(?i)(name|n)\\" + prefix);
+    public static Pattern dname = Pattern.compile("^(?i)(durability|dur)\\" + prefix);
+    public static Pattern mdname = Pattern.compile("^(?i)(maxdurability|maxdur)\\" + prefix);
+    public static Pattern plore = Pattern.compile("^(?i)(lore|l)\\" + prefix);
+    public static Pattern pcolor = Pattern.compile("^(?i)(c)\\" + prefix);
+    public static Pattern penchant = Pattern.compile("^(?i)(e)\\" + prefix);
+    public static Pattern pmodel = Pattern.compile("^(?i)(custommodeldata|custommodel|cm|cmd)\\" + prefix);
 
     private static int getOperation(String value) {
 
@@ -1330,8 +1330,8 @@ public class CMIItemSerializer {
                 try {
                     LeatherArmorMeta leatherMeta = (LeatherArmorMeta) meta;
                     Color color = leatherMeta.getColor();
-                    str.append(";");
-                    str.append(color.getRed() + "," + color.getGreen() + "," + color.getBlue());
+                    str.append(";c" + prefix);
+                    str.append(color.getRed() + "," + color.getGreen() + "," + color.getBlue() + suffix);
 //                    str.append(suffix);
                 } catch (Throwable e) {
                     e.printStackTrace();
@@ -1376,8 +1376,7 @@ public class CMIItemSerializer {
                     enchantS.append(",");
                 enchantS.append(CMIEnchantment.getName(e.getKey()) + ":" + e.getValue());
             }
-            str.append(enchantS.toString());
-//            str.append(suffix);
+            str.append("e" + prefix + enchantS.toString() + suffix);
         }
 
         return str.toString();

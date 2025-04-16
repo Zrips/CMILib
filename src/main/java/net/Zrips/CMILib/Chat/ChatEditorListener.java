@@ -29,7 +29,7 @@ public class ChatEditorListener implements Listener {
         if (!ChatEditorManager.map.containsKey(player.getUniqueId()))
             return;
 
-        CMIScheduler.get().runTask(() -> ChatEditorManager.perform(player, event.getMessage()));
+        CMIScheduler.runTask(plugin, () -> ChatEditorManager.perform(player, event.getMessage()));
         event.setCancelled(true);
         event.getRecipients().clear();
     }

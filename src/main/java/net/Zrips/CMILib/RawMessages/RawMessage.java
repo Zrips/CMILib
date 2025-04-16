@@ -466,9 +466,7 @@ public class RawMessage {
         }
 
         if (Version.isCurrentEqualOrHigher(Version.v1_21_R4)) {
-            CMIDebug.c(res);
             res = res.substring(1, res.length() - 1);
-            CMIDebug.c(res);
             
             temp.put(RawMessagePartType.HoverItem, "\"hover_event\":{\"action\":\"show_item\"," + res + "}");
         } else
