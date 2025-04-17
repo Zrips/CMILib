@@ -1493,8 +1493,11 @@ public class CMINBT {
     private static Object getRegistry() {
         if (registry == null) {
             try {
-                registry = ((DedicatedServer) CMILib.getInstance().getReflectionManager().getDedicatedServer()).getClass().getMethod("getDefaultRegistryAccess").invoke(
-                    (CMILib.getInstance().getReflectionManager().getDedicatedServer()));
+                if (Version.isCurrentEqualOrHigher(Version.v1_21_R4))
+                    registry = getBukkitClass("CraftRegistry").getMethod("getMinecraftRegistry").invoke(null);
+                else
+                    registry = ((DedicatedServer) CMILib.getInstance().getReflectionManager().getDedicatedServer()).getClass().getMethod("getDefaultRegistryAccess").invoke(
+                        (CMILib.getInstance().getReflectionManager().getDedicatedServer()));
             } catch (Throwable e) {
                 e.printStackTrace();
             }
