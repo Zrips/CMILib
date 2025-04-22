@@ -963,8 +963,34 @@ public class Reflections {
         return CMINBT.getNbt(item);
     }
 
+    private static String sanitizeName(String input) {
+        if (input == null || input.isEmpty())
+            return "Player";
+
+        StringBuilder sb = new StringBuilder();
+
+        for (char c : input.toCharArray()) {
+            if (Character.isLetterOrDigit(c) || c == '_') {
+                sb.append(c);
+            } else {
+                sb.append(Integer.toHexString(c));
+            }
+        }
+
+        while (sb.length() < 3) {
+            sb.append('_');
+        }
+
+        if (sb.length() > 16)
+            sb.setLength(16);
+
+        return sb.toString();
+    }
+
     @SuppressWarnings("deprecation")
     private static org.bukkit.profile.PlayerProfile getProfile(String name, String url) {
+        name = sanitizeName(name);
+
         org.bukkit.profile.PlayerProfile profile = Bukkit.createPlayerProfile(UUID.nameUUIDFromBytes(url.getBytes()), name == null ? name : name.replace(" ", ""));
         org.bukkit.profile.PlayerTextures textures = profile.getTextures();
         try {
@@ -1658,8 +1684,8 @@ public class Reflections {
     }
 
     @Deprecated // Use CMIEffectManager    
-    public void playEffect(Player player, Location location, CMIEffect ef) {        
-        CMIEffectManager.playEffect(player, location, ef);        
+    public void playEffect(Player player, Location location, CMIEffect ef) {
+        CMIEffectManager.playEffect(player, location, ef);
     }
 
     Constructor<MinecraftKey> keyConstructor = null;
