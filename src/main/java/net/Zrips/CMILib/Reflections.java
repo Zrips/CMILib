@@ -57,7 +57,6 @@ import net.Zrips.CMILib.Version.Version;
 import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
 import net.minecraft.advancements.AdvancementDisplay;
 import net.minecraft.resources.MinecraftKey;
-import net.minecraft.world.entity.PositionMoveRotation;
 import net.minecraft.world.phys.Vec3D;
 
 public class Reflections {
@@ -1514,8 +1513,10 @@ public class Reflections {
                 Object craft = entity.getClass().getMethod("getBukkitEntity").invoke(entity);
                 int id = (int) craft.getClass().getMethod("getEntityId").invoke(craft);
                 Vec3D position = new net.minecraft.world.phys.Vec3D(targetLoc.toVector().getX(), targetLoc.toVector().getY(), targetLoc.toVector().getZ());
-                PositionMoveRotation r = new PositionMoveRotation(position, new net.minecraft.world.phys.Vec3D(0, 0, 0), targetLoc.getYaw(), targetLoc.getPitch());
+                net.minecraft.world.entity.PositionMoveRotation r = new net.minecraft.world.entity.PositionMoveRotation(position, new net.minecraft.world.phys.Vec3D(0, 0, 0), targetLoc.getYaw(), targetLoc.getPitch());
+
                 net.minecraft.network.protocol.game.PacketPlayOutEntityTeleport packet = net.minecraft.network.protocol.game.PacketPlayOutEntityTeleport.a(id, r, new HashSet<>(), false);
+
                 sendPlayerPacket(player, packet);
                 return;
             }

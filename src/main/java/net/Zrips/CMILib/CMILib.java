@@ -30,6 +30,7 @@ import net.Zrips.CMILib.Shadow.ShadowCommandListener;
 import net.Zrips.CMILib.Skins.SkinManager;
 import net.Zrips.CMILib.Version.Version;
 import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
+import net.Zrips.CMILib.Worlds.WorldsListener;
 import net.Zrips.CMILib.commands.CommandsHandler;
 
 public class CMILib extends JavaPlugin {
@@ -37,6 +38,8 @@ public class CMILib extends JavaPlugin {
     private static final UUID emptyUserUUID = UUID.fromString("ffffffff-ffff-ffff-ffff-ffffffffffff");
     private static final UUID fakeUserUUID = UUID.fromString("ffffffff-ffff-ffff-ffff-fffffffffff0");
     private static final String fakeUserName = "CMIFakeOperator";
+
+    public static final String savesFolderName = "Saves";
 
     public static final String translationsFolderName = "Translations";
     public static final String itemsFolderName = "Items";
@@ -129,7 +132,7 @@ public class CMILib extends JavaPlugin {
 
     public void defaultLocaleDownloader() {
         try {
-            List<String> lang = Arrays.asList("BR","CN", "CZ", "DE", "ES", "FR", "IT", "LT", "NO", "PL", "RU", "SK", "SL", "TR", "UA", "ZH");
+            List<String> lang = Arrays.asList("BR", "CN", "CZ", "DE", "ES", "FR", "IT", "LT", "NO", "PL", "RU", "SK", "SL", "TR", "UA", "ZH");
             String lr = null;
 
             boolean download = true;
@@ -214,6 +217,10 @@ public class CMILib extends JavaPlugin {
 
         instance = this;
 
+        File f = new File(getDataFolder(), savesFolderName);
+        if (!f.isDirectory())
+            f.mkdir();
+
         this.getItemManager().load();
         this.getConfigManager().load();
         this.getItemManager().loadLocale();
@@ -285,6 +292,7 @@ public class CMILib extends JavaPlugin {
         pm.registerEvents(new GUIListener1_9(this), this);
         pm.registerEvents(new RawMessageListener(), this);
         pm.registerEvents(new ShadowCommandListener(), this);
+        pm.registerEvents(new WorldsListener(), this);
         getCommandManager().fillCommands();
 
         // Primary initialization to record locale
