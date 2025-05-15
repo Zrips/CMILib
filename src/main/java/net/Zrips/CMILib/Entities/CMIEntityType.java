@@ -499,7 +499,7 @@ public enum CMIEntityType {
 
         MobHeadInfo headInfo = headTextures.get(texture);
 
-        item = CMILib.getInstance().getReflectionManager().setSkullTexture(item, getTranslatedName(), texture);
+        item = CMILib.getInstance().getReflectionManager().setSkullTexture(item, getName(), texture);
 
         if (headInfo != null && headInfo.getCustomName() != null) {
             ItemMeta meta = item.getItemMeta();

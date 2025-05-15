@@ -25,6 +25,11 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
+		    <groupId>net.kyori</groupId>
+		    <artifactId>adventure-nbt</artifactId>
+		    <version>4.13.0</version>
+		</dependency>
+		<dependency>
 			<groupId>com.mojang</groupId>
 			<artifactId>authlib</artifactId>
 			<version>1.5.21</version>

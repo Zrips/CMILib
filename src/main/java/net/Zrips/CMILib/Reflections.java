@@ -962,26 +962,40 @@ public class Reflections {
         return CMINBT.getNbt(item);
     }
 
+    private static String getSuffix(String input) {
+        int hash = Math.abs(input.hashCode());
+        String hex = Integer.toHexString(hash);
+        return "_" + hex.substring(0, Math.min(3, hex.length()));
+    }
+
     private static String sanitizeName(String input) {
         if (input == null || input.isEmpty())
-            return "Player";
+            return "Player" + getSuffix("null");
 
         StringBuilder sb = new StringBuilder();
 
         for (char c : input.toCharArray()) {
-            if (Character.isLetterOrDigit(c) || c == '_') {
+            if ((c >= 'a' && c <= 'z') ||
+                (c >= 'A' && c <= 'Z') ||
+                (c >= '0' && c <= '9') ||
+                c == '_') {
                 sb.append(c);
-            } else {
-                sb.append(Integer.toHexString(c));
             }
         }
 
+        // If result is empty or too short, use hash suffix
+        if (sb.length() < 3) {
+            sb.append(getSuffix(input));
+        }
+
+        // Trim or pad to valid length
         while (sb.length() < 3) {
             sb.append('_');
         }
 
-        if (sb.length() > 16)
+        if (sb.length() > 16) {
             sb.setLength(16);
+        }
 
         return sb.toString();
     }
@@ -1513,7 +1527,8 @@ public class Reflections {
                 Object craft = entity.getClass().getMethod("getBukkitEntity").invoke(entity);
                 int id = (int) craft.getClass().getMethod("getEntityId").invoke(craft);
                 Vec3D position = new net.minecraft.world.phys.Vec3D(targetLoc.toVector().getX(), targetLoc.toVector().getY(), targetLoc.toVector().getZ());
-                net.minecraft.world.entity.PositionMoveRotation r = new net.minecraft.world.entity.PositionMoveRotation(position, new net.minecraft.world.phys.Vec3D(0, 0, 0), targetLoc.getYaw(), targetLoc.getPitch());
+                net.minecraft.world.entity.PositionMoveRotation r = new net.minecraft.world.entity.PositionMoveRotation(position, new net.minecraft.world.phys.Vec3D(0, 0, 0), targetLoc.getYaw(), targetLoc
+                    .getPitch());
 
                 net.minecraft.network.protocol.game.PacketPlayOutEntityTeleport packet = net.minecraft.network.protocol.game.PacketPlayOutEntityTeleport.a(id, r, new HashSet<>(), false);
 

@@ -412,6 +412,24 @@ public class RawMessage {
         return this;
     }
 
+    private static final Pattern BOOLEAN_PATTERN = Pattern.compile("(bold|italic|obfuscated|strikethrough|underlined):(\\d)b");
+
+    // Temp fix due to broken serializer
+    private static String updateBooleans(String input) {
+        Matcher matcher = BOOLEAN_PATTERN.matcher(input);
+        StringBuffer sb = new StringBuffer();
+
+        while (matcher.find()) {
+            String key = matcher.group(1);
+            String value = matcher.group(2);
+            String replacement = "\"" + key + "\":" + (value.equals("1") ? "true" : "false");
+            matcher.appendReplacement(sb, replacement);
+        }
+
+        matcher.appendTail(sb);
+        return sb.toString();
+    }
+
     public RawMessage addItem(ItemStack item) {
         if (item == null)
             return this;
@@ -425,6 +443,9 @@ public class RawMessage {
         }
 
         String res = CMINBT.toJson(item);
+
+        // Temp fix due to serializer using 0b and 1b for false and true
+        res = updateBooleans(res);
 
         // Cleaning up useless information. Italic not included due to some weird behavior which defaults to italic look if not specifically set to not be one
         res = res.replaceAll("\\\"bold\\\":false,|\\\"underlined\\\":false,|\\\"strikethrough\\\":false,|\\\"obfuscated\\\":false,", "");
@@ -467,7 +488,7 @@ public class RawMessage {
 
         if (Version.isCurrentEqualOrHigher(Version.v1_21_R4)) {
             res = res.substring(1, res.length() - 1);
-            
+
             temp.put(RawMessagePartType.HoverItem, "\"hover_event\":{\"action\":\"show_item\"," + res + "}");
         } else
             temp.put(RawMessagePartType.HoverItem, "\"hoverEvent\":{\"action\":\"show_item\",\"value\":\"" + escape(res, true) + "\"}");

@@ -26,8 +26,11 @@ import com.google.common.collect.Multimap;
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Entities.CMIEntityType;
 import net.Zrips.CMILib.Items.CMIMaterial;
+import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.PersistentData.CMIPersistentDataContainer;
 import net.Zrips.CMILib.Version.Version;
+import net.kyori.adventure.nbt.api.BinaryTagHolder;
+import net.kyori.adventure.text.NBTComponentBuilder;
 import net.minecraft.server.dedicated.DedicatedServer;
 
 public class CMINBT {
@@ -1771,7 +1774,6 @@ public class CMINBT {
     public static ItemStack modifyItemStack(ItemStack stack, String arguments) {
 
         if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
-
             return stack;
         }
 
