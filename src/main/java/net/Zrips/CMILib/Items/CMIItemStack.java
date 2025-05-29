@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
@@ -14,6 +15,7 @@ import org.bukkit.Material;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.MemorySection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -1063,5 +1065,9 @@ public class CMIItemStack {
         }
 
         return (ItemStack) new CMINBT(item).setByte("Unbreakable", (byte) (state ? 1 : 0));
+    }
+
+    public static ItemStack getItemFromObject(Object itemObject) {
+        return CMIItemSerializer.getItemFromObject(itemObject);
     }
 }

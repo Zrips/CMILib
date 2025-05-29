@@ -93,8 +93,10 @@ public class CMIGuiButton {
             return this;
 
         ItemMeta meta = item.getItemMeta();
-        meta.setHideTooltip(true);
-        item.setItemMeta(meta);
+        if (meta != null) {
+            meta.setHideTooltip(true);
+            item.setItemMeta(meta);
+        }
         return this;
     }
 

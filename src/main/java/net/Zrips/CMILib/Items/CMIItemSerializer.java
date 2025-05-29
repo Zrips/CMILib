@@ -22,6 +22,7 @@ import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.MemorySection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -1459,5 +1460,17 @@ public class CMIItemSerializer {
         }
 
         return liner;
+    }
+
+    public static ItemStack getItemFromObject(Object itemObject) {
+        if (itemObject instanceof ItemStack) {
+            return (ItemStack) itemObject;
+        } else if (itemObject instanceof MemorySection) {
+            Map<String, Object> map = ((MemorySection) itemObject).getValues(false);
+            return ItemStack.deserialize(map);
+        } else if (itemObject instanceof Map) {
+            return ItemStack.deserialize((Map<String, Object>) itemObject);
+        }
+        return null;
     }
 }
