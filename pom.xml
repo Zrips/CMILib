@@ -6,7 +6,7 @@
 
 	<groupId>CMILib</groupId>
 	<artifactId>CMILib</artifactId>
-	<version>1.5.4.6</version>
+	<version>1.5.4.7</version>
 	<name>CMILib</name>
 	<url>http://maven.apache.org</url>
 	<packaging>jar</packaging>
@@ -57,14 +57,12 @@
         </dependency>
 
         <!-- CMI -->
-        <dependency>
-            <groupId>net.Zrips</groupId>
-            <artifactId>CMI</artifactId>
-            <version>9.7.4.1</version>
-            <scope>system</scope>
-            <systemPath>${basedir}/libs/CMIAPI-9.7.4.1.jar</systemPath>
-        </dependency>
-
+		<dependency>
+			<groupId>com.github.Zrips</groupId>
+			<artifactId>CMI-API</artifactId>
+			<version>9.7.14.3</version>
+			<scope>provided</scope> 
+		</dependency>
         <!-- PlaceholderAPI -->
         <dependency>
             <groupId>me.clip</groupId>
@@ -92,6 +90,10 @@
 			<id>placeholderapi</id>
 			<url>
 				https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+		</repository>
+		<repository>
+			<id>jitpack.io</id>
+			<url>https://jitpack.io</url>
 		</repository>
 	</repositories>
 	
