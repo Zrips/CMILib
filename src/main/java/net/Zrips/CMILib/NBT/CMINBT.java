@@ -26,12 +26,8 @@ import com.google.common.collect.Multimap;
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Entities.CMIEntityType;
 import net.Zrips.CMILib.Items.CMIMaterial;
-import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.PersistentData.CMIPersistentDataContainer;
 import net.Zrips.CMILib.Version.Version;
-import net.kyori.adventure.nbt.api.BinaryTagHolder;
-import net.kyori.adventure.text.NBTComponentBuilder;
-import net.minecraft.server.dedicated.DedicatedServer;
 
 public class CMINBT {
 
@@ -39,6 +35,7 @@ public class CMINBT {
     private static Class<?> NBTTagString;
     private static Class<?> nbtTagCompound;
     private static Class<?> nbtTagList;
+    private static Class<?> holderLookupAClass;
     private static Method met_getInt;
     private static Method met_getByte;
     private static Method met_getLong;
@@ -124,20 +121,24 @@ public class CMINBT {
     static {
         if (Version.isCurrentEqualOrHigher(Version.v1_17_R1)) {
             try {
-                NBTBase = net.minecraft.nbt.NBTBase.class;
-                nbtTagCompound = net.minecraft.nbt.NBTTagCompound.class;
-                nbtTagList = net.minecraft.nbt.NBTTagList.class;
+                NBTBase = Class.forName("net.minecraft.nbt.NBTBase");
+                nbtTagCompound = Class.forName("net.minecraft.nbt.NBTTagCompound");
+                nbtTagList = Class.forName("net.minecraft.nbt.NBTTagList");
                 CraftItemStack = getBukkitClass("inventory.CraftItemStack");
-                IStack = net.minecraft.world.item.ItemStack.class;
+                IStack = Class.forName("net.minecraft.world.item.ItemStack");
                 CraftEntity = getBukkitClass("entity.CraftEntity");
-                MojangsonParser = net.minecraft.nbt.MojangsonParser.class;
+                MojangsonParser = Class.forName("net.minecraft.nbt.MojangsonParser");
             } catch (Throwable e) {
                 e.printStackTrace();
             }
             try {
-                NBTTagString = net.minecraft.nbt.NBTTagString.class;
+                NBTTagString = Class.forName("net.minecraft.nbt.NBTTagString");
             } catch (Throwable e) {
                 e.printStackTrace();
+            }
+            try {
+                holderLookupAClass = Class.forName("net.minecraft.core.HolderLookup$a");
+            } catch (Throwable e) {
             }
         } else {
             try {
@@ -1466,7 +1467,7 @@ public class CMINBT {
         try {
             if (setTagMethod == null) {
                 if (Version.isCurrentEqualOrHigher(Version.v1_20_R4))
-                    setTagMethod = nmsStack.getClass().getMethod(setTagName, net.minecraft.core.HolderLookup.a.class, NBTBase);
+                    setTagMethod = nmsStack.getClass().getMethod(setTagName, holderLookupAClass, NBTBase);
                 else
                     setTagMethod = nmsStack.getClass().getMethod(setTagName, nbtTagCompound);
             }
@@ -1498,9 +1499,10 @@ public class CMINBT {
             try {
                 if (Version.isCurrentEqualOrHigher(Version.v1_21_R4))
                     registry = getBukkitClass("CraftRegistry").getMethod("getMinecraftRegistry").invoke(null);
-                else
-                    registry = ((DedicatedServer) CMILib.getInstance().getReflectionManager().getDedicatedServer()).getClass().getMethod("getDefaultRegistryAccess").invoke(
-                        (CMILib.getInstance().getReflectionManager().getDedicatedServer()));
+                else {
+                    Object server = CMILib.getInstance().getReflectionManager().getDedicatedServer();
+                    registry = server.getClass().getMethod("getDefaultRegistryAccess").invoke(server);
+                }
             } catch (Throwable e) {
                 e.printStackTrace();
             }
@@ -1555,9 +1557,9 @@ public class CMINBT {
             if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
                 if (nbtMethod == null) {
                     if (Version.isCurrentEqualOrHigher(Version.v1_21_R1)) {
-                        nbtMethod = ((net.minecraft.world.item.ItemStack) nmsStack).getClass().getMethod("a", Class.forName("net.minecraft.core.HolderLookup$a"));
+                        nbtMethod = IStack.getMethod("a", holderLookupAClass);
                     } else
-                        nbtMethod = ((net.minecraft.world.item.ItemStack) nmsStack).getClass().getMethod("b", Class.forName("net.minecraft.core.HolderLookup$a"));
+                        nbtMethod = IStack.getMethod("b", holderLookupAClass);
                 }
                 return nbtMethod.invoke(nmsStack, getRegistry());
             }
@@ -1797,15 +1799,12 @@ public class CMINBT {
         if (item == null)
             return null;
 
-//        if(Version.isCurrentEqualOrHigher(Version.v1_20_R4))
-//            return item.toString();
-
         Object nmsStack = asNMSCopy(item);
 
         try {
             if (saveOptionalMethod == null) {
                 if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
-                    saveOptionalMethod = IStack.getMethod(itemSaveName, net.minecraft.core.HolderLookup.a.class);
+                    saveOptionalMethod = IStack.getMethod(itemSaveName, holderLookupAClass);
                 } else
                     saveOptionalMethod = IStack.getMethod(itemSaveName, nbtTagCompound);
             }

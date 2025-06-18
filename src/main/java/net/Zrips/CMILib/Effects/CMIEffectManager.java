@@ -658,9 +658,13 @@ public class CMIEffectManager {
 
     static {
         if (Version.isCurrentEqualOrHigher(Version.v1_17_R1)) {
-            PacketPlayOutWorldParticles = net.minecraft.network.protocol.game.PacketPlayOutWorldParticles.class;
+            try {
+                PacketPlayOutWorldParticles = Class.forName("net.minecraft.network.protocol.game.PacketPlayOutWorldParticles");
+                ParticleParam = Class.forName("net.minecraft.core.particles.ParticleParam");
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
             CraftParticle = Reflections.getBukkitClass("CraftParticle");
-            ParticleParam = net.minecraft.core.particles.ParticleParam.class;
         } else {
             try {
                 PacketPlayOutWorldParticles = CMILib.getInstance().getReflectionManager().getMinecraftClass("PacketPlayOutWorldParticles");
@@ -754,14 +758,29 @@ public class CMIEffectManager {
                 }
             }
 
-            net.minecraft.network.protocol.game.PacketPlayOutWorldParticles packet = null;
+            Object packet = null;
+
+            Object particleParam = CraftParticleMethod.invoke(null, particle, dd);
 
             if (Version.isCurrentEqualOrLower(Version.v1_21_R2)) {
-                if (effectConstructor == null)
-                    effectConstructor = PacketPlayOutWorldParticles.getConstructor(net.minecraft.core.particles.ParticleParam.class, boolean.class, double.class, double.class, double.class,
-                        float.class, float.class, float.class, float.class, int.class);
+                if (effectConstructor == null) {
+                    Class<?> packetClass = Class.forName("net.minecraft.network.protocol.game.PacketPlayOutWorldParticles");
+                    Class<?> particleParamClass = Class.forName("net.minecraft.core.particles.ParticleParam");
+                    effectConstructor = packetClass.getConstructor(
+                        particleParamClass,
+                        boolean.class,
+                        double.class,
+                        double.class,
+                        double.class,
+                        float.class,
+                        float.class,
+                        float.class,
+                        float.class,
+                        int.class);
+                }
 
-                packet = (net.minecraft.network.protocol.game.PacketPlayOutWorldParticles) effectConstructor.newInstance(CraftParticleMethod.invoke(null, particle, dd),
+                packet = effectConstructor.newInstance(
+                    particleParam,
                     true,
                     location.getX(),
                     location.getY(),
@@ -773,8 +792,25 @@ public class CMIEffectManager {
                     ef.getAmount());
 
             } else {
-                packet = new net.minecraft.network.protocol.game.PacketPlayOutWorldParticles(
-                    (net.minecraft.core.particles.ParticleParam) CraftParticleMethod.invoke(null, particle, dd),
+                if (effectConstructor == null) {
+                    Class<?> packetClass = Class.forName("net.minecraft.network.protocol.game.PacketPlayOutWorldParticles");
+                    Class<?> particleParamClass = Class.forName("net.minecraft.core.particles.ParticleParam");
+                    effectConstructor = packetClass.getConstructor(
+                        particleParamClass,
+                        boolean.class,
+                        boolean.class,
+                        double.class,
+                        double.class,
+                        double.class,
+                        float.class,
+                        float.class,
+                        float.class,
+                        float.class,
+                        int.class);
+                }
+
+                packet = effectConstructor.newInstance(
+                    particleParam,
                     true,
                     false,
                     location.getX(),
@@ -786,6 +822,39 @@ public class CMIEffectManager {
                     ef.getSpeed(),
                     ef.getAmount());
             }
+
+//            net.minecraft.network.protocol.game.PacketPlayOutWorldParticles packet = null;
+//
+//            if (Version.isCurrentEqualOrLower(Version.v1_21_R2)) {
+//                if (effectConstructor == null)
+//                    effectConstructor = PacketPlayOutWorldParticles.getConstructor(net.minecraft.core.particles.ParticleParam.class, boolean.class, double.class, double.class, double.class,
+//                        float.class, float.class, float.class, float.class, int.class);
+//
+//                packet = (net.minecraft.network.protocol.game.PacketPlayOutWorldParticles) effectConstructor.newInstance(CraftParticleMethod.invoke(null, particle, dd),
+//                    true,
+//                    location.getX(),
+//                    location.getY(),
+//                    location.getZ(),
+//                    (float) ef.getOffset().getX(),
+//                    (float) ef.getOffset().getY(),
+//                    (float) ef.getOffset().getZ(),
+//                    ef.getSpeed(),
+//                    ef.getAmount());
+//
+//            } else {
+//                packet = new net.minecraft.network.protocol.game.PacketPlayOutWorldParticles(
+//                    (net.minecraft.core.particles.ParticleParam) CraftParticleMethod.invoke(null, particle, dd),
+//                    true,
+//                    false,
+//                    location.getX(),
+//                    location.getY(),
+//                    location.getZ(),
+//                    (float) ef.getOffset().getX(),
+//                    (float) ef.getOffset().getY(),
+//                    (float) ef.getOffset().getZ(),
+//                    ef.getSpeed(),
+//                    ef.getAmount());
+//            }
             CMILib.getInstance().getReflectionManager().sendPlayerPacket(player, packet);
         } catch (Throwable e) {
             e.printStackTrace();

@@ -38,40 +38,40 @@ public class CMITitleMessage {
             if (Version.isCurrentEqualOrHigher(Version.v1_20_R2)) {
                 try {
                     getHandle = Class.forName("org.bukkit.craftbukkit." + version + ".entity.CraftPlayer").getMethod("getHandle");
-                    nmsIChatBaseComponent = net.minecraft.network.chat.IChatBaseComponent.class;
+                    nmsIChatBaseComponent = Class.forName("net.minecraft.network.chat.IChatBaseComponent");
                     if (Version.isCurrentEqualOrHigher(Version.v1_21_R2))
-                        playerConnection = net.minecraft.server.level.EntityPlayer.class.getField("f");
+                        playerConnection = Class.forName("net.minecraft.server.level.EntityPlayer").getField("f");
                     else
-                        playerConnection = net.minecraft.server.level.EntityPlayer.class.getField("c");
-                    sendPacket = net.minecraft.server.network.PlayerConnection.class.getMethod("a", net.minecraft.network.protocol.Packet.class);
+                        playerConnection = Class.forName("net.minecraft.server.level.EntityPlayer").getField("c");
+                    sendPacket = Class.forName("net.minecraft.server.network.PlayerConnection").getMethod("a", Class.forName("net.minecraft.network.protocol.Packet"));
                 } catch (Throwable e) {
                     e.printStackTrace();
                 }
             } else if (Version.isCurrentEqualOrHigher(Version.v1_20_R1)) {
                 try {
                     getHandle = Class.forName("org.bukkit.craftbukkit." + version + ".entity.CraftPlayer").getMethod("getHandle");
+                    nmsIChatBaseComponent = Class.forName("net.minecraft.network.chat.IChatBaseComponent");
                 } catch (Throwable e) {
                     e.printStackTrace();
                 }
-                nmsIChatBaseComponent = net.minecraft.network.chat.IChatBaseComponent.class;
                 try {
-                    playerConnection = net.minecraft.server.level.EntityPlayer.class.getField("c");
-                    sendPacket = net.minecraft.server.network.PlayerConnection.class.getMethod("a", net.minecraft.network.protocol.Packet.class);
+                    playerConnection = Class.forName("net.minecraft.server.level.EntityPlayer").getField("c");
+                    sendPacket = Class.forName("net.minecraft.server.network.PlayerConnection").getMethod("a", Class.forName("net.minecraft.network.protocol.Packet"));
                 } catch (Throwable e) {
                     e.printStackTrace();
                 }
             } else if (Version.isCurrentEqualOrHigher(Version.v1_17_R1)) {
                 try {
                     getHandle = Class.forName("org.bukkit.craftbukkit." + version + ".entity.CraftPlayer").getMethod("getHandle");
+                    nmsIChatBaseComponent = Class.forName("net.minecraft.network.chat.IChatBaseComponent");
                 } catch (Throwable e) {
                     e.printStackTrace();
                 }
 
-                nmsIChatBaseComponent = net.minecraft.network.chat.IChatBaseComponent.class;
                 try {
-                    playerConnection = net.minecraft.server.level.EntityPlayer.class.getField("b");
-                    sendPacket = net.minecraft.server.network.PlayerConnection.class.getMethod(Version.isCurrentEqualOrHigher(Version.v1_18_R1) ? "a" : "sendPacket",
-                        net.minecraft.network.protocol.Packet.class);
+                    playerConnection = Class.forName("net.minecraft.server.level.EntityPlayer").getField("b");
+                    sendPacket = Class.forName("net.minecraft.server.network.PlayerConnection").getMethod(Version.isCurrentEqualOrHigher(Version.v1_18_R1) ? "a" : "sendPacket",
+                        Class.forName("net.minecraft.network.protocol.Packet"));
                 } catch (Throwable e) {
                     e.printStackTrace();
                 }

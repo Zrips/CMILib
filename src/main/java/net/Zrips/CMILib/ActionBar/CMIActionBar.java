@@ -48,9 +48,9 @@ public class CMIActionBar {
 
         if (Version.isCurrentEqualOrHigher(Version.v1_19_R1)) {
             try {
-                packetType = net.minecraft.network.protocol.game.ClientboundSystemChatPacket.class;
-                nmsIChatBaseComponent = net.minecraft.network.chat.IChatBaseComponent.class;
-                nmsChatSerializer = net.minecraft.network.chat.IChatBaseComponent.ChatSerializer.class;
+                packetType = Class.forName("net.minecraft.network.protocol.game.ClientboundSystemChatPacket");
+                nmsIChatBaseComponent = Class.forName("net.minecraft.network.chat.IChatBaseComponent");
+                nmsChatSerializer = Class.forName(getChatSerializerClasspath());
                 getHandle = Class.forName("org.bukkit.craftbukkit." + Version.getCurrent() + ".entity.CraftPlayer").getMethod("getHandle");
             } catch (Throwable e) {
                 e.printStackTrace();
@@ -63,14 +63,14 @@ public class CMIActionBar {
                     playerConnection = Class.forName("net.minecraft.server.level.EntityPlayer").getField("f");
                 else
                     playerConnection = Class.forName("net.minecraft.server.level.EntityPlayer").getField("c");
-                sendPacket = Class.forName("net.minecraft.server.network.PlayerConnection").getMethod("b", net.minecraft.network.protocol.Packet.class);
+                sendPacket = Class.forName("net.minecraft.server.network.PlayerConnection").getMethod("b", Class.forName("net.minecraft.network.protocol.Packet"));
             } catch (Throwable e) {
                 e.printStackTrace();
             }
         } else if (Version.isCurrentEqualOrHigher(Version.v1_20_R1)) {
             try {
                 playerConnection = Class.forName("net.minecraft.server.level.EntityPlayer").getField("c");
-                sendPacket = Class.forName("net.minecraft.server.network.PlayerConnection").getMethod("a", net.minecraft.network.protocol.Packet.class);
+                sendPacket = Class.forName("net.minecraft.server.network.PlayerConnection").getMethod("a", Class.forName("net.minecraft.network.protocol.Packet"));
             } catch (Throwable e) {
                 e.printStackTrace();
             }
@@ -78,7 +78,7 @@ public class CMIActionBar {
             try {
                 playerConnection = Class.forName("net.minecraft.server.level.EntityPlayer").getField("b");
                 sendPacket = Class.forName("net.minecraft.server.network.PlayerConnection").getMethod(Version.isCurrentEqualOrHigher(Version.v1_18_R1) ? "a" : "sendPacket",
-                    net.minecraft.network.protocol.Packet.class);
+                    Class.forName("net.minecraft.network.protocol.Packet"));
             } catch (Throwable e) {
                 e.printStackTrace();
             }
@@ -86,12 +86,12 @@ public class CMIActionBar {
             try {
                 packetType = Class.forName("net.minecraft.network.protocol.game.PacketPlayOutChat");
                 nmsChatSerializer = Class.forName("net.minecraft.network.chat.IChatBaseComponent$ChatSerializer");
-                nmsIChatBaseComponent = net.minecraft.network.chat.IChatBaseComponent.class;
+                nmsIChatBaseComponent = Class.forName("net.minecraft.network.chat.IChatBaseComponent");
                 getHandle = Class.forName("org.bukkit.craftbukkit." + Version.getCurrent() + ".entity.CraftPlayer").getMethod("getHandle");
-                playerConnection = net.minecraft.server.level.EntityPlayer.class.getField("b");
-                sendPacket = net.minecraft.server.network.PlayerConnection.class.getMethod(Version.isCurrentEqualOrHigher(Version.v1_18_R1) ? "a" : "sendPacket",
-                    net.minecraft.network.protocol.Packet.class);
-                ChatMessageclz = net.minecraft.network.chat.ChatMessageType.class;
+                playerConnection = Class.forName("net.minecraft.server.level.EntityPlayer").getField("b");
+                sendPacket = Class.forName("net.minecraft.server.network.PlayerConnection").getMethod(Version.isCurrentEqualOrHigher(Version.v1_18_R1) ? "a" : "sendPacket",
+                    Class.forName("net.minecraft.network.protocol.Packet"));
+                ChatMessageclz = Class.forName("net.minecraft.network.chat.ChatMessageType");
 
                 consts = ChatMessageclz.getEnumConstants();
                 sub = consts[2].getClass();
@@ -241,10 +241,10 @@ public class CMIActionBar {
                     try {
                         Object cplayer = getHandle.invoke(player);
                         Object connection = playerConnection.get(cplayer);
-                        
+
                         if (connection == null)
                             continue;
-                        
+
                         sendPacket.invoke(connection, packet);
                     } catch (Throwable e) {
                         e.printStackTrace();
@@ -365,6 +365,8 @@ public class CMIActionBar {
     private static String getChatSerializerClasspath() {
         if (!Version.isCurrentHigher(Version.v1_8_R2))
             return "net.minecraft.server." + Version.getCurrent() + ".ChatSerializer";
+        if (Version.isCurrentEqualOrHigher(Version.v1_19_R1))
+            return "net.minecraft.network.chat.IChatBaseComponent$ChatSerializer";
         return "net.minecraft.server." + Version.getCurrent() + ".IChatBaseComponent$ChatSerializer";// 1_8_R2 moved to IChatBaseComponent
     }
 }

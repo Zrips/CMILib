@@ -19,7 +19,6 @@ import net.Zrips.CMILib.Colors.CMIChatColor;
 import net.Zrips.CMILib.Container.CMICommandSender;
 import net.Zrips.CMILib.Items.CMIItemStack;
 import net.Zrips.CMILib.Locale.LC;
-import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Messages.CMIMessages;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.Shadow.ShadowCommand;
@@ -430,6 +429,36 @@ public class RawMessage {
         return sb.toString();
     }
 
+    private static final Pattern CUSTOM_MODEL_DATA_PATTERN = Pattern.compile("\"minecraft:custom_model_data\":\\{floats:\\[(\\d+(?:\\.\\d+)?)f?\\]\\}\\s*,?");
+
+    private static String updateCustomModelData(String input) {
+        Matcher matcher = CUSTOM_MODEL_DATA_PATTERN.matcher(input);
+        StringBuffer sb = new StringBuffer();
+
+        while (matcher.find()) {
+            matcher.appendReplacement(sb, "");
+        }
+
+        matcher.appendTail(sb);
+        return sb.toString();
+    }
+
+    private static final Pattern INT_ARRAY_PATTERN = Pattern.compile("\\[I;\\s*([^\\]]+)\\]");
+
+    private static String fixIntArray(String input) {
+        Matcher matcher = INT_ARRAY_PATTERN.matcher(input);
+        StringBuffer sb = new StringBuffer();
+
+        while (matcher.find()) {
+            String numbers = matcher.group(1).trim();
+            String replacement = "[" + numbers + "]";
+            matcher.appendReplacement(sb, replacement);
+        }
+
+        matcher.appendTail(sb);
+        return sb.toString();
+    }
+
     public RawMessage addItem(ItemStack item) {
         if (item == null)
             return this;
@@ -444,8 +473,14 @@ public class RawMessage {
 
         String res = CMINBT.toJson(item);
 
-        // Temp fix due to serializer using 0b and 1b for false and true
-        res = updateBooleans(res);
+        if (Version.isCurrentEqualOrHigher(Version.v1_21_R4)) {
+            // Temp fix due to serializer using 0b and 1b for false and true
+            // custom model converts ints to floats, at the moment solution is to just remove entire section
+            // int array adds I which isn't valid anymore
+            res = updateBooleans(res);
+            res = updateCustomModelData(res);
+            res = fixIntArray(res);
+        }
 
         // Cleaning up useless information. Italic not included due to some weird behavior which defaults to italic look if not specifically set to not be one
         res = res.replaceAll("\\\"bold\\\":false,|\\\"underlined\\\":false,|\\\"strikethrough\\\":false,|\\\"obfuscated\\\":false,", "");
@@ -819,7 +854,7 @@ public class RawMessage {
         this.freezeFormat = false;
     }
 
-    static Pattern patern = Pattern.compile("((http|https|ftp|ftps)\\:\\/\\/)?[a-zA-Z0-9\\-]+\\.[a-zA-Z]{2,3}(\\/\\S*)?([^\\s|^\\)]+)");
+    static Pattern patern = Pattern.compile("(?<!&)((http|https|ftp|ftps)\\:\\/\\/)?[a-zA-Z0-9\\-]+\\.[a-zA-Z]{2,3}(\\/\\S*)?([^\\s|^\\)]+)");
 
     public static RawMessage translateRawMessage(CommandSender sender, String textLine) {
         return translateRawMessage(sender, textLine, false);

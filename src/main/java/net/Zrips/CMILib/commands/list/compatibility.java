@@ -1,6 +1,7 @@
 package net.Zrips.CMILib.commands.list;
 
 import java.util.Arrays;
+import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -27,6 +28,7 @@ import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.RawMessages.RawMessage;
 import net.Zrips.CMILib.Scoreboards.CMIScoreboard;
 import net.Zrips.CMILib.TitleMessages.CMITitleMessage;
+import net.Zrips.CMILib.Version.Version;
 import net.Zrips.CMILib.commands.CAnnotation;
 import net.Zrips.CMILib.commands.Cmd;
 
@@ -149,25 +151,27 @@ public class compatibility implements Cmd {
         if (bossbar == null)
             bossbar = new BossBarInfo(player, "Compatibility");
         bossbar.setTitleOfBar("Test");
-        bossbar.setPercentage(Math.random());
+        bossbar.setPercentage(new Random().nextDouble());
         plugin.getBossBarManager().Show(bossbar);
 
-        CMIAdvancement advancement = new CMIAdvancement()
-            .setId(new org.bukkit.NamespacedKey(plugin, "cmi/commandToast"))
-            .setDescription("_")
-            .setAnnounce(false)
-            .setHidden(false)
-            .setToast(true)
-            .setBackground(AdvancementBackground.ADVENTURE)
-            .setFrame(AdvancementFrameType.TASK)
-            .setTitle("Toast Test " + CMINumber.random(0, 1000));
-        try {
-            advancement.setItem(CMIItemStack.deserialize("leatherhelmet;purple").getItemStack());
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
+        if (Version.isCurrentLower(Version.v1_12_R1)) {
 
-        advancement.show(player);
+            CMIAdvancement advancement = new CMIAdvancement()
+                .setId(new org.bukkit.NamespacedKey(plugin, "cmi/commandToast"))
+                .setDescription("_")
+                .setAnnounce(false)
+                .setHidden(false)
+                .setToast(true)
+                .setBackground(AdvancementBackground.ADVENTURE)
+                .setFrame(AdvancementFrameType.TASK)
+                .setTitle("Toast Test " + CMINumber.random(0, 1000));
+            try {
+                advancement.setItem(CMIItemStack.deserialize("leatherhelmet;purple").getItemStack());
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+            advancement.show(player);
+        }
 
         // Check this
         // ref.setSkullTexture(item, customProfileName, texture)	

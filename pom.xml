@@ -6,75 +6,74 @@
 
 	<groupId>CMILib</groupId>
 	<artifactId>CMILib</artifactId>
-	<version>1.5.4.4</version>
+	<version>1.5.4.6</version>
 	<name>CMILib</name>
 	<url>http://maven.apache.org</url>
 	<packaging>jar</packaging>
 
 	<properties>
-		<maven.compiler.source>21</maven.compiler.source>
-		<maven.compiler.target>21</maven.compiler.target>
+		<maven.compiler.source>17</maven.compiler.source>
+		<maven.compiler.target>17</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
 	<dependencies>
-		<dependency>
-			<groupId>dev.folia</groupId>
-			<artifactId>folia-api</artifactId>
-			<version>1.21.4-R0.1-SNAPSHOT</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-		    <groupId>net.kyori</groupId>
-		    <artifactId>adventure-nbt</artifactId>
-		    <version>4.13.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.mojang</groupId>
-			<artifactId>authlib</artifactId>
-			<version>1.5.21</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.spigotmc</groupId>
-			<artifactId>spigot-api</artifactId>
-			<version>1.21.5-R0.1-SNAPSHOT</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.spigotmc</groupId>
-			<artifactId>spigot</artifactId>
-			<version>1.21.5-R0.1-SNAPSHOT</version>
-			<scope>provided</scope>
-		</dependency>
-		<!-- CMI  -->
-		<dependency>
-			<groupId>net.Zrips</groupId>
-			<artifactId>CMI</artifactId>
-			<version>9.7.4.1</version>
-			<scope>system</scope>
-			<systemPath>${basedir}/libs/CMIAPI-9.7.4.1.jar</systemPath>
-		</dependency>
-		<!-- PlaceholderAPI -->
-		<dependency>
-			<groupId>me.clip</groupId>
-			<artifactId>placeholderapi</artifactId>
-			<version>2.11.6</version>
-			<scope>provided</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.jetbrains</groupId>
-			<artifactId>annotations</artifactId>
-			<version>24.0.0</version>
-			<scope>compile</scope>
-		</dependency>
-	</dependencies>
+        <!-- APIs -->
+        <dependency>
+            <groupId>dev.folia</groupId>
+            <artifactId>folia-api</artifactId>
+            <version>1.21.4-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
+            <version>1.21.5-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.spigotmc</groupId>-->
+<!--            <artifactId>spigot</artifactId>-->
+<!--            <version>1.21.5-R0.1-SNAPSHOT</version>-->
+<!--            <scope>provided</scope>-->
+<!--        </dependency>-->
+        <dependency>
+            <groupId>com.mojang</groupId>
+            <artifactId>authlib</artifactId>
+            <version>1.5.21</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Utilities -->
+        <dependency>
+            <groupId>net.kyori</groupId>
+            <artifactId>adventure-nbt</artifactId>
+            <version>4.13.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>24.0.0</version>
+        </dependency>
+
+        <!-- CMI -->
+        <dependency>
+            <groupId>net.Zrips</groupId>
+            <artifactId>CMI</artifactId>
+            <version>9.7.4.1</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/libs/CMIAPI-9.7.4.1.jar</systemPath>
+        </dependency>
+
+        <!-- PlaceholderAPI -->
+        <dependency>
+            <groupId>me.clip</groupId>
+            <artifactId>placeholderapi</artifactId>
+            <version>2.11.6</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+    
 	<repositories>
 		<repository>
 			<id>papermc</id>
@@ -95,6 +94,7 @@
 				https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
 		</repository>
 	</repositories>
+	
 	<build>
 		<defaultGoal>clean package</defaultGoal>
 		<finalName>CMILib${project.version}</finalName>
@@ -109,11 +109,13 @@
 		<plugins>
 			<!-- Make a Jar -->
 			<plugin>
+                <groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
-				</configuration>
+                <version>3.11.0</version>
+                <configuration>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                </configuration>
 			</plugin>
 		</plugins>
 	</build>
