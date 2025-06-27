@@ -82,7 +82,6 @@ public class CMIScoreboard {
         if (Version.isCurrentEqualOrHigher(Version.v1_19_R1)) {
             try {
                 nmsIChatBaseComponent = Class.forName("net.minecraft.network.chat.IChatBaseComponent");
-                nmsChatSerializer = Class.forName("net.minecraft.network.chat.IChatBaseComponent$ChatSerializer");
                 scoreboardObjectiveClass = Class.forName("net.minecraft.world.scores.ScoreboardObjective");
                 packetPlayOutScoreboardObjectiveClass = Class.forName("net.minecraft.network.protocol.game.PacketPlayOutScoreboardObjective");
                 enumScoreboardHealthDisplayClass = Class.forName("net.minecraft.world.scores.criteria.IScoreboardCriteria$EnumScoreboardHealthDisplay");
@@ -98,6 +97,7 @@ public class CMIScoreboard {
 
             try {
                 // Only for 1.19 -> 1.20
+                nmsChatSerializer = Class.forName("net.minecraft.network.chat.IChatBaseComponent$ChatSerializer");
                 chatSerializerA = nmsChatSerializer.getMethod("a", String.class);
             } catch (Throwable e) {
             }

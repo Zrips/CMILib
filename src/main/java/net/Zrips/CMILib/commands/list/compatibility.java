@@ -73,53 +73,56 @@ public class compatibility implements Cmd {
         ref.getPlayerConnection(player);
         ref.getTileEntityAt(player.getLocation().clone().add(0, -1, 0));
 
-        CMINBT.isNBTSimilar(CMIMaterial.STONE.newItemStack(), CMIMaterial.STONE.newItemStack());
-
         player.getInventory().addItem(CMINBT.HideFlag(CMIMaterial.STONE.newItemStack(), 2));
 
-        CMIMessages.sendMessage(sender, CMINBT.toJson(CMIMaterial.STONE.newItemStack()));
+        if (Version.isCurrentLower(Version.v1_21_R5)) {
+            CMIMessages.sendMessage(sender, CMINBT.toJson(CMIMaterial.STONE.newItemStack()));
+            CMINBT.isNBTSimilar(CMIMaterial.STONE.newItemStack(), CMIMaterial.STONE.newItemStack());
 
-        try {
-            CMINBT nbt = new CMINBT(CMIMaterial.DIAMOND_SWORD.newItemStack());
+            try {
+                CMINBT nbt = new CMINBT(CMIMaterial.DIAMOND_SWORD.newItemStack());
 
-            nbt.setBoolean("boolTest", true);
-            if (!nbt.getBoolean("boolTest"))
-                CMIMessages.consoleMessage("Error boolTest");
+                nbt.setBoolean("boolTest", true);
+                if (!nbt.getBoolean("boolTest"))
+                    CMIMessages.consoleMessage("Error boolTest");
 
-            nbt.setByte("byteTest", (byte) 1);
-            if (nbt.getByte("byteTest") != 1)
-                CMIMessages.consoleMessage("Error byteTest");
+                nbt.setByte("byteTest", (byte) 1);
+                if (nbt.getByte("byteTest") != 1)
+                    CMIMessages.consoleMessage("Error byteTest");
 
-            nbt.setInt("intTest", 1);
-            if (nbt.getInt("intTest") != 1)
-                CMIMessages.consoleMessage("Error intTest");
+                nbt.setInt("intTest", 1);
+                if (nbt.getInt("intTest") != 1)
+                    CMIMessages.consoleMessage("Error intTest");
 
-            nbt.setLong("longTest", 1L);
-            if (nbt.getLong("longTest") != 1)
-                CMIMessages.consoleMessage("Error longTest");
+                nbt.setLong("longTest", 1L);
+                if (nbt.getLong("longTest") != 1)
+                    CMIMessages.consoleMessage("Error longTest");
 
-            nbt.setShort("shortTest", (short) 1);
-            if (nbt.getShort("shortTest") != 1)
-                CMIMessages.consoleMessage("Error shortTest");
+                nbt.setShort("shortTest", (short) 1);
+                if (nbt.getShort("shortTest") != 1)
+                    CMIMessages.consoleMessage("Error shortTest");
 
-            ItemStack item = (ItemStack) nbt.setString("stringTest", "test");
-            if (!nbt.getString("stringTest").equals("test"))
-                CMIMessages.consoleMessage("Error stringTest");
+                ItemStack item = (ItemStack) nbt.setString("stringTest", "test");
+                if (!nbt.getString("stringTest").equals("test"))
+                    CMIMessages.consoleMessage("Error stringTest");
 
-            CMINBT blockNBT = new CMINBT(player.getLocation().clone().add(0, -1, 0).getBlock());
+                CMINBT blockNBT = new CMINBT(player.getLocation().clone().add(0, -1, 0).getBlock());
 
-            CMINBT entityNBT = new CMINBT(player);
+                CMINBT entityNBT = new CMINBT(player);
 
-            nbt.getKeys();
-        } catch (Throwable e) {
-            e.printStackTrace();
+                nbt.getKeys();
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
         }
 
         CMITitleMessage.send(player, "Title", "SubTitle");
         CMIActionBar.send(player, "Action bar Test");
         CMIScoreboard.show(player, "Top line", Arrays.asList("first", "second"), 2);
 
-        plugin.getReflectionManager().playEffect(player, player.getEyeLocation(), new CMIEffect(CMIParticle.DUST));
+        new CMIAdvancement().setItem(CMIMaterial.TOTEM_OF_UNDYING.newItemStack()).setTitle("Test Title").show(player);
+
+        new CMIEffect(CMIParticle.DUST).show(player, player.getEyeLocation());
 
         try {
             RawMessage rm = new RawMessage();
@@ -136,16 +139,6 @@ public class compatibility implements Cmd {
         } catch (Throwable e) {
             e.printStackTrace();
         }
-//        try {
-//            CMI.getInstance().getNMS().showResurection(player);
-//        } catch (Throwable e) {
-//            e.printStackTrace();
-//        }
-//        try {
-//            CMI.getInstance().getNMS().updateExpBar(player);
-//        } catch (Throwable e) {
-//            e.printStackTrace();
-//        }
 
         BossBarInfo bossbar = plugin.getBossBarManager().getBossBar(player, "Compatibility");
         if (bossbar == null)

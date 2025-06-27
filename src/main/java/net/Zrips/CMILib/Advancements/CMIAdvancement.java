@@ -26,16 +26,16 @@ public class CMIAdvancement {
 
     private static final Gson gson = new Gson();
 
-    private NamespacedKey id;
+    private NamespacedKey id = new org.bukkit.NamespacedKey(CMILib.getInstance(), "cmi/commandToast");
     private ItemStack item;
     private String parent;
-    private String icon;
-    private AdvancementBackground background;
+    private String icon = "minecraft:stone";
+    private AdvancementBackground background = AdvancementBackground.ADVENTURE;
     private String title = "";
     private String description;
     private int data;
     private int customModelData = 0;
-    private AdvancementFrameType frame;
+    private AdvancementFrameType frame = AdvancementFrameType.CHALLENGE;
     private boolean announce = true;
     private boolean toast = true;
     private boolean hidden = true;

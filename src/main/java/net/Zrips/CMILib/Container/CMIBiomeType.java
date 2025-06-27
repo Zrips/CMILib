@@ -108,9 +108,10 @@ public enum CMIBiomeType {
     DRIPSTONE_CAVES("967C66"),
     OLD_GROWTH_BIRCH_FOREST("7E9A5B"),
     SNOWY_PLAINS("E6F2FA"),
-    BAMBOO_JUNGLE("A1C551")
+    BAMBOO_JUNGLE("A1C551"),
 
-    ;
+    //1.21.6
+    PALE_GARDEN("AAC8A4");
 
     private Color color = new Color(0, 0, 0);
     private int id = -1;

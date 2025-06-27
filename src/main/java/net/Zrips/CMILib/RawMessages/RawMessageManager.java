@@ -102,7 +102,9 @@ public class RawMessageManager {
         if (Version.isCurrentEqualOrHigher(Version.v1_20_R2)) {
             try {
                 getHandle = Class.forName("org.bukkit.craftbukkit." + version + ".entity.CraftPlayer").getMethod("getHandle");
-                if (Version.isCurrentEqualOrHigher(Version.v1_21_R2))
+                if (Version.isCurrentEqualOrHigher(Version.v1_21_R5))
+                    playerConnection = Class.forName("net.minecraft.server.level.EntityPlayer").getField("g");
+                else if (Version.isCurrentEqualOrHigher(Version.v1_21_R2))
                     playerConnection = Class.forName("net.minecraft.server.level.EntityPlayer").getField("f");
                 else
                     playerConnection = Class.forName("net.minecraft.server.level.EntityPlayer").getField("c");

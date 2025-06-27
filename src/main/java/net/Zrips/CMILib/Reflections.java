@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
@@ -27,11 +26,13 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.Server;
 import org.bukkit.Sound;
 import org.bukkit.World;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.scoreboard.Scoreboard;
 
@@ -170,7 +171,8 @@ public class Reflections {
 
                 IChatBaseComponent = Class.forName("net.minecraft.network.chat.IChatBaseComponent");
 
-                nmsChatSerializer = Class.forName("net.minecraft.network.chat.IChatBaseComponent$ChatSerializer");
+                if (Version.isCurrentLower(Version.v1_21_R5))
+                    nmsChatSerializer = Class.forName("net.minecraft.network.chat.IChatBaseComponent$ChatSerializer");
 
                 MinecraftServer = CraftServer.getClass().getMethod("getServer").invoke(CraftServer);
 
@@ -617,12 +619,15 @@ public class Reflections {
         return CMINBT.isNBTSimilar(is, is2);
     }
 
+    Method getProfileMethod;
+
     public com.mojang.authlib.GameProfile getProfile(Player player) {
         Object craftPlayer = this.CraftPlayer.cast(player);
-        Method method;
+
         try {
-            method = this.CraftPlayer.getMethod("getProfile");
-            Object profile = method.invoke(craftPlayer);
+            if (getProfileMethod == null)
+                getProfileMethod = this.CraftPlayer.getMethod("getProfile");
+            Object profile = getProfileMethod.invoke(craftPlayer);
             return (com.mojang.authlib.GameProfile) profile;
         } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
             e.printStackTrace();
@@ -706,7 +711,9 @@ public class Reflections {
             Object handle = getPlayerHandle(player);
 
             if (getConnectionField == null) {
-                if (Version.isCurrentEqualOrHigher(Version.v1_21_R2))
+                if (Version.isCurrentEqualOrHigher(Version.v1_21_R5))
+                    getConnectionField = handle.getClass().getField("g");
+                else if (Version.isCurrentEqualOrHigher(Version.v1_21_R2))
                     getConnectionField = handle.getClass().getField("f");
                 else if (Version.isCurrentEqualOrHigher(Version.v1_20_R1))
                     getConnectionField = handle.getClass().getField("c");
@@ -1337,7 +1344,9 @@ public class Reflections {
                 windowId = "j";
 
             // EntityHuman -> Container
-            if (Version.isCurrentEqualOrHigher(Version.v1_21_R4)) {
+            if (Version.isCurrentEqualOrHigher(Version.v1_21_R5)) {
+                activeContainer = "cn";
+            } else if (Version.isCurrentEqualOrHigher(Version.v1_21_R4)) {
                 activeContainer = "bR";
             } else if (Version.isCurrentEqualOrHigher(Version.v1_21_R1)) {
                 activeContainer = "cd";
@@ -2372,18 +2381,18 @@ public class Reflections {
         }
     }
 
-    private static Object getLootPredicateManager(Object server) {
-        try {
-            return server.getClass().getMethod("aH").invoke(server);
-        } catch (Exception ex) {
-            try {
-                return server.getClass().getMethod("getLootPredicateManager").invoke(server);
-            } catch (Exception ignored) {
-            }
-        }
-        return null;
-    }
-
+//    private static Object getLootPredicateManager(Object server) {
+//        try {
+//            return server.getClass().getMethod("aH").invoke(server);
+//        } catch (Exception ex) {
+//            try {
+//                return server.getClass().getMethod("getLootPredicateManager").invoke(server);
+//            } catch (Exception ignored) {
+//            }
+//        }
+//        return null;
+//    }
+//
 //    public void loadAdvancement(net.Zrips.CMILib.Advancements.CMIAdvancement ad, String advancement) {
 //        if (Version.isCurrentLower(Version.v1_12_R1) || Version.isCurrentEqualOrHigher(Version.v1_20_R2))
 //            return;
@@ -2531,6 +2540,11 @@ public class Reflections {
         if (ls.isEmpty())
             return item;
 
+        if (Version.isCurrentEqualOrHigher(Version.v1_21_R5)) {
+
+            return item;
+        }
+
         try {
 
             CMINBT nbt = new CMINBT(item);
@@ -2572,21 +2586,4 @@ public class Reflections {
         }
         return item;
     }
-
-//    public void registerCMIGlowEffect() {
-//	try {
-//	    Field f = Enchantment.class.getDeclaredField("acceptingNew");
-//	    f.setAccessible(true);
-//	    f.set(null, true);
-//	} catch (Throwable e) {
-//	    e.printStackTrace();
-//	}
-//	try {
-//	    NamespacedKey key = new NamespacedKey(plugin, "CMIGlowEffect");
-//	    CMIItemGlow glow = new CMIItemGlow(key);
-//	    Enchantment.registerEnchantment(glow);
-//	} catch (Throwable e) {
-//	    e.printStackTrace();
-//	}
-//    }
 }

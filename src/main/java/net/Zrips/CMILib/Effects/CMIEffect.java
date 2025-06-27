@@ -1,6 +1,8 @@
 package net.Zrips.CMILib.Effects;
 
 import org.bukkit.Color;
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import net.Zrips.CMILib.Colors.CMIChatColor;
@@ -126,7 +128,7 @@ public class CMIEffect {
             sub = name.split(":", 2)[1];
             name = name.split(":", 2)[0];
         }
-        
+
         CMIParticle cmiParticle = CMIParticle.get(name);
 
         if (cmiParticle == null)
@@ -214,5 +216,9 @@ public class CMIEffect {
         }
 
         return null;
+    }
+
+    public void show(Player player, Location location) {
+        CMIEffectManager.playEffect(player, location, this);
     }
 }

@@ -119,7 +119,16 @@ public class CMINBT {
     private static String listAddMethod = "add";
 
     static {
-        if (Version.isCurrentEqualOrHigher(Version.v1_17_R1)) {
+        if (Version.isCurrentEqualOrHigher(Version.v1_21_R5)) {
+            try {
+                CraftItemStack = getBukkitClass("inventory.CraftItemStack");
+                IStack = Class.forName("net.minecraft.world.item.ItemStack");
+                CraftEntity = getBukkitClass("entity.CraftEntity");
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+            // As of 1.21.5, the NBTBase class is removed so we can skip all this
+        } else if (Version.isCurrentEqualOrHigher(Version.v1_17_R1)) {
             try {
                 NBTBase = Class.forName("net.minecraft.nbt.NBTBase");
                 nbtTagCompound = Class.forName("net.minecraft.nbt.NBTTagCompound");
@@ -287,70 +296,72 @@ public class CMINBT {
         }
 
         try {
-            met_getString = nbtTagCompound.getMethod(getStringName, String.class);
-            met_getInt = nbtTagCompound.getMethod(getIntName, String.class);
-            met_getByte = nbtTagCompound.getMethod(getByteName, String.class);
-            met_getLong = nbtTagCompound.getMethod(getLongName, String.class);
-            met_getBoolean = nbtTagCompound.getMethod(getBooleanName, String.class);
-            met_getFloat = nbtTagCompound.getMethod(getFloatName, String.class);
-            met_getShort = nbtTagCompound.getMethod(getShortName, String.class);
-            met_getDouble = nbtTagCompound.getMethod(getDoubleName, String.class);
 
-            if (Version.isCurrentEqualOrHigher(Version.v1_21_R4)) {
-                met_getList = nbtTagCompound.getMethod(getListName, String.class);
-            } else
-                met_getList = nbtTagCompound.getMethod(getListName, String.class, int.class);
+            if (!Version.isCurrentEqualOrHigher(Version.v1_21_R5)) {
+                met_getString = nbtTagCompound.getMethod(getStringName, String.class);
+                met_getInt = nbtTagCompound.getMethod(getIntName, String.class);
+                met_getByte = nbtTagCompound.getMethod(getByteName, String.class);
+                met_getLong = nbtTagCompound.getMethod(getLongName, String.class);
+                met_getBoolean = nbtTagCompound.getMethod(getBooleanName, String.class);
+                met_getFloat = nbtTagCompound.getMethod(getFloatName, String.class);
+                met_getShort = nbtTagCompound.getMethod(getShortName, String.class);
+                met_getDouble = nbtTagCompound.getMethod(getDoubleName, String.class);
 
-            met_getByteArray = nbtTagCompound.getMethod(getByteArrayName, String.class);
-            met_getIntArray = nbtTagCompound.getMethod(getIntArrayName, String.class);
+                if (Version.isCurrentEqualOrHigher(Version.v1_21_R4)) {
+                    met_getList = nbtTagCompound.getMethod(getListName, String.class);
+                } else
+                    met_getList = nbtTagCompound.getMethod(getListName, String.class, int.class);
 
-            if (Version.isCurrentEqualOrHigher(Version.v1_13_R1)) {
-                met_getLongArray = nbtTagCompound.getMethod(getLongArrayName, String.class);
-            }
+                met_getByteArray = nbtTagCompound.getMethod(getByteArrayName, String.class);
+                met_getIntArray = nbtTagCompound.getMethod(getIntArrayName, String.class);
 
-            met_get = nbtTagCompound.getMethod(getName, String.class);
-            met_remove = nbtTagCompound.getMethod(removeName, String.class);
+                if (Version.isCurrentEqualOrHigher(Version.v1_13_R1)) {
+                    met_getLongArray = nbtTagCompound.getMethod(getLongArrayName, String.class);
+                }
 
-            met_getCompound = nbtTagCompound.getMethod(getCompoundName, String.class);
+                met_get = nbtTagCompound.getMethod(getName, String.class);
+                met_remove = nbtTagCompound.getMethod(removeName, String.class);
 
-            met_toString = nbtTagCompound.getMethod(asStringName);
+                met_getCompound = nbtTagCompound.getMethod(getCompoundName, String.class);
 
-            met_setBoolean = nbtTagCompound.getMethod(setBooleanName, String.class, boolean.class);
-            met_setByte = nbtTagCompound.getMethod(setByteName, String.class, byte.class);
-            met_setShort = nbtTagCompound.getMethod(setShortName, String.class, short.class);
-            met_setString = nbtTagCompound.getMethod(setStringName, String.class, String.class);
-            met_setInt = nbtTagCompound.getMethod(setIntName, String.class, int.class);
-            met_setLong = nbtTagCompound.getMethod(setLongName, String.class, long.class);
-            met_setDouble = nbtTagCompound.getMethod(setDoubleName, String.class, double.class);
+                met_toString = nbtTagCompound.getMethod(asStringName);
 
-            met_setIntArray = nbtTagCompound.getMethod(setIntArrayName, String.class, int[].class);
+                met_setBoolean = nbtTagCompound.getMethod(setBooleanName, String.class, boolean.class);
+                met_setByte = nbtTagCompound.getMethod(setByteName, String.class, byte.class);
+                met_setShort = nbtTagCompound.getMethod(setShortName, String.class, short.class);
+                met_setString = nbtTagCompound.getMethod(setStringName, String.class, String.class);
+                met_setInt = nbtTagCompound.getMethod(setIntName, String.class, int.class);
+                met_setLong = nbtTagCompound.getMethod(setLongName, String.class, long.class);
+                met_setDouble = nbtTagCompound.getMethod(setDoubleName, String.class, double.class);
 
-            try {
-                met_setByteArray = nbtTagCompound.getMethod(setByteArrayName, String.class, byte[].class);
-                if (Version.isCurrentEqualOrHigher(Version.v1_13_R1))
-                    met_setLongArray = nbtTagCompound.getMethod(setLongArrayName, String.class, long[].class);
-            } catch (Throwable ex) {
-                ex.printStackTrace();
-            }
+                met_setIntArray = nbtTagCompound.getMethod(setIntArrayName, String.class, int[].class);
 
-            met_set = nbtTagCompound.getMethod(setName, String.class, NBTBase);
-
-            // Will fail on 1.7.10 servers
-            try {
-                met_add = nbtTagList.getMethod(listAddMethod, int.class, NBTBase);
-            } catch (Throwable e) {
-            }
-
-            try {
-                met_tagStringValueOf = NBTTagString.getMethod("a", String.class);
-            } catch (Throwable e) {
                 try {
-                    met_tagStringValueOf = NBTTagString.getMethod("valueOf", String.class);
+                    met_setByteArray = nbtTagCompound.getMethod(setByteArrayName, String.class, byte[].class);
+                    if (Version.isCurrentEqualOrHigher(Version.v1_13_R1))
+                        met_setLongArray = nbtTagCompound.getMethod(setLongArrayName, String.class, long[].class);
                 } catch (Throwable ex) {
+                    ex.printStackTrace();
+                }
 
+                met_set = nbtTagCompound.getMethod(setName, String.class, NBTBase);
+
+                // Will fail on 1.7.10 servers
+                try {
+                    met_add = nbtTagList.getMethod(listAddMethod, int.class, NBTBase);
+                } catch (Throwable e) {
+                }
+
+                try {
+                    met_tagStringValueOf = NBTTagString.getMethod("a", String.class);
+                } catch (Throwable e) {
+                    try {
+                        met_tagStringValueOf = NBTTagString.getMethod("valueOf", String.class);
+                    } catch (Throwable ex) {
+
+                    }
                 }
             }
-
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -665,6 +676,10 @@ public class CMINBT {
     }
 
     private Object updateLegacyTag(Object t) {
+
+        if (Version.isCurrentEqualOrHigher(Version.v1_21_R5))
+            return t;
+
         if (getType().equals(nmbtType.item) && Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
             t = new CMINBT(new CMINBT(t).get("components")).get("minecraft:custom_data");
         }
@@ -1357,7 +1372,7 @@ public class CMINBT {
 //    }
 
     public boolean hasNBT() {
-        return tag != null;
+        return tag != null || Version.isCurrentEqualOrHigher(Version.v1_21_R5);
     }
 
     public boolean hasNBT(String key) {
@@ -1368,6 +1383,9 @@ public class CMINBT {
             if (persistent != null && persistent.hasKey(key))
                 return true;
         }
+
+        if (Version.isCurrentEqualOrHigher(Version.v1_21_R5))
+            return false;
 
         Object t = updateLegacyTag(tag);
 
@@ -1545,9 +1563,8 @@ public class CMINBT {
     }
 
     public static Object getNbt(ItemStack item) {
-        if (item == null || item.getType().equals(Material.AIR))
+        if (item == null || item.getType().equals(Material.AIR) || Version.isCurrentEqualOrHigher(Version.v1_21_R5))
             return null;
-
         try {
 
             Object nmsStack = asNMSCopy(item);
