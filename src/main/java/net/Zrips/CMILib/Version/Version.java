@@ -48,7 +48,7 @@ public enum Version {
     v1_21_R2(2, 3),
     v1_21_R3(4),
     v1_21_R4(5),
-    v1_21_R5(6),
+    v1_21_R5(6, 7),
     v1_22_R1(0),
     v1_22_R2,
     v1_22_R3,
@@ -288,16 +288,16 @@ public enum Version {
         if (current != null)
             return current;
 
+        ve = Bukkit.getBukkitVersion().replaceAll("^(\\d+\\.\\d+).*", "$1");
         main: for (int i = 1; i < 10; i++) {
             try {
                 Class.forName("org.bukkit.craftbukkit.v" + ve.replace(".", "_") + "_R" + i + ".entity.CraftPlayer");
-                for (Version one : values()) {
+                for (Version one : Version.values()) {
                     if (one.name().equalsIgnoreCase("v" + ve.replace(".", "_") + "_R" + i)) {
                         current = one;
                         break main;
                     }
                 }
-
                 break;
             } catch (ClassNotFoundException e) {
             }
