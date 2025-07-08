@@ -11,7 +11,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 import net.Zrips.CMILib.Colors.CMIChatColor;
-import net.Zrips.CMILib.Container.CMIBiome;
 import net.Zrips.CMILib.Container.CMIWorld;
 import net.Zrips.CMILib.Enchants.CMIEnchantment;
 import net.Zrips.CMILib.Entities.CMIEntity;
@@ -122,7 +121,7 @@ public class CMILibConfig {
         ExploitPatcherCheckItem = cfg.get("ExploitPatcher.Placeholders.blocked.checkItem", true);
 
         plugin.getSkinManager().loadConfig();
-        
+
         cfg.addComment("GlobalGui.EmptyField", "Defines item type in empty fields in GUI when its needed to be filled up");
         GUIEmptyField = CMILib.getInstance().getItemManager().getItem(cfg.get("GlobalGui.EmptyField", "BLACK_STAINED_GLASS_PANE"));
         if (GUIEmptyField == null)

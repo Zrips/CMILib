@@ -10,6 +10,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -1940,7 +1941,7 @@ public class Reflections {
                         false,
                         false);
 
-                    List<List<String>> adreq = List.of(List.of(CMIAdvancement.identificator));
+                    List<List<String>> adreq = Arrays.asList(Arrays.asList(CMIAdvancement.identificator));
                     Object requirements = advancementRequirementsClass.getConstructor(List.class).newInstance(adreq);
 
                     Object progress = advancementProgressClass.getConstructor().newInstance();

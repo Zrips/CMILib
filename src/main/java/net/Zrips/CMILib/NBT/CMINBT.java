@@ -10,6 +10,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.Block;
@@ -18,6 +19,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.google.common.collect.HashMultimap;
@@ -72,6 +74,10 @@ public class CMINBT {
     private static Class<?> CraftEntity;
     private static Class<?> MojangsonParser;
 
+    private static Object CODEC;
+    private static Object serializator;
+    private static Method encodeMethod;
+
     private static String getTagName = "getTag";
     private static String setTagName = "setTag";
 
@@ -124,9 +130,42 @@ public class CMINBT {
                 CraftItemStack = getBukkitClass("inventory.CraftItemStack");
                 IStack = Class.forName("net.minecraft.world.item.ItemStack");
                 CraftEntity = getBukkitClass("entity.CraftEntity");
+
+                Class<?> dynamicOps = Class.forName("com.mojang.serialization.DynamicOps");
+                Method met_createSerializationContext = null;
+                Object dops_Instance = null;
+                if (Version.isPaperBranch()) {
+                    met_createSerializationContext = getRegistry().getClass().getMethod("createSerializationContext", dynamicOps);
+                    CODEC = IStack.getField("CODEC").get(null);
+                    Class<?> dops = Class.forName("net.minecraft.nbt.NbtOps");
+                    dops_Instance = dops.getDeclaredField("INSTANCE").get(dops);
+                    nbtTagCompound = Class.forName("net.minecraft.nbt.CompoundTag");
+                    NBTBase = Class.forName("net.minecraft.nbt.Tag");
+                    NBTTagString = Class.forName("net.minecraft.nbt.StringTag");
+                    nbtTagList = Class.forName("net.minecraft.nbt.ListTag");
+                } else {
+                    met_createSerializationContext = getRegistry().getClass().getMethod("a", dynamicOps);
+                    CODEC = IStack.getField("b").get(null);
+                    Class<?> dops = Class.forName("net.minecraft.nbt.DynamicOpsNBT");
+                    dops_Instance = dops.getDeclaredField("a").get(dops);
+                    nbtTagCompound = Class.forName("net.minecraft.nbt.NBTTagCompound");
+                    NBTBase = Class.forName("net.minecraft.nbt.NBTBase");
+                    NBTTagString = Class.forName("net.minecraft.nbt.NBTTagString");
+                    nbtTagList = Class.forName("net.minecraft.nbt.NBTTagList");
+                }
+                serializator = met_createSerializationContext.invoke(getRegistry(), dops_Instance);
+
+                encodeMethod = CODEC.getClass().getMethod("encodeStart", dynamicOps, Object.class);
+
             } catch (Throwable e) {
                 e.printStackTrace();
             }
+
+            try {
+                holderLookupAClass = Class.forName("net.minecraft.core.HolderLookup$a");
+            } catch (Throwable e) {
+            }
+
             // As of 1.21.5, the NBTBase class is removed so we can skip all this
         } else if (Version.isCurrentEqualOrHigher(Version.v1_17_R1)) {
             try {
@@ -183,121 +222,171 @@ public class CMINBT {
             }
         }
 
-        if (Version.isCurrentEqualOrHigher(Version.v1_18_R1)) {
-            getStringName = "l";
-            setTagName = "c";
-            getIntName = "h";
-            getByteName = "f";
-            getLongName = "i";
-            getBooleanName = "q";
-            getFloatName = "j";
-            getShortName = "g";
-            getDoubleName = "k";
-            getListName = "c";
-            getByteArrayName = "m";
-            getIntArrayName = "n";
-            getLongArrayName = "o";
-
-            setBooleanName = "a";
-            setByteName = "a";
-            setShortName = "a";
-            setStringName = "a";
-            setIntName = "a";
-            setLongName = "a";
-            setDoubleName = "a";
-            setIntArrayName = "a";
-            setByteArrayName = "a";
-
-            listGetName = "k";
-
-            setName = "a";
-            getName = "c";
-            removeName = "r";
-            getCompoundName = "p";
-            asStringName = "e_";
-
-            hasKeyName = "e";
-            getKeysName = "d";
-
-            saveName = "f";
-            parseName = "a";
-            itemSaveName = "b";
-
-            getTypeIdName = "a";
-
-        }
-
-        if (Version.isCurrentEqualOrHigher(Version.v1_14_R1)) {
-            listAddMethod = "b";
-        } else if (Version.isCurrentEqualOrHigher(Version.v1_13_R1)) {
-            listAddMethod = "add";
-        }
-
-        if (Version.isCurrentEqual(Version.v1_18_R1)) {
-            getTagName = "s";
-        }
-
-        if (Version.isCurrentEqualOrHigher(Version.v1_18_R2)) {
-            getTagName = "t";
-        }
-
-        if (Version.isCurrentEqualOrHigher(Version.v1_19_R1)) {
-            getTagName = "u";
-        }
-
-        if (Version.isCurrentEqualOrLower(Version.v1_12_R1)) {
+        if (Version.isPaperBranch() && Version.isCurrentEqualOrHigher(Version.v1_21_R5)) {
+            // Keeping defaults
             asStringName = "toString";
-            getKeysName = "c";
-        }
+            hasKeyName = "contains";
+            listGetName = "getString";
+            getKeysName = "keySet";
+            getTypeIdName = "getId";
+        } else {
 
-        if (Version.isCurrentEqualOrHigher(Version.v1_19_R2)) {
-            asStringName = "f_";
-            getKeysName = "e";
-            getTypeIdName = "b";
-        }
+            if (Version.isCurrentEqualOrHigher(Version.v1_18_R1)) {
+                getStringName = "l";
+                setTagName = "c";
+                getIntName = "h";
+                getByteName = "f";
+                getLongName = "i";
+                getBooleanName = "q";
+                getFloatName = "j";
+                getShortName = "g";
+                getDoubleName = "k";
+                getListName = "c";
+                getByteArrayName = "m";
+                getIntArrayName = "n";
+                getLongArrayName = "o";
 
-        if (Version.isCurrentEqualOrHigher(Version.v1_20_R1)) {
-            asStringName = "m_";
-            getTagName = "v";
-        }
+                setBooleanName = "a";
+                setByteName = "a";
+                setShortName = "a";
+                setStringName = "a";
+                setIntName = "a";
+                setLongName = "a";
+                setDoubleName = "a";
+                setIntArrayName = "a";
+                setByteArrayName = "a";
 
-        if (Version.isCurrentEqualOrHigher(Version.v1_20_R2)) {
-            asStringName = "toString";
-            listGetName = "j";
-        }
+                listGetName = "k";
 
-        if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
-            getTagName = "v";
-            setTagName = "b";
-        }
+                setName = "a";
+                getName = "c";
+                removeName = "r";
+                getCompoundName = "p";
+                asStringName = "e_";
 
-        if (Version.isCurrentEqualOrHigher(Version.v1_21_R4)) {
-            getListName = "o";
-            itemSaveName = "a";
+                hasKeyName = "e";
+                getKeysName = "d";
 
-            saveName = "h";
+                saveName = "f";
+                parseName = "a";
+                itemSaveName = "b";
 
-            getName = "a";
-            hasKeyName = "b";
+                getTypeIdName = "a";
 
-            getStringName = "i";
-            getIntName = "e";
-            getByteName = "c";
-            getLongName = "f";
-            getBooleanName = "q";
-            getFloatName = "g";
-            getShortName = "d";
-            getDoubleName = "h";
-            getByteArrayName = "j";
-            getIntArrayName = "k";
-            getLongArrayName = "l";
+            }
+            if (Version.isCurrentEqualOrHigher(Version.v1_14_R1)) {
+                listAddMethod = "b";
+            } else if (Version.isCurrentEqualOrHigher(Version.v1_13_R1)) {
+                listAddMethod = "add";
+            }
 
-            listGetName = "c";
+            if (Version.isCurrentEqual(Version.v1_18_R1)) {
+                getTagName = "s";
+            }
+
+            if (Version.isCurrentEqualOrHigher(Version.v1_18_R2)) {
+                getTagName = "t";
+            }
+
+            if (Version.isCurrentEqualOrHigher(Version.v1_19_R1)) {
+                getTagName = "u";
+            }
+
+            if (Version.isCurrentEqualOrLower(Version.v1_12_R1)) {
+                asStringName = "toString";
+                getKeysName = "c";
+            }
+
+            if (Version.isCurrentEqualOrHigher(Version.v1_19_R2)) {
+                asStringName = "f_";
+                getKeysName = "e";
+                getTypeIdName = "b";
+            }
+
+            if (Version.isCurrentEqualOrHigher(Version.v1_20_R1)) {
+                asStringName = "m_";
+                getTagName = "v";
+            }
+
+            if (Version.isCurrentEqualOrHigher(Version.v1_20_R2)) {
+                asStringName = "toString";
+                listGetName = "j";
+            }
+
+            if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
+                getTagName = "v";
+                setTagName = "b";
+            }
+
+            if (Version.isCurrentEqualOrHigher(Version.v1_21_R4)) {
+                getListName = "o";
+                itemSaveName = "a";
+
+                saveName = "h";
+
+                getName = "a";
+                hasKeyName = "b";
+
+                getStringName = "i";
+                getIntName = "e";
+                getByteName = "c";
+                getLongName = "f";
+                getBooleanName = "q";
+                getFloatName = "g";
+                getShortName = "d";
+                getDoubleName = "h";
+                getByteArrayName = "j";
+                getIntArrayName = "k";
+                getLongArrayName = "l";
+
+                listGetName = "c";
+            }
+
+            if (Version.isCurrentEqualOrHigher(Version.v1_21_R5)) {
+                listGetName = "m";
+            }
         }
 
         try {
 
-            if (!Version.isCurrentEqualOrHigher(Version.v1_21_R5)) {
+            if (Version.isCurrentEqualOrHigher(Version.v1_21_R5)) {
+
+                met_getString = nbtTagCompound.getMethod(getStringName, String.class);
+                met_getInt = nbtTagCompound.getMethod(getIntName, String.class);
+                met_getByte = nbtTagCompound.getMethod(getByteName, String.class);
+                met_getLong = nbtTagCompound.getMethod(getLongName, String.class);
+                met_getBoolean = nbtTagCompound.getMethod(getBooleanName, String.class);
+                met_getFloat = nbtTagCompound.getMethod(getFloatName, String.class);
+                met_getShort = nbtTagCompound.getMethod(getShortName, String.class);
+                met_getDouble = nbtTagCompound.getMethod(getDoubleName, String.class);
+
+                met_getList = nbtTagCompound.getMethod(getListName, String.class);
+
+                met_getByteArray = nbtTagCompound.getMethod(getByteArrayName, String.class);
+                met_getIntArray = nbtTagCompound.getMethod(getIntArrayName, String.class);
+
+                if (Version.isCurrentEqualOrHigher(Version.v1_13_R1)) {
+                    met_getLongArray = nbtTagCompound.getMethod(getLongArrayName, String.class);
+                }
+
+                met_get = nbtTagCompound.getMethod(getName, String.class);
+                met_remove = nbtTagCompound.getMethod(removeName, String.class);
+
+                met_getCompound = nbtTagCompound.getMethod(getCompoundName, String.class);
+
+                met_toString = nbtTagCompound.getMethod(asStringName);
+
+                try {
+                    met_tagStringValueOf = NBTTagString.getMethod("a", String.class);
+                } catch (Throwable e) {
+                    try {
+                        met_tagStringValueOf = NBTTagString.getMethod("valueOf", String.class);
+                    } catch (Throwable ex) {
+
+                    }
+                }
+
+            } else {
                 met_getString = nbtTagCompound.getMethod(getStringName, String.class);
                 met_getInt = nbtTagCompound.getMethod(getIntName, String.class);
                 met_getByte = nbtTagCompound.getMethod(getByteName, String.class);
@@ -381,6 +470,15 @@ public class CMINBT {
 
     }
 
+    public CMINBT() {
+        try {
+            tag = nbtTagCompound.getDeclaredConstructor().newInstance();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        type = nmbtType.custom;
+    }
+    
     public CMINBT(Object nbtTagCompound) {
         tag = nbtTagCompound;
         type = nmbtType.custom;
@@ -677,11 +775,9 @@ public class CMINBT {
 
     private Object updateLegacyTag(Object t) {
 
-        if (Version.isCurrentEqualOrHigher(Version.v1_21_R5))
-            return t;
-
         if (getType().equals(nmbtType.item) && Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
-            t = new CMINBT(new CMINBT(t).get("components")).get("minecraft:custom_data");
+            t = getFromOptional(new CMINBT(t).get("components"));
+            t = getFromOptional(new CMINBT(t).get("minecraft:custom_data"));
         }
         return t;
     }
@@ -695,7 +791,6 @@ public class CMINBT {
     }
 
     public List<String> getList(String path, int type) {
-
         if (!this.hasNBT(path))
             return null;
 
@@ -704,8 +799,9 @@ public class CMINBT {
             CMIPersistentDataContainer persistentDataContainer = CMIPersistentDataContainer.get(object);
             if (persistentDataContainer != null) {
                 List<String> v = persistentDataContainer.getListString(path);
-                if (v != null)
+                if (v != null) {
                     return new ArrayList<String>(v);
+                }
             }
         }
 
@@ -717,7 +813,10 @@ public class CMINBT {
 
             Object t = updateLegacyTag(tag);
 
-            if (t != null && path.contains(".")) {
+            if (t == null)
+                return list;
+
+            if (path.contains(".")) {
                 List<String> keys = new ArrayList<String>();
                 keys.addAll(Arrays.asList(path.split("\\.")));
                 try {
@@ -734,9 +833,6 @@ public class CMINBT {
                 } catch (Throwable e) {
                 }
             }
-
-            if (t == null)
-                return list;
 
             Object ls = getFromOptional(Version.isCurrentEqualOrLower(Version.v1_21_R3) ? met_getList.invoke(t, path, type < 0 ? 8 : type) : met_getList.invoke(t, path));
             int size = (int) ls.getClass().getMethod("size").invoke(ls);
@@ -1372,7 +1468,7 @@ public class CMINBT {
 //    }
 
     public boolean hasNBT() {
-        return tag != null || Version.isCurrentEqualOrHigher(Version.v1_21_R5);
+        return tag != null;
     }
 
     public boolean hasNBT(String key) {
@@ -1384,15 +1480,24 @@ public class CMINBT {
                 return true;
         }
 
-        if (Version.isCurrentEqualOrHigher(Version.v1_21_R5))
+        Object t = updateLegacyTag(tag);
+//        Object t = tag;
+
+        if (t == null)
             return false;
 
-        Object t = updateLegacyTag(tag);
+        Method hasKeyMethod = null;
+        try {
+            hasKeyMethod = t.getClass().getMethod(hasKeyName, String.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
 
-        if (t != null && key.contains(".")) {
+        if (key.contains(".")) {
 
             try {
-                if ((boolean) t.getClass().getMethod(hasKeyName, String.class).invoke(t, key))
+                if ((boolean) hasKeyMethod.invoke(t, key))
                     return true;
             } catch (Throwable e) {
                 e.printStackTrace();
@@ -1401,27 +1506,27 @@ public class CMINBT {
             List<String> keys = new ArrayList<String>();
             keys.addAll(Arrays.asList(key.split("\\.")));
             try {
-                Object nbtbase = met_get.invoke(t, keys.get(0));
+                Object nbtbase = getFromOptional(met_get.invoke(t, keys.get(0)));
                 if (nbtbase == null)
                     return false;
                 for (int i = 1; i < keys.size(); i++) {
                     if (i + 1 < keys.size()) {
-                        nbtbase = met_get.invoke(nbtbase, keys.get(i));
+                        nbtbase = getFromOptional(met_get.invoke(nbtbase, keys.get(i)));
                     } else {
                         if (nbtbase == null)
                             break;
-                        return (Boolean) nbtbase.getClass().getMethod(hasKeyName, String.class).invoke(nbtbase, keys.get(i));
+                        return (Boolean) getFromOptional(nbtbase.getClass().getMethod(hasKeyName, String.class).invoke(nbtbase, keys.get(i)));
                     }
                 }
 
-                return (Boolean) t.getClass().getMethod(hasKeyName, String.class).invoke(t, key);
+                return (Boolean) getFromOptional(hasKeyMethod.invoke(t, key));
             } catch (Throwable e) {
                 e.printStackTrace();
             }
             return false;
         }
         try {
-            return t != null && (Boolean) (t.getClass().getMethod(hasKeyName, String.class).invoke(t, key));
+            return (Boolean) getFromOptional((hasKeyMethod.invoke(t, key)));
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -1555,21 +1660,36 @@ public class CMINBT {
             Object tag = nbtTagCompound.getDeclaredConstructor().newInstance();
             Object nmsStack = getEntityHandle(entity);
             Method methTag = nmsStack.getClass().getMethod(saveName, nbtTagCompound);
-            tag = methTag.invoke(nmsStack, tag);
-            return tag;
+            return methTag.invoke(nmsStack, tag);
         } catch (Exception e) {
             return null;
         }
     }
 
-    public static Object getNbt(ItemStack item) {
-        if (item == null || item.getType().equals(Material.AIR) || Version.isCurrentEqualOrHigher(Version.v1_21_R5))
-            return null;
-        try {
+    private static Method met_getOrThrow = null;
 
-            Object nmsStack = asNMSCopy(item);
-            if (nmsStack == null)
+    public static Object getNbt(ItemStack item) {
+
+        if (item == null || item.getType().equals(Material.AIR))
+            return null;
+
+        Object nmsStack = asNMSCopy(item);
+        if (nmsStack == null)
+            return null;
+
+        if (Version.isCurrentEqualOrHigher(Version.v1_21_R5)) {
+            try {
+                Object res = encodeMethod.invoke(CODEC, serializator, nmsStack);
+                if (met_getOrThrow == null)
+                    met_getOrThrow = res.getClass().getMethod("getOrThrow");
+                return met_getOrThrow.invoke(res);
+            } catch (Exception e) {
+                e.printStackTrace();
                 return null;
+            }
+        }
+
+        try {
 
             if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
                 if (nbtMethod == null) {

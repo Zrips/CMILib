@@ -98,7 +98,6 @@ public enum Version {
         return getPlatform().isAsync();
     }
 
-    @Deprecated
     public static boolean isPaperBranch() {
         return getPlatform().isAsync();
     }
