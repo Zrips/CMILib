@@ -478,7 +478,7 @@ public class CMINBT {
         }
         type = nmbtType.custom;
     }
-    
+
     public CMINBT(Object nbtTagCompound) {
         tag = nbtTagCompound;
         type = nmbtType.custom;
@@ -1936,9 +1936,17 @@ public class CMINBT {
         if (item == null)
             return null;
 
+        try {
+            if (Version.isCurrentEqualOrHigher(Version.v1_21_R5))
+                return getNbt(item).toString();
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+
         Object nmsStack = asNMSCopy(item);
 
         try {
+
             if (saveOptionalMethod == null) {
                 if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
                     saveOptionalMethod = IStack.getMethod(itemSaveName, holderLookupAClass);
