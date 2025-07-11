@@ -492,7 +492,9 @@ public class CMIChatColor {
 
     public static String deColorize(String text, boolean colorizeBeforeDe) {
         text = baseDeColorize(text, colorizeBeforeDe);
-        return deconvert(text);
+//        Broken in some instances
+//        return deconvert(text);
+        return text;
     }
 
     private static String baseDeColorize(String text, boolean colorizeBeforeDe) {
