@@ -9,6 +9,8 @@ import org.bukkit.entity.Player;
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Colors.CMIChatColor;
 import net.Zrips.CMILib.Version.Version;
+import net.Zrips.CMILib.commands.CommandsHandler;
+import net.Zrips.CMILib.commands.CommandsHandler;
 
 public class CMIDebug {
 //    private CMILogType type;
@@ -80,8 +82,8 @@ public class CMIDebug {
 
         if (!Version.isTestServer())
             return;
-        
-        if (!CMILib.getInstance().getCommandManager().enabledDebug)
+
+        if (!CommandsHandler.enabledDebug)
             return;
         if (!Version.isTestServer())
             return;
@@ -95,7 +97,7 @@ public class CMIDebug {
     public CMIDebug(
 //	CMILogType type, 
         Object... message) {
-        if (!CMILib.getInstance().getCommandManager().enabledDebug)
+        if (!CommandsHandler.enabledDebug)
             return;
 //	this.type = type;
 

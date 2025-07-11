@@ -164,6 +164,12 @@ public enum LC {
 
     info_pickIcon("&8Pick icon"),
 
+    dialog_signEditor("Sign Editor"),
+    dialog_update("Update"),
+    dialog_save("Save"),
+    dialog_close("Close"),
+    dialog_line("Line [line]"),
+
     direction_n("North"),
     direction_ne("North East"),
     direction_e("East"),
@@ -223,10 +229,10 @@ public enum LC {
     modify_lineAddInfo("&eEnter new line. Type &6cancel &eto cancel"),
     modify_commandAddInfo("&eEnter new command. Type &6cancel &eto cancel"),
     modify_commandAddInformationHover("&e[playerName] can be used to get player name \n"
-	+ "&eTo include delay in commands: \n"
-	+ "&edelay! 5 \n"
-	+ "&eSpecialized commands are supported. More info at \n"
-	+ "&ehttps://www.zrips.net/cmi/commands/specialized/"),
+        + "&eTo include delay in commands: \n"
+        + "&edelay! 5 \n"
+        + "&eSpecialized commands are supported. More info at \n"
+        + "&ehttps://www.zrips.net/cmi/commands/specialized/"),
     modify_commandEditInfo("&eClick to paste old text. Type &6cancel &eto cancel action"),
     modify_listLimit("&eList can't be bigger than &6[amount] &eentries"),
     modify_commandEditInfoHover("&eClick to paste old text"),
@@ -256,7 +262,7 @@ public enum LC {
     Location_Z("&eZ: &6[z]"),
     Location_Pitch("&ePitch: &6[pitch]"),
     Location_Yaw("&eYaw: &6[yaw]"),
-    
+
     info_Spawner("&r[type] Spawner"),
     ;
 
@@ -264,7 +270,7 @@ public enum LC {
     private List<String> comments = new ArrayList<String>();
 
     private LC(String text) {
-	this(text, "");
+        this(text, "");
     }
 
 //    private LC(String text, String comment) {
@@ -274,57 +280,57 @@ public enum LC {
 //    }
 
     private LC(String text, String... comment) {
-	this.text = text;
-	if (comment != null && comment.length > 0)
-	    for (String one : comment) {
-		if (one.isEmpty())
-		    continue;
-		comments.add(one);
-	    }
+        this.text = text;
+        if (comment != null && comment.length > 0)
+            for (String one : comment) {
+                if (one.isEmpty())
+                    continue;
+                comments.add(one);
+            }
     }
 
     private LC(List<String> ls) {
-	this(ls, "");
+        this(ls, "");
     }
 
     private LC(List<String> ls, String... comment) {
-	if (this.text == null)
-	    this.text = "";
-	for (String one : ls) {
-	    if (!this.text.isEmpty())
-		this.text += " /n";
-	    this.text += one;
-	}
+        if (this.text == null)
+            this.text = "";
+        for (String one : ls) {
+            if (!this.text.isEmpty())
+                this.text += " /n";
+            this.text += one;
+        }
 
-	if (comment != null && comment.length > 0)
-	    for (String one : comment) {
-		if (one.isEmpty())
-		    continue;
-		comments.add(one);
-	    }
+        if (comment != null && comment.length > 0)
+            for (String one : comment) {
+                if (one.isEmpty())
+                    continue;
+                comments.add(one);
+            }
     }
 
     public String getText() {
-	return text;
+        return text;
     }
 
     public String getPt() {
-	return this.name().replace("_", ".");
+        return this.name().replace("_", ".");
     }
 
     public List<String> getComments() {
-	return comments;
+        return comments;
     }
 
     public String get(Object... values) {
-	return CMIMessages.getMsg(this, values);
+        return CMIMessages.getMsg(this, values);
     }
-    
+
     public String getLocale(Object... values) {
-	return CMIMessages.getMsg(this, values);
+        return CMIMessages.getMsg(this, values);
     }
 
     public void sendMessage(Object sender, Object... variables) {
-	CMIMessages.sendMessage(sender, this, variables);
+        CMIMessages.sendMessage(sender, this, variables);
     }
 }
