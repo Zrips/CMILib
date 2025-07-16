@@ -9,6 +9,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -20,6 +23,7 @@ import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Reflections;
 import net.Zrips.CMILib.Container.CMIText;
 import net.Zrips.CMILib.Items.CMIMaterial;
+import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Version.Version;
 
 public class CMIEffectManager {
@@ -690,12 +694,12 @@ public class CMIEffectManager {
         }
     }
 
-    private static void playFor1_17Up(Player player, Location location, CMIEffect ef) {
+    public static @Nullable Object getParticleParameters(@Nullable Location location, @Nonnull CMIEffect ef) {
 
         org.bukkit.Particle particle = ef.getParticle().getParticle();
 
         if (particle == null)
-            return;
+            return null;
 
         try {
             Object dd = null;
@@ -727,7 +731,8 @@ public class CMIEffectManager {
             case MaterialData:
                 break;
             case Trail:
-                dd = new Trail(location, ef.getColorFrom(), ef.getDuration());
+                if (location != null)
+                    dd = new Trail(location, ef.getColorFrom(), ef.getDuration());
                 break;
             case Vibration:
                 if (destinationConstructor == null)
@@ -739,10 +744,12 @@ public class CMIEffectManager {
                         vibrationConstructor = org.bukkit.Vibration.class.getConstructor(Class.forName("org.bukkit.Vibration$Destination$BlockDestination"), int.class);
                 }
 
-                if (Version.isCurrentEqualOrHigher(Version.v1_21_R1))
-                    dd = vibrationConstructor.newInstance(location, destinationConstructor.newInstance(location), 20);
-                else
-                    dd = vibrationConstructor.newInstance(destinationConstructor.newInstance(location), 20);
+                if (location != null) {
+                    if (Version.isCurrentEqualOrHigher(Version.v1_21_R1))
+                        dd = vibrationConstructor.newInstance(location, destinationConstructor.newInstance(location), 20);
+                    else
+                        dd = vibrationConstructor.newInstance(destinationConstructor.newInstance(location), 20);
+                }
                 break;
             case Void:
                 break;
@@ -758,9 +765,25 @@ public class CMIEffectManager {
                 }
             }
 
-            Object packet = null;
+            return CraftParticleMethod.invoke(null, particle, dd);
 
-            Object particleParam = CraftParticleMethod.invoke(null, particle, dd);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private static void playFor1_17Up(Object playerConnection, Location location, CMIEffect ef) {
+
+        Object particleParam = ef.getParticleParameters(location);
+
+        if (particleParam == null) {
+            CMIDebug.c("null particle param");
+            return;
+        }
+
+        try {
+            Object packet = null;
 
             if (Version.isCurrentEqualOrLower(Version.v1_21_R2)) {
                 if (effectConstructor == null) {
@@ -807,7 +830,7 @@ public class CMIEffectManager {
                         float.class,
                         float.class,
                         int.class);
-                }
+                } 
 
                 packet = effectConstructor.newInstance(
                     particleParam,
@@ -823,77 +846,52 @@ public class CMIEffectManager {
                     ef.getAmount());
             }
 
-//            net.minecraft.network.protocol.game.PacketPlayOutWorldParticles packet = null;
-//
-//            if (Version.isCurrentEqualOrLower(Version.v1_21_R2)) {
-//                if (effectConstructor == null)
-//                    effectConstructor = PacketPlayOutWorldParticles.getConstructor(net.minecraft.core.particles.ParticleParam.class, boolean.class, double.class, double.class, double.class,
-//                        float.class, float.class, float.class, float.class, int.class);
-//
-//                packet = (net.minecraft.network.protocol.game.PacketPlayOutWorldParticles) effectConstructor.newInstance(CraftParticleMethod.invoke(null, particle, dd),
-//                    true,
-//                    location.getX(),
-//                    location.getY(),
-//                    location.getZ(),
-//                    (float) ef.getOffset().getX(),
-//                    (float) ef.getOffset().getY(),
-//                    (float) ef.getOffset().getZ(),
-//                    ef.getSpeed(),
-//                    ef.getAmount());
-//
-//            } else {
-//                packet = new net.minecraft.network.protocol.game.PacketPlayOutWorldParticles(
-//                    (net.minecraft.core.particles.ParticleParam) CraftParticleMethod.invoke(null, particle, dd),
-//                    true,
-//                    false,
-//                    location.getX(),
-//                    location.getY(),
-//                    location.getZ(),
-//                    (float) ef.getOffset().getX(),
-//                    (float) ef.getOffset().getY(),
-//                    (float) ef.getOffset().getZ(),
-//                    ef.getSpeed(),
-//                    ef.getAmount());
-//            }
-            CMILib.getInstance().getReflectionManager().sendPlayerPacket(player, packet);
+            CMILib.getInstance().getReflectionManager().sendPacket(playerConnection, packet);
         } catch (Throwable e) {
             e.printStackTrace();
         }
     }
 
     public static void playEffect(Player player, Location location, CMIEffect ef) {
-        if (location == null || ef == null || location.getWorld() == null || player == null || !player.isOnline())
+
+        if (location == null || location.getWorld() == null || player == null || !player.isOnline())
             return;
 
         if (!location.getWorld().equals(player.getWorld()))
             return;
 
-        if (ef.getParticle() == null)
+        playEffect(CMILib.getInstance().getReflectionManager().getPlayerConnection(player), location, ef);
+    }
+
+    public static void playEffect(Object playerConnection, Location location, CMIEffect ef) {
+
+        if (location == null || location.getWorld() == null)
+            return;
+
+        if (ef == null || ef.getParticle() == null)
             return;
 
         if (!ef.getParticle().isParticle())
             return;
 
         try {
-
             if (Version.isCurrentEqualOrHigher(Version.v1_17_R1)) {
-                playFor1_17Up(player, location, ef);
+                playFor1_17Up(playerConnection, location, ef);
             } else if (Version.isCurrentEqualOrHigher(Version.v1_14_R2)) {
-                playFor1_14Up(player, location, ef);
+                playFor1_14Up(playerConnection, location, ef);
             } else if (Version.isCurrentEqualOrHigher(Version.v1_13_R1)) {
-                playFor1_13Up(player, location, ef);
+                playFor1_13Up(playerConnection, location, ef);
             } else if (Version.isCurrentEqualOrHigher(Version.v1_8_R1)) {
-                playFor1_8Up(player, location, ef);
+                playFor1_8Up(playerConnection, location, ef);
             } else {
-                playForAncient(player, location, ef);
+                playForAncient(playerConnection, location, ef);
             }
-
         } catch (Throwable e) {
             e.printStackTrace();
         }
     }
 
-    private static void playForAncient(Player player, Location location, CMIEffect ef) {
+    private static void playForAncient(Object playerConnection, Location location, CMIEffect ef) {
         Effect effect = ef.getParticle().getEffect();
 
         if (effect == null)
@@ -904,13 +902,13 @@ public class CMIEffectManager {
                 effectConstructor = PacketPlayOutWorldParticles.getConstructor(String.class, float.class, float.class, float.class, float.class, float.class, float.class, float.class, int.class);
             Object newPack = effectConstructor.newInstance(effect.name(), (float) location.getX(), (float) location.getY(), (float) location.getZ(), (float) ef.getOffset().getX(),
                 (float) ef.getOffset().getY(), (float) ef.getOffset().getZ(), ef.getSpeed(), ef.getAmount());
-            CMILib.getInstance().getReflectionManager().sendPlayerPacket(player, newPack);
+            CMILib.getInstance().getReflectionManager().sendPacket(playerConnection, newPack);
         } catch (Throwable e) {
             e.printStackTrace();
         }
     }
 
-    private static void playFor1_8Up(Player player, Location location, CMIEffect ef) {
+    private static void playFor1_8Up(Object playerConnection, Location location, CMIEffect ef) {
 
         Effect effect = ef.getParticle().getEffect();
 
@@ -978,13 +976,13 @@ public class CMIEffectManager {
                     ef.getAmount(),
                     extra);
 
-            CMILib.getInstance().getReflectionManager().sendPlayerPacket(player, newPack);
+            CMILib.getInstance().getReflectionManager().sendPacket(playerConnection, newPack);
         } catch (Throwable e) {
             e.printStackTrace();
         }
     }
 
-    private static void playFor1_13Up(Player player, Location location, CMIEffect ef) {
+    private static void playFor1_13Up(Object playerConnection, Location location, CMIEffect ef) {
 
         org.bukkit.Particle particle = ef.getParticle().getParticle();
 
@@ -1005,13 +1003,13 @@ public class CMIEffectManager {
             Object param = CraftParticleMethod.invoke(null, particle, dd);
             Object packet = effectConstructor.newInstance(param, true, (float) location.getX(), (float) location.getY(), (float) location.getZ(), (float) ef
                 .getOffset().getX(), (float) ef.getOffset().getY(), (float) ef.getOffset().getZ(), ef.getSpeed(), ef.getAmount());
-            CMILib.getInstance().getReflectionManager().sendPlayerPacket(player, packet);
+            CMILib.getInstance().getReflectionManager().sendPacket(playerConnection, packet);
         } catch (Throwable e) {
             e.printStackTrace();
         }
     }
 
-    private static void playFor1_14Up(Player player, Location location, CMIEffect ef) {
+    private static void playFor1_14Up(Object playerConnection, Location location, CMIEffect ef) {
 
         org.bukkit.Particle particle = ef.getParticle().getParticle();
 
@@ -1032,7 +1030,7 @@ public class CMIEffectManager {
 
             Object packet = effectConstructor.newInstance(CraftParticleMethod.invoke(null, particle, dd), true, location.getX(), location.getY(), location.getZ(), (float) ef
                 .getOffset().getX(), (float) ef.getOffset().getY(), (float) ef.getOffset().getZ(), ef.getSpeed(), ef.getAmount());
-            CMILib.getInstance().getReflectionManager().sendPlayerPacket(player, packet);
+            CMILib.getInstance().getReflectionManager().sendPacket(playerConnection, packet);
         } catch (Throwable e) {
             e.printStackTrace();
         }

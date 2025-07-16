@@ -1,5 +1,7 @@
 package net.Zrips.CMILib.Effects;
 
+import javax.annotation.Nullable;
+
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -22,6 +24,8 @@ public class CMIEffect {
     private int amount = 1;
     private float speed = 0;
     private int duration = 1;
+
+    private Object particleParameters = null;
 
     public CMIEffect(CMIParticle particle) {
         this.particle = particle;
@@ -218,7 +222,21 @@ public class CMIEffect {
         return null;
     }
 
+    public void show(Object playerConnection, Location location) {
+        CMIEffectManager.playEffect(playerConnection, location, this);
+    }
+
     public void show(Player player, Location location) {
         CMIEffectManager.playEffect(player, location, this);
+    }
+
+    public @Nullable Object getParticleParameters(@Nullable Location location) {
+        if (this.particleParameters == null)
+            this.particleParameters = CMIEffectManager.getParticleParameters(location, this);
+        return this.particleParameters;
+    }
+
+    public void setParticleParameters(Object particleParameters) {
+        this.particleParameters = particleParameters;
     }
 }
