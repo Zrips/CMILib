@@ -56,13 +56,14 @@ public class RawMessage {
     }
 
     private String textIntoJson(String text, boolean hover) {
+
         if (text.isEmpty()) {
             return "";
         }
         if (text.equalsIgnoreCase(" ")) {
             return " ";
         }
-        text = CMIChatColor.deColorize(text);
+        text = CMIChatColor.deColorize(text, true, false);
 
         Matcher match = CMIChatColor.fullPattern.matcher(text);
         String matcher = null;
@@ -411,7 +412,8 @@ public class RawMessage {
         return this;
     }
 
-    private static final Pattern BOOLEAN_PATTERN = Pattern.compile("(bold|italic|obfuscated|strikethrough|underlined):(\\d)b");
+//    private static final Pattern BOOLEAN_PATTERN = Pattern.compile("(bold|italic|obfuscated|strikethrough|underlined):(\\d)b");
+    private static final Pattern BOOLEAN_PATTERN = Pattern.compile("(\"?):(([10])b)([,}])");
 
     // Temp fix due to broken serializer
     private static String updateBooleans(String input) {
@@ -419,14 +421,23 @@ public class RawMessage {
         StringBuffer sb = new StringBuffer();
 
         while (matcher.find()) {
-            String key = matcher.group(1);
-            String value = matcher.group(2);
-            String replacement = "\"" + key + "\":" + (value.equals("1") ? "true" : "false");
-            matcher.appendReplacement(sb, replacement);
+            matcher.appendReplacement(sb, matcher.group().replace(matcher.group(2), matcher.group(3).equals("1") ? "true" : "false"));
         }
 
         matcher.appendTail(sb);
         return sb.toString();
+//        Matcher matcher = BOOLEAN_PATTERN.matcher(input);
+//        StringBuffer sb = new StringBuffer();
+//
+//        while (matcher.find()) {
+//            String key = matcher.group(1);
+//            String value = matcher.group(2);
+//            String replacement = "\"" + key + "\":" + (value.equals("1") ? "true" : "false");
+//            matcher.appendReplacement(sb, replacement);
+//        }
+//
+//        matcher.appendTail(sb);
+//        return sb.toString();
     }
 
     private static final Pattern CUSTOM_MODEL_DATA_PATTERN = Pattern.compile("\"minecraft:custom_model_data\":\\{floats:\\[(\\d+(?:\\.\\d+)?)f?\\]\\}\\s*,?");
@@ -483,7 +494,7 @@ public class RawMessage {
         }
 
         // Cleaning up useless information. Italic not included due to some weird behavior which defaults to italic look if not specifically set to not be one
-        res = res.replaceAll("\\\"bold\\\":false,|\\\"underlined\\\":false,|\\\"strikethrough\\\":false,|\\\"obfuscated\\\":false,", "");
+        res = res.replaceAll("\\\"bold\\\":false,?|\\\"underlined\\\":false,?|\\\"strikethrough\\\":false,?|\\\"obfuscated\\\":false,?", "");
 
         try {
 //            if (res.length() > 32766) {
