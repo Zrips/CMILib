@@ -39,6 +39,7 @@ public class CMIEffect {
 
     public void setParticle(CMIParticle particle) {
         this.particle = particle;
+        this.particleParameters = null;
     }
 
     @Deprecated
