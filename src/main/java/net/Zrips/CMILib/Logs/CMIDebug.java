@@ -3,13 +3,11 @@ package net.Zrips.CMILib.Logs;
 import java.util.Arrays;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Colors.CMIChatColor;
 import net.Zrips.CMILib.Version.Version;
-import net.Zrips.CMILib.commands.CommandsHandler;
 import net.Zrips.CMILib.commands.CommandsHandler;
 
 public class CMIDebug {
@@ -74,7 +72,7 @@ public class CMIDebug {
                 FullMessage.append(String.valueOf(one) + " ");
         }
 
-        player.sendMessage(CMIChatColor.DARK_GRAY + "[CMID] " + CMIChatColor.DARK_AQUA + FullMessage.toString());
+        player.sendMessage(CMIChatColor.DARK_GRAY + "[CMID] " + CMIChatColor.DARK_AQUA + FullMessage.toString().replace("§", "&"));
     }
 
     @SuppressWarnings("unused")

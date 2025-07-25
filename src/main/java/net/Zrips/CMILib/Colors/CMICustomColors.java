@@ -1,23 +1,24 @@
 package net.Zrips.CMILib.Colors;
 
 public enum CMICustomColors {
+
     Black("000000"),
-    Dark_Blue("0000C8"),
+    Dark_Blue("0000AA"),
     Dark_Green("00AA00"),
     Dark_Aqua("00AAAA"),
     Dark_Red("AA0000"),
     Dark_Purple("AA00AA"),
-    Gold("FFD700"),
-    Gray("808080"),
+    Gold("FFAA00"),
+    Gray("AAAAAA"),
     Dark_Gray("555555"),
-    Blue("0000FF"),
-    Green("00FF00"),
+    Blue("5555FF"),
+    Green("55FF55"),
     Aqua("55FFFF"),
-    Red("FF0000"),
+    Red("FF5555"),
     Light_Purple("FF55FF"),
-    Yellow("FFFF00"),
+    Yellow("FFFF55"),
     White("FFFFFF"),
-    
+
     Navy_Blue("000080"),
     Stratos("000741"),
     Swamp("001B1C"),
@@ -1578,17 +1579,23 @@ public enum CMICustomColors {
     Ivory("FFFFF0");
 
     private String hex;
+    private String name;
 //    private String[] extra;
     private long rgb = 0;
 
     CMICustomColors(String hex) {
-	this.hex = hex.toLowerCase();
+        this.hex = hex.toLowerCase();
 //	this.extra = extra;
-	rgb = Long.parseLong(hex, 16);
+        rgb = Long.parseLong(hex, 16);
+        this.name = this.toString().replace("_", "");
     }
 
     public String getHex() {
-	return hex;
+        return hex;
+    }
+    
+    public String getName() {
+	return name;
     }
 
 //    public String[] getExtra() {
@@ -1596,6 +1603,6 @@ public enum CMICustomColors {
 //    }
 
     public long getRgb() {
-	return rgb;
+        return rgb;
     }
 }

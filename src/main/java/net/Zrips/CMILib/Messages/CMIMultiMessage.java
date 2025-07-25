@@ -18,7 +18,6 @@ import net.Zrips.CMILib.Colors.CMIChatColor;
 import net.Zrips.CMILib.Container.CMICommandSender;
 import net.Zrips.CMILib.Items.CMIMaterial;
 import net.Zrips.CMILib.Locale.Snd;
-import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.RawMessages.RawMessage;
 import net.Zrips.CMILib.TitleMessages.CMITitleMessage;
 import net.Zrips.CMILib.Version.Version;
@@ -35,7 +34,6 @@ public class CMIMultiMessage {
     private List<Object> extra;
 
     public CMIMultiMessage(String msg) {
-
         for (CMIMultiMessageType one : CMIMultiMessageType.values()) {
 
             Pattern pattern = one.getRegex();
@@ -195,7 +193,7 @@ public class CMIMultiMessage {
             // Clearing from any command
             RawMessage rm = RawMessage.translateTextOnlyRawMessage(message);
 
-            CMIScheduler.get().runTask(() -> rm.show(sender));
+            CMIScheduler.runTask(CMILib.getInstance(), () -> rm.show(sender));
             break;
         case timedActionBar:
             if (!(sender instanceof Player))
@@ -249,6 +247,7 @@ public class CMIMultiMessage {
             break;
         case plain:
         default:
+
             if (sender != null) {
                 // Lets send messages in json format to bypass client side delay
                 if (Version.isCurrentEqualOrHigher(Version.v1_16_R1) && sender instanceof Player) {
@@ -257,8 +256,9 @@ public class CMIMultiMessage {
                     rm.addText(message);
                     rm.show(sender);
                 } else {
-                    if (Version.isCurrentLower(Version.v1_16_R1))
+                    if (Version.isCurrentLower(Version.v1_16_R1)) {
                         message = CMIChatColor.stripHexColor(message);
+                    }
                     sender.sendMessage(message);
                 }
             }
