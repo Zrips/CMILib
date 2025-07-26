@@ -1,8 +1,9 @@
 package net.Zrips.CMILib.Colors;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -388,25 +389,71 @@ public class GradientColor {
         return output.toString();
     }
 
-    public static CMIChatColor mixColors(CMIChatColor color1, CMIChatColor color2, double percent) {
-        percent = percent / 100D;
+    public static void clearCache() {
+        gradientcache.clear();
+    }
+
+    private static Map<String, String> gradientcache = new LinkedHashMap<String, String>(100, 0.75f, true) {
+        @Override
+        protected boolean removeEldestEntry(Map.Entry<String, String> eldest) {
+            return size() > 100;
+        }
+    };
+
+    public static String mixColors(CMIChatColor color1, CMIChatColor color2, double percent, boolean vanilla) {
         double inverse_percent = 1.0 - percent;
         int redPart = (int) (color2.getRed() * percent + color1.getRed() * inverse_percent);
         int greenPart = (int) (color2.getGreen() * percent + color1.getGreen() * inverse_percent);
         int bluePart = (int) (color2.getBlue() * percent + color1.getBlue() * inverse_percent);
-//        This slow? Cache results?
-        String hexCode = '#' + Integer.toHexString((redPart << 16) | (greenPart << 8) | bluePart).toUpperCase(Locale.ROOT);
-//        String hexCode = String.format("#%02x%02x%02x", redPart, greenPart, bluePart);
-        return new CMIChatColor(hexCode);
+        return vanilla ? toHexColorVanilla(redPart, greenPart, bluePart) : toHexColor(redPart, greenPart, bluePart);
+    }
+
+    private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
+
+    private static String toHexColor(int red, int green, int blue) {
+        char[] hexChars = new char[6];
+        hexChars[0] = HEX_ARRAY[(red >>> 4) & 0xF];
+        hexChars[1] = HEX_ARRAY[red & 0xF];
+        hexChars[2] = HEX_ARRAY[(green >>> 4) & 0xF];
+        hexChars[3] = HEX_ARRAY[green & 0xF];
+        hexChars[4] = HEX_ARRAY[(blue >>> 4) & 0xF];
+        hexChars[5] = HEX_ARRAY[blue & 0xF];
+        return new String(hexChars);
+    }
+
+    private static String toHexColorVanilla(int red, int green, int blue) {
+        StringBuilder sb = new StringBuilder(14);
+        sb.append('§').append('x');
+        int[] rgb = { red, green, blue };
+
+        for (int color : rgb) {
+            sb.append('§').append(HEX_ARRAY[(color >>> 4) & 0xF]);
+            sb.append('§').append(HEX_ARRAY[color & 0xF]);
+        }
+        return sb.toString();
     }
 
     public static String processGradient(String text) {
+        return processGradient(text, false);
+    }
+
+    public static String processGradient(String text, boolean vanilla) {
+
+        if (!text.contains(CMIChatColor.colorCodePrefix))
+            return text;
+
+        String cached = gradientcache.get(text);
+        if (cached != null)
+            return cached;
+
         Matcher gradientMatch = gradientPattern.matcher(text);
+
+        String original = text;
 
         while (gradientMatch.find()) {
             String fullmatch = gradientMatch.group();
-            CMIChatColor c1 = CMIChatColor.getColor(CMIChatColor.colorCodePrefix + gradientMatch.group(3) + CMIChatColor.colorCodeSuffix);
-            CMIChatColor c2 = CMIChatColor.getColor(CMIChatColor.colorCodePrefix + gradientMatch.group(7) + CMIChatColor.colorCodeSuffix);
+            CMIChatColor c1 = CMIChatColor.getColor(gradientMatch.group(3));
+            CMIChatColor c2 = CMIChatColor.getColor(gradientMatch.group(7));
 
             if (c1 == null || c2 == null) {
                 continue;
@@ -420,16 +467,24 @@ public class GradientColor {
 
             gtext = CMIChatColor.stripColor(gtext);
 
+            int length = gtext.length();
+            length = length < 2 ? 2 : length - 1;
+
             for (int i = 0; i < gtext.length(); i++) {
                 char ch = gtext.charAt(i);
-                int length = gtext.length();
-                length = length < 2 ? 2 : length;
-                double percent = (i * 100D) / (length - 1);
-                CMIChatColor mix = mixColors(c1, c2, percent);
-                updated.append(CMIChatColor.colorCodePrefix).append(mix.getHex()).append(CMIChatColor.colorCodeSuffix);
+                double percent = i / (double) length;
+                if (vanilla) {
+                    updated.append(mixColors(c1, c2, percent, vanilla));
+                } else {
+                    String mix = mixColors(c1, c2, percent, vanilla);
+                    updated.append(CMIChatColor.colorCodePrefix).append(mix).append(CMIChatColor.colorCodeSuffix);
+                }
                 if (!formats.isEmpty()) {
                     for (CMIChatColor one : formats) {
-                        updated.append("&").append(one.getChar());
+                        if (vanilla)
+                            updated.append("§").append(one.getChar());
+                        else
+                            updated.append("&").append(one.getChar());
                     }
                 }
 
@@ -437,14 +492,13 @@ public class GradientColor {
 
                 if (codePoint > 127) {
                     if (Character.isSurrogate(ch)) {
-                        // Should be "" instead of StringOf to get correct results
-                        updated.append("" + ch + gtext.charAt(i + 1));
+                        updated.append(ch).append(gtext.charAt(i + 1));
                         i++;
                     } else {
-                        updated.append("" + ch);
+                        updated.append(ch);
                     }
                 } else {
-                    updated.append(String.valueOf(ch));
+                    updated.append(ch);
                 }
             }
 
@@ -454,10 +508,11 @@ public class GradientColor {
 
             text = text.replace(fullmatch, updated.toString());
 
-            if (continuous) {
-                text = processGradient(text);
-            }
+            if (continuous)
+                text = processGradient(text, vanilla);
         }
+
+        gradientcache.put(original, text);
 
         return text;
     }

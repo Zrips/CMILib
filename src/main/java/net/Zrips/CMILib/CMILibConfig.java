@@ -418,6 +418,7 @@ public class CMILibConfig {
 
         CMIEntityType.cache.clear();
         CMIWorld.onDisable();
+        CMIChatColor.clearCache();
 
         if (configLoaded && langLoaded)
             plugin.info("reload", player, "feedback", "[ms]", (System.currentTimeMillis() - time));
