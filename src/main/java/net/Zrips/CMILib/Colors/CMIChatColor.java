@@ -18,6 +18,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Color;
 
 import net.Zrips.CMILib.CMILibConfig;
+import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Version.Version;
 
 public class CMIChatColor {
@@ -611,7 +612,6 @@ public class CMIChatColor {
     }
 
     public static CMIChatColor getColor(String text) {
-
         if (text == null)
             return null;
 
@@ -644,7 +644,7 @@ public class CMIChatColor {
         if (or.length() > 1 && String.valueOf(or.charAt(or.length() - 2)).equalsIgnoreCase("&")) {
             text = text.substring(text.length() - 1, text.length()).toLowerCase();
             CMIChatColor byChar = BY_CHAR.get(text);
-            if (byChar != null && !byChar.isFormat())
+            if (byChar != null)
                 return byChar;
         }
 

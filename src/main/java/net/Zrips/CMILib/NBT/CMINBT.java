@@ -1937,8 +1937,9 @@ public class CMINBT {
             return null;
 
         try {
-            if (Version.isCurrentEqualOrHigher(Version.v1_21_R5))
+            if (Version.isCurrentEqualOrHigher(Version.v1_21_R5)) {
                 return getNbt(item).toString();
+            }
         } catch (Throwable e) {
             e.printStackTrace();
         }

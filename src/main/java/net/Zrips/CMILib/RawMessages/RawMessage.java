@@ -417,6 +417,9 @@ public class RawMessage {
 
     // Temp fix due to broken serializer
     private static String updateBooleans(String input) {
+        if (!input.contains("1b") && !input.contains("0b"))
+            return input;
+
         Matcher matcher = BOOLEAN_PATTERN.matcher(input);
         StringBuffer sb = new StringBuffer();
 
@@ -426,23 +429,40 @@ public class RawMessage {
 
         matcher.appendTail(sb);
         return sb.toString();
-//        Matcher matcher = BOOLEAN_PATTERN.matcher(input);
-//        StringBuffer sb = new StringBuffer();
-//
-//        while (matcher.find()) {
-//            String key = matcher.group(1);
-//            String value = matcher.group(2);
-//            String replacement = "\"" + key + "\":" + (value.equals("1") ? "true" : "false");
-//            matcher.appendReplacement(sb, replacement);
-//        }
-//
-//        matcher.appendTail(sb);
-//        return sb.toString();
+    }
+
+    private static final Pattern FLOAT_PATTERN = Pattern.compile("\"([-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?)f\"");
+
+    private static String updateFloats(String input) {
+        if (!input.contains("f\",") && !input.contains("f\"}"))
+            return input;
+        
+        Matcher matcher = FLOAT_PATTERN.matcher(input);
+        StringBuffer sb = new StringBuffer();
+
+        while (matcher.find()) {
+            matcher.appendReplacement(sb, matcher.group(1));
+        }
+
+        matcher.appendTail(sb);
+        return sb.toString();
+    }
+
+    private static final Pattern QUOTED_NUMBER_WITH_D = Pattern.compile("(:)\\\"?(-?\\d+(?:\\.\\d+)?)(?:[dD])?\\\"?([,}])");
+
+    public static String fixQuotedAmountNumbers(String input) {
+        if (!input.contains("d\",") && !input.contains("d\"}"))
+            return input;
+        return QUOTED_NUMBER_WITH_D.matcher(input).replaceAll("$1$2$3");
     }
 
     private static final Pattern CUSTOM_MODEL_DATA_PATTERN = Pattern.compile("\"minecraft:custom_model_data\":\\{floats:\\[(\\d+(?:\\.\\d+)?)f?\\]\\}\\s*,?");
 
     private static String updateCustomModelData(String input) {
+
+        if (!input.contains("\"minecraft:custom_model_data\":"))
+            return input;
+
         Matcher matcher = CUSTOM_MODEL_DATA_PATTERN.matcher(input);
         StringBuffer sb = new StringBuffer();
 
@@ -457,6 +477,10 @@ public class RawMessage {
     private static final Pattern INT_ARRAY_PATTERN = Pattern.compile("\\[I;\\s*([^\\]]+)\\]");
 
     private static String fixIntArray(String input) {
+
+        if (!input.contains("[I;"))
+            return input;
+
         Matcher matcher = INT_ARRAY_PATTERN.matcher(input);
         StringBuffer sb = new StringBuffer();
 
@@ -488,9 +512,11 @@ public class RawMessage {
             // Temp fix due to serializer using 0b and 1b for false and true
             // custom model converts ints to floats, at the moment solution is to just remove entire section
             // int array adds I which isn't valid anymore
+            res = updateFloats(res);
             res = updateBooleans(res);
             res = updateCustomModelData(res);
             res = fixIntArray(res);
+            res = fixQuotedAmountNumbers(res);
         }
 
         // Cleaning up useless information. Italic not included due to some weird behavior which defaults to italic look if not specifically set to not be one
