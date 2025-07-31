@@ -10,7 +10,6 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.Block;
@@ -19,7 +18,6 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.google.common.collect.HashMultimap;
@@ -1938,6 +1936,18 @@ public class CMINBT {
 
         try {
             if (Version.isCurrentEqualOrHigher(Version.v1_21_R5)) {
+
+//                String meta = item.hasItemMeta() ? item.getItemMeta().getAsString() : "";
+//                StringBuilder sb = new StringBuilder();
+//                sb.append("{");
+//                if (!meta.isEmpty()) {
+//                    sb.append("components:").append(meta).append(",");
+//                }
+//                sb.append("count:").append(item.getAmount()).append(",");
+//                sb.append("id:\"").append(item.getType().getKey().toString()).append("\"");
+//                sb.append("}");
+//
+//                return sb.toString();
                 return getNbt(item).toString();
             }
         } catch (Throwable e) {

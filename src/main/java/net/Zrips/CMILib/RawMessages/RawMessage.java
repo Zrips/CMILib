@@ -5,20 +5,34 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.bukkit.Bukkit;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.ShulkerBox;
 import org.bukkit.command.CommandSender;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.BookMeta;
+import org.bukkit.inventory.meta.BundleMeta;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Colors.CMIChatColor;
 import net.Zrips.CMILib.Container.CMICommandSender;
 import net.Zrips.CMILib.Items.CMIItemStack;
+import net.Zrips.CMILib.Items.CMIMC;
+import net.Zrips.CMILib.Items.CMIMaterial;
 import net.Zrips.CMILib.Locale.LC;
+import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Messages.CMIMessages;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.Shadow.ShadowCommand;
@@ -436,7 +450,7 @@ public class RawMessage {
     private static String updateFloats(String input) {
         if (!input.contains("f\",") && !input.contains("f\"}"))
             return input;
-        
+
         Matcher matcher = FLOAT_PATTERN.matcher(input);
         StringBuffer sb = new StringBuffer();
 
@@ -494,6 +508,71 @@ public class RawMessage {
         return sb.toString();
     }
 
+    private static ShulkerBox simplifyShulkerBoxContents(ItemStack shulkerBox) {
+        if (shulkerBox == null || !(shulkerBox.getItemMeta() instanceof BlockStateMeta))
+            return null;
+
+        BlockStateMeta meta = (BlockStateMeta) shulkerBox.getItemMeta();
+
+        BlockState state = meta.getBlockState();
+        if (!(state instanceof ShulkerBox))
+            return null;
+
+        ItemStack newShulkerBox = new ItemStack(shulkerBox.getType());
+        BlockStateMeta newMeta = (BlockStateMeta) newShulkerBox.getItemMeta();
+        ShulkerBox newBox = (ShulkerBox) newMeta.getBlockState();
+
+        ShulkerBox box = (ShulkerBox) state;
+
+        Inventory inventory = box.getInventory();
+        ItemStack[] simplifiedContents = new ItemStack[inventory.getSize()];
+
+        for (int i = 0; i < inventory.getSize(); i++) {
+            ItemStack item = inventory.getItem(i);
+            if (item == null || item.getType().isAir())
+                continue;
+            ItemStack simpleItem = new ItemStack(item.getType(), item.getAmount());
+            ItemMeta originalMeta = item.getItemMeta();
+            if (originalMeta != null && originalMeta.hasDisplayName()) {
+                ItemMeta simpleMeta = simpleItem.getItemMeta();
+                simpleMeta.setDisplayName(originalMeta.getDisplayName());
+                simpleItem.setItemMeta(simpleMeta);
+            }
+            simplifiedContents[i] = simpleItem;
+        }
+
+        newBox.getInventory().setContents(simplifiedContents);
+
+        return newBox;
+    }
+
+    private static BundleMeta simplifyBundleContents(ItemStack shulkerBox) {
+        if (shulkerBox == null || !(shulkerBox.getItemMeta() instanceof BundleMeta))
+            return null;
+
+        ItemStack newShulkerBox = new ItemStack(shulkerBox.getType());
+        BundleMeta newMeta = (BundleMeta) newShulkerBox.getItemMeta();
+
+        List<ItemStack> simplifiedContents = new ArrayList<ItemStack>();
+
+        for (ItemStack one : ((BundleMeta) shulkerBox.getItemMeta()).getItems()) {
+            if (one == null || one.getType().isAir())
+                continue;
+            ItemStack simpleItem = new ItemStack(one.getType(), one.getAmount());
+            ItemMeta originalMeta = one.getItemMeta();
+            if (originalMeta != null && originalMeta.hasDisplayName()) {
+                ItemMeta simpleMeta = simpleItem.getItemMeta();
+                simpleMeta.setDisplayName(originalMeta.getDisplayName());
+                simpleItem.setItemMeta(simpleMeta);
+            }
+            simplifiedContents.add(simpleItem);
+        }
+
+        newMeta.setItems(simplifiedContents);
+
+        return newMeta;
+    }
+
     public RawMessage addItem(ItemStack item) {
         if (item == null)
             return this;
@@ -506,9 +585,52 @@ public class RawMessage {
             item.setItemMeta(bmeta);
         }
 
+        CMIMaterial cmat = CMIMaterial.get(item);
+
+        if (Version.isCurrentEqualOrHigher(Version.v1_21_R4) && item.hasItemMeta()) {
+            ItemStack cloned = cmat.newItemStack();
+            ItemMeta newMeta = cloned.getItemMeta();
+
+            ShulkerBox shulkerMeta = null;
+            if (cmat.isShulkerBox()) {
+                shulkerMeta = simplifyShulkerBoxContents(item);
+                if (shulkerMeta != null)
+                    ((BlockStateMeta) newMeta).setBlockState(shulkerMeta);
+            }
+
+            if (cmat.isPlayerHead()) {
+                SkullMeta skullMeta = (SkullMeta) item.getItemMeta();
+                ((SkullMeta) newMeta).setPlayerProfile(skullMeta.getPlayerProfile());
+            }
+            
+            if (cmat.containsCriteria(CMIMC.BUNDLE)) {
+                BundleMeta bundleMeta = simplifyBundleContents(item);
+                if (bundleMeta != null)
+                    newMeta = bundleMeta;
+            }
+            
+            ItemMeta originalMeta = item.getItemMeta();
+            newMeta.setDisplayName(originalMeta.getDisplayName());
+            newMeta.setLore(originalMeta.getLore());
+            for (ItemFlag flag : originalMeta.getItemFlags()) {
+                newMeta.addItemFlags(flag);
+            }
+            
+            for (Entry<Enchantment, Integer> enchant : originalMeta.getEnchants().entrySet()) {
+                newMeta.addEnchant(enchant.getKey(), enchant.getValue(), true);
+            }
+
+            cloned.setItemMeta(newMeta);
+            item = cloned;
+        }
+
         String res = CMINBT.toJson(item);
 
+        // Cleaning up useless information. Italic not included due to some weird behavior which defaults to italic look if not specifically set to not be one
+        res = res.replaceAll("\\\"bold\\\":false,?|\\\"underlined\\\":false,?|\\\"strikethrough\\\":false,?|\\\"obfuscated\\\":false,?", "");
+
         if (Version.isCurrentEqualOrHigher(Version.v1_21_R4)) {
+
             // Temp fix due to serializer using 0b and 1b for false and true
             // custom model converts ints to floats, at the moment solution is to just remove entire section
             // int array adds I which isn't valid anymore
@@ -518,9 +640,6 @@ public class RawMessage {
             res = fixIntArray(res);
             res = fixQuotedAmountNumbers(res);
         }
-
-        // Cleaning up useless information. Italic not included due to some weird behavior which defaults to italic look if not specifically set to not be one
-        res = res.replaceAll("\\\"bold\\\":false,?|\\\"underlined\\\":false,?|\\\"strikethrough\\\":false,?|\\\"obfuscated\\\":false,?", "");
 
         try {
 //            if (res.length() > 32766) {
@@ -771,6 +890,7 @@ public class RawMessage {
         value = value.replace("\\\"strikethrough\\\":false,", "");
         value = value.replace("\"underlined\":false,", "");
         value = value.replace("\\\"underlined\\\":false,", "");
+
         return value;
     }
 
