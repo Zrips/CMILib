@@ -32,7 +32,6 @@ import net.Zrips.CMILib.Items.CMIItemStack;
 import net.Zrips.CMILib.Items.CMIMC;
 import net.Zrips.CMILib.Items.CMIMaterial;
 import net.Zrips.CMILib.Locale.LC;
-import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Messages.CMIMessages;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.Shadow.ShadowCommand;
@@ -587,7 +586,7 @@ public class RawMessage {
 
         CMIMaterial cmat = CMIMaterial.get(item);
 
-        if (Version.isCurrentEqualOrHigher(Version.v1_21_R4) && item.hasItemMeta()) {
+        if (Version.isCurrentEqualOrHigher(Version.v1_21_R1) && item.hasItemMeta()) {
             ItemStack cloned = cmat.newItemStack();
             ItemMeta newMeta = cloned.getItemMeta();
 
@@ -602,20 +601,27 @@ public class RawMessage {
                 SkullMeta skullMeta = (SkullMeta) item.getItemMeta();
                 ((SkullMeta) newMeta).setPlayerProfile(skullMeta.getPlayerProfile());
             }
-            
+
             if (cmat.containsCriteria(CMIMC.BUNDLE)) {
                 BundleMeta bundleMeta = simplifyBundleContents(item);
                 if (bundleMeta != null)
                     newMeta = bundleMeta;
             }
-            
+
             ItemMeta originalMeta = item.getItemMeta();
-            newMeta.setDisplayName(originalMeta.getDisplayName());
-            newMeta.setLore(originalMeta.getLore());
+
+            if (Version.isPaperBranch()) {
+                newMeta.displayName(originalMeta.displayName());
+                newMeta.lore(originalMeta.lore());
+            } else {
+                newMeta.setDisplayName(originalMeta.getDisplayName());
+                newMeta.setLore(originalMeta.getLore());
+            }
+
             for (ItemFlag flag : originalMeta.getItemFlags()) {
                 newMeta.addItemFlags(flag);
             }
-            
+
             for (Entry<Enchantment, Integer> enchant : originalMeta.getEnchants().entrySet()) {
                 newMeta.addEnchant(enchant.getKey(), enchant.getValue(), true);
             }
@@ -878,6 +884,7 @@ public class RawMessage {
     }
 
     private static String truncate(String value) {
+
         if (value.length() < 5000)
             return value;
         value = value.replace("\"bold\":false,", "");

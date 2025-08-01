@@ -1946,8 +1946,8 @@ public class CMINBT {
 //                sb.append("count:").append(item.getAmount()).append(",");
 //                sb.append("id:\"").append(item.getType().getKey().toString()).append("\"");
 //                sb.append("}");
-//
 //                return sb.toString();
+                
                 return getNbt(item).toString();
             }
         } catch (Throwable e) {
