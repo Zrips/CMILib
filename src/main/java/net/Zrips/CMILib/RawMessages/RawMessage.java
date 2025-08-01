@@ -19,6 +19,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ArmorMeta;
 import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.BundleMeta;
@@ -608,6 +609,13 @@ public class RawMessage {
                     newMeta = bundleMeta;
             }
 
+            if (item.getItemMeta() instanceof ArmorMeta) {
+                ArmorMeta armorMeta = (ArmorMeta) item.getItemMeta();
+                if (armorMeta.hasTrim()) {
+                    ((ArmorMeta) newMeta).setTrim(armorMeta.getTrim());
+                }
+            }
+
             ItemMeta originalMeta = item.getItemMeta();
 
             if (Version.isPaperBranch()) {
@@ -685,10 +693,15 @@ public class RawMessage {
 
         if (Version.isCurrentEqualOrHigher(Version.v1_21_R4)) {
             res = res.substring(1, res.length() - 1);
-
             temp.put(RawMessagePartType.HoverItem, "\"hover_event\":{\"action\":\"show_item\"," + res + "}");
-        } else
+        } else {
+            if (Version.isCurrentEqualOrHigher(Version.v1_21_R3) && res.startsWith("{components:{")) {
+                res = "{\"components\":{" + res.substring("{components:{".length(), res.length());
+                res = res.replace(",}", "}");
+            }
+
             temp.put(RawMessagePartType.HoverItem, "\"hoverEvent\":{\"action\":\"show_item\",\"value\":\"" + escape(res, true) + "\"}");
+        }
         return this;
     }
 
@@ -884,7 +897,6 @@ public class RawMessage {
     }
 
     private static String truncate(String value) {
-
         if (value.length() < 5000)
             return value;
         value = value.replace("\"bold\":false,", "");
