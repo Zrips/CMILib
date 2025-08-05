@@ -1891,6 +1891,13 @@ public class Reflections {
     private Constructor<?> toastAdvancementDisplay = null;
     private Constructor<?> toastPacketPlayOutAdvancements = null;
 
+    private Class<?> advancementFrameTypeClass = null;
+    private Class<?> minecraftKeyClass = null;
+    private Class<?> advancementDisplayClass = null;
+    private Class<?> advancementRequirementsClass = null;
+    private Class<?> advancementProgressClass = null;
+    private Class<?> packetPlayOutAdvancementsClass = null;
+
     public void showToast(CMIAdvancement advancement, Player... players) {
         if (!Version.isCurrentEqualOrHigher(Version.v1_20_R2))
             return;
@@ -1898,12 +1905,14 @@ public class Reflections {
         CMIScheduler.runTaskAsynchronously(plugin, () -> {
             try {
 
-                Class<?> advancementFrameTypeClass = Class.forName("net.minecraft.advancements.AdvancementFrameType");
-                Class<?> minecraftKeyClass = Class.forName("net.minecraft.resources.MinecraftKey");
-                Class<?> advancementDisplayClass = Class.forName("net.minecraft.advancements.AdvancementDisplay");
-                Class<?> advancementRequirementsClass = Class.forName("net.minecraft.advancements.AdvancementRequirements");
-                Class<?> advancementProgressClass = Class.forName("net.minecraft.advancements.AdvancementProgress");
-                Class<?> packetPlayOutAdvancementsClass = Class.forName("net.minecraft.network.protocol.game.PacketPlayOutAdvancements");
+                if (advancementFrameTypeClass == null) {
+                    advancementFrameTypeClass = Class.forName("net.minecraft.advancements.AdvancementFrameType");
+                    minecraftKeyClass = Class.forName("net.minecraft.resources.MinecraftKey");
+                    advancementDisplayClass = Class.forName("net.minecraft.advancements.AdvancementDisplay");
+                    advancementRequirementsClass = Class.forName("net.minecraft.advancements.AdvancementRequirements");
+                    advancementProgressClass = Class.forName("net.minecraft.advancements.AdvancementProgress");
+                    packetPlayOutAdvancementsClass = Class.forName("net.minecraft.network.protocol.game.PacketPlayOutAdvancements");
+                }
 
                 if (Version.isCurrentEqualOrHigher(Version.v1_20_R3)) {
 
@@ -2269,58 +2278,49 @@ public class Reflections {
             Class<?> jsonElementClass = Class.forName("com.google.gson.JsonElement");
 
             if (Version.isCurrentEqualOrHigher(Version.v1_20_R1)) {
-                Class<?> advWorld = getMinecraftClass("AdvancementDataWorld");
-                Object deser = advWorld.getField("b").get(null);
+                Object deser = AdvancementDataWorld.getField("b").get(null);
 
                 Object jsonElement = deser.getClass().getMethod("fromJson", String.class, Class.class).invoke(deser, advancement, jsonElementClass);
-                Object jsonObject = getMinecraftClass("ChatDeserializer").getMethod("m", jsonElementClass, String.class).invoke(null, jsonElement, "advancement");
+                Object jsonObject = ChatDeserializer.getMethod("m", jsonElementClass, String.class).invoke(null, jsonElement, "advancement");
 
-                Class<?> ldcClass = getMinecraftClass("LootDeserializationContext");
-
-                Object server = MinecraftServerClass.getMethod("getServer").invoke(null);
                 Object predicateMgr = getLootPredicateManager();
-                Constructor<?> ctor = ldcClass.getConstructor(mcKey.getClass(), predicateMgr.getClass());
+                Constructor<?> ctor = LootDeserializationContext.getConstructor(mcKey.getClass(), predicateMgr.getClass());
                 Object ldc = ctor.newInstance(mcKey, predicateMgr);
 
-                Method deserialize = SerializedAdvancement.getMethod("a", jsonObject.getClass(), ldcClass);
+                Method deserialize = SerializedAdvancement.getMethod("a", jsonObject.getClass(), LootDeserializationContext);
                 Object nms = deserialize.invoke(null, jsonObject, ldc);
 
                 if (nms != null) {
-                    Object ax = server.getClass().getMethod("az").invoke(server);
+                    Object ax = DedicatedServer.getClass().getMethod("az").invoke(DedicatedServer);
                     Object c = ax.getClass().getField("c").get(ax);
                     c.getClass().getMethod("a", Map.class).invoke(c, Collections.singletonMap(mcKey, nms));
                 }
 
             } else if (Version.isCurrentEqualOrHigher(Version.v1_18_R1)) {
-                Class<?> advWorld = getMinecraftClass("AdvancementDataWorld");
-                Object deser = advWorld.getField("b").get(null);
-
+                Object deser = AdvancementDataWorld.getField("b").get(null);
                 Object jsonElement = deser.getClass().getMethod("fromJson", String.class, Class.class).invoke(deser, advancement, jsonElementClass);
-                Object jsonObject = getMinecraftClass("ChatDeserializer").getMethod("m", jsonElementClass, String.class).invoke(null, jsonElement, "advancement");
+                Object jsonObject = ChatDeserializer.getMethod("m", jsonElementClass, String.class).invoke(null, jsonElement, "advancement");
 
-                Class<?> ldcClass = getMinecraftClass("LootDeserializationContext");
-
-                Object server = MinecraftServerClass.getMethod("getServer").invoke(null);
                 Object predicateMgr = getLootPredicateManager();
                 if (predicateMgr == null)
                     return;
 
-                Constructor<?> ctor = ldcClass.getConstructor(mcKey.getClass(), predicateMgr.getClass());
+                Constructor<?> ctor = LootDeserializationContext.getConstructor(mcKey.getClass(), predicateMgr.getClass());
                 Object ldc = ctor.newInstance(mcKey, predicateMgr);
 
-                Method deserialize = SerializedAdvancement.getMethod("a", jsonObject.getClass(), ldcClass);
+                Method deserialize = SerializedAdvancement.getMethod("a", jsonObject.getClass(), LootDeserializationContext);
                 Object nms = deserialize.invoke(null, jsonObject, ldc);
 
                 if (nms != null) {
                     Object access = null;
                     if (Version.isCurrentEqualOrHigher(Version.v1_19_R3)) {
-                        access = server.getClass().getMethod("az").invoke(server);
+                        access = DedicatedServer.getClass().getMethod("az").invoke(DedicatedServer);
                     } else if (Version.isCurrentEqualOrHigher(Version.v1_19_R2)) {
-                        access = server.getClass().getMethod("ay").invoke(server);
+                        access = DedicatedServer.getClass().getMethod("ay").invoke(DedicatedServer);
                     } else if (Version.isCurrentEqualOrHigher(Version.v1_19_R1)) {
-                        access = server.getClass().getMethod("az").invoke(server);
+                        access = DedicatedServer.getClass().getMethod("az").invoke(DedicatedServer);
                     } else {
-                        access = server.getClass().getMethod("ax").invoke(server);
+                        access = DedicatedServer.getClass().getMethod("ax").invoke(DedicatedServer);
                     }
 
                     Object c = access.getClass().getField("c").get(access);
@@ -2328,39 +2328,31 @@ public class Reflections {
                 }
 
             } else if (Version.isCurrentEqualOrHigher(Version.v1_17_R1)) {
-                Class<?> advWorld = getMinecraftClass("AdvancementDataWorld");
-                Object deser = advWorld.getField("b").get(null);
+                Object deser = AdvancementDataWorld.getField("b").get(null);
 
                 Object jsonElement = deser.getClass().getMethod("fromJson", String.class, Class.class).invoke(deser, advancement, jsonElementClass);
-                Object jsonObject = getMinecraftClass("ChatDeserializer").getMethod("m", jsonElementClass, String.class).invoke(null, jsonElement, "advancement");
+                Object jsonObject = ChatDeserializer.getMethod("m", jsonElementClass, String.class).invoke(null, jsonElement, "advancement");
 
-                Class<?> ldcClass = getMinecraftClass("LootDeserializationContext");
-
-                Object server = MinecraftServerClass.getMethod("getServer").invoke(null);
                 Object predicateMgr = getLootPredicateManager();
-                Constructor<?> ctor = ldcClass.getConstructor(mcKey.getClass(), predicateMgr.getClass());
+                Constructor<?> ctor = LootDeserializationContext.getConstructor(mcKey.getClass(), predicateMgr.getClass());
                 Object ldc = ctor.newInstance(mcKey, predicateMgr);
 
-                Method deserialize = SerializedAdvancement.getMethod("a", jsonObject.getClass(), ldcClass);
+                Method deserialize = SerializedAdvancement.getMethod("a", jsonObject.getClass(), LootDeserializationContext);
                 Object nms = deserialize.invoke(null, jsonObject, ldc);
 
-                Object advData = server.getClass().getMethod("getAdvancementData").invoke(server);
-                Object registry = advData.getClass().getField("c").get(advData);
-                registry.getClass().getMethod("a", Map.class).invoke(registry, Collections.singletonMap(mcKey, nms));
+                advancementRegistry.getClass().getMethod("a", Map.class).invoke(advancementRegistry, Collections.singletonMap(mcKey, nms));
 
             } else if (Version.isCurrentEqualOrHigher(Version.v1_16_R1)) {
-                Class<?> advWorld = getMinecraftClass("AdvancementDataWorld");
-                Object deser = advWorld.getField("DESERIALIZER").get(null);
+                Object deser = AdvancementDataWorld.getField("DESERIALIZER").get(null);
 
                 Object jsonElement = deser.getClass().getMethod("fromJson", String.class, Class.class).invoke(deser, advancement, jsonElementClass);
-                Object jsonObject = getMinecraftClass("ChatDeserializer").getMethod("m", jsonElementClass, String.class).invoke(null, jsonElement, "advancement");
+                Object jsonObject = ChatDeserializer.getMethod("m", jsonElementClass, String.class).invoke(null, jsonElement, "advancement");
 
                 Object server = MinecraftServerClass.getDeclaredMethod("getServer").invoke(null);
                 Object predicateMgr = getLootPredicateManager();
-                Class<?> ldcClass = getMinecraftClass("LootDeserializationContext");
-                Method deserialize = SerializedAdvancement.getMethod("a", jsonObject.getClass(), ldcClass);
 
-                Object ldc = ldcClass.getConstructor(mcKey.getClass(), predicateMgr.getClass()).newInstance(mcKey, predicateMgr);
+                Method deserialize = SerializedAdvancement.getMethod("a", jsonObject.getClass(), LootDeserializationContext);
+                Object ldc = LootDeserializationContext.getConstructor(mcKey.getClass(), predicateMgr.getClass()).newInstance(mcKey, predicateMgr);
                 Object nms = deserialize.invoke(null, jsonObject, ldc);
 
                 if (nms != null) {
@@ -2370,10 +2362,9 @@ public class Reflections {
                 }
 
             } else {
-                Class<?> advWorld = getMinecraftClass("AdvancementDataWorld");
-                Object deser = advWorld.getField("DESERIALIZER").get(null);
+                Object deser = AdvancementDataWorld.getField("DESERIALIZER").get(null);
                 Object nms = deser.getClass().getMethod("fromJson", String.class, Class.class).invoke(deser, advancement, SerializedAdvancement);
-                Object registry = advWorld.getField("REGISTRY").get(null);
+                Object registry = AdvancementDataWorld.getField("REGISTRY").get(null);
                 registry.getClass().getMethod("a", Map.class).invoke(registry, Collections.singletonMap(mcKey, nms));
             }
 
