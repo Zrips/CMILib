@@ -17,7 +17,6 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.components.ToolComponent;
 
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Colors.CMIChatColor;
@@ -30,7 +29,6 @@ import net.Zrips.CMILib.GUI.GUIManager.GUIRows;
 import net.Zrips.CMILib.GUI.GUIManager.InvType;
 import net.Zrips.CMILib.Items.CMIMaterial;
 import net.Zrips.CMILib.Locale.LC;
-import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Sounds.CMISound;
 import net.Zrips.CMILib.Version.Version;
 
@@ -429,13 +427,23 @@ public class CMIGui {
 
         if (pageCount == 1)
             return;
-        if (this.getInvSize().getRows() < 6)
-            this.setInvSize(GUIRows.r6);
+
+        if (this.getInvSize().getRows() < 6) {
+
+            boolean emptyLastLine = true;
+            for (int i = this.getInvSize().getFields() - 9; i < this.getInvSize().getFields(); i++) {
+                if (this.getButtons().get(i - 1) == null)
+                    continue;
+                emptyLastLine = false;
+                break;
+            }
+
+            if (!emptyLastLine)
+                this.setInvSize(this.getInvSize().getRows() + 1);
+        }
 
         int NextPage = CurrentPage + 1;
-//	NextPage = CurrentPage < pageCount ? NextPage : CurrentPage;
         int Prevpage = CurrentPage - 1;
-//	Prevpage = CurrentPage > 1 ? Prevpage : CurrentPage;
 
         if (Prevpage == 0)
             Prevpage = pageCount;
@@ -445,76 +453,74 @@ public class CMIGui {
 
         int prevP = Prevpage;
         int nextP = NextPage;
-        if (pageCount != 0) {
 
-//	    for (int i = GUIRows.r5.getFields(); i < GUIRows.r6.getFields(); i++) {
-//		this.getButtons().remove(i);
-//	    }
+        if (pageCount <= 0)
+            return;
 
-            Integer mid = this.getSlot(GUIButtonLocation.bottomRight) - 4;
-            Set<Integer> midButttons = getPageMiddleButtons();
-            if (midButttons.isEmpty())
-                midButttons.add(mid);
+        Integer mid = this.getSlot(GUIButtonLocation.bottomRight) - 4;
+        Set<Integer> midButttons = getPageMiddleButtons();
+        if (midButttons.isEmpty())
+            midButttons.add(mid);
 
-            for (Integer midSlot : midButttons) {
-                CMIGuiButton button = new CMIGuiButton(midSlot, CMILib.getInstance().getConfigManager().getGUIMiddlePage()) {
+        for (Integer midSlot : midButttons) {
+            CMIGuiButton button = new CMIGuiButton(midSlot, CMILib.getInstance().getConfigManager().getGUIMiddlePage()) {
+                @Override
+                public void click(GUIClickType type) {
+                    if (CurrentPage != 1)
+                        pageChange(1);
+                }
+            };
+            button.setName(LC.info_pageCountHover.getLocale("[totalEntries]", totalEntries));
+            button.addLore(LC.info_pageCount.getLocale("[current]", CurrentPage, "[total]", pageCount));
+            this.removeButton(midSlot);
+            this.addButton(button);
+        }
+
+        Integer prev = this.getSlot(GUIButtonLocation.bottomLeft);
+        Set<Integer> prevButttons = getPagePrevButtons();
+        if (prevButttons.isEmpty())
+            prevButttons.add(prev);
+
+        for (Integer prevSlot : prevButttons) {
+            if (this.getButtons().get(prevSlot) == null
+//		    && CurrentPage > 1
+            ) {
+
+                CMIGuiButton button = new CMIGuiButton(prevSlot, CMILib.getInstance().getConfigManager().getGUIPreviousPage()) {
                     @Override
                     public void click(GUIClickType type) {
-                        if (CurrentPage != 1)
-                            pageChange(1);
+                        pageChange(prevP);
                     }
                 };
-                button.setName(LC.info_pageCountHover.getLocale("[totalEntries]", totalEntries));
-                button.addLore(LC.info_pageCount.getLocale("[current]", CurrentPage, "[total]", pageCount));
-                this.removeButton(midSlot);
+                button.setName(LC.info_prevPageGui.getLocale());
+                button.addLore(LC.info_pageCount.getLocale("[current]", CurrentPage, "[total]", pageCount) + (prevP == pageCount ? " " + LC.info_lastPageHover.getLocale() : ""));
+                this.removeButton(prevSlot);
                 this.addButton(button);
             }
+        }
 
-            Integer prev = this.getSlot(GUIButtonLocation.bottomLeft);
-            Set<Integer> prevButttons = getPagePrevButtons();
-            if (prevButttons.isEmpty())
-                prevButttons.add(prev);
+        Integer next = this.getSlot(GUIButtonLocation.bottomRight);
+        Set<Integer> nextButttons = getPageNextButtons();
+        if (nextButttons.isEmpty())
+            nextButttons.add(next);
 
-            for (Integer prevSlot : prevButttons) {
-                if (this.getButtons().get(prevSlot) == null
-//		    && CurrentPage > 1
-                ) {
-
-                    CMIGuiButton button = new CMIGuiButton(prevSlot, CMILib.getInstance().getConfigManager().getGUIPreviousPage()) {
-                        @Override
-                        public void click(GUIClickType type) {
-                            pageChange(prevP);
-                        }
-                    };
-                    button.setName(LC.info_prevPageGui.getLocale());
-                    button.addLore(LC.info_pageCount.getLocale("[current]", CurrentPage, "[total]", pageCount) + (prevP == pageCount ? " " + LC.info_lastPageHover.getLocale() : ""));
-                    this.removeButton(prevSlot);
-                    this.addButton(button);
-                }
-            }
-
-            Integer next = this.getSlot(GUIButtonLocation.bottomRight);
-            Set<Integer> nextButttons = getPageNextButtons();
-            if (nextButttons.isEmpty())
-                nextButttons.add(next);
-
-            for (Integer nextSlot : nextButttons) {
-                if (this.getButtons().get(nextSlot) == null
+        for (Integer nextSlot : nextButttons) {
+            if (this.getButtons().get(nextSlot) == null
 //		    && pageCount > CurrentPage
-                ) {
-                    CMIGuiButton button = new CMIGuiButton(nextSlot, CMILib.getInstance().getConfigManager().getGUINextPage()) {
-                        @Override
-                        public void click(GUIClickType type) {
-                            pageChange(nextP);
-                        }
-                    };
-                    button.setName(LC.info_nextPageGui.getLocale());
-                    button.addLore(LC.info_pageCount.getLocale("[current]", CurrentPage, "[total]", pageCount) + (nextP == 1 ? " " + LC.info_firstPageHover.getLocale() : ""));
-                    this.removeButton(nextSlot);
-                    this.addButton(button);
-                }
+            ) {
+                CMIGuiButton button = new CMIGuiButton(nextSlot, CMILib.getInstance().getConfigManager().getGUINextPage()) {
+                    @Override
+                    public void click(GUIClickType type) {
+                        pageChange(nextP);
+                    }
+                };
+                button.setName(LC.info_nextPageGui.getLocale());
+                button.addLore(LC.info_pageCount.getLocale("[current]", CurrentPage, "[total]", pageCount) + (nextP == 1 ? " " + LC.info_firstPageHover.getLocale() : ""));
+                this.removeButton(nextSlot);
+                this.addButton(button);
             }
         }
+
     }
 
     public boolean isAllowShift() {

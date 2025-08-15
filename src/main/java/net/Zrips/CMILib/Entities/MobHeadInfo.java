@@ -3,10 +3,6 @@ package net.Zrips.CMILib.Entities;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bukkit.inventory.meta.ItemMeta;
-
-import net.Zrips.CMILib.Locale.LC;
-
 public class MobHeadInfo {
 
     private String customName = null;

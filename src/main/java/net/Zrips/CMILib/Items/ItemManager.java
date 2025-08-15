@@ -24,7 +24,6 @@ import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.potion.PotionData;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 
 import net.Zrips.CMILib.CMILib;
@@ -33,7 +32,6 @@ import net.Zrips.CMILib.Colors.CMIChatColor;
 import net.Zrips.CMILib.Enchants.CMIEnchantment;
 import net.Zrips.CMILib.Entities.CMIEntityType;
 import net.Zrips.CMILib.FileHandler.ConfigReader;
-import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Messages.CMIMessages;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.Version.Version;
@@ -561,7 +559,7 @@ public class ItemManager {
 
             }
 
-            if (ncm.getItemStack().getItemMeta() instanceof EnchantmentStorageMeta) {
+            if (ncm.getItemStack() != null && ncm.getItemStack().getItemMeta() instanceof EnchantmentStorageMeta) {
                 EnchantmentStorageMeta meta = (EnchantmentStorageMeta) ncm.getItemStack().getItemMeta();
 
                 List<String> split = new ArrayList<String>();
