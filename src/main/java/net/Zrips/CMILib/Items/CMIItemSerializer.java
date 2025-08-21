@@ -16,6 +16,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.annotation.Nullable;
+
 import org.bukkit.Art;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -472,15 +474,15 @@ public class CMIItemSerializer {
         return input;
     }
 
-    public static CMIItemStack deserialize(String input) {
+    public static @Nullable CMIItemStack deserialize(String input) {
         return deserialize(null, input, null);
     }
 
-    public static CMIItemStack deserialize(String input, CMIAsyncHead ahead) {
+    public static @Nullable CMIItemStack deserialize(String input, CMIAsyncHead ahead) {
         return deserialize(null, input, ahead);
     }
 
-    public static CMIItemStack deserialize(CommandSender sender, String input) {
+    public static @Nullable CMIItemStack deserialize(CommandSender sender, String input) {
         return deserialize(sender, input, null);
     }
 
@@ -515,7 +517,7 @@ public class CMIItemSerializer {
         return itemName.contains("-") || itemName.toLowerCase().startsWith("head:") || itemName.toLowerCase().startsWith("player_head:") ? itemName : itemName.replace(":", "-");
     }
 
-    public static CMIItemStack deserialize(CommandSender sender, String input, CMIAsyncHead ahead) {
+    public static @Nullable CMIItemStack deserialize(CommandSender sender, String input, CMIAsyncHead ahead) {
 
         if (input == null)
             return null;
@@ -693,11 +695,17 @@ public class CMIItemSerializer {
             if (cim.getItemStack().hasItemMeta() && cim.getItemStack().getItemMeta().hasDisplayName())
                 return false;
 
+            Matcher loreMatch = plore.matcher(value);
+
+            if (loreMatch.find())
+                return applyLore(sender, cim, value.substring(loreMatch.group().length()));
+
             if (value.contains("\\\\n") || value.contains("\\n"))
                 return false;
 
             return subApplyName(sender, cim, value);
         }
+
         return subApplyName(sender, cim, value.substring(nameMatch.group().length()));
     }
 
