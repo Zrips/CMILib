@@ -778,7 +778,6 @@ public class CMIEffectManager {
         Object particleParam = ef.getParticleParameters(location);
 
         if (particleParam == null) {
-            CMIDebug.c("null particle param");
             return;
         }
 
@@ -830,7 +829,7 @@ public class CMIEffectManager {
                         float.class,
                         float.class,
                         int.class);
-                } 
+                }
 
                 packet = effectConstructor.newInstance(
                     particleParam,
@@ -865,7 +864,7 @@ public class CMIEffectManager {
 
     public static void playEffect(Object playerConnection, Location location, CMIEffect ef) {
 
-        if (location == null || location.getWorld() == null)
+        if (location == null || location.getWorld() == null || playerConnection == null)
             return;
 
         if (ef == null || ef.getParticle() == null)

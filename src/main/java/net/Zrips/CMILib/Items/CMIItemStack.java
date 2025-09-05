@@ -458,7 +458,8 @@ public class CMIItemStack {
             item.setItemMeta(potion);
             item.setDurability((short) 0);
             potion = (PotionMeta) item.getItemMeta();
-            potion.setDisplayName(this.getRealName());
+            if (effect != null)
+                potion.setDisplayName(this.getRealName());
             item.setItemMeta(potion);
         }
 

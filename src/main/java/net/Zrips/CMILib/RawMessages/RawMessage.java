@@ -23,6 +23,7 @@ import org.bukkit.inventory.meta.ArmorMeta;
 import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.BundleMeta;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
@@ -607,6 +608,14 @@ public class RawMessage {
                 BundleMeta bundleMeta = simplifyBundleContents(item);
                 if (bundleMeta != null)
                     newMeta = bundleMeta;
+            }
+
+            if (item.getItemMeta() instanceof EnchantmentStorageMeta) {
+                EnchantmentStorageMeta meta = (EnchantmentStorageMeta) item.getItemMeta();
+                EnchantmentStorageMeta newStorageMeta = (EnchantmentStorageMeta) newMeta;                
+                for (Entry<Enchantment, Integer> enchant : meta.getStoredEnchants().entrySet()) {
+		    newStorageMeta.addStoredEnchant(enchant.getKey(), enchant.getValue(), true);
+		}
             }
 
             if (item.getItemMeta() instanceof ArmorMeta) {

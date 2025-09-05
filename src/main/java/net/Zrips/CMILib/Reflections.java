@@ -684,10 +684,14 @@ public class Reflections {
 //	return false;
 //    }
 
+    Method handleMEthod = null;
+
     public Object getPlayerHandle(Player player) {
         Object handle = null;
         try {
-            handle = player.getClass().getMethod("getHandle").invoke(player);
+            if (handleMEthod == null)
+                handleMEthod = player.getClass().getMethod("getHandle");
+            handle = handleMEthod.invoke(player);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -857,6 +861,8 @@ public class Reflections {
     }
 
     public void sendPacket(Object connection, Object packet) {
+        if (connection == null || packet == null)
+            return;
         try {
             if (Version.isCurrentEqualOrHigher(Version.v1_17_R1)) {
                 sendPacket.invoke(connection, packet);
@@ -1175,9 +1181,9 @@ public class Reflections {
         }
     }
 
+    @Deprecated
     public Object getNmsPlayer(Player p) throws Exception {
-        Method getHandle = p.getClass().getMethod("getHandle");
-        return getHandle.invoke(p);
+        return getPlayerHandle(p);
     }
 
     public Object getNmsScoreboard(Scoreboard s) throws Exception {
@@ -1217,6 +1223,7 @@ public class Reflections {
         }
     }
 
+    @Deprecated
     public void sendAllPacket(Object packet) throws Exception {
         for (Player p : Bukkit.getOnlinePlayers()) {
             Object nmsPlayer = getNmsPlayer(p);
@@ -1228,6 +1235,7 @@ public class Reflections {
         }
     }
 
+    @Deprecated
     public void sendListPacket(List<String> players, Object packet) {
         try {
             for (String name : players) {
@@ -1287,7 +1295,7 @@ public class Reflections {
 
     public Object getPlayerField(Player Player, String Field) {
         try {
-            Object P = Player.getClass().getMethod("getHandle").invoke(Player);
+            Object P = getPlayerHandle(Player);
             return P.getClass().getField(Field).get(P);
         } catch (Error | Exception e) {
             return null;
@@ -1296,8 +1304,8 @@ public class Reflections {
 
     private Integer getActiveContainerStateId(Player player) {
         try {
-            return getActiveContainerStateId(CraftPlayer.getMethod("getHandle").invoke(player));
-        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+            return getActiveContainerStateId(getPlayerHandle(player));
+        } catch (IllegalArgumentException | SecurityException e) {
             e.printStackTrace();
         }
         return null;
@@ -1326,7 +1334,7 @@ public class Reflections {
 
     public Integer getActiveContainerId(Player player) {
         try {
-            return getActiveContainerId(CraftPlayer.getMethod("getHandle").invoke(player));
+            return getActiveContainerId(getPlayerHandle(player));
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -1409,7 +1417,7 @@ public class Reflections {
         try {
 
             if (Version.isCurrentEqualOrHigher(Version.v1_14_R1)) {
-                Object entityplayer = CraftPlayer.getMethod("getHandle").invoke(p);
+                Object entityplayer = getPlayerHandle(p);
 
                 Object s = null;
                 if (Version.isCurrentEqualOrHigher(Version.v1_17_R1)) {
@@ -1489,7 +1497,7 @@ public class Reflections {
 
             } else if (Version.isCurrentEqualOrHigher(Version.v1_8_R2)) {
 
-                Object entityplayer = CraftPlayer.getMethod("getHandle").invoke(p);
+                Object entityplayer = getPlayerHandle(p);
 
                 RawMessage rm = new RawMessage();
                 rm.addText(title);

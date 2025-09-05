@@ -15,6 +15,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import net.Zrips.CMILib.BossBar.BossBarListener;
 import net.Zrips.CMILib.BossBar.BossBarManager;
 import net.Zrips.CMILib.Chat.ChatEditorListener;
+import net.Zrips.CMILib.Container.CMIPlayerConnection;
 import net.Zrips.CMILib.Enchants.CMIEnchantment;
 import net.Zrips.CMILib.GUI.GUIListener;
 import net.Zrips.CMILib.GUI.GUIListener1_9;
@@ -286,6 +287,8 @@ public class CMILib extends JavaPlugin {
         this.getCommand(CommandsHandler.getLabel()).setExecutor(getCommandManager());
         this.getCommand(CommandsHandler.getLabel()).setTabCompleter(getTab());
 
+        pm.registerEvents(new CMIPlayerConnection(), this);
+        
         pm.registerEvents(new ChatEditorListener(this), this);
         pm.registerEvents(new BossBarListener(this), this);
         pm.registerEvents(new GUIListener(this), this);
