@@ -53,6 +53,7 @@ public class CMIGui {
     private Object whatShows;
     private Object tempData;
 
+    private boolean allowClone = false;
     private boolean allowShift = false;
     private boolean allowPickUpAll = false;
     private boolean allowItemPickup = true;
@@ -529,6 +530,14 @@ public class CMIGui {
 
     public void setAllowShift(boolean allowShift) {
         this.allowShift = allowShift;
+    }
+    
+    public boolean isAllowClone() {
+        return allowClone;
+    }
+    
+    public void setAllowClone(boolean allowClone) {
+        this.allowClone = allowClone;
     }
 
     public CMISound getOpenSound() {

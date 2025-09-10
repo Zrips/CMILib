@@ -180,9 +180,19 @@ public class GUIListener implements Listener {
             event.setCancelled(true);
         }
 
-        if (!event.getAction().equals(InventoryAction.PICKUP_ALL) && !event.getAction().equals(InventoryAction.PICKUP_ONE) && !event.getAction().equals(InventoryAction.PICKUP_HALF) && !event.getAction()
-            .equals(InventoryAction.PICKUP_SOME) && !event.getAction().equals(InventoryAction.PLACE_ALL) && !event.getAction().equals(InventoryAction.PLACE_ONE) && !event.getAction().equals(
-                InventoryAction.PLACE_SOME) && !gui.isAllowShift() && !event.getAction().equals(InventoryAction.MOVE_TO_OTHER_INVENTORY))
+        InventoryAction action = event.getAction();
+
+        boolean allowed = action == InventoryAction.PICKUP_ALL ||
+            action == InventoryAction.PICKUP_ONE ||
+            action == InventoryAction.PICKUP_HALF ||
+            action == InventoryAction.PICKUP_SOME ||
+            action == InventoryAction.PLACE_ALL ||
+            action == InventoryAction.PLACE_ONE ||
+            action == InventoryAction.PLACE_SOME ||
+            (gui.isAllowShift() && action == InventoryAction.MOVE_TO_OTHER_INVENTORY) ||
+            (gui.isAllowClone() && action == InventoryAction.CLONE_STACK);
+
+        if (!allowed)
             event.setCancelled(true);
 
         if (!gui.isAllowPickUpAll() && !canClickByTimer(player.getUniqueId())) {
@@ -210,8 +220,6 @@ public class GUIListener implements Listener {
             if (GUIManager.usePackets)
                 CMIScheduler.get().runTask(() -> player.setItemOnCursor(player.getItemOnCursor()));
         }
-
-        InventoryAction action = event.getAction();
 
         // removing click limit in case its move to another inventory event which can happen after double clicking on item while holding same one on cursor
         if (!gui.isAllowMoveAll() && action.equals(InventoryAction.MOVE_TO_OTHER_INVENTORY))
