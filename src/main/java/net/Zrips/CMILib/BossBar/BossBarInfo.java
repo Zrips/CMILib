@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import javax.annotation.Nullable;
+
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
@@ -11,8 +13,8 @@ import org.bukkit.entity.Player;
 
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Colors.CMIChatColor;
+import net.Zrips.CMILib.Container.CMINumber;
 import net.Zrips.CMILib.Locale.Snd;
-import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Time.CMITimeManager;
 import net.Zrips.CMILib.Version.Schedulers.CMITask;
 
@@ -107,7 +109,7 @@ public class BossBarInfo {
         }
     }
 
-    public Player getPlayer() {
+    public @Nullable Player getPlayer() {
         return this.player;
     }
 
@@ -118,23 +120,22 @@ public class BossBarInfo {
     public Double getPercentage() {
         if (percentage == null)
             percentage = 0D;
-        return percentage < 0D ? 0D : percentage > 1D ? 1D : percentage;
+        return CMINumber.normalize(percentage);
     }
 
     public void setPercentage(double max, double current) {
         if (max == 0)
             max = 1D;
         current = current * 100 / max / 100D;
+
         setPercentage(current);
     }
 
     public void setPercentage(Double percentage) {
 
         if (percentage != null) {
-            if (percentage < 0)
-                percentage = 0D;
-            if (percentage > 1)
-                percentage = 1D;
+            percentage = CMINumber.normalize(percentage);
+
             if (Double.isNaN(percentage) || Double.isInfinite(percentage)) {
                 if (adjustPerc != null && adjustPerc > 0)
                     percentage = 0D;
@@ -180,6 +181,9 @@ public class BossBarInfo {
     }
 
     public String getTitleOfBar(Player player) {
+        if (player == null)
+            return getTitleOfBar();
+
         String t = getTitleOfBar();
 
         if (this.isWithPlaceholder())
@@ -209,8 +213,6 @@ public class BossBarInfo {
             double leftTicks = this.percentage / (this.adjustPerc < 0 ? -this.adjustPerc : this.adjustPerc);
             Long totalTicks = (long) (leftTicks * (this.auto < 0 ? -this.auto : this.auto));
             mili = totalTicks * 50;
-            if (this.getAdjustPerc() < 0)
-                mili += 1000;
         }
         return mili;
     }
@@ -295,8 +297,8 @@ public class BossBarInfo {
     public boolean stillRunning() {
 
         if (this.getKeepFor() < 0)
-	    return true;
-        
+            return true;
+
         if (getPercentage() < 1 && getAdjustPerc() != null && getAdjustPerc() > 0)
             return true;
 
@@ -381,7 +383,7 @@ public class BossBarInfo {
     public void setColorChangeIntervalTicks(int colorChangeIntervalTicks) {
         this.colorChangeIntervalTicks = colorChangeIntervalTicks;
     }
-    
+
     public boolean timerRunOut() {
         return true;
     }

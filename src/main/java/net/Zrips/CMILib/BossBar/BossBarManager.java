@@ -127,6 +127,28 @@ public class BossBarManager {
         barInfo.setBar(Bukkit.createBossBar(name, color, barInfo.getStyle() != null ? barInfo.getStyle() : BarStyle.SEGMENTED_10));
     }
 
+    private void runCommands(final BossBarInfo barInfo) {
+        Player player = barInfo.getPlayer();
+
+        CMIScheduler.runTask(plugin, () -> {
+            if (!barInfo.timerRunOut())
+                return;
+            if (CMILib.getInstance().isCmiPresent()) {
+                if (player != null) {
+                    com.Zrips.CMI.CMI.getInstance().getSpecializedCommandManager().processCmds(barInfo.getCommands(player), player);
+                } else {
+                    com.Zrips.CMI.CMI.getInstance().getSpecializedCommandManager().processCmds(barInfo.getCommands(null), Bukkit.getConsoleSender());
+                }
+            } else {
+                if (player != null) {
+                    CMICommand.performCommand(player, barInfo.getCommands(player), CommandType.bossbar);
+                } else {
+                    CMICommand.performCommand(Bukkit.getConsoleSender(), barInfo.getCommands(null), CommandType.bossbar);
+                }
+            }
+        });
+    }
+
     public synchronized void Show(final BossBarInfo barInfo) {
         if (Version.isCurrentLower(Version.v1_9_R1))
             return;
@@ -156,7 +178,7 @@ public class BossBarManager {
 
             BossBar bar = barInfo.getBar();
 
-            String name = player == null ? barInfo.getTitleOfBar() : barInfo.getTitleOfBar(player);
+            String name = barInfo.getTitleOfBar(player);
 
             boolean isNew = true;
             if (bar == null) {
@@ -189,41 +211,13 @@ public class BossBarManager {
                                 curP = 1D;
                             barInfo.setPercentage(curP);
                             bar.setProgress(curP);
-                            bar.setTitle(name);
                         } catch (Throwable e) {
                         }
-                        CMIScheduler.runTask(plugin, () -> {
-                            if (!barInfo.timerRunOut())
-                                return;
-
-                            if (CMILib.getInstance().isCmiPresent()) {
-                                if (player != null) {
-                                    com.Zrips.CMI.CMI.getInstance().getSpecializedCommandManager().processCmds(barInfo.getCommands(player), player);
-                                } else {
-                                    com.Zrips.CMI.CMI.getInstance().getSpecializedCommandManager().processCmds(barInfo.getCommands(null), Bukkit.getConsoleSender());
-                                }
-                            } else {
-                                if (player != null) {
-                                    CMICommand.performCommand(player, barInfo.getCommands(player), CommandType.bossbar);
-                                } else {
-                                    CMICommand.performCommand(Bukkit.getConsoleSender(), barInfo.getCommands(null), CommandType.bossbar);
-                                }
-                            }
-                        });
+                        runCommands(barInfo);
                     }
 
                     if (barInfo.getHideScheduler() == null)
-                        barInfo.setHideScheduler(CMIScheduler.get().runTaskLater(() -> {
-                            CMIBossBarHideEvent ev = new CMIBossBarHideEvent(barInfo);
-                            Bukkit.getServer().getPluginManager().callEvent(ev);
-                            if (!ev.isCancelled()) {
-                                barInfo.getBar().setVisible(false);
-                                barInfo.cancelAutoScheduler();
-                                removeGlobalBossbar(barInfo);
-                                barInfo.remove();
-                                barInfo.setHideScheduler(null);
-                            }
-                        }, barInfo.getKeepFor()));
+                        hideScheduler(barInfo);
 
                 }
                 if (curP == null)
@@ -231,12 +225,19 @@ public class BossBarManager {
                         curP = 0D;
                     else
                         curP = 1D;
-                curP += barInfo.getAdjustPerc();
-                barInfo.setPercentage(curP);
-            } else
+
+                if (!isNew) {
+                    curP += barInfo.getAdjustPerc();
+                    barInfo.setPercentage(curP);
+                    name = barInfo.getTitleOfBar(player);
+                }
+
+            } else {
                 barInfo.setPercentage(percentage);
+            }
 
             try {
+
                 bar.setProgress(barInfo.getPercentage());
                 bar.setTitle(name);
                 if (player != null && player.isOnline()) {
@@ -259,20 +260,24 @@ public class BossBarManager {
                 e.printStackTrace();
             }
 
-            if (!barInfo.stillRunning() && barInfo.getHideScheduler() == null) {
-                barInfo.setHideScheduler(CMIScheduler.runTaskLater(plugin, () -> {
-                    CMIBossBarHideEvent ev = new CMIBossBarHideEvent(barInfo);
-                    Bukkit.getServer().getPluginManager().callEvent(ev);
-                    if (!ev.isCancelled()) {
-                        barInfo.getBar().setVisible(false);
-                        removeGlobalBossbar(barInfo);
-                        barInfo.remove();
-                        barInfo.setHideScheduler(null);
-                    }
-                }, barInfo.getKeepFor()));
-            }
+            if (!barInfo.stillRunning() && barInfo.getHideScheduler() == null)
+                hideScheduler(barInfo);
+
         }, 0L, barInfo.getAuto()));
 
+    }
+
+    private void hideScheduler(BossBarInfo barInfo) {
+        barInfo.setHideScheduler(CMIScheduler.runTaskLater(plugin, () -> {
+            CMIBossBarHideEvent ev = new CMIBossBarHideEvent(barInfo);
+            Bukkit.getServer().getPluginManager().callEvent(ev);
+            if (!ev.isCancelled()) {
+                barInfo.getBar().setVisible(false);
+                removeGlobalBossbar(barInfo);
+                barInfo.remove();
+                barInfo.setHideScheduler(null);
+            }
+        }, barInfo.getKeepFor()));
     }
 
     public void removeBossBar(Player player, String name) {
