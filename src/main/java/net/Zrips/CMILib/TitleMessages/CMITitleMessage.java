@@ -13,7 +13,6 @@ import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.ActionBar.CMIActionBar;
 import net.Zrips.CMILib.Colors.CMIChatColor;
 import net.Zrips.CMILib.Container.CMICommandSender;
-import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Version.Version;
 import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
 
@@ -125,7 +124,7 @@ public class CMITitleMessage {
         if (receivingPacket == null)
             return;
 
-        CMIScheduler.runTaskAsynchronously(() -> {
+        CMIScheduler.runTaskAsynchronously(CMILib.getInstance(), () -> {
             String t = title == null ? null : CMIChatColor.translate((String) title);
             String s = subtitle == null ? null : CMIChatColor.translate((String) subtitle);
 
@@ -148,6 +147,7 @@ public class CMITitleMessage {
                 case v1_15_R1:
                 case v1_16_R1:
                 default:
+
                     receivingPacket.sendTitle(t, s, fadeIn, keep, fadeOut);
 //                        Timer reset packet, causes some issue
 //                        if (Version.isCurrentEqualOrHigher(Version.v1_19_R1) && timerResetPacket != null) {
