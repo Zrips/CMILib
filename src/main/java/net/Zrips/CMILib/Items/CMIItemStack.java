@@ -5,17 +5,17 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
+
+import javax.annotation.Nullable;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.MemorySection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -37,6 +37,7 @@ import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Attributes.Attribute;
 import net.Zrips.CMILib.Colors.CMIChatColor;
 import net.Zrips.CMILib.Colors.CMIColors;
+import net.Zrips.CMILib.Container.CMIKyori;
 import net.Zrips.CMILib.Container.CMINumber;
 import net.Zrips.CMILib.Enchants.CMIEnchantment;
 import net.Zrips.CMILib.Entities.CMIEntity;
@@ -243,10 +244,19 @@ public class CMIItemStack {
         ItemMeta meta = this.getItemStack().getItemMeta();
 
         if (meta != null) {
-            if (name == null) {
-                meta.setDisplayName(null);
+
+            if (Version.isPaperBranch() && Version.isCurrentEqualOrHigher(Version.v1_20_R1)) {
+                if (name == null) {
+                    meta.displayName(null);
+                } else {
+                    meta.displayName(CMIKyori.deserialize(name));
+                }
             } else {
-                meta.setDisplayName(CMIChatColor.translate(name));
+                if (name == null) {
+                    meta.setDisplayName(null);
+                } else {
+                    meta.setDisplayName(CMIChatColor.translate(name));
+                }
             }
         }
         this.getItemStack().setItemMeta(meta);
@@ -259,7 +269,58 @@ public class CMIItemStack {
 
         ItemMeta meta = this.getItemStack().getItemMeta();
 
-        return meta == null || meta.getDisplayName() == null || meta.getDisplayName().isEmpty() ? getRealName() : meta.getDisplayName();
+        if (Version.isPaperBranch() && Version.isCurrentEqualOrHigher(Version.v1_20_R1)) {
+
+            if (meta.hasDisplayName())
+                return CMIKyori.serialize(meta.displayName());
+
+            if (meta.hasItemName())
+                return CMIKyori.serialize(meta.itemName());
+
+            return getRealName();
+        }
+
+        if (Version.isCurrentEqualOrHigher(Version.v1_20_R1))
+            return meta == null ? getRealName() : meta.getDisplayName() != null && !meta.getDisplayName().isEmpty() ? meta.getDisplayName() : meta.getItemName() != null && !meta.getItemName().isEmpty()
+                ? meta.getItemName() : getRealName();
+
+        return meta == null ? getRealName() : meta.getDisplayName() != null && !meta.getDisplayName().isEmpty() ? meta.getDisplayName() : getRealName();
+    }
+
+    public CMIItemStack setItemName(@Nullable String name) {
+
+        if (!Version.isCurrentEqualOrHigher(Version.v1_20_R1))
+            return this;
+
+        ItemMeta meta = this.getItemStack().getItemMeta();
+        if (Version.isPaperBranch()) {
+            if (name == null) {
+                meta.itemName(null);
+            } else {
+                meta.itemName(CMIKyori.deserialize(name));
+            }
+
+        } else {
+            if (name == null) {
+                meta.setItemName(null);
+            } else {
+                meta.setItemName(name);
+            }
+        }
+        this.getItemStack().setItemMeta(meta);
+
+        return this;
+    }
+
+    public @Nullable String getItemName() {
+
+        if (!Version.isCurrentEqualOrHigher(Version.v1_20_R1))
+            return null;
+
+        if (!Version.isPaperBranch())
+            return this.getItemStack().getItemMeta().getItemName();
+
+        return CMIKyori.serialize(this.getItemStack().getItemMeta().itemName());
     }
 
     public CMIItemStack addLore(String string) {
