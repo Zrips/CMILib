@@ -14,6 +14,7 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 
@@ -337,17 +338,28 @@ public class CMIChatColor {
         return text;
     }
 
-    private static String translateVanillaColorCodes(String textToTranslate) {
-        if (textToTranslate == null)
-            return null;
-        char[] chars = textToTranslate.toCharArray();
+    private static String translateVanillaColorCodes(String text) {
+        if (text == null || text.isEmpty())
+            return text;
+
+        char[] chars = text.toCharArray();
         for (int i = 0; i < chars.length - 1; i++) {
-            if (chars[i] == '&' && "0123456789AaBbCcDdEeFfKkLlMmNnOoRr".indexOf(chars[i + 1]) > -1) {
+            if (chars[i] == '&' && isColorCode(chars[i + 1])) {
                 chars[i] = '§';
                 chars[i + 1] = Character.toLowerCase(chars[i + 1]);
             }
         }
         return new String(chars);
+    }
+
+    private static boolean isColorCode(char c) {
+        return (c >= '0' && c <= '9')
+            || (c >= 'a' && c <= 'f')
+            || (c >= 'k' && c <= 'o')
+            || (c == 'r') || (c == 'x')
+            || (c >= 'A' && c <= 'F')
+            || (c >= 'K' && c <= 'O')
+            || (c == 'R') || (c == 'X');
     }
 
     public static String convertNamedHex(String text) {
