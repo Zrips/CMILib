@@ -72,6 +72,13 @@ public class CMINumber {
         return number < min ? min : number > max ? max : number;
     }
 
+    public static <T extends Number> double normalize(T value) {
+        if (value == null)
+            return 0.0;
+        double v = value.doubleValue();
+        return Math.max(0.0, Math.min(1.0, v));
+    }
+
     public static boolean fractional(double number) {
         return number != Math.floor(number);
     }
