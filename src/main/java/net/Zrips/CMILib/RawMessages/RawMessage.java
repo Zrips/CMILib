@@ -34,6 +34,7 @@ import net.Zrips.CMILib.Items.CMIItemStack;
 import net.Zrips.CMILib.Items.CMIMC;
 import net.Zrips.CMILib.Items.CMIMaterial;
 import net.Zrips.CMILib.Locale.LC;
+import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Messages.CMIMessages;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.Shadow.ShadowCommand;
@@ -612,10 +613,10 @@ public class RawMessage {
 
             if (item.getItemMeta() instanceof EnchantmentStorageMeta) {
                 EnchantmentStorageMeta meta = (EnchantmentStorageMeta) item.getItemMeta();
-                EnchantmentStorageMeta newStorageMeta = (EnchantmentStorageMeta) newMeta;                
+                EnchantmentStorageMeta newStorageMeta = (EnchantmentStorageMeta) newMeta;
                 for (Entry<Enchantment, Integer> enchant : meta.getStoredEnchants().entrySet()) {
-		    newStorageMeta.addStoredEnchant(enchant.getKey(), enchant.getValue(), true);
-		}
+                    newStorageMeta.addStoredEnchant(enchant.getKey(), enchant.getValue(), true);
+                }
             }
 
             if (item.getItemMeta() instanceof ArmorMeta) {

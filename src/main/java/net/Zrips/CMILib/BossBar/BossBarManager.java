@@ -124,6 +124,7 @@ public class BossBarManager {
                 }
             }
         }
+        
         barInfo.setBar(Bukkit.createBossBar(name, color, barInfo.getStyle() != null ? barInfo.getStyle() : BarStyle.SEGMENTED_10));
     }
 

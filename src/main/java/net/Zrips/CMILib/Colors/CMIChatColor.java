@@ -14,12 +14,10 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 
 import net.Zrips.CMILib.CMILibConfig;
-import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Version.Version;
 
 public class CMIChatColor {
@@ -125,6 +123,7 @@ public class CMIChatColor {
     private int redChannel = -1;
     private int greenChannel = -1;
     private int blueChannel = -1;
+    private int alpha = -1;
     private String hexCode = null;
     private String name;
 
@@ -134,6 +133,28 @@ public class CMIChatColor {
 
     public CMIChatColor(String hex) {
         this(null, hex);
+    }
+
+    private static String expandHex(String hex) {
+        if (hex == null)
+            return null;
+        hex = hex.startsWith("#") ? hex.substring(1) : hex;
+
+        switch (hex.length()) {
+        case 3: // RGB -> RRGGBB
+            return "" +
+                hex.charAt(0) + hex.substring(0, 1) +
+                hex.charAt(1) + hex.substring(1, 2) +
+                hex.charAt(2) + hex.substring(2, 3);
+        case 4: // RGBA -> RRGGBBAA
+            return "" +
+                hex.charAt(0) + hex.substring(0, 1) +
+                hex.charAt(1) + hex.substring(1, 2) +
+                hex.charAt(2) + hex.substring(2, 3) +
+                hex.charAt(3) + hex.substring(3, 4);
+        default:
+            return hex;
+        }
     }
 
     public CMIChatColor(String name, String hex) {
@@ -147,8 +168,18 @@ public class CMIChatColor {
         if (hex.startsWith("#"))
             hex = hex.substring(1);
 
-        if (hex.length() == 3 || hex.length() == 6)
+        hex = expandHex(hex);
+
+        if (hex.length() == 6)
             this.hexCode = hex;
+
+        String alphaString = null;
+
+        if (hex.length() == 8) {
+            this.hexCode = hex.substring(0, 6);
+            alphaString = hex.substring(6, 8);
+        }
+
         this.name = name;
 
         try {
@@ -157,11 +188,15 @@ public class CMIChatColor {
                 greenChannel = Integer.valueOf(this.hexCode.substring(2, 4), 16);
                 blueChannel = Integer.parseInt(this.hexCode.substring(4, 6), 16);
             }
+            if (alphaString != null) {
+                alpha = Integer.valueOf(alphaString, 16);
+            }
         } catch (Throwable e) {
             this.redChannel = -1;
             this.greenChannel = -1;
             this.blueChannel = -1;
             this.hexCode = null;
+            this.alpha = -1;
         }
     }
 
@@ -207,6 +242,7 @@ public class CMIChatColor {
     public static void clearCache() {
         GradientColor.clearCache();
         basecache.clear();
+        baseOwnCache.clear();
     }
 
     private static Map<String, String> basecache = new LinkedHashMap<String, String>(100, 0.75f, true) {
@@ -216,16 +252,36 @@ public class CMIChatColor {
         }
     };
 
+    private static Map<String, String> baseOwnCache = new LinkedHashMap<String, String>(100, 0.75f, true) {
+        @Override
+        protected boolean removeEldestEntry(Map.Entry<String, String> eldest) {
+            return size() > 100;
+        }
+    };
+
     public static String translate(String text) {
+        return translate(text, false);
+    }
+
+    public static String translate(String text, boolean onlyCMIformat) {
 
         if (text == null)
             return null;
 
-        String cached = basecache.get(text);
-        if (cached != null) {
-            // Moving to the end of the queue to keep it in cache
-            basecache.put(text, cached);
-            return cached;
+        if (onlyCMIformat) {
+            String cached = baseOwnCache.get(text);
+            if (cached != null) {
+                // Moving to the end of the queue to keep it in cache
+                baseOwnCache.put(text, cached);
+                return cached;
+            }
+        } else {
+            String cached = basecache.get(text);
+            if (cached != null) {
+                // Moving to the end of the queue to keep it in cache
+                basecache.put(text, cached);
+                return cached;
+            }
         }
 
         String ori = text;
@@ -275,7 +331,7 @@ public class CMIChatColor {
             }
         }
 
-        if (CMILibConfig.QuirkyHex && text.contains("&" + CMIChatColor.hexSymbol)) {
+        if (!onlyCMIformat && CMILibConfig.QuirkyHex && text.contains("&" + CMIChatColor.hexSymbol)) {
             Matcher match = CMIChatColor.cleanQuirkyHexColorRegexPattern.matcher(text);
             while (match.find()) {
                 String string = match.group();
@@ -303,7 +359,7 @@ public class CMIChatColor {
             }
         }
 
-        if (CMILibConfig.OfficialHex && text.contains(CMIChatColor.hexSymbol)) {
+        if (!onlyCMIformat && CMILibConfig.OfficialHex && text.contains(CMIChatColor.hexSymbol)) {
             Matcher match = CMIChatColor.cleanOfficialColorRegexPattern.matcher(text);
             while (match.find()) {
                 String string = match.group();
@@ -333,7 +389,10 @@ public class CMIChatColor {
 
         text = translateVanillaColorCodes(text);
 
-        basecache.put(ori, text);
+        if (onlyCMIformat)
+            baseOwnCache.put(ori, text);
+        else
+            basecache.put(ori, text);
 
         return text;
     }

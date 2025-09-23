@@ -531,11 +531,11 @@ public class CMIGui {
     public void setAllowShift(boolean allowShift) {
         this.allowShift = allowShift;
     }
-    
+
     public boolean isAllowClone() {
         return allowClone;
     }
-    
+
     public void setAllowClone(boolean allowClone) {
         this.allowClone = allowClone;
     }

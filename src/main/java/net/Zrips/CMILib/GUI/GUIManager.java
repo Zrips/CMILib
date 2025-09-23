@@ -13,14 +13,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Container.CMIPlayerInventory;
-import net.Zrips.CMILib.Items.CMIMaterial;
-import net.Zrips.CMILib.Logs.CMIDebug;
-import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.Permissions.CMILPerm;
 import net.Zrips.CMILib.Version.Version;
 import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
@@ -404,19 +400,19 @@ public class GUIManager {
             return;
 
 //        if (!usePackets) {
-            for (Entry<Integer, CMIGuiButton> one : gui.getButtons().entrySet()) {
-                if (one.getKey() > guiInv.getSize())
-                    continue;
-                try {
-                    ItemStack item = one.getValue().getItem(gui.getPlayer());
+        for (Entry<Integer, CMIGuiButton> one : gui.getButtons().entrySet()) {
+            if (one.getKey() > guiInv.getSize())
+                continue;
+            try {
+                ItemStack item = one.getValue().getItem(gui.getPlayer());
 
-                    if (one.getKey() < guiInv.getSize())
-                        guiInv.setItem(one.getKey(), item);
-                } catch (Throwable e) {
-                    e.printStackTrace();
-                    break;
-                }
+                if (one.getKey() < guiInv.getSize())
+                    guiInv.setItem(one.getKey(), item);
+            } catch (Throwable e) {
+                e.printStackTrace();
+                break;
             }
+        }
 //        } else {
 //	    for (Entry<Integer, CMIGuiButton> one : gui.getButtons().entrySet()) {
 //		if (one.getKey() > GuiInv.getSize())

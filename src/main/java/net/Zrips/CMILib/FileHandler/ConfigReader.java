@@ -68,7 +68,7 @@ public class ConfigReader extends YamlConfiguration {
     }
 
     public void loadExistingData() {
-        this.getC().options().copyDefaults(true);
+        this.copyDefaults(true);
     }
 
     @Override

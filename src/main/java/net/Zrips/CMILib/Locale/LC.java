@@ -50,6 +50,7 @@ public enum LC {
     info_CantTeleportWorld("&eYou can't teleport to this world"),
     info_CantTeleportNoWorld("&cTarget world doesn't exist. Teleportation canceled"),
     info_ClickToConfirmDelete("&eClick to confirm removal of &6[name]"),
+    info_ClickToConfirm("&eClick to confirm"),
     info_teleported("&eYou have been teleported."),
     info_PlayerSpliter("&e----- &6[playerDisplayName] &e-----"),
     info_Spliter("&e--------------------------------------------------"),

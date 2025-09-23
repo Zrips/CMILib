@@ -245,7 +245,7 @@ public class CMIItemStack {
 
         if (meta != null) {
 
-            if (Version.isPaperBranch() && Version.isCurrentEqualOrHigher(Version.v1_20_R1)) {
+            if (Version.isPaperBranch() && Version.isCurrentEqualOrHigher(Version.v1_21_R4)) {
                 if (name == null) {
                     meta.displayName(null);
                 } else {
@@ -269,27 +269,23 @@ public class CMIItemStack {
 
         ItemMeta meta = this.getItemStack().getItemMeta();
 
-        if (Version.isPaperBranch() && Version.isCurrentEqualOrHigher(Version.v1_20_R1)) {
-
-            if (meta.hasDisplayName())
-                return CMIKyori.serialize(meta.displayName());
+        if (meta != null && Version.isPaperBranch() && Version.isCurrentEqualOrHigher(Version.v1_21_R4)) {
 
             if (meta.hasItemName())
                 return CMIKyori.serialize(meta.itemName());
 
+            if (meta.hasDisplayName())
+                return CMIKyori.serialize(meta.displayName());
+
             return getRealName();
         }
-
-        if (Version.isCurrentEqualOrHigher(Version.v1_20_R1))
-            return meta == null ? getRealName() : meta.getDisplayName() != null && !meta.getDisplayName().isEmpty() ? meta.getDisplayName() : meta.getItemName() != null && !meta.getItemName().isEmpty()
-                ? meta.getItemName() : getRealName();
 
         return meta == null ? getRealName() : meta.getDisplayName() != null && !meta.getDisplayName().isEmpty() ? meta.getDisplayName() : getRealName();
     }
 
     public CMIItemStack setItemName(@Nullable String name) {
 
-        if (!Version.isCurrentEqualOrHigher(Version.v1_20_R1))
+        if (!Version.isCurrentEqualOrHigher(Version.v1_21_R4))
             return this;
 
         ItemMeta meta = this.getItemStack().getItemMeta();
@@ -314,7 +310,7 @@ public class CMIItemStack {
 
     public @Nullable String getItemName() {
 
-        if (!Version.isCurrentEqualOrHigher(Version.v1_20_R1))
+        if (!Version.isCurrentEqualOrHigher(Version.v1_21_R4))
             return null;
 
         if (!Version.isPaperBranch())
