@@ -244,20 +244,20 @@ public class CMIItemStack {
         ItemMeta meta = this.getItemStack().getItemMeta();
 
         if (meta != null) {
-
-            if (Version.isPaperBranch() && Version.isCurrentEqualOrHigher(Version.v1_21_R4)) {
-                if (name == null) {
-                    meta.displayName(null);
-                } else {
-                    meta.displayName(CMIKyori.deserialize(name));
-                }
-            } else {
+            // Doesn't process gradients properly
+//            if (Version.isPaperBranch() && Version.isCurrentEqualOrHigher(Version.v1_21_R4)) {
+//                if (name == null) {
+//                    meta.displayName(null);
+//                } else {
+//                    meta.displayName(CMIKyori.deserialize(CMIChatColor.translate(name)));
+//                }
+//            } else {
                 if (name == null) {
                     meta.setDisplayName(null);
                 } else {
                     meta.setDisplayName(CMIChatColor.translate(name));
                 }
-            }
+//            }
         }
         this.getItemStack().setItemMeta(meta);
         return this;

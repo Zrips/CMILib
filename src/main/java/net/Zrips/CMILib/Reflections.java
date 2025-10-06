@@ -27,13 +27,11 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.Server;
 import org.bukkit.Sound;
 import org.bukkit.World;
-import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.scoreboard.Scoreboard;
 
@@ -113,7 +111,7 @@ public class Reflections {
                 world = Class.forName("net.minecraft.world.level.World");
             } catch (Throwable e) {
                 e.printStackTrace();
-            }
+            }            
         }
         if (Version.isCurrentEqualOrHigher(Version.v1_17_R1)) {
 
@@ -189,7 +187,9 @@ public class Reflections {
                 IStack = Class.forName("net.minecraft.world.item.ItemStack");
 
                 String variable = "ax";
-                if (Version.isCurrentEqualOrHigher(Version.v1_21_R2))
+                if (Version.isCurrentEqualOrHigher(Version.v1_21_R6))
+                    variable = "aF";
+                else if (Version.isCurrentEqualOrHigher(Version.v1_21_R2))
                     variable = "aD";
                 else if (Version.isCurrentEqualOrHigher(Version.v1_20_R4))
                     variable = "aE";
@@ -471,7 +471,9 @@ public class Reflections {
             try {
                 // DedicatedServer -> DedicatedServerSettings
                 Object field1 = null;
-                if (Version.isCurrentEqualOrHigher(Version.v1_21_R2)) {
+                if (Version.isCurrentEqualOrHigher(Version.v1_21_R6)) {
+                    field1 = MinecraftServer.getClass().getField("t").get(MinecraftServer);
+                }else if (Version.isCurrentEqualOrHigher(Version.v1_21_R2)) {
                     field1 = MinecraftServer.getClass().getField("s").get(MinecraftServer);
                 } else if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
                     field1 = MinecraftServer.getClass().getField("r").get(MinecraftServer);
@@ -485,7 +487,9 @@ public class Reflections {
                 // PropertyManager -> Properties
 
                 Object field2 = null;
-                if (Version.isCurrentEqualOrHigher(Version.v1_21_R1))
+                if (Version.isCurrentEqualOrHigher(Version.v1_21_R6))
+                    field2 = prop.getClass().getField("ak").get(prop);
+                else if (Version.isCurrentEqualOrHigher(Version.v1_21_R1))
                     field2 = prop.getClass().getField("ac").get(prop);
                 else if (Version.isCurrentEqualOrHigher(Version.v1_20_R4))
                     field2 = prop.getClass().getField("ab").get(prop);
@@ -1353,7 +1357,9 @@ public class Reflections {
                 windowId = "j";
 
             // EntityHuman -> Container
-            if (Version.isCurrentEqualOrHigher(Version.v1_21_R5)) {
+            if (Version.isCurrentEqualOrHigher(Version.v1_21_R6)) {
+                activeContainer = "cl";
+            } else if (Version.isCurrentEqualOrHigher(Version.v1_21_R5)) {
                 activeContainer = "cn";
             } else if (Version.isCurrentEqualOrHigher(Version.v1_21_R4)) {
                 activeContainer = "bR";
