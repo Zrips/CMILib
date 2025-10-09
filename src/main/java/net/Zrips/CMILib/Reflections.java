@@ -36,6 +36,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.scoreboard.Scoreboard;
 
 import com.mojang.authlib.properties.Property;
+import com.mojang.authlib.properties.PropertyMap;
 
 import net.Zrips.CMILib.Advancements.CMIAdvancement;
 import net.Zrips.CMILib.Attributes.Attribute;
@@ -48,6 +49,7 @@ import net.Zrips.CMILib.Items.CMIItemStack;
 import net.Zrips.CMILib.Items.CMIMaterial;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.RawMessages.RawMessage;
+import net.Zrips.CMILib.Skins.SkinManager;
 import net.Zrips.CMILib.Version.Version;
 import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
 
@@ -111,8 +113,9 @@ public class Reflections {
                 world = Class.forName("net.minecraft.world.level.World");
             } catch (Throwable e) {
                 e.printStackTrace();
-            }            
+            }
         }
+
         if (Version.isCurrentEqualOrHigher(Version.v1_17_R1)) {
 
             try {
@@ -473,7 +476,7 @@ public class Reflections {
                 Object field1 = null;
                 if (Version.isCurrentEqualOrHigher(Version.v1_21_R6)) {
                     field1 = MinecraftServer.getClass().getField("t").get(MinecraftServer);
-                }else if (Version.isCurrentEqualOrHigher(Version.v1_21_R2)) {
+                } else if (Version.isCurrentEqualOrHigher(Version.v1_21_R2)) {
                     field1 = MinecraftServer.getClass().getField("s").get(MinecraftServer);
                 } else if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
                     field1 = MinecraftServer.getClass().getField("r").get(MinecraftServer);
@@ -1045,8 +1048,10 @@ public class Reflections {
 
             prof = new com.mojang.authlib.GameProfile(UUID.nameUUIDFromBytes(texture.getBytes()), null);
 
-            prof.getProperties().removeAll("textures");
-            prof.getProperties().put("textures", new Property("textures", texture));
+            PropertyMap properties = SkinManager.getPropertyMap(prof);
+
+            properties.removeAll("textures");
+            properties.put("textures", new Property("textures", texture));
 
             SkullMeta headMeta = (SkullMeta) item.getItemMeta();
 

@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
@@ -20,11 +21,13 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
+import com.mojang.authlib.properties.PropertyMap;
 
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.FileHandler.ConfigReader;
 import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Messages.CMIMessages;
+import net.Zrips.CMILib.Version.Version;
 
 public class SkinManager {
     public HashMap<UUID, CMISkin> skinCacheByUUID = new HashMap<UUID, CMISkin>();
@@ -72,9 +75,13 @@ public class SkinManager {
     }
 
     Long lastUpdateRequest = 0L;
+    private static Method getProperties = null;
 
     public boolean setSkin(GameProfile profile, UUID uuid) {
-
+        
+        if (Version.isCurrentEqualOrHigher(Version.v1_21_R6))
+            return false;
+        
         if (checkCache(profile, uuid))
             return true;
         try {
@@ -119,9 +126,13 @@ public class SkinManager {
 //                            save(cmiSkin);
 //                    });
 
+                    // Requires fix
                     if (profile != null) {
-                        profile.getProperties().removeAll("textures");
-                        profile.getProperties().put("textures", new Property("textures", skin, signature));
+
+                        PropertyMap properties = getPropertyMap(profile);
+
+                        properties.removeAll("textures");
+                        properties.put("textures", new Property("textures", skin, signature));
                     }
                 } catch (Throwable ex) {
                     ex.printStackTrace();
@@ -145,14 +156,62 @@ public class SkinManager {
 
     }
 
+    public static PropertyMap getPropertyMap(GameProfile profile) {
+        if (Version.isCurrentEqualOrHigher(Version.v1_21_R6)) {
+            if (getProperties == null) {
+                try {
+                    getProperties = com.mojang.authlib.GameProfile.class.getMethod("properties");
+                } catch (NoSuchMethodException | SecurityException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (getProperties != null)
+                try {
+                    return (PropertyMap) getProperties.invoke(profile);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return null;
+                }
+        }
+
+        try {
+            if (getProperties == null) {
+                getProperties = com.mojang.authlib.GameProfile.class.getMethod("getProperties");
+            }
+
+            PropertyMap properties = (PropertyMap) getProperties.invoke(profile);
+            return (PropertyMap) getProperties.invoke(properties);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     private boolean checkCache(GameProfile profile, UUID uuid) {
+        // Requires fix
+        if (Version.isCurrentEqualOrHigher(Version.v1_21_R6) && Version.isPaperBranch()) {
+            return false;
+        }
+
         if (profile == null)
             return false;
         CMISkin cache = skinCacheByUUID.get(uuid);
         if (cache != null && cache.getSkin() != null && cache.getSignature() != null && cache.getLastUpdate() + (SkinUpdateTimer * 60 * 1000L) > System.currentTimeMillis()) {
-            profile.getProperties().removeAll("textures");
-            profile.getProperties().put("textures", new Property("textures", cache.getSkin(), cache.getSignature()));
-            return true;
+
+            try {
+                if (getProperties == null) {
+                    getProperties = com.mojang.authlib.GameProfile.class.getMethod("getProperties");
+                }
+
+                PropertyMap properties = (PropertyMap) getProperties.invoke(profile);
+
+                properties.removeAll("textures");
+                properties.put("textures", new Property("textures", cache.getSkin(), cache.getSignature()));
+                return true;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
+            }
         }
         return false;
     }
