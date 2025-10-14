@@ -4,9 +4,11 @@ import java.lang.reflect.Method;
 
 import javax.annotation.Nullable;
 
+import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Entity;
 
+import net.Zrips.CMILib.Messages.CMIMessages;
 import net.Zrips.CMILib.Version.Version;
 
 public enum CMIAttribute {
@@ -22,18 +24,44 @@ public enum CMIAttribute {
     }
 
     CMIAttribute(String attribute) {
-
         try {
             Class<?> c = Class.forName("org.bukkit.attribute.Attribute");
-
             Object[] attributes = (Object[]) c.getMethod("values").invoke(c);
 
-            for (Object one : attributes) {
-                if (one.toString().equalsIgnoreCase(attribute) || this.toString().equalsIgnoreCase(one.toString())) {
-                    this.attribute = one;
-                    break;
+            if (Version.isPaperBranch() && Version.isCurrentEqualOrHigher(Version.v1_21_R6)) {
+                Class<?> cc = Class.forName("org.bukkit.craftbukkit.attribute.CraftAttribute");
+                Method method = cc.getMethod("getKey");
+                for (Object one : attributes) {
+                    NamespacedKey key = (NamespacedKey) method.invoke(one);
+                    if (key.getKey().equalsIgnoreCase(this.toString())) {
+                        this.attribute = one;
+                        break;
+                    }
                 }
             }
+
+            // Outdated method
+            if (this.attribute == null) {
+                for (Object one : attributes) {
+                    if (one.toString().equalsIgnoreCase(attribute) || this.toString().equalsIgnoreCase(one.toString())) {
+                        this.attribute = one;
+                        break;
+                    }
+                }
+            }
+
+            // Last fail safe approach
+            if (this.attribute == null) {
+                for (Object one : attributes) {
+                    if (one.toString().contains(attribute.toLowerCase()) || one.toString().contains(this.toString().toLowerCase())) {
+                        this.attribute = one;
+                        break;
+                    }
+                }
+            }
+
+            if (this.attribute == null)
+                CMIMessages.consoleMessage("&c[CMIL] Cant find attribute: " + this.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
