@@ -120,16 +120,8 @@ public class SkinManager {
                     skinCacheByUUID.put(uuid, cmiSkin);
                     skinCacheByName.put(playerName, cmiSkin);
 
-//                    CMIScheduler.runTaskAsynchronously(() -> {
-//                        if (!saving)
-//                            save(cmiSkin);
-//                    });
-
-                    // Requires fix
                     if (profile != null) {
-
                         PropertyMap properties = getPropertyMap(profile);
-
                         if (properties != null) {
                             properties.removeAll("textures");
                             properties.put("textures", new Property("textures", skin, signature));
