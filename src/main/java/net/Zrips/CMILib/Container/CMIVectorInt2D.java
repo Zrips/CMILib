@@ -57,4 +57,8 @@ public class CMIVectorInt2D {
         this.z = z;
     }
 
+    @Override
+    public String toString() {
+        return getX() + ";" + getZ();
+    }
 }
