@@ -2477,6 +2477,24 @@ public enum CMIMaterial {
         return this.containsCriteria(CMIMC.SHULKERBOX);
     }
 
+    public static boolean isCopperChest(Material mat) {
+        CMIMaterial m = CMIMaterial.get(mat);
+        return m == null ? false : m.isCopperChest();
+    }
+
+    public boolean isCopperChest() {
+        return this.containsCriteria(CMIMC.COPPERCHEST);
+    }
+
+    public static boolean isChest(Material mat) {
+        CMIMaterial m = CMIMaterial.get(mat);
+        return m == null ? false : m.isChest();
+    }
+
+    public boolean isChest() {
+        return this.containsCriteria(CMIMC.CHEST);
+    }
+
     public static boolean isLeatherArmor(Material mat) {
         CMIMaterial m = CMIMaterial.get(mat);
         return m == null ? false : m.isLeatherArmor();
