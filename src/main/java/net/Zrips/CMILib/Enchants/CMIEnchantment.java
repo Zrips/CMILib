@@ -134,7 +134,7 @@ public class CMIEnchantment {
 
         for (CMIEnchantment cmiEnchant : byEnchant.values()) {
 
-            String name = cmiEnchant.getName();
+            String name = cmiEnchant.getKeyName();
             if (name == null)
                 continue;
             if (name.isEmpty())
