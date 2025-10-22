@@ -72,6 +72,14 @@ public class CMINumber {
         return number < min ? min : number > max ? max : number;
     }
 
+    public static <T extends Number & Comparable<T>> T clamp(T value, T min) {
+        if (value == null)
+            return min;
+        if (value.compareTo(min) < 0)
+            return min;
+        return value;
+    }
+
     public static <T extends Number> double normalize(T value) {
         if (value == null)
             return 0.0;

@@ -78,8 +78,8 @@ public class SkinManager {
 
     public boolean setSkin(GameProfile profile, UUID uuid) {
 
-        if (Version.isCurrentEqualOrHigher(Version.v1_21_R6))
-            return false;
+//        if (Version.isCurrentEqualOrHigher(Version.v1_21_R6))
+//            return false;
 
         if (checkCache(profile, uuid))
             return true;

@@ -56,11 +56,15 @@ public class CMIText {
         if (removeUnderScore)
             name = name.replace("_", " ");
 
-        String[] split = name.toLowerCase().split(" ");
+        String[] split = name.toLowerCase().split(removeUnderScore ? " " : "_");
         StringBuilder str = new StringBuilder();
         for (String one : split) {
-            if (!str.toString().isEmpty())
-                str.append(" ");
+            if (!str.toString().isEmpty()) {
+                if (removeUnderScore)
+                    str.append(" ");
+                else
+                    str.append("_");
+            }
 
             if (one.length() > 1)
                 str.append(one.substring(0, 1).toUpperCase() + one.substring(1));
@@ -68,8 +72,8 @@ public class CMIText {
                 str.append(one.toUpperCase());
             else
                 str.append(one);
-
         }
+
         return str.toString();
     }
 
