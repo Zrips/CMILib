@@ -237,6 +237,10 @@ public class CMIEffect {
         return this.particleParameters;
     }
 
+    public @Nullable Object getParticleParameter(@Nullable Location location) {
+        return CMIEffectManager.getParticleParameter(location, this);
+    }
+
     public void setParticleParameters(Object particleParameters) {
         this.particleParameters = particleParameters;
     }

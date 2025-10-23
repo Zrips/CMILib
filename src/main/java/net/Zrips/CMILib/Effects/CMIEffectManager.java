@@ -694,16 +694,9 @@ public class CMIEffectManager {
         }
     }
 
-    public static @Nullable Object getParticleParameters(@Nullable Location location, @Nonnull CMIEffect ef) {
-
-        org.bukkit.Particle particle = ef.getParticle().getParticle();
-
-        if (particle == null)
-            return null;
-
+    public static Object getParticleParameter(@Nullable Location location, @Nonnull CMIEffect ef) {
+        Object dd = null;
         try {
-            Object dd = null;
-
             switch (ef.getParticle().getDataType()) {
             case BlockData:
                 dd = Bukkit.createBlockData(ef.getMaterial() == null ? CMIMaterial.STONE.getMaterial() : ef.getMaterial().getMaterial());
@@ -756,6 +749,21 @@ public class CMIEffectManager {
             default:
                 break;
             }
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+        return dd;
+    }
+
+    public static @Nullable Object getParticleParameters(@Nullable Location location, @Nonnull CMIEffect ef) {
+
+        org.bukkit.Particle particle = ef.getParticle().getParticle();
+
+        if (particle == null)
+            return null;
+
+        try {
+            Object dd = getParticleParameter(location, ef);
 
             if (CraftParticleMethod == null) {
                 try {
