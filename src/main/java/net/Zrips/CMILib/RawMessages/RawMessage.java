@@ -464,12 +464,12 @@ public class RawMessage {
         return sb.toString();
     }
 
-    private static final Pattern QUOTED_NUMBER_WITH_D = Pattern.compile("(:)\\\"?(-?\\d+(?:\\.\\d+)?)(?:[dD])?\\\"?([,}])");
+    private static final Pattern QUOTED_NUMBER_WITH_D = Pattern.compile("(?<!text:)\"(-?\\d+(?:\\.\\d+)?)(?:[dD])?\"(?=[,\\}])");
 
     public static String fixQuotedAmountNumbers(String input) {
         if (!input.contains("d\",") && !input.contains("d\"}"))
             return input;
-        return QUOTED_NUMBER_WITH_D.matcher(input).replaceAll("$1$2$3");
+        return QUOTED_NUMBER_WITH_D.matcher(input).replaceAll("$1");
     }
 
     private static final Pattern CUSTOM_MODEL_DATA_PATTERN = Pattern.compile("\"minecraft:custom_model_data\":\\{floats:\\[(\\d+(?:\\.\\d+)?)f?\\]\\}\\s*,?");
