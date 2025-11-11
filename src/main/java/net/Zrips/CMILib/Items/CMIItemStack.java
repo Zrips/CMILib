@@ -252,11 +252,11 @@ public class CMIItemStack {
 //                    meta.displayName(CMIKyori.deserialize(CMIChatColor.translate(name)));
 //                }
 //            } else {
-                if (name == null) {
-                    meta.setDisplayName(null);
-                } else {
-                    meta.setDisplayName(CMIChatColor.translate(name));
-                }
+            if (name == null) {
+                meta.setDisplayName(null);
+            } else {
+                meta.setDisplayName(CMIChatColor.translate(name));
+            }
 //            }
         }
         this.getItemStack().setItemMeta(meta);

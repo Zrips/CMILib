@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import net.Zrips.CMILib.CMILib;
+import net.Zrips.CMILib.Version.MinecraftPlatform;
 import net.Zrips.CMILib.Version.Version;
 
 public class CMIPersistentDataContainer {
@@ -309,7 +310,8 @@ public class CMIPersistentDataContainer {
         if (persistentDataContainer == null)
             return this;
 
-        if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
+        // Special exception for arclight as it doesn't allow access to this particular method for some reason
+        if (Version.isCurrentEqualOrHigher(Version.v1_20_R4) && !Version.getPlatform().equals(MinecraftPlatform.arclight)) {
             persistentDataContainer.set(getKey(key), PersistentDataType.LIST.integers(), value);
             return this;
         }

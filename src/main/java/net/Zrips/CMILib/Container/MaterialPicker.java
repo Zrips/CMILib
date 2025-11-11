@@ -17,59 +17,71 @@ public class MaterialPicker {
     Player player;
 
     public MaterialPicker(Player player) {
-	this.player = player;
+        this.player = player;
+    }
+
+    public boolean validMaterial(CMIMaterial one) {
+        return one.isValidAsItemStack();
     }
 
     public void pickedMaterial(GUIClickType type, CMIMaterial material) {
     }
 
+    public void onUIClose() {
+
+    }
+
     public boolean openPicker(int page, String title) {
 
-	CMIGui gui = new CMIGui(player) {
-	    @Override
-	    public void pageChange(int page) {
-		openPicker(page, title);
-	    }
-	};
-	gui.setTitle(title);
+        CMIGui gui = new CMIGui(player) {
+            @Override
+            public void pageChange(int page) {
+                openPicker(page, title);
+            }
 
-	Map<String, CMIMaterial> map = new TreeMap<>();
-	
-	
-	for (CMIMaterial one : CMIMaterial.values()) {
-	    if (!one.isValidAsItemStack())
-		continue;
-	    map.put(one.toString(), one);
-	}
+            @Override
+            public void onClose() {
+                onUIClose();
+            }
+        };
+        gui.setTitle(title);
 
-	PageInfo pi = new PageInfo(45, map.size(), page);
+        Map<String, CMIMaterial> map = new TreeMap<>();
 
-	for (CMIMaterial one : map.values()) {
-	    if (!one.isValidAsItemStack())
-		continue;
-	    
-	    ItemStack item = one.newItemStack();
+        for (CMIMaterial one : CMIMaterial.values()) {
+            if (!validMaterial(one))
+                continue;
+            map.put(one.toString(), one);
+        }
 
-	    if (pi.isContinue())
-		continue;
-	    if (pi.isBreak())
-		break;
+        PageInfo pi = new PageInfo(45, map.size(), page);
 
-	    CMIGuiButton button = new CMIGuiButton(item) {
-		@Override
-		public void click(GUIClickType type) {
-		    pickedMaterial(type, one);
-		}
-	    };
+        for (CMIMaterial one : map.values()) {
+            if (!validMaterial(one))
+                continue;
 
-	    gui.addButton(button);
-	}
+            ItemStack item = one.newItemStack();
 
-	gui.addPagination(pi);
+            if (pi.isContinue())
+                continue;
+            if (pi.isBreak())
+                break;
 
-	gui.fillEmptyButtons();
-	gui.open();
-	return true;
+            CMIGuiButton button = new CMIGuiButton(item) {
+                @Override
+                public void click(GUIClickType type) {
+                    pickedMaterial(type, one);
+                }
+            };
+
+            gui.addButton(button);
+        }
+
+        gui.addPagination(pi);
+
+        gui.fillEmptyButtons();
+        gui.open();
+        return true;
     }
 
 }

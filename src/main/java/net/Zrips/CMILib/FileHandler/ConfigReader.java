@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.bukkit.Location;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -385,6 +386,11 @@ public class ConfigReader extends YamlConfiguration {
     public int get(String path, int boo) {
         path = process(path, boo);
         return config.getInt(path);
+    }
+
+    public Map<String, Object> get(String path, Map<String, Object> boo) {
+        path = process(path, boo);
+        return (Map<String, Object>) config.get(path);
     }
 
     public int get(String path, Integer boo) {
