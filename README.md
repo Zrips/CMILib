@@ -78,6 +78,7 @@ Then, add the dependency:
     <groupId>com.github.Zrips</groupId>
     <artifactId>CMILib</artifactId>
     <version>1.4.7.4</version>
+    <scope>provided</scope>
 </dependency>
 ```
 
