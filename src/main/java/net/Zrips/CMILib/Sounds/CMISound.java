@@ -12,6 +12,7 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import net.Zrips.CMILib.CMILib;
+import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Messages.CMIMessages;
 import net.Zrips.CMILib.Version.Version;
 import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
@@ -39,11 +40,11 @@ public class CMISound {
 			for (Object sound : sounds) {
 				if (sound == null)
 					continue;
-				String name = sound.toString();
 				try {
+					String name = getSoundName((Sound) sound);
 					soundsByname.put(name.toLowerCase().replace("_", "").replace(".", ""), (Sound) sound);
 				} catch (Exception e) {
-					CMIMessages.consoleMessage("&4Failed to recognize biome by (" + name + ") name. Skipping.");
+					CMIMessages.consoleMessage("&4Failed to recognize biome by (" + sound.toString() + ") name. Skipping.");
 				}
 			}
 		} catch (Throwable e) {
@@ -88,25 +89,30 @@ public class CMISound {
 					sound = one.getValue();
 			}
 		}
-		if (sound != null) {
-			// Changed to interface from class
-			if (Version.isCurrentEqualOrHigher(Version.v1_21_R2)) {
-				if (Version.isPaperBranch()) {
-					try {
-						rawName = sound.getKey().getKey();
-					} catch (Throwable e) {
-						rawName = sound.toString();
-					}
-				} else
-					rawName = sound.toString();
-			} else {
+
+		if (sound != null)
+			rawName = getSoundName(sound);
+
+	}
+
+	private static String getSoundName(Sound sound) {
+		if (Version.isCurrentEqualOrHigher(Version.v1_21_R2)) {
+			if (Version.isPaperBranch()) {
 				try {
-					rawName = (String) org.bukkit.Sound.class.getMethod("toString").invoke(sound);
+					return sound.getKey().getKey();
 				} catch (Throwable e) {
-					e.printStackTrace();
+					return sound.toString();
 				}
+			} else
+				return sound.toString();
+		} else {
+			try {
+				return (String) org.bukkit.Sound.class.getMethod("toString").invoke(sound);
+			} catch (Throwable e) {
+				e.printStackTrace();
 			}
 		}
+		return sound.toString();
 	}
 
 	public Sound getSound() {
@@ -135,7 +141,19 @@ public class CMISound {
 		if (player == null)
 			return this;
 
-		CMILib.getInstance().getReflectionManager().playSound(player, player.getLocation(), sound, volume, pitch);
+		return play(player, player.getLocation());
+	}
+
+	public CMISound play(Player player, Location loc) {
+
+		if (!enabled)
+			return this;
+		if (sound == null)
+			return this;
+		if (player == null || loc == null)
+			return this;
+
+		CMILib.getInstance().getReflectionManager().playSound(player, loc, sound, volume, pitch);
 
 		return this;
 	}

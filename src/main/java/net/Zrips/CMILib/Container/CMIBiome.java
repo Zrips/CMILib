@@ -20,7 +20,7 @@ public class CMIBiome {
 	private static Method kmet = null;
 	private static Method met = null;
 
-	private static String getBiomeName(Object biome) {
+	public static String getBiomeName(Object biome) {
 		if (!Version.isPaperBranch()) {
 			return biome.toString();
 		}
