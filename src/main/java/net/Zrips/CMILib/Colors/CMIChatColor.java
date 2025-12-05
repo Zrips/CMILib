@@ -178,8 +178,8 @@ public class CMIChatColor {
         String alphaString = null;
 
         if (hex.length() == 8) {
-            alphaString = hex.substring(0, 2);
-            this.hexCode = hex.substring(2, 8);
+            this.hexCode = hex.substring(0, 6);
+            alphaString = hex.substring(6, 8);
         }
 
         this.name = name;
@@ -877,6 +877,10 @@ public class CMIChatColor {
 
     public int getARGB() {
         return alpha << 24 | getRed() << 16 | getGreen() << 8 | getBlue();
+    }
+
+    public int getRGB() {
+        return getRed() << 16 | getGreen() << 8 | getBlue();
     }
 
     public static CMIChatColor getClosest(String hex) {
