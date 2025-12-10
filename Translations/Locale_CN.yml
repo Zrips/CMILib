@@ -152,7 +152,7 @@ info:
   CantTeleportWorld: '&e你无法传送到这个世界'
   CantTeleportNoWorld: '&c目标世界不存在.传送已取消'
   ClickToConfirmDelete: '&e点击确认移除 &6[name]'
-  ClickToConfirm: '&eClick to confirm'
+  ClickToConfirm: '&e点击确认'
   teleported: '&e你已被传送'
   PlayerSpliter: '&e----- &6[playerDisplayName] &e-----'
   Spliter: '&e--------------------------------------------------'
