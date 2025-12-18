@@ -6,7 +6,7 @@
 
 	<groupId>CMILib</groupId>
 	<artifactId>CMILib</artifactId>
-	<version>1.5.7.4</version>
+	<version>1.5.8.0</version>
 	<name>CMILib</name>
 	<url>http://maven.apache.org</url>
 	<packaging>jar</packaging>
@@ -27,16 +27,16 @@
 <!--        </dependency>-->
         <dependency>
 			<groupId>io.papermc.paper</groupId>
-			<artifactId>paper-api</artifactId>
-			<version>1.21.10-R0.1-SNAPSHOT</version> <!-- use latest -->
+			<artifactId>paper-api</artifactId> 
+			<version>1.21.11-R0.1-SNAPSHOT</version> <!-- use latest -->
 			<scope>provided</scope>
 		</dependency>
-        <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
-            <version>1.21.10-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.spigotmc</groupId>-->
+<!--            <artifactId>spigot-api</artifactId>-->
+<!--            <version>1.21.11-R0.1-SNAPSHOT</version>-->
+<!--            <scope>provided</scope>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>com.mojang</groupId>
             <artifactId>authlib</artifactId>

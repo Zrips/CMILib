@@ -41,7 +41,11 @@ public class CMIBlock {
     public static enum FlipDirection {
         NORTH_SOUTH,
         WEST_EAST,
-        UP_DOWN
+
+        UP_DOWN,
+        ROTATE_90_CW,
+        ROTATE_90_CCW,
+        ROTATE_180
     }
 
     public static enum Bisect {
@@ -198,14 +202,14 @@ public class CMIBlock {
             org.bukkit.block.data.BlockData blockData = block.getBlockData();
             if (blockData instanceof org.bukkit.block.data.Directional) {
                 org.bukkit.block.data.Directional directional = blockd == null
-                    ? (org.bukkit.block.data.Directional) blockData.clone()
-                    : (org.bukkit.block.data.Directional) blockd;
+                        ? (org.bukkit.block.data.Directional) blockData.clone()
+                        : (org.bukkit.block.data.Directional) blockd;
 
                 return directional.getFacing();
             }
             if (blockData instanceof org.bukkit.block.data.Rotatable) {
                 org.bukkit.block.data.Rotatable directional = blockd == null ? (org.bukkit.block.data.Rotatable) blockData.clone()
-                    : (org.bukkit.block.data.Rotatable) blockd;
+                        : (org.bukkit.block.data.Rotatable) blockd;
                 return directional.getRotation();
             }
         }
@@ -301,8 +305,8 @@ public class CMIBlock {
                 if (blockData instanceof org.bukkit.block.data.type.Slab) {
 
                     org.bukkit.block.data.type.Slab slab = blockd == null || !(blockd instanceof org.bukkit.block.data.type.Slab)
-                        ? (org.bukkit.block.data.type.Slab) blockData.clone()
-                        : (org.bukkit.block.data.type.Slab) blockd;
+                            ? (org.bukkit.block.data.type.Slab) blockData.clone()
+                            : (org.bukkit.block.data.type.Slab) blockd;
 
                     switch (slab.getType().toString()) {
                     case "TOP":
@@ -317,8 +321,8 @@ public class CMIBlock {
 
                 } else if (blockData instanceof org.bukkit.block.data.Bisected) {
                     org.bukkit.block.data.Bisected half = blockd == null || !(blockd instanceof org.bukkit.block.data.Bisected)
-                        ? (org.bukkit.block.data.Bisected) blockData.clone()
-                        : (org.bukkit.block.data.Bisected) blockd;
+                            ? (org.bukkit.block.data.Bisected) blockData.clone()
+                            : (org.bukkit.block.data.Bisected) blockd;
                     if (half != null) {
                         switch (half.getHalf().toString()) {
                         case "TOP":
@@ -337,11 +341,60 @@ public class CMIBlock {
 
             if (blockData instanceof org.bukkit.block.data.Directional) {
                 org.bukkit.block.data.Directional directional = blockd == null
-                    ? (org.bukkit.block.data.Directional) blockData.clone()
-                    : (org.bukkit.block.data.Directional) blockd;
+                        ? (org.bukkit.block.data.Directional) blockData.clone()
+                        : (org.bukkit.block.data.Directional) blockd;
                 if (directional != null) {
                     org.bukkit.block.BlockFace face = directional.getFacing();
                     switch (direction) {
+                    case ROTATE_90_CW:
+                        switch (face.toString()) {
+                        case "NORTH":
+                            directional.setFacing(BlockFace.EAST);
+                            break;
+                        case "EAST":
+                            directional.setFacing(BlockFace.SOUTH);
+                            break;
+                        case "SOUTH":
+                            directional.setFacing(BlockFace.WEST);
+                            break;
+                        case "WEST":
+                            directional.setFacing(BlockFace.NORTH);
+                            break;
+                        }
+                        break;
+                    case ROTATE_90_CCW:
+
+                        switch (face.toString()) {
+                        case "NORTH":
+                            directional.setFacing(BlockFace.WEST);
+                            break;
+                        case "EAST":
+                            directional.setFacing(BlockFace.NORTH);
+                            break;
+                        case "SOUTH":
+                            directional.setFacing(BlockFace.EAST);
+                            break;
+                        case "WEST":
+                            directional.setFacing(BlockFace.SOUTH);
+                            break;
+                        }
+                        break;
+                    case ROTATE_180:
+                        switch (face.toString()) {
+                        case "NORTH":
+                            directional.setFacing(BlockFace.SOUTH);
+                            break;
+                        case "EAST":
+                            directional.setFacing(BlockFace.WEST);
+                            break;
+                        case "SOUTH":
+                            directional.setFacing(BlockFace.NORTH);
+                            break;
+                        case "WEST":
+                            directional.setFacing(BlockFace.EAST);
+                            break;
+                        }
+                        break;
                     case NORTH_SOUTH:
 
                         if (angle) {
@@ -444,7 +497,7 @@ public class CMIBlock {
 
             if (blockData instanceof org.bukkit.block.data.Rotatable) {
                 org.bukkit.block.data.Rotatable directional = blockd == null ? (org.bukkit.block.data.Rotatable) blockData.clone()
-                    : (org.bukkit.block.data.Rotatable) blockd;
+                        : (org.bukkit.block.data.Rotatable) blockd;
                 switch (direction) {
                 case NORTH_SOUTH:
                     switch (directional.getRotation()) {
@@ -1014,7 +1067,7 @@ public class CMIBlock {
 
             if (blockData instanceof org.bukkit.block.data.Directional) {
                 org.bukkit.block.data.Directional directional = blockd == null ? (org.bukkit.block.data.Directional) blockData.clone()
-                    : (org.bukkit.block.data.Directional) blockd;
+                        : (org.bukkit.block.data.Directional) blockd;
                 org.bukkit.block.BlockFace face = directional.getFacing();
 
                 switch (directional.getFacing()) {
@@ -1041,7 +1094,7 @@ public class CMIBlock {
             if (blockData instanceof org.bukkit.block.data.Rotatable) {
 
                 org.bukkit.block.data.Rotatable directional = blockd == null ? (org.bukkit.block.data.Rotatable) blockData.clone()
-                    : (org.bukkit.block.data.Rotatable) blockd;
+                        : (org.bukkit.block.data.Rotatable) blockd;
 
                 org.bukkit.block.BlockFace face = directional.getRotation();
 
@@ -1504,7 +1557,7 @@ public class CMIBlock {
             if (blockData instanceof org.bukkit.block.data.Directional) {
 
                 org.bukkit.block.data.Directional directional = blockd == null ? (org.bukkit.block.data.Directional) ((org.bukkit.block.data.Directional) blockData).clone()
-                    : (org.bukkit.block.data.Directional) blockd;
+                        : (org.bukkit.block.data.Directional) blockd;
 
 //	    if (cmat.isStairs()) {
 
@@ -1532,7 +1585,7 @@ public class CMIBlock {
             if (blockData instanceof org.bukkit.block.data.Rotatable) {
 
                 org.bukkit.block.data.Rotatable directional = blockd == null ? (org.bukkit.block.data.Rotatable) blockData.clone()
-                    : (org.bukkit.block.data.Rotatable) blockd;
+                        : (org.bukkit.block.data.Rotatable) blockd;
 
                 org.bukkit.block.BlockFace face = directional.getRotation();
 

@@ -14,7 +14,7 @@ import org.bukkit.util.Vector;
 
 import net.Zrips.CMILib.Items.CMIMaterial;
 
-public class CuboidArea {
+public class CMICuboidArea {
     private Vector p1;
     private Vector p2;
     private Vector highPoints;
@@ -23,7 +23,7 @@ public class CuboidArea {
 
     private static final int MIN_HEIGHT = 0;
 
-    public CuboidArea(World world, Vector startLoc, Vector endLoc) {
+    public CMICuboidArea(World world, Vector startLoc, Vector endLoc) {
         highPoints = startLoc.clone();
         p1 = startLoc.clone();
         lowPoints = endLoc.clone();
@@ -32,7 +32,7 @@ public class CuboidArea {
         recheck();
     }
 
-    public CuboidArea(Location startLoc, Location endLoc) {
+    public CMICuboidArea(Location startLoc, Location endLoc) {
         highPoints = startLoc.toVector().clone();
         p1 = startLoc.toVector().clone();
         lowPoints = endLoc.toVector().clone();
@@ -42,8 +42,8 @@ public class CuboidArea {
     }
 
     @Override
-    public CuboidArea clone() {
-        CuboidArea clone = new CuboidArea(world);
+    public CMICuboidArea clone() {
+        CMICuboidArea clone = new CMICuboidArea(world);
         clone.highPoints = highPoints == null ? null : highPoints.clone();
         clone.lowPoints = lowPoints == null ? null : lowPoints.clone();
         clone.p1 = p1 == null ? null : p1.clone();
@@ -73,11 +73,11 @@ public class CuboidArea {
 //    public CuboidArea() {
 //    }
 
-    public CuboidArea(World world) {
+    public CMICuboidArea(World world) {
         this.world = world;
     }
 
-    public boolean isAreaWithinArea(CuboidArea area) {
+    public boolean isAreaWithinArea(CMICuboidArea area) {
         return (this.containsLoc(area.highPoints) && this.containsLoc(area.lowPoints));
     }
 
@@ -202,7 +202,7 @@ public class CuboidArea {
         return true;
     }
 
-    public boolean checkCollision(CuboidArea area) {
+    public boolean checkCollision(CMICuboidArea area) {
         if (area.getWorld() == null || this.getWorld() == null)
             return false;
         if (!area.getWorld().equals(this.getWorld())) {
@@ -268,22 +268,20 @@ public class CuboidArea {
         return (highPoints.getBlockZ() - lowPoints.getBlockZ()) + 1;
     }
 
-    @Deprecated
-    public Location getHighLoc() {
+    public Location getHighLocation() {
         if (!this.valid())
             return null;
-        return new Location(this.getWorld(), highPoints.getBlockX(), highPoints.getBlockY(), highPoints.getBlockZ());
+        return highPoints.toLocation(this.getWorld());
     }
 
     public Vector getHighPoint() {
         return highPoints;
     }
 
-    @Deprecated
-    public Location getLowLoc() {
+    public Location getLowLocation() {
         if (!this.valid())
             return null;
-        return new Location(this.getWorld(), lowPoints.getBlockX(), lowPoints.getBlockY(), lowPoints.getBlockZ());
+        return lowPoints.toLocation(this.getWorld());
     }
 
     public Vector getLowPoint() {
@@ -294,28 +292,28 @@ public class CuboidArea {
         return this.world;
     }
 
-    public List<ChunkRef> getChunks() {
+    public List<CMIChunkReference> getChunks() {
         return getChunks(0);
     }
 
-    public List<ChunkRef> getChunks(int range) {
-        List<ChunkRef> chunks = new ArrayList<>();
+    public List<CMIChunkReference> getChunks(int range) {
+        List<CMIChunkReference> chunks = new ArrayList<>();
         Vector high = this.highPoints;
         Vector low = this.lowPoints;
-        int lowX = ChunkRef.getChunkCoord(low.getBlockX() - range);
-        int lowZ = ChunkRef.getChunkCoord(low.getBlockZ() - range);
-        int highX = ChunkRef.getChunkCoord(high.getBlockX() + range);
-        int highZ = ChunkRef.getChunkCoord(high.getBlockZ() + range);
+        int lowX = CMIChunkReference.getChunkCoord(low.getBlockX() - range);
+        int lowZ = CMIChunkReference.getChunkCoord(low.getBlockZ() - range);
+        int highX = CMIChunkReference.getChunkCoord(high.getBlockX() + range);
+        int highZ = CMIChunkReference.getChunkCoord(high.getBlockZ() + range);
 
         for (int x = lowX; x <= highX; x++) {
             for (int z = lowZ; z <= highZ; z++) {
-                chunks.add(new ChunkRef(x, z));
+                chunks.add(new CMIChunkReference(x, z));
             }
         }
         return chunks;
     }
 
-    public void setArea(CuboidArea area) {
+    public void setArea(CMICuboidArea area) {
         this.highPoints = area.getHighPoint().clone();
         this.lowPoints = area.getLowPoint().clone();
         this.p1 = area.p1.clone();
@@ -400,53 +398,6 @@ public class CuboidArea {
         sb.append(this.lowPoints.getX()).append(":").append(this.lowPoints.getY()).append(":").append(this.lowPoints.getZ()).append(":")
                 .append(this.highPoints.getX()).append(":").append(this.highPoints.getY()).append(":").append(this.highPoints.getZ());
         return sb.toString();
-    }
-
-    public static final class ChunkRef {
-
-        public static int getChunkCoord(final int val) {
-            return val >> 4;
-        }
-
-        private final int z;
-        private final int x;
-
-        public ChunkRef(Location loc) {
-            this.x = getChunkCoord(loc.getBlockX());
-            this.z = getChunkCoord(loc.getBlockZ());
-        }
-
-        public ChunkRef(int x, int z) {
-            this.x = x;
-            this.z = z;
-        }
-
-        @Override
-        public boolean equals(final Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (obj == null) {
-                return false;
-            }
-            if (getClass() != obj.getClass()) {
-                return false;
-            }
-            ChunkRef other = (ChunkRef) obj;
-            return this.x == other.x && this.z == other.z;
-        }
-
-        @Override
-        public int hashCode() {
-            return x ^ z;
-        }
-
-        @Override
-        public String toString() {
-            StringBuilder sb = new StringBuilder();
-            sb.append("{ x: ").append(x).append(", z: ").append(z).append(" }");
-            return sb.toString();
-        }
     }
 
     public boolean shift(Player player, double amount) {

@@ -773,7 +773,10 @@ public class CMIChatColor {
     public Color getRGBColor() {
         if (blueChannel < 0)
             return null;
-        return Color.fromARGB(alpha, redChannel, greenChannel, blueChannel);
+        if (Version.isCurrentEqualOrHigher(Version.v1_20_R1))
+            return Color.fromARGB(alpha, redChannel, greenChannel, blueChannel);
+        else
+            return Color.fromRGB(redChannel, greenChannel, blueChannel);
     }
 
     public java.awt.Color getJavaColor() {
