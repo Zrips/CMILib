@@ -152,6 +152,7 @@ info:
   CantTeleportWorld: '&e你无法传送到这个世界'
   CantTeleportNoWorld: '&c目标世界不存在.传送已取消'
   ClickToConfirmDelete: '&e点击确认移除 &6[name]'
+  ClickToConfirm: '&e点击确认'
   teleported: '&e你已被传送'
   PlayerSpliter: '&e----- &6[playerDisplayName] &e-----'
   Spliter: '&e--------------------------------------------------'
@@ -247,7 +248,6 @@ info:
   pageCount: '&2[current]&7/&2[total]'
   pageCountHover: '&e共有[totalEntries]条目'
   skullOwner: '!actionbar!&7所有者:&r [playerName]'
-  playerHeadName: '&7[playerName]&e的头'
   mobHeadName: '&f[mobName]&e的头'
   circle: '&3圆形'
   square: '&5方形'
@@ -291,72 +291,6 @@ info:
     void: 虚空
     wither: 凋零
     world_border: 世界边界
-  Biomes:
-    DARK_FOREST: 黑森林
-    SNOWY_TAIGA: 积雪针叶林
-    COLD_OCEAN: 冷水海洋
-    FOREST: 森林
-    GROVE: 雪林
-    JAGGED_PEAKS: 尖峭山峰
-    SOUL_SAND_VALLEY: 灵魂沙峡谷
-    CHERRY_GROVE: 樱花树林
-    OLD_GROWTH_PINE_TAIGA: 原始松木针叶林
-    THE_VOID: 虚空
-    END_HIGHLANDS: 末地高地
-    WINDSWEPT_HILLS: 风袭丘陵
-    MUSHROOM_FIELDS: 蘑菇岛
-    FLOWER_FOREST: 繁花森林
-    DEEP_FROZEN_OCEAN: 冰冻深海
-    STONY_PEAKS: 裸岩山峰
-    DEEP_LUKEWARM_OCEAN: 温水深海
-    PLAINS: 平原
-    WARPED_FOREST: 诡异森林
-    BADLANDS: 恶地
-    CRIMSON_FOREST: 绯红森林
-    LUSH_CAVES: 繁茂洞穴
-    END_MIDLANDS: 末地内陆
-    WINDSWEPT_GRAVELLY_HILLS: 风袭沙砾丘陵
-    DEEP_OCEAN: 深海
-    STONY_SHORE: 石岸
-    DEEP_COLD_OCEAN: 冷水深海
-    JUNGLE: 丛林
-    TAIGA: 针叶林
-    FROZEN_PEAKS: 冰封山峰
-    WARM_OCEAN: 暖水海洋
-    END_BARRENS: 末地荒地
-    MANGROVE_SWAMP: 红树林沼泽
-    FROZEN_OCEAN: 冻洋
-    NETHER_WASTES: 下界荒地
-    WINDSWEPT_SAVANNA: 风袭热带草原
-    OLD_GROWTH_SPRUCE_TAIGA: 原始云杉针叶林
-    DEEP_DARK: 深暗之域
-    SUNFLOWER_PLAINS: 向日葵平原
-    DESERT: 沙漠
-    BEACH: 沙滩
-    BIRCH_FOREST: 桦木森林
-    WOODED_BADLANDS: 疏林恶地
-    FROZEN_RIVER: 冻河
-    WINDSWEPT_FOREST: 风袭森林
-    SNOWY_BEACH: 积雪沙滩
-    SNOWY_SLOPES: 积雪山坡
-    SAVANNA: 热带草原
-    ICE_SPIKES: 冰刺之地
-    LUKEWARM_OCEAN: 温水海洋
-    SWAMP: 沼泽
-    BASALT_DELTAS: 玄武岩三角洲
-    SPARSE_JUNGLE: 稀疏丛林
-    OCEAN: 海洋
-    MEADOW: 草甸
-    RIVER: 河流
-    ERODED_BADLANDS: 风蚀恶地
-    PALE_GARDEN: 苍白之园
-    SAVANNA_PLATEAU: 热带高原
-    DRIPSTONE_CAVES: 溶洞
-    OLD_GROWTH_BIRCH_FOREST: 原始桦木森林
-    SNOWY_PLAINS: 雪原
-    BAMBOO_JUNGLE: 竹林
-    SMALL_END_ISLANDS: 末地小型岛屿
-    THE_END: 末地
   EntityType:
     acacia_boat: 金合欢木船
     acacia_chest_boat: 金合欢木运输船
@@ -386,6 +320,7 @@ info:
     chicken: 鸡
     cod: 鳕鱼
     command_block_minecart: 命令方块矿车
+    copper_golem: 铜傀儡
     cow: 牛
     creaking: 嘎枝
     creeper: 苦力怕
@@ -420,6 +355,7 @@ info:
     glow_squid: 发光鱿鱼
     goat: 山羊
     guardian: 守卫者
+    happy_ghast: 快乐恶魂
     hoglin: 疣猪兽
     hopper_minecart: 漏斗矿车
     horse: 马
@@ -434,11 +370,13 @@ info:
     jungle_chest_boat: 丛林木运输船
     leash_knot: 拴绳结
     lightning_bolt: 闪电束
+    lingering_potion: 滞留药水
     llama: 羊驼
     llama_spit: 羊驼唾沫
     magma_cube: 岩浆怪
     mangrove_boat: 红树木船
     mangrove_chest_boat: 红树木运输船
+    mannequin: 玩家模型
     marker: 标记
     minecart: 矿车
     mooshroom: 哞菇
@@ -459,7 +397,6 @@ info:
     pillager: 掠夺者
     player: 玩家
     polar_bear: 北极熊
-    potion: 药水
     pufferfish: 河豚
     rabbit: 兔子
     ravager: 劫掠兽
@@ -478,6 +415,7 @@ info:
     spawner_minecart: 刷怪笼矿车
     spectral_arrow: 光灵箭
     spider: 蜘蛛
+    splash_potion: 喷溅药水
     spruce_boat: 云杉木船
     spruce_chest_boat: 云杉木运输船
     squid: 鱿鱼
@@ -510,127 +448,133 @@ info:
     zombified_piglin: 僵尸猪灵
   # Avoid adding color codes to the enchant name
   EnchantNames:
-    wind_burst: 风爆
-    channeling: 引雷
-    silk_touch: 精准采集
-    oxygen: 水下呼吸
     fire_aspect: 火焰附加
-    loot_bonus_mobs: 抢夺
-    density: 致密
-    lure: 饵钓
-    swift_sneak: 迅捷潜行
-    breach: Breach
-    depth_strider: 深海探索者
-    protection_projectile: 弹射物保护
-    impaling: 穿刺
-    arrow_infinite: 无限
-    loot_bonus_blocks: 时运
     knockback: 击退
-    soul_speed: 灵魂疾行
-    multishot: 多重射击
-    water_worker: 水下速掘
-    arrow_fire: 火矢
-    thorns: 荆棘
-    protection_fire: 火焰保护
-    protection_environmental: 保护
-    protection_explosions: 爆炸保护
-    luck: 幸运
-    sweeping_edge: 横扫之刃
-    protection_fall: 摔落缓冲
+    aqua_affinity: 水下速掘
+    unbreaking: 耐久
+    blast_protection: 爆炸保护
     riptide: 激流
-    frost_walker: 冰霜行者
-    vanishing_curse: 消失诅咒
+    soul_speed: 灵魂疾行
+    density: 致密
     binding_curse: 绑定诅咒
-    durability: 耐久
-    damage_all: 锋利
-    dig_speed: 效率
-    arrow_damage: 力量
-    damage_undead: 亡灵杀手
-    quick_charge: 快速装填
-    damage_arthropods: 节肢杀手
-    loyalty: 忠诚
-    arrow_knockback: 冲击
+    silk_touch: 精准采集
+    luck_of_the_sea: 海之眷顾
+    sharpness: 锋利
+    bane_of_arthropods: 节肢杀手
+    wind_burst: 风爆
+    power: 力量
+    breach: Breach
     mending: 经验修补
+    impaling: 穿刺
+    respiration: 水下呼吸
+    sweeping_edge: 横扫之刃
+    flame: 火矢
+    depth_strider: 深海探索者
+    multishot: 多重射击
+    efficiency: 摔落缓冲
+    looting: 抢夺
+    loyalty: 忠诚
+    thorns: 荆棘
+    projectile_protection: 弹射物保护
+    channeling: 引雷
     piercing: 穿透
+    feather_falling: 摔落缓冲
+    fire_protection: 火焰保护
+    lure: 饵钓
+    smite: 亡灵杀手
+    swift_sneak: 迅捷潜行
+    quick_charge: 快速装填
+    punch: 冲击
+    fortune: 时运
+    infinity: 无限
+    vanishing_curse: 消失诅咒
+    frost_walker: 冰霜行者
+    protection: 保护
   PotionEffectAliases:
-    instanthealth:
-    - 瞬间治疗
-    invisibility:
-    - 隐身
-    waterbreathing:
-    - 水下呼吸
-    resistance:
-    - 抗性提升
-    unluck:
-    - 霉运
     blindness:
     - 失明
+    waterbreathing:
+    - 水下呼吸
+    dolphinsgrace:
+    - 海豚的恩惠
+    glowing:
+    - 发光
+    instantdamage:
+    - 瞬间伤害
     haste:
     - 急迫
-    poison:
-    - 中毒
-    slowness:
-    - 缓慢
-    hunger:
-    - 饥饿
-    slowfalling:
-    - 缓降
+    levitation:
+    - 飘浮
+    infested:
+    - 寄生
     weaving:
     - 盘丝
     fireresistance:
     - 防火
-    saturation:
-    - 饱和
-    raidomen:
-    - 袭击之兆
-    jumpboost:
-    - 跳跃提升
-    dolphinsgrace:
-    - 海豚的恩惠
-    miningfatigue:
-    - 挖掘疲劳
-    healthboost:
-    - 生命提升
-    regeneration:
-    - 生命恢复
-    conduitpower:
-    - 潮涌能量
+    hunger:
+    - 饥饿
+    windcharged:
+    - 蓄风
+    instanthealth:
+    - 瞬间治疗
+    nightvision:
+    - 夜视
     badomen:
     - 不祥之兆
-    luck:
-    - 幸运
-    speed:
-    - 迅捷
+    slowness:
+    - 缓慢
+    jumpboost:
+    - 跳跃提升
+    poison:
+    - 中毒
     trialomen:
     - 试炼之兆
+    raidomen:
+    - 袭击之兆
     strength:
     - 力量
+    wither:
+    - 凋灵
     darkness:
     - 黑暗
-    heroofthevillage:
-    - 村庄英雄
-    levitation:
-    - 飘浮
-    instantdamage:
-    - 瞬间伤害
+    conduitpower:
+    - 潮涌能量
+    slowfalling:
+    - 缓降
     oozing:
     - 渗浆
+    miningfatigue:
+    - 挖掘疲劳
+    unluck:
+    - 霉运
+    healthboost:
+    - 生命提升
     weakness:
     - 虚弱
     nausea:
     - 反胃
-    windcharged:
-    - 蓄风
+    regeneration:
+    - 生命恢复
+    luck:
+    - 幸运
+    saturation:
+    - 饱和
+    heroofthevillage:
+    - 村庄英雄
+    resistance:
+    - 抗性提升
+    invisibility:
+    - 隐身
+    speed:
+    - 迅捷
     absorption:
     - 伤害吸收
-    wither:
-    - 凋灵
-    glowing:
-    - 发光
-    infested:
-    - 寄生
-    nightvision:
-    - 夜视
+dialog:
+  signEditor: Sign Editor
+  update: 更新
+  save: 保存
+  close: 关闭
+  line: Line [line]
 direction:
   n: 北
   ne: 东北
