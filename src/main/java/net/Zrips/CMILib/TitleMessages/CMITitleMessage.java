@@ -32,7 +32,7 @@ public class CMITitleMessage {
 
     static {
 
-        if (Version.isCurrentHigher(Version.v1_7_R4)) {
+        if (Version.isCurrentHigher(Version.v1_7_R4) && !Version.isMojangMappings()) {
             Version version = Version.getCurrent();
             if (Version.isCurrentEqualOrHigher(Version.v1_20_R2)) {
                 try {

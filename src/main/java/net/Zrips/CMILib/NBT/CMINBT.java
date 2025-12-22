@@ -123,7 +123,40 @@ public class CMINBT {
     private static String listAddMethod = "add";
 
     static {
-        if (Version.isCurrentEqualOrHigher(Version.v1_21_R5)) {
+        if (Version.isMojangMappings()) {
+
+            try {
+                CraftItemStack = Class.forName("org.bukkit.craftbukkit.inventory.CraftItemStack");
+                IStack = Class.forName("net.minecraft.world.item.ItemStack");
+                CraftEntity = Class.forName("org.bukkit.craftbukkit.entity.CraftEntity");
+                Class<?> dynamicOps = Class.forName("com.mojang.serialization.DynamicOps");
+
+                Method met_createSerializationContext = getRegistry().getClass().getMethod("createSerializationContext", dynamicOps);
+
+                CODEC = IStack.getField("CODEC").get(null);
+
+                Class<?> dops = Class.forName("net.minecraft.nbt.NbtOps");
+                Object dops_Instance = dops.getField("INSTANCE").get(null);
+
+                nbtTagCompound = Class.forName("net.minecraft.nbt.CompoundTag");
+                NBTBase = Class.forName("net.minecraft.nbt.Tag");
+                NBTTagString = Class.forName("net.minecraft.nbt.StringTag");
+                nbtTagList = Class.forName("net.minecraft.nbt.ListTag");
+
+                serializator = met_createSerializationContext.invoke(getRegistry(), dops_Instance);
+
+                encodeMethod = CODEC.getClass().getMethod("encodeStart", dynamicOps, Object.class);
+
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+
+            try {
+                holderLookupAClass = Class.forName("net.minecraft.core.HolderLookup$Provider");
+            } catch (Throwable e) {
+            }
+
+        } else if (Version.isCurrentEqualOrHigher(Version.v1_21_R5)) {
             try {
                 CraftItemStack = getBukkitClass("inventory.CraftItemStack");
                 IStack = Class.forName("net.minecraft.world.item.ItemStack");
@@ -220,7 +253,15 @@ public class CMINBT {
             }
         }
 
-        if (Version.isPaperBranch() && Version.isCurrentEqualOrHigher(Version.v1_21_R5)) {
+        if (Version.isMojangMappings()) {
+            
+            asStringName = "toString";
+            hasKeyName = "contains";
+            listGetName = "getString";
+            getKeysName = "keySet";
+            getTypeIdName = "getId";
+
+        } else if (Version.isPaperBranch() && Version.isCurrentEqualOrHigher(Version.v1_21_R5)) {
             // Keeping defaults
             asStringName = "toString";
             hasKeyName = "contains";
@@ -228,7 +269,6 @@ public class CMINBT {
             getKeysName = "keySet";
             getTypeIdName = "getId";
         } else {
-
             if (Version.isCurrentEqualOrHigher(Version.v1_18_R1)) {
                 getStringName = "l";
                 setTagName = "c";
@@ -1618,7 +1658,9 @@ public class CMINBT {
     private static Object getRegistry() {
         if (registry == null) {
             try {
-                if (Version.isCurrentEqualOrHigher(Version.v1_21_R4))
+                if (Version.isMojangMappings())
+                    registry = Class.forName("org.bukkit.craftbukkit.CraftRegistry").getMethod("getMinecraftRegistry").invoke(null);
+                else if (Version.isCurrentEqualOrHigher(Version.v1_21_R4))
                     registry = getBukkitClass("CraftRegistry").getMethod("getMinecraftRegistry").invoke(null);
                 else {
                     Object server = CMILib.getInstance().getReflectionManager().getDedicatedServer();
@@ -1947,7 +1989,7 @@ public class CMINBT {
 //                sb.append("id:\"").append(item.getType().getKey().toString()).append("\"");
 //                sb.append("}");
 //                return sb.toString();
-                
+
                 return getNbt(item).toString();
             }
         } catch (Throwable e) {

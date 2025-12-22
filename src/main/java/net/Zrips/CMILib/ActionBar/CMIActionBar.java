@@ -1,8 +1,6 @@
 package net.Zrips.CMILib.ActionBar;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -41,7 +39,14 @@ public class CMIActionBar {
 
     private static void init() {
 
-        if (Version.isCurrentEqualOrHigher(Version.v1_19_R1)) {
+        if (Version.isMojangMappings()) {
+            try {
+                constructor = Class.forName("net.minecraft.network.protocol.game.ClientboundSystemChatPacket").getConstructor(Class.forName("net.minecraft.network.chat.Component"),
+                        boolean.class);
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+        } else if (Version.isCurrentEqualOrHigher(Version.v1_19_R1)) {
             try {
                 packetType = Class.forName("net.minecraft.network.protocol.game.ClientboundSystemChatPacket");
                 nmsIChatBaseComponent = Class.forName("net.minecraft.network.chat.IChatBaseComponent");
@@ -76,7 +81,9 @@ public class CMIActionBar {
         }
 
         try {
-            if (Version.isCurrentEqualOrHigher(Version.v1_20_R1)) {
+            if (Version.isMojangMappings()) {
+
+            } else if (Version.isCurrentEqualOrHigher(Version.v1_20_R1)) {
                 constructor = packetType.getConstructor(nmsIChatBaseComponent, boolean.class);
             } else if (Version.isCurrentEqualOrHigher(Version.v1_19_R1)) {
                 if (Version.isCurrentSubEqual(0))
@@ -160,7 +167,9 @@ public class CMIActionBar {
 
             Object p = null;
 
-            if (Version.isCurrentEqualOrHigher(Version.v1_20_R1)) {
+            if (Version.isMojangMappings()) {
+                p = constructor.newInstance(serialized, true);
+            } else if (Version.isCurrentEqualOrHigher(Version.v1_20_R1)) {
                 p = constructor.newInstance(serialized, true);
             } else if (Version.isCurrentEqualOrHigher(Version.v1_19_R1)) {
                 if (Version.isCurrentSubEqual(0))

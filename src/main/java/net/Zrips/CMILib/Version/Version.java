@@ -104,6 +104,10 @@ public enum Version {
         return getPlatform().isAsync();
     }
 
+    public static boolean isMojangMappings() {
+        return Version.isCurrentEqualOrHigher(Version.v1_21_R7) && Version.isPaperBranch();
+    }
+
     public String getShortVersion() {
         return shortVersion;
     }
@@ -441,7 +445,7 @@ public enum Version {
             return new ArrayList<String>();
 
         return Arrays.stream(minorVersions)
-            .mapToObj(version -> getSimplifiedVersion() + version)
-            .collect(Collectors.toList());
+                .mapToObj(version -> getSimplifiedVersion() + version)
+                .collect(Collectors.toList());
     }
 }

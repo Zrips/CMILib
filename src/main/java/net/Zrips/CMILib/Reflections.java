@@ -48,6 +48,7 @@ import net.Zrips.CMILib.Effects.CMIEffect;
 import net.Zrips.CMILib.Effects.CMIEffectManager;
 import net.Zrips.CMILib.Items.CMIItemStack;
 import net.Zrips.CMILib.Items.CMIMaterial;
+import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.RawMessages.RawMessage;
 import net.Zrips.CMILib.Skins.SkinManager;
@@ -99,6 +100,9 @@ public class Reflections {
 
     private Class<?> advancementFrameTypeClass = null;
     private Class<?> minecraftKeyClass = null;
+    private Class<?> identifierClass = null;
+    private Method resourceKeyMethod = null;
+    private Method identifierMethod = null;
     private Class<?> advancementDisplayClass = null;
     private Class<?> advancementRequirementsClass = null;
     private Class<?> advancementProgressClass = null;
@@ -107,7 +111,7 @@ public class Reflections {
     Class<?> vec3DClass = null;
     Class<?> posMoveRotClass = null;
     Class<?> teleportPacketClass = null;
-    
+
     private Field getConnectionField = null;
 
     private Object advancementRegistry;
@@ -121,7 +125,7 @@ public class Reflections {
 
     private void initialize() {
 
-        if (Version.isPaperBranch() && Version.isCurrentEqualOrHigher(Version.v1_21_R7)) {
+        if (Version.isMojangMappings()) {
             try {
                 world = Class.forName("net.minecraft.world.level.Level");
                 sendPacket = Class.forName("net.minecraft.server.network.ServerGamePacketListenerImpl").getMethod("send", Class.forName("net.minecraft.network.protocol.Packet"));
@@ -133,7 +137,7 @@ public class Reflections {
                 CraftBeehive = Class.forName("org.bukkit.craftbukkit.block.impl.CraftBeehive");
                 CraftNamespacedKey = Class.forName("org.bukkit.craftbukkit.util.CraftNamespacedKey");
                 PacketPlayOutEntityTeleport = Class.forName("net.minecraft.network.protocol.game.ClientboundTeleportEntityPacket");
-                EntityHuman = Class.forName("org.bukkit.entity.Player");
+                EntityHuman = Class.forName("net.minecraft.world.entity.player.Player");
                 PacketPlayOutSpawnEntityLiving = Class.forName("net.minecraft.network.protocol.game.ClientboundAddEntityPacket");
                 PacketPlayOutEntityMetadata = Class.forName("net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket");
                 PacketPlayOutSetSlot = Class.forName("net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket");
@@ -152,22 +156,26 @@ public class Reflections {
                 CraftPlayer = Class.forName("org.bukkit.craftbukkit.entity.CraftPlayer");
                 CraftEntity = Class.forName("org.bukkit.craftbukkit.entity.CraftEntity");
                 PropertyManagerClass = Class.forName("net.minecraft.server.dedicated.Settings");
-                CEntity = Class.forName("org.bukkit.entity.Entity");
+                CEntity = Class.forName("net.minecraft.world.entity.Entity");
                 nbtTagCompound = Class.forName("net.minecraft.nbt.CompoundTag");
                 EntityLiving = Class.forName("net.minecraft.world.entity.LivingEntity");
                 Item = Class.forName("net.minecraft.world.item.Item");
                 IStack = Class.forName("net.minecraft.world.item.ItemStack");
                 advancementFrameTypeClass = Class.forName("net.minecraft.advancements.AdvancementType");
                 minecraftKeyClass = Class.forName("net.minecraft.resources.ResourceKey");
+                identifierClass = Class.forName("net.minecraft.resources.Identifier");
+                resourceKeyMethod = minecraftKeyClass.getMethod("createRegistryKey", identifierClass);
+                identifierMethod = identifierClass.getMethod("tryBuild", String.class, String.class);
+
                 advancementDisplayClass = Class.forName("net.minecraft.advancements.DisplayInfo");
                 advancementRequirementsClass = Class.forName("net.minecraft.advancements.AdvancementRequirements");
                 advancementProgressClass = Class.forName("net.minecraft.advancements.AdvancementProgress");
                 packetPlayOutAdvancementsClass = Class.forName("net.minecraft.network.protocol.game.ClientboundUpdateAdvancementsPacket");
 
                 vec3DClass = Class.forName("net.minecraft.world.phys.Vec3");
-                posMoveRotClass = Class.forName("net.minecraft.world.entity.PositionMoveRotation");
-                teleportPacketClass = Class.forName("net.minecraft.network.protocol.game.ClientboundTeleportEntityPacket");    
-                
+                posMoveRotClass = Class.forName("net.minecraft.world.entity.PositionMoveRotation");                
+                teleportPacketClass = Class.forName("net.minecraft.network.protocol.game.ClientboundTeleportEntityPacket");
+
             } catch (Throwable e) {
                 e.printStackTrace();
             }
@@ -196,11 +204,11 @@ public class Reflections {
                 }
 
                 if (Version.isCurrentEqualOrHigher(Version.v1_21_R2)) {
-                        vec3DClass = Class.forName("net.minecraft.world.phys.Vec3D");
-                        posMoveRotClass = Class.forName("net.minecraft.world.entity.PositionMoveRotation");
-                        teleportPacketClass = Class.forName("net.minecraft.network.protocol.game.PacketPlayOutEntityTeleport");                    
+                    vec3DClass = Class.forName("net.minecraft.world.phys.Vec3D");
+                    posMoveRotClass = Class.forName("net.minecraft.world.entity.PositionMoveRotation");
+                    teleportPacketClass = Class.forName("net.minecraft.network.protocol.game.PacketPlayOutEntityTeleport");
                 }
-                
+
                 if (Version.isCurrentEqualOrHigher(Version.v1_20_R2))
                     sendPacket = Class.forName("net.minecraft.server.network.PlayerConnection").getMethod("b", Class.forName("net.minecraft.network.protocol.Packet"));
                 else if (Version.isCurrentEqualOrHigher(Version.v1_18_R1))
@@ -545,6 +553,32 @@ public class Reflections {
 
     public void setServerProperties(CMIServerProperties setting, Object value, boolean save) {
 
+        if (Version.isMojangMappings()) {
+
+            try {
+                // DedicatedServer -> DedicatedServerSettings
+                Object field1 = MinecraftServer.getClass().getField("settings").get(MinecraftServer);
+
+                // DedicatedServerSettings -> DedicatedServerProperties method
+                Object prop = field1.getClass().getMethod("getProperties").invoke(field1);
+
+                // PropertyManager -> Properties
+
+                Object field2 = prop.getClass().getField("properties").get(prop);
+
+                Method setPropertyMethod = field2.getClass().getDeclaredMethod("setProperty", String.class, String.class);
+                setPropertyMethod.invoke(field2, setting.getPath(), String.valueOf(value));
+
+                if (save)
+                    // DedicatedServerSettings -> forceSave method
+                    field1.getClass().getMethod("forceSave").invoke(field1);
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+
+            return;
+        }
+
         if (Version.isCurrentEqualOrHigher(Version.v1_20_R2)) {
 
             try {
@@ -560,6 +594,7 @@ public class Reflections {
                     field1 = MinecraftServer.getClass().getField("s").get(MinecraftServer);
                 } else
                     field1 = MinecraftServer.getClass().getField("u").get(MinecraftServer);
+
                 // DedicatedServerSettings -> DedicatedServerProperties method
                 Object prop = field1.getClass().getMethod("a").invoke(field1);
 
@@ -799,7 +834,7 @@ public class Reflections {
             Object handle = getPlayerHandle(player);
 
             if (getConnectionField == null) {
-                if (Version.isCurrentEqualOrHigher(Version.v1_21_R7) && Version.isPaperBranch())
+                if (Version.isMojangMappings())
                     getConnectionField = handle.getClass().getField("connection");
                 else if (Version.isCurrentEqualOrHigher(Version.v1_21_R5))
                     getConnectionField = handle.getClass().getField("g");
@@ -923,8 +958,12 @@ public class Reflections {
             if (Version.isCurrentEqualOrHigher(Version.v1_13_R2)) {
                 try {
                     Object ncw = getWorldServer(loc.getWorld());
-                    if (getTileEntityAtMeth == null)
-                        getTileEntityAtMeth = ncw.getClass().getMethod(Version.isCurrentEqualOrHigher(Version.v1_18_R1) ? "c_" : "getTileEntity", BlockPosition);
+                    if (getTileEntityAtMeth == null) {
+                        if (Version.isMojangMappings())
+                            getTileEntityAtMeth = ncw.getClass().getMethod("getBlockEntity", BlockPosition);
+                        else
+                            getTileEntityAtMeth = ncw.getClass().getMethod(Version.isCurrentEqualOrHigher(Version.v1_18_R1) ? "c_" : "getTileEntity", BlockPosition);
+                    }
                     return getTileEntityAtMeth.invoke(ncw, getBlockPosition(loc));
                 } catch (Throwable e) {
                     e.printStackTrace();
@@ -1440,10 +1479,32 @@ public class Reflections {
         return null;
     }
 
+    Field containerMenuField = null;
+    Field containerIdField = null;
+
     private Integer getActiveContainerId(Object entityplayer) {
 
         String activeContainer = "activeContainer";
         String windowId = "windowId";
+
+        if (Version.isMojangMappings()) {
+            try {
+
+                if (containerMenuField == null)
+                    containerMenuField = EntityHuman.getField("containerMenu");
+
+                Object container = CraftContainer.cast(containerMenuField.get(entityplayer));
+
+                if (containerIdField == null)
+                    containerIdField = container.getClass().getField("containerId");
+
+                return (int) containerIdField.get(container);
+            } catch (Throwable e) {
+                if (Version.isCurrentEqualOrHigher(Version.v1_17_R1))
+                    e.printStackTrace();
+            }
+            return -1;
+        }
 
         try {
             if (Version.isCurrentEqualOrHigher(Version.v1_21_R2))
@@ -1519,7 +1580,45 @@ public class Reflections {
 
         try {
 
-            if (Version.isCurrentEqualOrHigher(Version.v1_14_R1)) {
+            if (Version.isMojangMappings()) {
+
+                Object entityplayer = getPlayerHandle(p);
+                Object s = null;
+                switch (CMIPlayerInventory.getTopInventory(p).getSize()) {
+                case 9:
+                    s = getContainer("GENERIC_9x1");
+                    break;
+                case 18:
+                    s = getContainer("GENERIC_9x2");
+                    break;
+                case 27:
+                    s = getContainer("GENERIC_9x3");
+                    break;
+                case 36:
+                    s = getContainer("GENERIC_9x4");
+                    break;
+                case 45:
+                    s = getContainer("GENERIC_9x5");
+                    break;
+                case 54:
+                    s = getContainer("GENERIC_9x6");
+                    break;
+                default:
+                    return;
+                }
+
+                RawMessage rm = new RawMessage();
+                rm.addText(title);
+
+                Constructor<?> packet = PacketPlayOutOpenWindow.getConstructor(int.class, CraftContainers, IChatBaseComponent);
+
+                Object newPack = packet.newInstance(getActiveContainerId(entityplayer), s, textToIChatBaseComponent(rm.getRaw()));
+                sendPlayerPacket(p, newPack);
+
+                // Need to update inventory to actually update existing items
+                p.updateInventory();
+
+            } else if (Version.isCurrentEqualOrHigher(Version.v1_14_R1)) {
                 Object entityplayer = getPlayerHandle(p);
 
                 Object s = null;
@@ -1637,27 +1736,47 @@ public class Reflections {
 
     public void superficialEntityTeleport(Player player, Object entity, Location targetLoc) {
         try {
-
+            
             if (entity == null || !CEntity.isInstance(entity))
                 return;
 
-//            if (Version.isCurrentEqualOrHigher(Version.v1_21_R2)) {
-//                Object craft = entity.getClass().getMethod("getBukkitEntity").invoke(entity);
-//                int id = (int) craft.getClass().getMethod("getEntityId").invoke(craft);
-//                Vec3D position = new net.minecraft.world.phys.Vec3D(targetLoc.toVector().getX(), targetLoc.toVector().getY(), targetLoc.toVector().getZ());
-//                net.minecraft.world.entity.PositionMoveRotation r = new net.minecraft.world.entity.PositionMoveRotation(position, new net.minecraft.world.phys.Vec3D(0, 0, 0), targetLoc.getYaw(), targetLoc
-//                    .getPitch());
-//
-//                net.minecraft.network.protocol.game.PacketPlayOutEntityTeleport packet = net.minecraft.network.protocol.game.PacketPlayOutEntityTeleport.a(id, r, new HashSet<>(), false);
-//
-//                sendPlayerPacket(player, packet);
-//                return;
-//            }
+            if (Version.isMojangMappings()) {
 
-            if (Version.isCurrentEqualOrHigher(Version.v1_21_R2)) {
                 Object craft = entity.getClass().getMethod("getBukkitEntity").invoke(entity);
                 int id = (int) craft.getClass().getMethod("getEntityId").invoke(craft);
 
+                if (vec3DConstructor == null)
+                    vec3DConstructor = vec3DClass.getConstructor(double.class, double.class, double.class);
+
+                if (posMoveRotConstructor == null)
+                    posMoveRotConstructor = posMoveRotClass.getConstructor(vec3DClass, vec3DClass, float.class, float.class);
+
+                if (teleportFactoryMethod == null)
+                    teleportFactoryMethod = teleportPacketClass.getMethod("teleport", int.class, posMoveRotClass, Set.class, boolean.class);
+
+                Object position = vec3DConstructor.newInstance(
+                        targetLoc.getX(),
+                        targetLoc.getY(),
+                        targetLoc.getZ());
+
+                Object zeroVec = vec3DConstructor.newInstance(0.0, 0.0, 0.0);
+
+                Object posMoveRot = posMoveRotConstructor.newInstance(
+                        position,
+                        zeroVec,
+                        targetLoc.getYaw(),
+                        targetLoc.getPitch());
+
+                Object packet = teleportFactoryMethod.invoke(null, id, posMoveRot, new HashSet<>(), false);
+
+                sendPlayerPacket(player, packet);
+                return;
+            }
+
+            if (Version.isCurrentEqualOrHigher(Version.v1_21_R2)) {
+
+                Object craft = entity.getClass().getMethod("getBukkitEntity").invoke(entity);
+                int id = (int) craft.getClass().getMethod("getEntityId").invoke(craft);
 
                 if (vec3DConstructor == null)
                     vec3DConstructor = vec3DClass.getConstructor(double.class, double.class, double.class);
@@ -1861,6 +1980,11 @@ public class Reflections {
 
     private Object getKey(String key) {
         try {
+
+            if (Version.isMojangMappings()) {
+                return resourceKeyMethod.invoke(identifierMethod.invoke("minecraft", key));
+            }
+
             if (Version.isCurrentEqualOrHigher(Version.v1_20_R1)) {
                 if (minecraftKeyStaticA == null)
                     minecraftKeyStaticA = minecraftKeyClass.getMethod("a", String.class);
@@ -1877,8 +2001,25 @@ public class Reflections {
         }
     }
 
+    private Object getIdentifier(String base, String key) {
+        if (!Version.isMojangMappings())
+            return null;
+
+        try {
+            return identifierMethod.invoke(null, base, key);
+        } catch (Throwable e) {
+            e.printStackTrace();
+            return null;
+        }
+
+    }
+
     private Object getKey(String base, String key) {
         try {
+
+            if (Version.isMojangMappings()) {
+                return resourceKeyMethod.invoke(null, identifierMethod.invoke(null, base, key));
+            }
 
             if (Version.isCurrentEqualOrHigher(Version.v1_20_R1)) {
                 if (minecraftKeyStaticABase == null) {
@@ -1969,7 +2110,76 @@ public class Reflections {
         CMIScheduler.runTaskAsynchronously(plugin, () -> {
             try {
 
-                if (Version.isCurrentEqualOrHigher(Version.v1_20_R3)) {
+                if (Version.isMojangMappings()) {
+
+                    Object frame = advancementFrameTypeClass.getField("TASK").get(null);
+                    if (advancement.getFrame().name().equals("CHALLENGE"))
+                        frame = advancementFrameTypeClass.getField("CHALLENGE").get(null);
+                    else if (advancement.getFrame().name().equals("GOAL"))
+                        frame = advancementFrameTypeClass.getField("GOAL").get(null);
+
+                    Object itemStack = CMINBT.asNMSCopy(advancement.getItem());
+                    Object title = textToIChatBaseComponent(new RawMessage().addText(advancement.getTitle()).getRaw());
+                    Object description = textToIChatBaseComponent(new RawMessage().addText(advancement.getDescription()).getRaw());
+
+                    Object identifier = getIdentifier(advancement.getId().getNamespace(), advancement.getId().getKey());
+
+                    if (toastAdvancementDisplay == null) {
+                        toastAdvancementDisplay = advancementDisplayClass.getConstructor(
+                                IStack,
+                                IChatBaseComponent,
+                                IChatBaseComponent,
+                                java.util.Optional.class,
+                                advancementFrameTypeClass,
+                                boolean.class,
+                                boolean.class,
+                                boolean.class);
+                    }
+
+                    Object display = toastAdvancementDisplay.newInstance(
+                            itemStack,
+                            title,
+                            description,
+                            java.util.Optional.empty(),
+                            frame,
+                            true,
+                            false,
+                            false);
+
+                    List<List<String>> adreq = Arrays.asList(Arrays.asList(CMIAdvancement.identificator));
+                    Object requirements = advancementRequirementsClass.getConstructor(List.class).newInstance(adreq);
+
+                    Object progress = advancementProgressClass.getConstructor().newInstance();
+                    advancementProgressClass.getMethod("update", advancementRequirementsClass).invoke(progress, requirements);
+                    advancementProgressClass.getMethod("grantProgress", String.class).invoke(progress, CMIAdvancement.identificator);
+
+                    Map<Object, Object> progressMap = new HashMap<>();
+                    progressMap.put(identifier, progress);
+
+                    Set<Object> addedSet = new HashSet<>();
+                    Object serializedAdv = SerializedAdvancement.getConstructor().newInstance();
+                    SerializedAdvancement.getMethod("display", advancementDisplayClass).invoke(serializedAdv, display);
+                    SerializedAdvancement.getMethod("requirements", advancementRequirementsClass).invoke(serializedAdv, requirements);
+                    Object holder = SerializedAdvancement.getMethod("build", identifierClass).invoke(serializedAdv, identifier);
+                    addedSet.add(holder);
+
+                    Set<Object> removedSet = new HashSet<>();
+                    removedSet.add(identifier);
+
+                    try {
+                        if (toastPacketPlayOutAdvancements == null)
+                            toastPacketPlayOutAdvancements = packetPlayOutAdvancementsClass.getConstructor(boolean.class, Collection.class, Set.class, Map.class, boolean.class);
+                    } catch (Throwable e) {
+                        e.printStackTrace();
+                        return;
+                    }
+
+                    for (Player player : players) {
+                        CMIPlayerConnection.sendPacket(player, toastPacketPlayOutAdvancements.newInstance(false, addedSet, new HashSet<>(), progressMap, true));
+                        CMIPlayerConnection.sendPacket(player, toastPacketPlayOutAdvancements.newInstance(false, new HashSet<>(), removedSet, new HashMap<>(), true));
+                    }
+
+                } else if (Version.isCurrentEqualOrHigher(Version.v1_20_R3)) {
 
                     Object frame = advancementFrameTypeClass.getField("a").get(null);
                     if (advancement.getFrame().name().equals("CHALLENGE"))

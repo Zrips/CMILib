@@ -22,7 +22,6 @@ import net.Zrips.CMILib.Effects.CMIEffectManager.CMIParticle;
 import net.Zrips.CMILib.FileHandler.ConfigReader;
 import net.Zrips.CMILib.Items.CMIItemStack;
 import net.Zrips.CMILib.Items.CMIMaterial;
-import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Messages.CMIMessages;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.RawMessages.RawMessage;
@@ -150,14 +149,14 @@ public class compatibility implements Cmd {
         if (Version.isCurrentLower(Version.v1_12_R1)) {
 
             CMIAdvancement advancement = new CMIAdvancement()
-                .setId(new org.bukkit.NamespacedKey(plugin, "cmi/commandToast"))
-                .setDescription("_")
-                .setAnnounce(false)
-                .setHidden(false)
-                .setToast(true)
-                .setBackground(AdvancementBackground.ADVENTURE)
-                .setFrame(AdvancementFrameType.TASK)
-                .setTitle("Toast Test " + CMINumber.random(0, 1000));
+                    .setId(new org.bukkit.NamespacedKey(plugin, "cmi/commandToast"))
+                    .setDescription("_")
+                    .setAnnounce(false)
+                    .setHidden(false)
+                    .setToast(true)
+                    .setBackground(AdvancementBackground.ADVENTURE)
+                    .setFrame(AdvancementFrameType.TASK)
+                    .setTitle("Toast Test " + CMINumber.random(0, 1000));
             try {
                 advancement.setItem(CMIItemStack.deserialize("leatherhelmet;purple").getItemStack());
             } catch (Throwable e) {
@@ -167,7 +166,7 @@ public class compatibility implements Cmd {
         }
 
         // Check this
-        // ref.setSkullTexture(item, customProfileName, texture)	
+        // ref.setSkullTexture(item, customProfileName, texture)
         // ref.updateTileEntity(loadValue, tag);
 
         return true;

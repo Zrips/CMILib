@@ -162,7 +162,7 @@ public class CMIEffectManager {
         NAUTILUS(CMIMaterial.NAUTILUS_SHELL),
         DOLPHIN(CMIMaterial.DOLPHIN_SPAWN_EGG),
 
-        //1.16
+        // 1.16
         WATER_SPLASH(CMIMaterial.SPLASH_POTION),
         CAMPFIRE_SIGNAL_SMOKE(CMIMaterial.SOUL_CAMPFIRE),
         CAMPFIRE_COSY_SMOKE(CMIMaterial.CAMPFIRE),
@@ -448,11 +448,11 @@ public class CMIEffectManager {
                 String name1 = one.toString().toLowerCase().replace("_", "");
                 String name2 = one.name().toLowerCase().replace("_", "");
                 if (!name1.equalsIgnoreCase(n1) &&
-                    !name1.equalsIgnoreCase(n2) &&
-                    !name1.equalsIgnoreCase(n3) &&
-                    !name2.equalsIgnoreCase(n1) &&
-                    !name2.equalsIgnoreCase(n2) &&
-                    !name2.equalsIgnoreCase(n3))
+                        !name1.equalsIgnoreCase(n2) &&
+                        !name1.equalsIgnoreCase(n3) &&
+                        !name2.equalsIgnoreCase(n1) &&
+                        !name2.equalsIgnoreCase(n2) &&
+                        !name2.equalsIgnoreCase(n3))
                     continue;
                 effect = one;
                 break;
@@ -595,11 +595,11 @@ public class CMIEffectManager {
                 String name1 = one.toString().toLowerCase().replace("_", "");
                 String name2 = one.name().toLowerCase().replace("_", "");
                 if (!name1.equalsIgnoreCase(n1)
-                    && !name1.equalsIgnoreCase(n2)
-                    && !name1.equalsIgnoreCase(n3)
-                    && !name2.equalsIgnoreCase(n1)
-                    && !name2.equalsIgnoreCase(n2)
-                    && !name2.equalsIgnoreCase(n3))
+                        && !name1.equalsIgnoreCase(n2)
+                        && !name1.equalsIgnoreCase(n3)
+                        && !name2.equalsIgnoreCase(n1)
+                        && !name2.equalsIgnoreCase(n2)
+                        && !name2.equalsIgnoreCase(n3))
                     continue;
                 particle = one;
                 return one;
@@ -661,7 +661,17 @@ public class CMIEffectManager {
     }
 
     static {
-        if (Version.isCurrentEqualOrHigher(Version.v1_17_R1)) {
+        if (Version.isMojangMappings()) {
+
+            try {
+                PacketPlayOutWorldParticles = Class.forName("net.minecraft.network.protocol.game.ClientboundLevelParticlesPacket");
+                ParticleParam = Class.forName("net.minecraft.core.particles.ParticleOptions");
+                CraftParticle = Class.forName("org.bukkit.craftbukkit.CraftParticle");
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+
+        } else if (Version.isCurrentEqualOrHigher(Version.v1_17_R1)) {
             try {
                 PacketPlayOutWorldParticles = Class.forName("net.minecraft.network.protocol.game.PacketPlayOutWorldParticles");
                 ParticleParam = Class.forName("net.minecraft.core.particles.ParticleParam");
@@ -792,65 +802,105 @@ public class CMIEffectManager {
         try {
             Object packet = null;
 
-            if (Version.isCurrentEqualOrLower(Version.v1_21_R2)) {
+            if (Version.isMojangMappings()) {
+
+                if (effectConstructor == null) {
+                    effectConstructor = PacketPlayOutWorldParticles.getConstructor(
+                            ParticleParam,
+                            // overrideLimiter
+                            boolean.class,
+                            // alwaysShow
+                            boolean.class,
+                            // posX
+                            double.class,
+							// posY
+                            double.class,
+							// posZ
+                            double.class,
+                            // xDist
+                            float.class,
+                            // yDist
+                            float.class,
+							// zDist
+                            float.class,
+                            // maxSpeed
+                            float.class,
+                            // count
+                            int.class);
+                }
+
+                packet = effectConstructor.newInstance(
+                        particleParam,
+                        true,
+                        true,
+                        location.getX(),
+                        location.getY(),
+                        location.getZ(),
+                        (float) ef.getOffset().getX(),
+                        (float) ef.getOffset().getY(),
+                        (float) ef.getOffset().getZ(),
+                        ef.getSpeed(),
+                        ef.getAmount());
+
+            } else if (Version.isCurrentEqualOrLower(Version.v1_21_R2)) {
                 if (effectConstructor == null) {
                     Class<?> packetClass = Class.forName("net.minecraft.network.protocol.game.PacketPlayOutWorldParticles");
                     Class<?> particleParamClass = Class.forName("net.minecraft.core.particles.ParticleParam");
                     effectConstructor = packetClass.getConstructor(
-                        particleParamClass,
-                        boolean.class,
-                        double.class,
-                        double.class,
-                        double.class,
-                        float.class,
-                        float.class,
-                        float.class,
-                        float.class,
-                        int.class);
+                            particleParamClass,
+                            boolean.class,
+                            double.class,
+                            double.class,
+                            double.class,
+                            float.class,
+                            float.class,
+                            float.class,
+                            float.class,
+                            int.class);
                 }
 
                 packet = effectConstructor.newInstance(
-                    particleParam,
-                    true,
-                    location.getX(),
-                    location.getY(),
-                    location.getZ(),
-                    (float) ef.getOffset().getX(),
-                    (float) ef.getOffset().getY(),
-                    (float) ef.getOffset().getZ(),
-                    ef.getSpeed(),
-                    ef.getAmount());
+                        particleParam,
+                        true,
+                        location.getX(),
+                        location.getY(),
+                        location.getZ(),
+                        (float) ef.getOffset().getX(),
+                        (float) ef.getOffset().getY(),
+                        (float) ef.getOffset().getZ(),
+                        ef.getSpeed(),
+                        ef.getAmount());
 
             } else {
                 if (effectConstructor == null) {
                     Class<?> packetClass = Class.forName("net.minecraft.network.protocol.game.PacketPlayOutWorldParticles");
                     Class<?> particleParamClass = Class.forName("net.minecraft.core.particles.ParticleParam");
                     effectConstructor = packetClass.getConstructor(
-                        particleParamClass,
-                        boolean.class,
-                        boolean.class,
-                        double.class,
-                        double.class,
-                        double.class,
-                        float.class,
-                        float.class,
-                        float.class,
-                        float.class,
-                        int.class);
+                            particleParamClass,
+                            boolean.class,
+                            boolean.class,
+                            double.class,
+                            double.class,
+                            double.class,
+                            float.class,
+                            float.class,
+                            float.class,
+                            float.class,
+                            int.class);
                 }
 
                 packet = effectConstructor.newInstance(
-                    particleParam,
-                    true,
-                    false,
-                    location.getX(),
-                    location.getY(),
-                    location.getZ(),
-                    (float) ef.getOffset().getX(),
-                    (float) ef.getOffset().getY(),
-                    (float) ef.getOffset().getZ(),
-                    ef.getSpeed(),
-                    ef.getAmount());
+                        particleParam,
+                        true,
+                        false,
+                        location.getX(),
+                        location.getY(),
+                        location.getZ(),
+                        (float) ef.getOffset().getX(),
+                        (float) ef.getOffset().getY(),
+                        (float) ef.getOffset().getZ(),
+                        ef.getSpeed(),
+                        ef.getAmount());
             }
 
             CMILib.getInstance().getReflectionManager().sendPacket(playerConnection, packet);
@@ -908,7 +958,7 @@ public class CMIEffectManager {
             if (effectConstructor == null)
                 effectConstructor = PacketPlayOutWorldParticles.getConstructor(String.class, float.class, float.class, float.class, float.class, float.class, float.class, float.class, int.class);
             Object newPack = effectConstructor.newInstance(effect.name(), (float) location.getX(), (float) location.getY(), (float) location.getZ(), (float) ef.getOffset().getX(),
-                (float) ef.getOffset().getY(), (float) ef.getOffset().getZ(), ef.getSpeed(), ef.getAmount());
+                    (float) ef.getOffset().getY(), (float) ef.getOffset().getZ(), ef.getSpeed(), ef.getAmount());
             CMILib.getInstance().getReflectionManager().sendPacket(playerConnection, newPack);
         } catch (Throwable e) {
             e.printStackTrace();
@@ -955,33 +1005,33 @@ public class CMIEffectManager {
 
             if (effectConstructor == null)
                 effectConstructor = PacketPlayOutWorldParticles.getConstructor(EnumParticle, boolean.class, float.class, float.class, float.class, float.class, float.class, float.class, float.class,
-                    int.class, int[].class);
+                        int.class, int[].class);
 
             Object newPack = null;
             if (ef.getParticle().isColored())
                 newPack = effectConstructor.newInstance(particle,
-                    true,
-                    (float) location.getX(),
-                    (float) location.getY(),
-                    (float) location.getZ(),
-                    ef.getColorFrom().getRed() / 255F,
-                    ef.getColorFrom().getGreen() / 255F,
-                    ef.getColorFrom().getBlue() / 255F,
-                    1,
-                    0,
-                    extra);
+                        true,
+                        (float) location.getX(),
+                        (float) location.getY(),
+                        (float) location.getZ(),
+                        ef.getColorFrom().getRed() / 255F,
+                        ef.getColorFrom().getGreen() / 255F,
+                        ef.getColorFrom().getBlue() / 255F,
+                        1,
+                        0,
+                        extra);
             else
                 newPack = effectConstructor.newInstance(particle,
-                    true,
-                    (float) location.getX(),
-                    (float) location.getY(),
-                    (float) location.getZ(),
-                    (float) ef.getOffset().getX(),
-                    (float) ef.getOffset().getY(),
-                    (float) ef.getOffset().getZ(),
-                    ef.getSpeed(),
-                    ef.getAmount(),
-                    extra);
+                        true,
+                        (float) location.getX(),
+                        (float) location.getY(),
+                        (float) location.getZ(),
+                        (float) ef.getOffset().getX(),
+                        (float) ef.getOffset().getY(),
+                        (float) ef.getOffset().getZ(),
+                        ef.getSpeed(),
+                        ef.getAmount(),
+                        extra);
 
             CMILib.getInstance().getReflectionManager().sendPacket(playerConnection, newPack);
         } catch (Throwable e) {
@@ -1005,11 +1055,11 @@ public class CMIEffectManager {
 
             if (effectConstructor == null)
                 effectConstructor = PacketPlayOutWorldParticles.getConstructor(ParticleParam, boolean.class, float.class, float.class, float.class, float.class, float.class, float.class,
-                    float.class, int.class);
+                        float.class, int.class);
 
             Object param = CraftParticleMethod.invoke(null, particle, dd);
             Object packet = effectConstructor.newInstance(param, true, (float) location.getX(), (float) location.getY(), (float) location.getZ(), (float) ef
-                .getOffset().getX(), (float) ef.getOffset().getY(), (float) ef.getOffset().getZ(), ef.getSpeed(), ef.getAmount());
+                    .getOffset().getX(), (float) ef.getOffset().getY(), (float) ef.getOffset().getZ(), ef.getSpeed(), ef.getAmount());
             CMILib.getInstance().getReflectionManager().sendPacket(playerConnection, packet);
         } catch (Throwable e) {
             e.printStackTrace();
@@ -1033,10 +1083,10 @@ public class CMIEffectManager {
 
             if (effectConstructor == null)
                 effectConstructor = PacketPlayOutWorldParticles.getConstructor(ParticleParam, boolean.class, double.class, double.class, double.class, float.class, float.class, float.class,
-                    float.class, int.class);
+                        float.class, int.class);
 
             Object packet = effectConstructor.newInstance(CraftParticleMethod.invoke(null, particle, dd), true, location.getX(), location.getY(), location.getZ(), (float) ef
-                .getOffset().getX(), (float) ef.getOffset().getY(), (float) ef.getOffset().getZ(), ef.getSpeed(), ef.getAmount());
+                    .getOffset().getX(), (float) ef.getOffset().getY(), (float) ef.getOffset().getZ(), ef.getSpeed(), ef.getAmount());
             CMILib.getInstance().getReflectionManager().sendPacket(playerConnection, packet);
         } catch (Throwable e) {
             e.printStackTrace();
