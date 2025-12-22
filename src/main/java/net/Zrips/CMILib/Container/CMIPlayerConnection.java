@@ -26,16 +26,17 @@ public class CMIPlayerConnection implements Listener {
 
     static {
         try {
-            Class<?> pcc = Class.forName("net.minecraft.network.protocol.Packet");
             if (Version.isMojangMappings()) {
-                Class<?> pc = Class.forName("net.minecraft.server.network.ServerGamePacketListenerImpl");                
-                sendPacket = pc.getMethod("send", pcc);
+                sendPacket = Class.forName("net.minecraft.server.network.ServerGamePacketListenerImpl").getMethod("send", Class.forName("net.minecraft.network.protocol.Packet"));
             } else if (Version.isCurrentEqualOrHigher(Version.v1_20_R2)) {
-                Class<?> pc = Class.forName("net.minecraft.server.network.PlayerConnection");
-                sendPacket = pc.getMethod("b", pcc);
+                sendPacket = Class.forName("net.minecraft.server.network.PlayerConnection").getMethod("b", Class.forName("net.minecraft.network.protocol.Packet"));
+            } else if (Version.isCurrentEqualOrHigher(Version.v1_18_R1)) {
+                sendPacket = Class.forName("net.minecraft.server.network.PlayerConnection").getMethod("a", Class.forName("net.minecraft.network.protocol.Packet"));
+            } else if (Version.isCurrentEqualOrHigher(Version.v1_17_R1)) {
+                sendPacket = Class.forName("net.minecraft.server.network.PlayerConnection").getMethod("sendPacket", Class.forName("net.minecraft.network.protocol.Packet"));
             } else {
-                Class<?> pc = Class.forName("net.minecraft.server.network.PlayerConnection");
-                sendPacket = pc.getMethod("a", pcc);
+                sendPacket = Class.forName("net.minecraft.server." + Version.getCurrent() + ".PlayerConnection").getMethod("sendPacket",
+                        Class.forName("net.minecraft.server." + Version.getCurrent() + ".Packet"));
             }
         } catch (NoSuchMethodException | ClassNotFoundException e) {
             e.printStackTrace();
