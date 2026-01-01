@@ -17,39 +17,70 @@ import java.util.regex.Pattern;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 
+import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.CMILibConfig;
+import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Version.Version;
+import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
 
 public class CMIChatColor {
 
+    // Limited to 23 entries
     private static final Map<String, CMIChatColor> BY_CHAR = new HashMap<>();
+    // Limited to 23 entries
     private static final Map<String, CMIChatColor> BY_NAME = new HashMap<>();
+
     private static final LinkedHashMap<String, CMIChatColor> CUSTOM_BY_NAME = new LinkedHashMap<>();
-    private static final Map<String, CMIChatColor> CUSTOM_BY_HEX = new HashMap<>();
-    private static final TreeMap<String, CMIChatColor> CUSTOM_BY_RGB = new TreeMap<>();
+
+    private static final TreeMap<String, CMIChatColor> CUSTOM_BY_HEX = new TreeMap<String, CMIChatColor>() {
+        @Override
+        public CMIChatColor put(String key, CMIChatColor value) {
+            if (size() >= 3000 && !containsKey(key)) {
+                pollFirstEntry();
+            }
+            return super.put(key, value);
+        }
+    };
+
+    private static final TreeMap<String, CMIChatColor> CUSTOM_BY_RGB = new TreeMap<String, CMIChatColor>() {
+        @Override
+        public CMIChatColor put(String key, CMIChatColor value) {
+            if (size() >= 5000 && !containsKey(key)) {
+                pollFirstEntry();
+            }
+            return super.put(key, value);
+        }
+    };
+
+    private static Map<String, String> baseCacheByText = new LinkedHashMap<String, String>(100, 0.75f, true) {
+        @Override
+        protected boolean removeEldestEntry(Map.Entry<String, String> eldest) {
+            return size() > 100;
+        }
+    };
+
+    private static Map<String, String> baseCMICacheByText = new LinkedHashMap<String, String>(100, 0.75f, true) {
+        @Override
+        protected boolean removeEldestEntry(Map.Entry<String, String> eldest) {
+            return size() > 100;
+        }
+    };
 
     static {
         for (CMICustomColors one : CMICustomColors.values()) {
             CUSTOM_BY_NAME.put(one.name().toLowerCase().replace("_", ""), new CMIChatColor(one.toString(), one.getHex()));
             CUSTOM_BY_HEX.put(one.getHex().toLowerCase(), new CMIChatColor(one.toString(), one.getHex()));
-//	    if (one.getExtra() != null) {
-//		for (String extra : one.getExtra()) {
-//		    CUSTOM_BY_NAME.put(extra.toLowerCase().replace("_", ""), new CMIChatColor(extra.replace(" ", "_"), one.getHex()));
-//		}
-//	    }
         }
-        for (float x = 0.0F; x <= 1; x += 0.1) {
-            for (float z = 0.1F; z <= 1; z += 0.1) {
-                for (float y = 0; y <= 1; y += 0.03) {
-                    java.awt.Color color = java.awt.Color.getHSBColor(y, x, z);
-                    StringBuilder hex = new StringBuilder().append(Integer.toHexString((color.getRed() << 16) + (color.getGreen() << 8) + color.getBlue() & 0xffffff));
-                    while (hex.length() < 6) {
-                        hex.append("0" + hex);
-                    }
-                    CMIChatColor.getClosest(hex.toString());
-                }
-            }
-        }
+
+        CMIScheduler.scheduleSyncRepeatingTask(CMILib.getInstance(), () -> {
+            CMIDebug.c("CUSTOM_BY_HEX", CUSTOM_BY_HEX.size(),
+                    "CUSTOM_BY_RGB", CUSTOM_BY_RGB.size(),
+                    "basecache", baseCacheByText.size(),
+                    "baseOwnCache", baseCMICacheByText.size(),
+                    "BY_CHAR", BY_CHAR.size(),
+                    "BY_NAME", BY_NAME.size(),
+                    "CUSTOM_BY_NAME", CUSTOM_BY_NAME.size());
+        }, 20, 20);
     }
 
     public static final String colorReplacerPlaceholder = "\uFF06";
@@ -93,30 +124,30 @@ public class CMIChatColor {
 
     public static final Pattern formatPattern = Pattern.compile("(&[klmnorKLMNOR])");
 
-    public static final CMIChatColor BLACK = new CMIChatColor("Black", '0', 0, 0, 0);
-    public static final CMIChatColor DARK_BLUE = new CMIChatColor("Dark_Blue", '1', 0, 0, 170);
-    public static final CMIChatColor DARK_GREEN = new CMIChatColor("Dark_Green", '2', 0, 170, 0);
-    public static final CMIChatColor DARK_AQUA = new CMIChatColor("Dark_Aqua", '3', 0, 170, 170);
-    public static final CMIChatColor DARK_RED = new CMIChatColor("Dark_Red", '4', 170, 0, 0);
-    public static final CMIChatColor DARK_PURPLE = new CMIChatColor("Dark_Purple", '5', 170, 0, 170);
-    public static final CMIChatColor GOLD = new CMIChatColor("Gold", '6', 255, 170, 0);
-    public static final CMIChatColor GRAY = new CMIChatColor("Gray", '7', 170, 170, 170);
-    public static final CMIChatColor DARK_GRAY = new CMIChatColor("Dark_Gray", '8', 85, 85, 85);
-    public static final CMIChatColor BLUE = new CMIChatColor("Blue", '9', 85, 85, 255);
-    public static final CMIChatColor GREEN = new CMIChatColor("Green", 'a', 85, 255, 85);
-    public static final CMIChatColor AQUA = new CMIChatColor("Aqua", 'b', 85, 255, 255);
-    public static final CMIChatColor RED = new CMIChatColor("Red", 'c', 255, 85, 85);
-    public static final CMIChatColor LIGHT_PURPLE = new CMIChatColor("Light_Purple", 'd', 255, 85, 255);
-    public static final CMIChatColor YELLOW = new CMIChatColor("Yellow", 'e', 255, 255, 85);
-    public static final CMIChatColor WHITE = new CMIChatColor("White", 'f', 255, 255, 255);
+    public static final CMIChatColor BLACK = new CMIChatColor('0', "Black", 0, 0, 0);
+    public static final CMIChatColor DARK_BLUE = new CMIChatColor('1', "Dark_Blue", 0, 0, 170);
+    public static final CMIChatColor DARK_GREEN = new CMIChatColor('2', "Dark_Green", 0, 170, 0);
+    public static final CMIChatColor DARK_AQUA = new CMIChatColor('3', "Dark_Aqua", 0, 170, 170);
+    public static final CMIChatColor DARK_RED = new CMIChatColor('4', "Dark_Red", 170, 0, 0);
+    public static final CMIChatColor DARK_PURPLE = new CMIChatColor('5', "Dark_Purple", 170, 0, 170);
+    public static final CMIChatColor GOLD = new CMIChatColor('6', "Gold", 255, 170, 0);
+    public static final CMIChatColor GRAY = new CMIChatColor('7', "Gray", 170, 170, 170);
+    public static final CMIChatColor DARK_GRAY = new CMIChatColor('8', "Dark_Gray", 85, 85, 85);
+    public static final CMIChatColor BLUE = new CMIChatColor('9', "Blue", 85, 85, 255);
+    public static final CMIChatColor GREEN = new CMIChatColor('a', "Green", 85, 255, 85);
+    public static final CMIChatColor AQUA = new CMIChatColor('b', "Aqua", 85, 255, 255);
+    public static final CMIChatColor RED = new CMIChatColor('c', "Red", 255, 85, 85);
+    public static final CMIChatColor LIGHT_PURPLE = new CMIChatColor('d', "Light_Purple", 255, 85, 255);
+    public static final CMIChatColor YELLOW = new CMIChatColor('e', "Yellow", 255, 255, 85);
+    public static final CMIChatColor WHITE = new CMIChatColor('f', "White", 255, 255, 255);
 
-    public static final CMIChatColor OBFUSCATED = new CMIChatColor("Obfuscated", 'k', false);
-    public static final CMIChatColor BOLD = new CMIChatColor("Bold", 'l', false);
-    public static final CMIChatColor STRIKETHROUGH = new CMIChatColor("Strikethrough", 'm', false);
-    public static final CMIChatColor UNDERLINE = new CMIChatColor("Underline", 'n', false);
-    public static final CMIChatColor ITALIC = new CMIChatColor("Italic", 'o', false);
-    public static final CMIChatColor RESET = new CMIChatColor("Reset", 'r', false, true);
-    public static final CMIChatColor HEX = new CMIChatColor("Hex", 'x', false, false);
+    public static final CMIChatColor OBFUSCATED = new CMIChatColor('k', "Obfuscated");
+    public static final CMIChatColor BOLD = new CMIChatColor('l', "Bold");
+    public static final CMIChatColor STRIKETHROUGH = new CMIChatColor('m', "Strikethrough");
+    public static final CMIChatColor UNDERLINE = new CMIChatColor('n', "Underline");
+    public static final CMIChatColor ITALIC = new CMIChatColor('o', "Italic");
+    public static final CMIChatColor RESET = new CMIChatColor('r');
+    public static final CMIChatColor HEX = new CMIChatColor('x');
 
     private char c = 10;
     private boolean color = true;
@@ -128,10 +159,6 @@ public class CMIChatColor {
     private int alpha = 255;
     private String hexCode = null;
     private String name;
-
-    public CMIChatColor(String name, char c, int red, int green, int blue) {
-        this(name, c, true, false, red, green, blue);
-    }
 
     public CMIChatColor(String hex) {
         this(null, hex);
@@ -219,8 +246,24 @@ public class CMIChatColor {
         this.redChannel = red;
         this.greenChannel = green;
         this.blueChannel = blue;
+    }
 
-        if (Version.isCurrentLower(Version.v1_16_R1) && name.equalsIgnoreCase("Hex"))
+    public CMIChatColor(String name, char c, int red, int green, int blue) {
+        this(name, c, red > -1 && green > -1 && blue > -1, name.equalsIgnoreCase("Reset"), red, green, blue);
+    }
+
+    private CMIChatColor(char c) {
+        this(c, c == 'r' ? "Reset" : c == 'x' ? "Hex" : "Temp", -1, -1, -1);
+    }
+
+    private CMIChatColor(char c, String name) {
+        this(c, name, -1, -1, -1);
+    }
+
+    private CMIChatColor(char c, String name, int red, int green, int blue) {
+        this(name, c, red > -1 && green > -1 && blue > -1, name.equalsIgnoreCase("Reset"), red, green, blue);
+
+        if (Version.isCurrentLower(Version.v1_16_R1) && c == 'x')
             return;
         BY_CHAR.put(String.valueOf(c).toLowerCase(), this);
         BY_NAME.put(this.getName().toLowerCase().replace("_", ""), this);
@@ -243,23 +286,9 @@ public class CMIChatColor {
 
     public static void clearCache() {
         GradientColor.clearCache();
-        basecache.clear();
-        baseOwnCache.clear();
+        baseCacheByText.clear();
+        baseCMICacheByText.clear();
     }
-
-    private static Map<String, String> basecache = new LinkedHashMap<String, String>(100, 0.75f, true) {
-        @Override
-        protected boolean removeEldestEntry(Map.Entry<String, String> eldest) {
-            return size() > 100;
-        }
-    };
-
-    private static Map<String, String> baseOwnCache = new LinkedHashMap<String, String>(100, 0.75f, true) {
-        @Override
-        protected boolean removeEldestEntry(Map.Entry<String, String> eldest) {
-            return size() > 100;
-        }
-    };
 
     public static String translate(String text) {
         return translate(text, false);
@@ -297,17 +326,17 @@ public class CMIChatColor {
             return null;
 
         if (onlyCMIformat) {
-            String cached = baseOwnCache.get(text);
+            String cached = baseCMICacheByText.get(text);
             if (cached != null) {
                 // Moving to the end of the queue to keep it in cache
-                baseOwnCache.put(text, cached);
+                baseCMICacheByText.put(text, cached);
                 return cached;
             }
         } else {
-            String cached = basecache.get(text);
+            String cached = baseCacheByText.get(text);
             if (cached != null) {
                 // Moving to the end of the queue to keep it in cache
-                basecache.put(text, cached);
+                baseCacheByText.put(text, cached);
                 return cached;
             }
         }
@@ -419,9 +448,9 @@ public class CMIChatColor {
         text = translateVanillaColorCodes(text);
 
         if (onlyCMIformat)
-            baseOwnCache.put(ori, text);
+            baseCMICacheByText.put(ori, text);
         else
-            basecache.put(ori, text);
+            baseCacheByText.put(ori, text);
 
         return text;
     }

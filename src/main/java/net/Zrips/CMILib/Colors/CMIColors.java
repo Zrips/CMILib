@@ -4,6 +4,7 @@ import java.awt.Color;
 
 import net.Zrips.CMILib.Items.CMIMaterial;
 
+@Deprecated
 public enum CMIColors {
     White(0, "White", CMIMaterial.WHITE_DYE, new Color(249, 255, 254)),
     Orange(1, "Orange", CMIMaterial.ORANGE_DYE, new Color(249, 128, 29)),
@@ -28,62 +29,62 @@ public enum CMIColors {
     private Color color;
 
     CMIColors(int id, String name, CMIMaterial mat, Color color) {
-	this.id = id;
-	this.name = name;
-	this.mat = mat;
-	this.color = color;
+        this.id = id;
+        this.name = name;
+        this.mat = mat;
+        this.color = color;
     }
 
     CMIColors(int id, String name, CMIMaterial mat) {
-	this.id = id;
-	this.name = name;
-	this.mat = mat;
+        this.id = id;
+        this.name = name;
+        this.mat = mat;
     }
 
     public int getId() {
-	return id;
+        return id;
     }
 
     public String getName() {
-	return name;
+        return name;
     }
 
     public static CMIColors getById(int id) {
-	for (CMIColors one : CMIColors.values()) {
-	    if (one.getId() == id)
-		return one;
-	}
-	return CMIColors.White;
+        for (CMIColors one : CMIColors.values()) {
+            if (one.getId() == id)
+                return one;
+        }
+        return CMIColors.White;
     }
 
     public CMIMaterial getMat() {
-	return mat;
+        return mat;
     }
 
     public void setMat(CMIMaterial mat) {
-	this.mat = mat;
+        this.mat = mat;
     }
 
     public static CMIMaterial getColorMaterial(CMIMaterial mat) {
-	String name = mat.getName().replace(" ", "").replace("_", "").toLowerCase();
-	for (CMIColors one : values()) {
-	    if (name.contains(one.getName().replace("_", "").toLowerCase()))
-		return one.getMat();
-	}
+        String name = mat.getName().replace(" ", "").replace("_", "").toLowerCase();
+        for (CMIColors one : values()) {
+            if (name.contains(one.getName().replace("_", "").toLowerCase()))
+                return one.getMat();
+        }
 
-	return null;
+        return null;
     }
 
     public static CMIColors getColor(CMIMaterial mat) {
-	String name = mat.getName().replace(" ", "").replace("_", "").toLowerCase();
-	for (CMIColors one : values()) {
-	    if (name.contains(one.getName().replace("_", "").toLowerCase()))
-		return one;
-	}
-	return null;
+        String name = mat.getName().replace(" ", "").replace("_", "").toLowerCase();
+        for (CMIColors one : values()) {
+            if (name.contains(one.getName().replace("_", "").toLowerCase()))
+                return one;
+        }
+        return null;
     }
 
     public Color getColor() {
-	return color;
+        return color;
     }
 }
