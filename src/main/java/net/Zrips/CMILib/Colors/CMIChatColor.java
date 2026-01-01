@@ -17,11 +17,8 @@ import java.util.regex.Pattern;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 
-import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.CMILibConfig;
-import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Version.Version;
-import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
 
 public class CMIChatColor {
 
@@ -71,16 +68,6 @@ public class CMIChatColor {
             CUSTOM_BY_NAME.put(one.name().toLowerCase().replace("_", ""), new CMIChatColor(one.toString(), one.getHex()));
             CUSTOM_BY_HEX.put(one.getHex().toLowerCase(), new CMIChatColor(one.toString(), one.getHex()));
         }
-
-        CMIScheduler.scheduleSyncRepeatingTask(CMILib.getInstance(), () -> {
-            CMIDebug.c("CUSTOM_BY_HEX", CUSTOM_BY_HEX.size(),
-                    "CUSTOM_BY_RGB", CUSTOM_BY_RGB.size(),
-                    "basecache", baseCacheByText.size(),
-                    "baseOwnCache", baseCMICacheByText.size(),
-                    "BY_CHAR", BY_CHAR.size(),
-                    "BY_NAME", BY_NAME.size(),
-                    "CUSTOM_BY_NAME", CUSTOM_BY_NAME.size());
-        }, 20, 20);
     }
 
     public static final String colorReplacerPlaceholder = "\uFF06";
