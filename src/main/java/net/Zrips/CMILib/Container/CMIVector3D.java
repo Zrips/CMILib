@@ -21,8 +21,19 @@ public class CMIVector3D extends CMIVector2D {
         this.z = z;
     }
 
+    public CMIVector3D add(double x, double y, double z) {
+        return this.plus(x, y, z);
+    }
+
     public CMIVector3D plus(double x, double y, double z) {
-        return new CMIVector3D(this.x + x, this.y + y, this.z + z);
+        this.x += x;
+        this.y += y;
+        this.z += z;
+        return this;
+    }
+
+    public CMIVector3D add(CMIVector3D v) {
+        return this.plus(v.x, v.y, v.z);
     }
 
     public CMIVector3D plus(CMIVector3D v) {
@@ -39,7 +50,10 @@ public class CMIVector3D extends CMIVector2D {
     }
 
     public CMIVector3D minus(double x, double y, double z) {
-        return new CMIVector3D(this.x - x, this.y - y, this.z - z);
+        this.x -= x;
+        this.y -= y;
+        this.z -= z;
+        return this;
     }
 
     public double dot(CMIVector3D v) {
@@ -47,11 +61,16 @@ public class CMIVector3D extends CMIVector2D {
     }
 
     public CMIVector3D cross(CMIVector3D other) {
-        double resultX = y * other.z - z * other.y;
-        double resultY = z * other.x - x * other.z;
-        double resultZ = x * other.y - y * other.x;
+        
+        double nx = this.y * other.z - this.z * other.y;
+        double ny = this.z * other.x - this.x * other.z;
+        double nz = this.x * other.y - this.y * other.x;
 
-        return new CMIVector3D(resultX, resultY, resultZ);
+        this.x = nx;
+        this.y = ny;
+        this.z = nz;
+        
+        return this;
     }
 
     public CMIVector3D multiply(double scalar) {
@@ -63,12 +82,18 @@ public class CMIVector3D extends CMIVector2D {
     }
 
     public CMIVector3D multiply(double x, double y, double z) {
-        return new CMIVector3D(this.x * x, this.y * y, this.z * z);
+        this.x *= x;
+        this.y *= y;
+        this.z *= z;
+        return this;
     }
 
     public CMIVector3D normalize() {
         double length = Math.sqrt(x * x + y * y + z * z);
-        return new CMIVector3D(x / length, y / length, z / length);
+        this.x /= length;
+        this.y /= length;
+        this.z /= length;
+        return this;
     }
 
     public double lengthSquared() {
@@ -105,6 +130,11 @@ public class CMIVector3D extends CMIVector2D {
 
     public boolean isZero() {
         return x == 0 && y == 0 && z == 0;
+    }
+
+    @Override
+    public CMIVector3D clone() {
+        return new CMIVector3D(x, y, z);
     }
 
 }

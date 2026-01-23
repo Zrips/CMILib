@@ -29,9 +29,11 @@ import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.inventory.meta.components.CustomModelDataComponent;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.jetbrains.annotations.NotNull;
 
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Attributes.Attribute;
@@ -218,7 +220,8 @@ public class CMIItemStack {
                 ItemMeta meta = this.getItemStack().getItemMeta();
                 attList.forEach(att -> {
                     AttributeModifier attackDamage = new AttributeModifier(UUID.randomUUID(), att.getType().getFullName(), att.getMod(),
-                        att.getOperation() == 0 ? AttributeModifier.Operation.ADD_NUMBER : att.getOperation() == 1 ? AttributeModifier.Operation.ADD_SCALAR : AttributeModifier.Operation.MULTIPLY_SCALAR_1);
+                            att.getOperation() == 0 ? AttributeModifier.Operation.ADD_NUMBER
+                                    : att.getOperation() == 1 ? AttributeModifier.Operation.ADD_SCALAR : AttributeModifier.Operation.MULTIPLY_SCALAR_1);
                     meta.addAttributeModifier(att.getType().getAttribute(), attackDamage);
                 });
                 this.getItemStack().setItemMeta(meta);
@@ -402,8 +405,10 @@ public class CMIItemStack {
     }
 
     public String getRealName() {
-        return this.getCMIType() == null || this.getCMIType() == CMIMaterial.NONE ? this.getType().name() : this.getCMIType().getTranslatedName() != null ? this.getCMIType().getTranslatedName() : this
-            .getCMIType().getName();
+        return this.getCMIType() == null || this.getCMIType() == CMIMaterial.NONE ? this.getType().name()
+                : this.getCMIType().getTranslatedName() != null ? this.getCMIType().getTranslatedName()
+                        : this
+                                .getCMIType().getName();
     }
 
     public String getBukkitName() {
@@ -501,7 +506,8 @@ public class CMIItemStack {
 
         setEnt();
 
-        // Should not be null at this point if everything went how it should have, but just in case
+        // Should not be null at this point if everything went how it should have, but
+        // just in case
         if (this.item == null) {
             return null;
         }
@@ -614,8 +620,8 @@ public class CMIItemStack {
 
         try {
             if ((item.getCMIType().isPotion() || item.getCMIType().equals(CMIMaterial.TIPPED_ARROW)) &&
-                (this.getCMIType().isPotion() || this.getCMIType().equals(CMIMaterial.TIPPED_ARROW)) &&
-                this.getType().equals(item.getType())) {
+                    (this.getCMIType().isPotion() || this.getCMIType().equals(CMIMaterial.TIPPED_ARROW)) &&
+                    this.getType().equals(item.getType())) {
                 PotionMeta potion = (PotionMeta) item.getItemStack().getItemMeta();
                 PotionMeta potion2 = (PotionMeta) this.getItemStack().getItemMeta();
                 try {
@@ -1087,6 +1093,20 @@ public class CMIItemStack {
         if (item == null)
             return item;
 
+        if (Version.isCurrentEqualOrHigher(Version.v1_21_R1)) {
+            ItemMeta meta = item.getItemMeta();
+
+            @NotNull
+            CustomModelDataComponent old = meta.getCustomModelDataComponent();
+            @NotNull
+            List<Float> floats = new ArrayList<>(old.getFloats());
+            floats.add((float) data);
+            old.setFloats(floats);
+
+            item.setItemMeta(meta);
+            return item;
+        }
+
         if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
             ItemMeta meta = item.getItemMeta();
             meta.setCustomModelData(data);
@@ -1095,6 +1115,37 @@ public class CMIItemStack {
         }
 
         return (ItemStack) new CMINBT(item).setInt("CustomModelData", data);
+    }
+
+    public CMIItemStack setCustomModelData(String data) {
+        if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
+            setCustomModelData(this.getItemStack(), data);
+            return this;
+        }
+
+        this.setItemStack(setCustomModelData(this.getItemStack(), data));
+        return this;
+    }
+
+    public static ItemStack setCustomModelData(ItemStack item, String data) {
+        if (item == null)
+            return item;
+
+        if (Version.isCurrentEqualOrHigher(Version.v1_21_R1)) {
+            ItemMeta meta = item.getItemMeta();
+
+            @NotNull
+            CustomModelDataComponent old = meta.getCustomModelDataComponent();
+            @NotNull
+            List<String> strings = new ArrayList<>(old.getStrings());
+            strings.add(data);
+            old.setStrings(strings);
+
+            item.setItemMeta(meta);
+            return item;
+        }
+
+        return item;
     }
 
     public static boolean isUnbreakable(ItemStack item) {

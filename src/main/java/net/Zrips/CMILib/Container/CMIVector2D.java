@@ -16,20 +16,32 @@ public class CMIVector2D {
         this.y = y;
     }
 
+    public CMIVector2D add(CMIVector2D v) {
+        return plus(v);
+    }
+
     public CMIVector2D plus(CMIVector2D v) {
-        return new CMIVector2D(x + v.x, y + v.y);
+        this.x += v.x;
+        this.y += v.y;
+        return this;
     }
 
     public CMIVector2D minus(CMIVector2D v) {
-        return new CMIVector2D(x - v.x, y - v.y);
+        this.x -= v.x;
+        this.y -= v.y;
+        return this;
     }
 
     public CMIVector2D minus(Vector v) {
-        return new CMIVector2D(x - v.getX(), y - v.getY());
+        this.x -= v.getX();
+        this.y -= v.getY();
+        return this;
     }
 
     public CMIVector2D multiply(double s) {
-        return new CMIVector2D(s * x, s * y);
+        this.x *= s;
+        this.y *= s;
+        return this;
     }
 
     public double dot(CMIVector2D v) {
@@ -67,5 +79,10 @@ public class CMIVector2D {
     public CMIVector2D setY(double y) {
         this.y = y;
         return this;
+    }
+
+    @Override
+    public CMIVector2D clone() {
+        return new CMIVector2D(x, y);
     }
 }

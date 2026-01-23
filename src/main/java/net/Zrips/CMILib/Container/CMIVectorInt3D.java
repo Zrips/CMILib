@@ -24,17 +24,30 @@ public class CMIVectorInt3D extends CMIVectorInt2D {
         this(loc.toVector());
     }
 
+    public CMIVectorInt3D add(CMIVectorInt3D v) {
+        return plus(v);
+    }
+
     public CMIVectorInt3D plus(CMIVectorInt3D v) {
-        return new CMIVectorInt3D(x + v.x, y + v.y, z + v.z);
+        this.x += v.x;
+        this.y += v.y;
+        this.z += v.z;
+        return this;
     }
 
     public CMIVectorInt3D minus(CMIVectorInt3D v) {
-        return new CMIVectorInt3D(x - v.x, y - v.y, z - v.z);
+        this.x -= v.x;
+        this.y -= v.y;
+        this.z -= v.z;
+        return this;
     }
 
     @Override
     public CMIVectorInt3D times(int s) {
-        return new CMIVectorInt3D(s * x, s * y, s * z);
+        this.x *= s;
+        this.y *= s;
+        this.z *= s;
+        return this;
     }
 
     public double dot(CMIVectorInt3D v) {
@@ -52,5 +65,10 @@ public class CMIVectorInt3D extends CMIVectorInt2D {
     @Override
     public String toString() {
         return getX() + ";" + getY() + ";" + getZ();
+    }
+
+    @Override
+    public CMIVectorInt3D clone() {
+        return new CMIVectorInt3D(x, y, z);
     }
 }

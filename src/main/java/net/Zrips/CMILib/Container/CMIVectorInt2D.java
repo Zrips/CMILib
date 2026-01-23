@@ -25,16 +25,26 @@ public class CMIVectorInt2D {
         this(loc.toVector());
     }
 
+    public CMIVectorInt2D add(CMIVectorInt2D v) {
+        return plus(v);
+    }
+
     public CMIVectorInt2D plus(CMIVectorInt2D v) {
-        return new CMIVectorInt2D(x + v.x, z + v.z);
+        this.x += v.x;
+        this.z += v.z;
+        return this;
     }
 
     public CMIVectorInt2D minus(CMIVectorInt2D v) {
-        return new CMIVectorInt2D(x - v.x, z - v.z);
+        this.x -= v.x;
+        this.z -= v.z;
+        return this;
     }
 
     public CMIVectorInt2D times(int s) {
-        return new CMIVectorInt2D(s * x, s * z);
+        this.x *= s;
+        this.z *= s;
+        return this;
     }
 
     public double dot(CMIVectorInt2D v) {
@@ -60,5 +70,10 @@ public class CMIVectorInt2D {
     @Override
     public String toString() {
         return getX() + ";" + getZ();
+    }
+
+    @Override
+    public CMIVectorInt2D clone() {
+        return new CMIVectorInt2D(x, z);
     }
 }

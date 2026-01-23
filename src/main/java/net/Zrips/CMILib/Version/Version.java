@@ -61,8 +61,78 @@ public enum Version {
     v1_24_R2,
     v1_24_R3;
 
+    //Future change to be based on specific versions and not NMS mappings
+//    v1_7(7, 0, 1),
+//    v1_7_5(7, 5, 2),
+//    v1_7_8(7, 8, 3),
+//    v1_7_10(7, 10, 4),
+//    v1_8(8, 0, 1),
+//    v1_8_1(8, 1, 1),
+//    v1_8_2(8, 2, 1),
+//    v1_8_3(8, 3, 2),
+//    v1_8_4(8, 4, 2),
+//    v1_8_8(8, 8, 3),
+//    v1_9(9, 0, 1),
+//    v1_9_4(9, 4, 2),
+//    v1_10(10, 0, 1),
+//    v1_11(11, 0, 1),
+//    v1_11_2(11, 2, 1),
+//    v1_12(12, 0, 1),
+//    v1_12_1(12, 1, 1),
+//    v1_12_2(12, 2, 1),
+//    v1_13(13, 0, 1),
+//    v1_13_1(13, 1, 2),
+//    v1_13_2(13, 2, 2),
+//    v1_14(14, 0, 1),
+//    v1_14_2(14, 2, 1),
+//    v1_14_3(14, 3, 1),
+//    v1_14_4(14, 4, 1),
+//    v1_15(15, 0, 1),
+//    v1_15_1(15, 1, 1),
+//    v1_15_2(15, 2, 1),
+//    v1_16(16, 0, 1),
+//    v1_16_1(16, 1, 1),
+//    v1_16_2(16, 2, 2),
+//    v1_16_3(16, 3, 2),
+//    v1_16_4(16, 4, 3),
+//    v1_16_5(16, 5, 3),
+//    v1_17(17, 0, 1),
+//    v1_17_1(17, 1, 1),
+//    v1_18(18, 0, 1),
+//    v1_18_1(18, 1, 1),
+//    v1_18_2(18, 2, 2),
+//    v1_19(19, 0, 1),
+//    v1_19_1(19, 1, 1),
+//    v1_19_2(19, 2, 1),
+//    v1_19_3(19, 3, 2),
+//    v1_19_4(19, 4, 3),
+//    v1_20(20, 0, 1),
+//    v1_20_1(20, 1, 1),
+//    v1_20_2(20, 2, 2),
+//    v1_20_3(20, 3, 3),
+//    v1_20_4(20, 4, 3),
+//    v1_20_5(20, 5, 4),
+//    v1_20_6(20, 6, 4),
+//    v1_21(21, 0, 1),
+//    v1_21_1(21, 1, 1),
+//    v1_21_2(21, 2, 1),
+//    v1_21_3(21, 3, 2),
+//    v1_21_4(21, 4, 3),
+//    v1_21_5(21, 5, 4),
+//    v1_21_6(21, 6, 5),
+//    v1_21_7(21, 7, 5),
+//    v1_21_8(21, 8, 5),
+//    v1_21_9(21, 9, 6),
+//    v1_21_10(21, 10, 6),
+//    v1_21_11(21, 11, 7);
+
     private Integer value;
     private int[] minorVersions = null;
+
+    private int majorVersion = 0;
+    private int minorVersion = 0;
+    private int nmsVersion = 1;
+    
     private String shortVersion;
     private static int subVersion = 0;
     private static Version current = null;
@@ -77,6 +147,14 @@ public enum Version {
         // Enables extra commands for test servers
         if (CMILib.getInstance().getReflectionManager().getServerName().equals("LT_Craft") && Bukkit.getWorlds().get(0).getSeed() == 1782374759)
             testServer = true;
+    }
+
+
+    Version(int majorVersion, int minorVersion, int nmsVersion) {
+        this();
+        this.majorVersion = majorVersion;
+        this.minorVersion = minorVersion;
+		this.nmsVersion = nmsVersion;
     }
 
     Version(int... versions) {

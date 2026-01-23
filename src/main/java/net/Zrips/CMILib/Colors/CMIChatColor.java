@@ -98,7 +98,7 @@ public class CMIChatColor {
     public static final Pattern hexColorNamePattern = Pattern.compile(ColorNameRegex);
     public static final Pattern hexColorNamePatternLast = Pattern.compile(ColorNameRegex + "(?!.*\\{#)");
 
-    public static final String ColorFontRegex = "(\\" + colorFontPrefix + ")([a-zA-Z_]{3,})(\\" + colorCodeSuffix + ")";
+    public static final String ColorFontRegex = "(\\" + colorFontPrefix + ")([a-zA-Z_]{2,})(\\" + colorCodeSuffix + ")";
 
     public static final Pattern gradientPattern = Pattern.compile("(\\{(#[^\\{\\}]*?)>\\})(.*?)(\\{(#[^\\{\\}]*?)<(>?)\\})");
 
