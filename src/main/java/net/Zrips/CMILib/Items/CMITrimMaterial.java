@@ -11,7 +11,8 @@ public enum CMITrimMaterial {
     LAPIS,
     NETHERITE,
     QUARTZ,
-    REDSTONE;
+    REDSTONE,
+    RESIN;
 
     private CMITrimMaterial() {
 
@@ -43,6 +44,8 @@ public enum CMITrimMaterial {
             return org.bukkit.inventory.meta.trim.TrimMaterial.QUARTZ;
         case "REDSTONE":
             return org.bukkit.inventory.meta.trim.TrimMaterial.REDSTONE;
+        case "RESIN":
+            return org.bukkit.inventory.meta.trim.TrimMaterial.RESIN;
         }
         return null;
     }
