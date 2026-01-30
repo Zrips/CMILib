@@ -140,7 +140,10 @@ public class CMIEffect {
             return null;
 
         if (sub != null) {
-            for (String one : sub.split(":")) {
+
+            String[] split = sub.contains(":") ? sub.split(":") : sub.split(";");
+
+            for (String one : split) {
 
                 if (cmiParticle.isColored() && colorFrom == null) {
                     colorFrom = processColor(one);

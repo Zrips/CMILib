@@ -16,6 +16,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle.Spell;
 import org.bukkit.Particle.Trail;
 import org.bukkit.entity.Player;
 
@@ -23,7 +24,6 @@ import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Reflections;
 import net.Zrips.CMILib.Container.CMIText;
 import net.Zrips.CMILib.Items.CMIMaterial;
-import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Version.Version;
 
 public class CMIEffectManager {
@@ -44,7 +44,8 @@ public class CMIEffectManager {
         Vibration(CMIEffectDataValueTypes.Duration, CMIEffectDataValueTypes.Location),
         Float(CMIEffectDataValueTypes.Speed),
         Int(CMIEffectDataValueTypes.Speed),
-        Trail(CMIEffectDataValueTypes.ColorFrom, CMIEffectDataValueTypes.Duration, CMIEffectDataValueTypes.Location);
+        Trail(CMIEffectDataValueTypes.ColorFrom, CMIEffectDataValueTypes.Duration, CMIEffectDataValueTypes.Location),
+        Spell(CMIEffectDataValueTypes.ColorFrom, CMIEffectDataValueTypes.Speed);
 
         private Set<CMIEffectDataValueTypes> dataTypes = new HashSet<>();
 
@@ -168,7 +169,9 @@ public class CMIEffectManager {
         CAMPFIRE_COSY_SMOKE(CMIMaterial.CAMPFIRE),
         SNEEZE(CMIMaterial.SLIME_BALL),
         COMPOSTER(CMIMaterial.BONE_MEAL),
-        FLASH(CMIMaterial.GLOWSTONE),
+
+        FLASH(CMIParticleDataType.Color, CMIMaterial.GLOWSTONE),
+
         FALLING_LAVA(CMIMaterial.MAGMA_BLOCK),
         LANDING_LAVA(CMIMaterial.BLAZE_POWDER),
         FALLING_WATER(CMIMaterial.WATER_BUCKET),
@@ -231,8 +234,10 @@ public class CMIEffectManager {
         FISHING(CMIMaterial.FISHING_ROD),
         UNDERWATER(CMIMaterial.TURTLE_EGG),
         ENCHANTED_HIT(CMIMaterial.ENCHANTED_BOOK),
-        EFFECT(CMIMaterial.POTION),
-        INSTANT_EFFECT(CMIMaterial.GOLDEN_APPLE),
+
+        EFFECT(CMIParticleDataType.Spell, CMIMaterial.POTION),
+        INSTANT_EFFECT(CMIParticleDataType.Spell, CMIMaterial.GOLDEN_APPLE),
+
         ENTITY_EFFECT(CMIParticleDataType.Color, CMIMaterial.GLOWSTONE_DUST),
         WITCH(CMIMaterial.POTION),
         DRIPPING_WATER(CMIMaterial.ICE),
@@ -249,8 +254,8 @@ public class CMIEffectManager {
         TOTEM_OF_UNDYING(CMIMaterial.TOTEM_OF_UNDYING),
         DUST_COLOR_TRANSITION(CMIParticleDataType.DustTransition),
         VIBRATION(CMIParticleDataType.Vibration),
-        SCULK_CHARGE(CMIParticleDataType.Float),
-        SHRIEK(CMIParticleDataType.Int),
+        SCULK_CHARGE(CMIParticleDataType.Float, CMIMaterial.WIND_CHARGE),
+        SHRIEK(CMIParticleDataType.Int, CMIMaterial.SCULK_SHRIEKER),
         EGG_CRACK(CMIMaterial.TURTLE_EGG),
         DUST_PLUME(CMIMaterial.BREEZE_ROD),
         WHITE_SMOKE(CMIMaterial.HEAVY_CORE),
@@ -737,6 +742,10 @@ public class CMIEffectManager {
                 if (location != null)
                     dd = new Trail(location, ef.getColorFrom(), ef.getDuration());
                 break;
+            case Spell:
+                if (location != null)
+                    dd = new Spell(ef.getColorFrom(), ef.getSpeed());
+                break;
             case Vibration:
                 if (destinationConstructor == null)
                     destinationConstructor = Class.forName("org.bukkit.Vibration$Destination$BlockDestination").getConstructor(Location.class);
@@ -813,15 +822,15 @@ public class CMIEffectManager {
                             boolean.class,
                             // posX
                             double.class,
-							// posY
+                            // posY
                             double.class,
-							// posZ
+                            // posZ
                             double.class,
                             // xDist
                             float.class,
                             // yDist
                             float.class,
-							// zDist
+                            // zDist
                             float.class,
                             // maxSpeed
                             float.class,
