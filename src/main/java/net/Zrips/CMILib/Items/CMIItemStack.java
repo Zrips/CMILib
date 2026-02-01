@@ -1102,6 +1102,7 @@ public class CMIItemStack {
             List<Float> floats = new ArrayList<>(old.getFloats());
             floats.add((float) data);
             old.setFloats(floats);
+            meta.setCustomModelDataComponent(old);
 
             item.setItemMeta(meta);
             return item;
