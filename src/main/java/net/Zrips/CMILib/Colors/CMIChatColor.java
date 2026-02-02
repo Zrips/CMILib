@@ -18,6 +18,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Color;
 
 import net.Zrips.CMILib.CMILibConfig;
+import net.Zrips.CMILib.Container.CMICachedLinkedMap;
 import net.Zrips.CMILib.Version.Version;
 
 public class CMIChatColor {
@@ -26,7 +27,6 @@ public class CMIChatColor {
     private static final Map<String, CMIChatColor> BY_CHAR = new HashMap<>();
     // Limited to 23 entries
     private static final Map<String, CMIChatColor> BY_NAME = new HashMap<>();
-
     private static final LinkedHashMap<String, CMIChatColor> CUSTOM_BY_NAME = new LinkedHashMap<>();
 
     private static final TreeMap<String, CMIChatColor> CUSTOM_BY_HEX = new TreeMap<String, CMIChatColor>() {
@@ -49,19 +49,8 @@ public class CMIChatColor {
         }
     };
 
-    private static Map<String, String> baseCacheByText = new LinkedHashMap<String, String>(100, 0.75f, true) {
-        @Override
-        protected boolean removeEldestEntry(Map.Entry<String, String> eldest) {
-            return size() > 100;
-        }
-    };
-
-    private static Map<String, String> baseCMICacheByText = new LinkedHashMap<String, String>(100, 0.75f, true) {
-        @Override
-        protected boolean removeEldestEntry(Map.Entry<String, String> eldest) {
-            return size() > 100;
-        }
-    };
+    private static CMICachedLinkedMap<String, String> baseCacheByText = new CMICachedLinkedMap<String, String>(100);
+    private static CMICachedLinkedMap<String, String> baseCMICacheByText = new CMICachedLinkedMap<String, String>(100);
 
     static {
         for (CMICustomColors one : CMICustomColors.values()) {
@@ -314,18 +303,12 @@ public class CMIChatColor {
 
         if (onlyCMIformat) {
             String cached = baseCMICacheByText.get(text);
-            if (cached != null) {
-                // Moving to the end of the queue to keep it in cache
-                baseCMICacheByText.put(text, cached);
+            if (cached != null)
                 return cached;
-            }
         } else {
             String cached = baseCacheByText.get(text);
-            if (cached != null) {
-                // Moving to the end of the queue to keep it in cache
-                baseCacheByText.put(text, cached);
+            if (cached != null)
                 return cached;
-            }
         }
 
         String ori = text;
@@ -681,6 +664,7 @@ public class CMIChatColor {
         return isReset;
     }
 
+    @Deprecated
     public ChatColor getColor() {
         return ChatColor.getByChar(this.getChar());
     }

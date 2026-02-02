@@ -67,15 +67,14 @@ public class CMIDebug {
         StringBuilder FullMessage = new StringBuilder();
         for (Object one : message) {
             if (one instanceof String[]) {
-                FullMessage.append(String.valueOf(Arrays.asList((String[]) one).toString()) + " ");
+                FullMessage.append(Arrays.asList((String[]) one).toString()).append(" ");
             } else
-                FullMessage.append(String.valueOf(one) + " ");
+                FullMessage.append(String.valueOf(one)).append(" ");
         }
 
         player.sendMessage(CMIChatColor.DARK_GRAY + "[CMID] " + CMIChatColor.DARK_AQUA + FullMessage.toString().replace("§", "&"));
     }
 
-    @SuppressWarnings("unused")
     public static void c(Object... message) {
 
         if (!Version.isTestServer())
@@ -94,7 +93,7 @@ public class CMIDebug {
 
     public CMIDebug(
 //	CMILogType type, 
-        Object... message) {
+            Object... message) {
         if (!CommandsHandler.enabledDebug)
             return;
 //	this.type = type;
