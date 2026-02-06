@@ -60,14 +60,12 @@ public class MaterialPicker {
             if (!validMaterial(one))
                 continue;
 
-            ItemStack item = one.newItemStack();
-
             if (pi.isContinue())
                 continue;
             if (pi.isBreak())
                 break;
 
-            CMIGuiButton button = new CMIGuiButton(item) {
+            CMIGuiButton button = new CMIGuiButton(one) {
                 @Override
                 public void click(GUIClickType type) {
                     pickedMaterial(type, one);
