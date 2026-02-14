@@ -312,6 +312,7 @@ info:
     breeze: 旋风人
     breeze_wind_charge: 旋风人风弹
     camel: 骆驼
+    camel_husk: 骆驼尸壳
     cat: 猫
     cave_spider: 洞穴蜘蛛
     cherry_boat: 樱花木船
@@ -381,6 +382,7 @@ info:
     minecart: 矿车
     mooshroom: 哞菇
     mule: 骡
+    nautilus: 鹦鹉螺
     oak_boat: 橡木船
     oak_chest_boat: 橡木运输船
     ocelot: 豹猫
@@ -389,6 +391,7 @@ info:
     pale_oak_boat: 苍白橡木船
     pale_oak_chest_boat: 苍白橡木运输船
     panda: 熊猫
+    parched: 焦骸
     parrot: 鹦鹉
     phantom: 幻翼
     pig: 猪
@@ -444,131 +447,133 @@ info:
     zoglin: 僵尸疣猪兽
     zombie: 僵尸
     zombie_horse: 僵尸马
+    zombie_nautilus: 僵尸鹦鹉螺
     zombie_villager: 僵尸村民
     zombified_piglin: 僵尸猪灵
   # Avoid adding color codes to the enchant name
   EnchantNames:
-    fire_aspect: 火焰附加
-    knockback: 击退
-    aqua_affinity: 水下速掘
-    unbreaking: 耐久
-    blast_protection: 爆炸保护
-    riptide: 激流
-    soul_speed: 灵魂疾行
     density: 致密
-    binding_curse: 绑定诅咒
-    silk_touch: 精准采集
-    luck_of_the_sea: 海之眷顾
-    sharpness: 锋利
-    bane_of_arthropods: 节肢杀手
-    wind_burst: 风爆
+    lure: 饵钓
+    fortune: 时运
+    lunge: 突进
     power: 力量
-    breach: Breach
-    mending: 经验修补
-    impaling: 穿刺
-    respiration: 水下呼吸
-    sweeping_edge: 横扫之刃
-    flame: 火矢
-    depth_strider: 深海探索者
-    multishot: 多重射击
-    efficiency: 摔落缓冲
-    looting: 抢夺
-    loyalty: 忠诚
-    thorns: 荆棘
-    projectile_protection: 弹射物保护
     channeling: 引雷
-    piercing: 穿透
+    bane_of_arthropods: 节肢杀手
+    blast_protection: 爆炸保护
+    soul_speed: 灵魂疾行
+    smite: 亡灵杀手
+    sweeping_edge: 横扫之刃
+    loyalty: 忠诚
+    silk_touch: 精准采集
+    multishot: 多重射击
     feather_falling: 摔落缓冲
     fire_protection: 火焰保护
-    lure: 饵钓
-    smite: 亡灵杀手
-    swift_sneak: 迅捷潜行
+    impaling: 穿刺
+    unbreaking: 耐久
+    thorns: 荆棘
+    knockback: 击退
+    flame: 火矢
     quick_charge: 快速装填
+    projectile_protection: 弹射物保护
+    protection: 保护
+    sharpness: 锋利
+    fire_aspect: 火焰附加
+    piercing: 穿透
+    riptide: 激流
+    swift_sneak: 迅捷潜行
+    frost_walker: 冰霜行者
+    wind_burst: 风爆
     punch: 冲击
-    fortune: 时运
+    looting: 抢夺
+    binding_curse: 绑定诅咒
+    aqua_affinity: 水下速掘
+    depth_strider: 深海探索者
+    respiration: 水下呼吸
     infinity: 无限
     vanishing_curse: 消失诅咒
-    frost_walker: 冰霜行者
-    protection: 保护
+    efficiency: 效率
+    mending: 经验修补
+    luck_of_the_sea: 海之眷顾
+    breach: 破甲
   PotionEffectAliases:
-    blindness:
-    - 失明
-    waterbreathing:
-    - 水下呼吸
-    dolphinsgrace:
-    - 海豚的恩惠
-    glowing:
-    - 发光
-    instantdamage:
-    - 瞬间伤害
-    haste:
-    - 急迫
-    levitation:
-    - 飘浮
-    infested:
-    - 寄生
-    weaving:
-    - 盘丝
-    fireresistance:
-    - 防火
-    hunger:
-    - 饥饿
-    windcharged:
-    - 蓄风
-    instanthealth:
-    - 瞬间治疗
-    nightvision:
-    - 夜视
-    badomen:
-    - 不祥之兆
-    slowness:
-    - 缓慢
-    jumpboost:
-    - 跳跃提升
-    poison:
-    - 中毒
-    trialomen:
-    - 试炼之兆
-    raidomen:
-    - 袭击之兆
-    strength:
-    - 力量
-    wither:
-    - 凋灵
-    darkness:
-    - 黑暗
-    conduitpower:
-    - 潮涌能量
-    slowfalling:
-    - 缓降
-    oozing:
-    - 渗浆
-    miningfatigue:
-    - 挖掘疲劳
-    unluck:
-    - 霉运
-    healthboost:
-    - 生命提升
     weakness:
-    - 虚弱
-    nausea:
-    - 反胃
-    regeneration:
-    - 生命恢复
-    luck:
-    - 幸运
-    saturation:
-    - 饱和
+      - 虚弱
+    windcharged:
+      - 蓄风
+    levitation:
+      - 飘浮
     heroofthevillage:
-    - 村庄英雄
-    resistance:
-    - 抗性提升
-    invisibility:
-    - 隐身
+      - 村庄英雄
+    slowness:
+      - 缓慢
+    haste:
+      - 急迫
+    instanthealth:
+      - 瞬间治疗
+    jumpboost:
+      - 跳跃提升
     speed:
-    - 迅捷
+      - 迅捷
+    luck:
+      - 幸运
     absorption:
-    - 伤害吸收
+      - 伤害吸收
+    dolphinsgrace:
+      - 海豚的恩惠
+    waterbreathing:
+      - 水下呼吸
+    infested:
+      - 寄生
+    darkness:
+      - 黑暗
+    poison:
+      - 中毒
+    resistance:
+      - 抗性提升
+    wither:
+      - 凋灵
+    miningfatigue:
+      - 挖掘疲劳
+    conduitpower:
+      - 潮涌能量
+    slowfalling:
+      - 缓降
+    fireresistance:
+      - 防火
+    invisibility:
+      - 隐身
+    blindness:
+      - 失明
+    oozing:
+      - 渗浆
+    trialomen:
+      - 试炼之兆
+    hunger:
+      - 饥饿
+    nightvision:
+      - 夜视
+    weaving:
+      - 盘丝
+    healthboost:
+      - 生命提升
+    raidomen:
+      - 袭击之兆
+    strength:
+      - 力量
+    regeneration:
+      - 生命恢复
+    unluck:
+      - 霉运
+    saturation:
+      - 饱和
+    instantdamage:
+      - 瞬间伤害
+    nausea:
+      - 反胃
+    badomen:
+      - 不祥之兆
+    glowing:
+      - 发光
 dialog:
   signEditor: Sign Editor
   update: 更新
