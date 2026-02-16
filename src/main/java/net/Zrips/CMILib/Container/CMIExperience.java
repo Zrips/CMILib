@@ -2,7 +2,6 @@ package net.Zrips.CMILib.Container;
 
 import org.bukkit.entity.Player;
 
-import net.Zrips.CMILib.Container.CMINumber;
 import net.Zrips.CMILib.Version.Version;
 
 public class CMIExperience {

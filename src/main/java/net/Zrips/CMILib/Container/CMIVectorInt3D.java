@@ -1,6 +1,7 @@
 package net.Zrips.CMILib.Container;
 
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.util.Vector;
 
 public class CMIVectorInt3D extends CMIVectorInt2D {
@@ -70,5 +71,9 @@ public class CMIVectorInt3D extends CMIVectorInt2D {
     @Override
     public CMIVectorInt3D clone() {
         return new CMIVectorInt3D(x, y, z);
+    }
+
+    public Location toLocation(World world) {
+        return new Location(world, this.getX(), this.getY(), this.getZ());
     }
 }

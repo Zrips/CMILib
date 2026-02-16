@@ -4,9 +4,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
-import net.Zrips.CMILib.Container.PageInfo;
 import net.Zrips.CMILib.GUI.CMIGui;
 import net.Zrips.CMILib.GUI.CMIGuiButton;
 import net.Zrips.CMILib.GUI.GUIManager.GUIClickType;
