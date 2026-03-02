@@ -50,11 +50,13 @@ public class CMIVector2D {
 
     @Override
     public String toString() {
-        return String.format("%.2f;%.2f", x, y);
+        return String.format(java.util.Locale.ROOT, "%.2f;%.2f", x, y);
     }
 
     public static CMIVector2D fromString(String value) {
         String[] parts = value.split(";");
+        if (parts.length != 2)
+            return new CMIVector2D(0, 0);
         try {
             return new CMIVector2D(Double.parseDouble(parts[0]), Double.parseDouble(parts[1]));
         } catch (Exception e) {
@@ -84,5 +86,10 @@ public class CMIVector2D {
     @Override
     public CMIVector2D clone() {
         return new CMIVector2D(x, y);
+    }
+
+    public String translateVariables(String text) {
+        return text.replace("[x]", CMINumber.format2(getX()))
+                .replace("[y]", CMINumber.format2(getY()));
     }
 }

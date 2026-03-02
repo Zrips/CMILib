@@ -205,6 +205,27 @@ public class CMIChatColor {
         }
     }
 
+    public CMIChatColor(Color color) {
+        this(color.getRed(), color.getGreen(), color.getBlue(), Version.isCurrentEqualOrHigher(Version.v1_20_R1) ? color.getAlpha() : 255);
+    }
+
+    public CMIChatColor(int red, int green, int blue) {
+        this(red, green, blue, 255);
+    }
+
+    public CMIChatColor(int red, int green, int blue, int alpha) {
+
+        this.redChannel = red;
+        this.greenChannel = green;
+        this.blueChannel = blue;
+        this.alpha = alpha;
+
+        if (Version.isCurrentEqualOrHigher(Version.v1_20_R1) && alpha < 255)
+            this.hexCode = String.format("%02X%02X%02X%02X", alpha, redChannel, greenChannel, blueChannel);
+        else
+            this.hexCode = String.format("%02X%02X%02X", redChannel, greenChannel, blueChannel);
+    }
+
     public CMIChatColor(String name, char c, Boolean color) {
         this(name, c, color, false);
     }
@@ -880,6 +901,10 @@ public class CMIChatColor {
 
     public int getARGB() {
         return alpha << 24 | getRed() << 16 | getGreen() << 8 | getBlue();
+    }
+
+    public int getRGBA() {
+        return getRed() << 24 | getGreen() << 16 | getBlue() << 8 | alpha;
     }
 
     public int getRGB() {

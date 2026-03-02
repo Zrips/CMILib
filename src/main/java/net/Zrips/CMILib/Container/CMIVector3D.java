@@ -1,5 +1,8 @@
 package net.Zrips.CMILib.Container;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.util.Vector;
@@ -61,7 +64,7 @@ public class CMIVector3D extends CMIVector2D {
     }
 
     public CMIVector3D cross(CMIVector3D other) {
-        
+
         double nx = this.y * other.z - this.z * other.y;
         double ny = this.z * other.x - this.x * other.z;
         double nz = this.x * other.y - this.y * other.x;
@@ -69,7 +72,7 @@ public class CMIVector3D extends CMIVector2D {
         this.x = nx;
         this.y = ny;
         this.z = nz;
-        
+
         return this;
     }
 
@@ -102,11 +105,13 @@ public class CMIVector3D extends CMIVector2D {
 
     @Override
     public String toString() {
-        return String.format("%.2f;%.2f;%.2f", x, y, z);
+        return String.format(java.util.Locale.ROOT, "%.2f;%.2f;%.2f", x, y, z);
     }
 
     public static CMIVector3D fromString(String value) {
         String[] parts = value.split(";");
+        if (parts.length != 3)
+            return new CMIVector3D(0, 0, 0);
         try {
             return new CMIVector3D(Double.parseDouble(parts[0]), Double.parseDouble(parts[1]), Double.parseDouble(parts[2]));
         } catch (Exception e) {
@@ -137,4 +142,14 @@ public class CMIVector3D extends CMIVector2D {
         return new CMIVector3D(x, y, z);
     }
 
+    public Vector toVector() {
+        return new Vector(x, y, z);
+    }
+
+    @Override
+    public String translateVariables(String text) {
+        return text.replace("[x]", CMINumber.format2(getX()))
+                .replace("[y]", CMINumber.format2(getY()))
+                .replace("[z]", CMINumber.format2(getZ()));
+    }
 }
