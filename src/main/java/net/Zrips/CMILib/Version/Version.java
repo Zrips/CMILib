@@ -61,7 +61,7 @@ public enum Version {
     v1_24_R2,
     v1_24_R3;
 
-    //Future change to be based on specific versions and not NMS mappings
+    // Future change to be based on specific versions and not NMS mappings
 //    v1_7(7, 0, 1),
 //    v1_7_5(7, 5, 2),
 //    v1_7_8(7, 8, 3),
@@ -132,7 +132,7 @@ public enum Version {
     private int majorVersion = 0;
     private int minorVersion = 0;
     private int nmsVersion = 1;
-    
+
     private String shortVersion;
     private static int subVersion = 0;
     private static Version current = null;
@@ -149,12 +149,11 @@ public enum Version {
             testServer = true;
     }
 
-
     Version(int majorVersion, int minorVersion, int nmsVersion) {
         this();
         this.majorVersion = majorVersion;
         this.minorVersion = minorVersion;
-		this.nmsVersion = nmsVersion;
+        this.nmsVersion = nmsVersion;
     }
 
     Version(int... versions) {
@@ -208,7 +207,7 @@ public enum Version {
     }
 
     public static boolean isFolia() {
-        return getPlatform().equals(MinecraftPlatform.folia);
+        return getPlatform().equals(MinecraftPlatform.folia) || getPlatform().equals(MinecraftPlatform.canvas);
     }
 
     public static boolean isPurpur() {
@@ -272,6 +271,11 @@ public enum Version {
 
         if (version.contains("magma")) {
             platform = MinecraftPlatform.magma;
+            return platform;
+        }
+
+        if (version.contains("canvas")) {
+            platform = MinecraftPlatform.canvas;
             return platform;
         }
 

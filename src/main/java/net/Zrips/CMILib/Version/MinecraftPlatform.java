@@ -11,6 +11,7 @@ public enum MinecraftPlatform {
     airplane(true),
     pufferfish(true),
     folia(true), 
+    canvas(true), 
     fabric(true),
     magma(true),
     
