@@ -3,21 +3,32 @@ package net.Zrips.CMILib.Container;
 import org.bukkit.util.Vector;
 
 public class CMIPlane {
-    private Vector center;
+    private CMIVector3D center;
     private CMIVector2D sizeMin;
     private CMIVector2D sizeMax;
 
+    @Deprecated
     public CMIPlane(Vector center, CMIVector2D sizeMin, CMIVector2D sizeMax) {
-        this.center = center;
+        this.center = new CMIVector3D(center);
         this.sizeMin = sizeMin;
         this.sizeMax = sizeMax;
     }
 
+    @Deprecated
     public Vector getCenter() {
+        return new Vector(center.getX(), center.getY(), center.getZ());
+    }
+
+    @Deprecated
+    public void setCenter(Vector center) {
+        this.center = new CMIVector3D(center);
+    }
+
+    public CMIVector3D getCenterPoint() {
         return center;
     }
 
-    public void setCenter(Vector center) {
+    public void setCenterPoint(CMIVector3D center) {
         this.center = center;
     }
 

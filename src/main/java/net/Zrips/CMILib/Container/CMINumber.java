@@ -41,6 +41,17 @@ public class CMINumber {
         return map.get(l) + toRoman(number - l);
     }
 
+    public static String format2(double x) {
+        long scaled = (long) (x * 100.0);
+        long integer = scaled / 100;
+        long fraction = Math.abs(scaled % 100);
+
+        if (fraction < 10)
+            return integer + ".0" + fraction;
+
+        return integer + "." + fraction;
+    }
+
     private final static DecimalFormat dcf = new DecimalFormat("##.##");
 
     public static String format2Decimals(double number) {
@@ -70,6 +81,16 @@ public class CMINumber {
 
     public static long clamp(long number, long min, long max) {
         return number < min ? min : number > max ? max : number;
+    }
+
+    public static <T extends Number & Comparable<T>> T clampValue(T value, T min, T max) {
+        if (value == null)
+            return min;
+        if (value.compareTo(min) < 0)
+            return min;
+        if (value.compareTo(max) > 0)
+            return max;
+        return value;
     }
 
     public static <T extends Number & Comparable<T>> T clamp(T value, T min) {

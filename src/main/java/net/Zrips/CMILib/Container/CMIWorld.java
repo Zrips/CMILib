@@ -8,12 +8,11 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.annotation.Nullable;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.FileHandler.ConfigReader;
@@ -23,12 +22,83 @@ import net.Zrips.CMILib.Version.Schedulers.CMITask;
 
 public class CMIWorld {
 
-    public static void onDisable() {
-        worldNames.clear();
+    private @Nullable UUID uuid = null;
+    private @Nullable String name = null;
+
+    public CMIWorld() {
+    }
+
+    public CMIWorld(Location loc) {
+        if (loc == null)
+            return;
+
+        if (loc.getWorld() == null)
+            return;
+
+        this.uuid = Version.isCurrentEqualOrHigher(Version.v1_16_R1) ? loc.getWorld().getUID() : null;
+        this.name = loc.getWorld().getName();
+    }
+
+    public CMIWorld(CMILocation loc) {
+        if (loc.getWorld() != null) {
+            this.uuid = Version.isCurrentEqualOrHigher(Version.v1_16_R1) ? loc.getWorld().getUID() : null;
+            this.name = loc.getWorld().getName();
+        } else {
+            this.name = loc.getWorldName();
+        }
+    }
+
+    public CMIWorld(World world) {
+        if (world == null) {
+            return;
+        }
+        this.uuid = Version.isCurrentEqualOrHigher(Version.v1_16_R1) ? world.getUID() : null;
+        this.name = world.getName();
+    }
+
+    public CMIWorld(String worldName) {
+        if (worldName.length() == 36) {
+            try {
+                this.uuid = UUID.fromString(worldName);
+                return;
+            } catch (Throwable e) {
+            }
+        }
+        this.name = worldName;
+    }
+
+    public CMIWorld(UUID uuid) {
+        this.uuid = uuid;
+    }
+
+    public @Nullable World getWorld() {
+        if (uuid != null && Version.isCurrentEqualOrHigher(Version.v1_16_R1))
+            return Bukkit.getWorld(uuid);
+
+        if (name != null)
+            return Bukkit.getWorld(name);
+
+        return null;
+    }
+
+    public @Nullable UUID getUUID() {
+        return uuid;
+    }
+
+    public @Nullable String getWorldName() {
+        if (name != null) {
+            return name;
+        }
+        World world = getWorld();
+        return world != null ? world.getName() : null;
     }
 
     static HashMap<String, String> worldNames = new HashMap<String, String>();
     static HashMap<UUID, String> worldNamesByUUID = new HashMap<UUID, String>();
+
+    public static void onDisable() {
+        worldNames.clear();
+    }
 
     public static String getWorldNameFormatted(World world) {
         if (world == null || world.getName() == null)
@@ -183,10 +253,25 @@ public class CMIWorld {
         }
     }
 
+    public static int getMinHeight(CMIWorld world) {
+        if (Version.isCurrentEqualOrLower(Version.v1_16_R3))
+            return 0;
+
+        return world == null || world.getWorld() == null ? 0 : world.getWorld().getMinHeight();
+    }
+
     public static int getMinHeight(World world) {
         if (Version.isCurrentEqualOrLower(Version.v1_16_R3))
             return 0;
         return world == null ? 0 : world.getMinHeight();
+    }
+
+    public static int getMaxHeight(CMIWorld world) {
+        World w = world.getWorld();
+        if (w == null)
+            return 256;
+
+        return getMaxHeight(w);
     }
 
     public static int getMaxHeight(World world) {
@@ -215,11 +300,24 @@ public class CMIWorld {
         return 256;
     }
 
+    public static @Nullable CMIWorld getCMIWorld(String name) {
+        @Nullable
+        World w = getWorld(name);
+        if (w != null)
+            return new CMIWorld(w);
+        return null;
+    }
+
     public static @Nullable World getWorld(String name) {
+
+        if (name == null)
+            return null;
+
         World w = Bukkit.getWorld(name);
 
         if (w != null)
             return w;
+
         String originalName = name;
         name = name.replaceAll("[_|.|-]", "");
 
@@ -237,6 +335,14 @@ public class CMIWorld {
             }
         }
 
+        return null;
+    }
+
+    public static @Nullable CMIWorld getCMIWorld(UUID uuid) {
+        @Nullable
+        World w = getWorld(uuid);
+        if (w != null)
+            return new CMIWorld(w);
         return null;
     }
 

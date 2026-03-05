@@ -12,6 +12,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Colors.CMIChatColor;
@@ -26,6 +28,8 @@ import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.Version.Version;
 import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
 import net.Zrips.CMILib.Version.Schedulers.CMITask;
+import net.kyori.adventure.text.Component;
+import net.md_5.bungee.api.chat.BaseComponent;
 
 public class CMIGuiButton {
 
@@ -63,13 +67,13 @@ public class CMIGuiButton {
         if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
             ItemMeta meta = item.getItemMeta();
             meta.addItemFlags(
-                ItemFlag.HIDE_ARMOR_TRIM,
-                ItemFlag.HIDE_ATTRIBUTES,
-                ItemFlag.HIDE_DESTROYS,
-                ItemFlag.HIDE_DYE,
-                ItemFlag.HIDE_ENCHANTS,
-                ItemFlag.HIDE_UNBREAKABLE,
-                ItemFlag.HIDE_PLACED_ON);
+                    ItemFlag.HIDE_ARMOR_TRIM,
+                    ItemFlag.HIDE_ATTRIBUTES,
+                    ItemFlag.HIDE_DESTROYS,
+                    ItemFlag.HIDE_DYE,
+                    ItemFlag.HIDE_ENCHANTS,
+                    ItemFlag.HIDE_UNBREAKABLE,
+                    ItemFlag.HIDE_PLACED_ON);
             try {
                 meta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
             } catch (Throwable e) {
@@ -78,6 +82,7 @@ public class CMIGuiButton {
                 meta.addItemFlags(ItemFlag.HIDE_STORED_ENCHANTS);
             } catch (Throwable e) {
             }
+            
             item.setItemMeta(meta);
             return;
         }
@@ -429,6 +434,7 @@ public class CMIGuiButton {
             i = (ItemStack) new CMINBT(i).setString(GUIManager.CMIGUIIcon, GUIManager.LIProtection);
 
         ItemMeta meta = i.hasItemMeta() ? i.getItemMeta() : null;
+        boolean modified = false;
 
         if (meta == null) {
             try {
@@ -439,14 +445,25 @@ public class CMIGuiButton {
         }
 
         if (meta != null && meta.hasDisplayName()) {
-            meta.setDisplayName(CMILib.getInstance().getPlaceholderAPIManager().updatePlaceHolders(player, meta.getDisplayName()));
+            String oldName = meta.getDisplayName();
+            String newName = CMILib.getInstance().getPlaceholderAPIManager().updatePlaceHolders(player, meta.getDisplayName());
+            if (!oldName.equals(newName)) {
+                meta.setDisplayName(newName);
+                modified = true;
+            }
         }
 
         if (meta != null && meta.hasLore()) {
-            meta.setLore(CMILib.getInstance().getPlaceholderAPIManager().updatePlaceHolders(player, meta.getLore()));
+            @Nullable
+            List<String> oldLore = meta.getLore();
+            List<String> newLore = CMILib.getInstance().getPlaceholderAPIManager().updatePlaceHolders(player, meta.getLore());
+            if (!oldLore.equals(newLore)) {
+                meta.setLore(newLore);
+                modified = true;
+            }
         }
 
-        if (meta != null) {
+        if (meta != null && modified) {
             i.setItemMeta(meta);
         }
 

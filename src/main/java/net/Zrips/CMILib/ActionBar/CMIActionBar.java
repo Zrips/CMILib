@@ -257,7 +257,8 @@ public class CMIActionBar {
             if (!actionbarMap.isEmpty())
                 return;
 
-            timer.cancel();
+            if (timer != null)
+                timer.cancel();
             timer = null;
         }, 0L, 20L);
 

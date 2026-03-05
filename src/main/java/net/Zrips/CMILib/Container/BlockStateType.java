@@ -59,19 +59,19 @@ public enum BlockStateType {
     private Class<?> c;
 
     BlockStateType(Class<?> c) {
-	this.c = c;
+        this.c = c;
     }
 
     public static BlockStateType getByName(String name) {
-	for (BlockStateType one : BlockStateType.values()) {
-	    if (one.toString().equalsIgnoreCase(name))
-		return one;
+        for (BlockStateType one : BlockStateType.values()) {
+            if (one.toString().equalsIgnoreCase(name))
+                return one;
 
-	}
-	return null;
+        }
+        return null;
     }
 
     public Class<?> getClassType() {
-	return c;
+        return c;
     }
 }

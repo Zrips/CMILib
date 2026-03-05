@@ -12,56 +12,56 @@ public class RawMessageCommand {
     private String command = null;
 
     public RawMessageCommand() {
-	this(null);
+        this(null);
     }
 
     public RawMessageCommand(UUID uuid) {
-	this.id = RawMessageManager.add(this);
-	this.time = System.currentTimeMillis();
-	this.uuid = uuid;
+        this.id = RawMessageManager.add(this);
+        this.time = System.currentTimeMillis();
+        this.uuid = uuid;
     }
 
     public void run(CommandSender sender) {
     }
 
     public Long getId() {
-	return id;
+        return id;
     }
 
     @Deprecated
     public String getCommandToPerform() {
-	return getCommand();
+        return getCommand();
     }
 
     public String getCommand() {
-	return RawMessageManager.rmccmd + id;
+        return RawMessageManager.rmccmd + id;
     }
 
     public void delete() {
-	RawMessageManager.delete(this);
+        RawMessageManager.delete(this);
     }
 
     public boolean isKeep() {
-	return keep;
+        return keep;
     }
 
     public void setKeep(boolean keep) {
-	this.keep = keep;
+        this.keep = keep;
     }
 
     public Long getCreationTime() {
-	return time;
+        return time;
     }
 
     public UUID getUUID() {
-	return uuid;
+        return uuid;
     }
 
-    public void setOriginalCommand(String command) {        
-	this.command = command.replace("  ", " ");
+    public void setOriginalCommand(String command) {
+        this.command = command.replace("  ", " ");
     }
 
     public String getOriginalCommand() {
-	return this.command;
+        return this.command;
     }
 }

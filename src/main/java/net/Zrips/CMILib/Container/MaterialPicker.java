@@ -4,9 +4,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
-import net.Zrips.CMILib.Container.PageInfo;
 import net.Zrips.CMILib.GUI.CMIGui;
 import net.Zrips.CMILib.GUI.CMIGuiButton;
 import net.Zrips.CMILib.GUI.GUIManager.GUIClickType;
@@ -60,14 +58,12 @@ public class MaterialPicker {
             if (!validMaterial(one))
                 continue;
 
-            ItemStack item = one.newItemStack();
-
             if (pi.isContinue())
                 continue;
             if (pi.isBreak())
                 break;
 
-            CMIGuiButton button = new CMIGuiButton(item) {
+            CMIGuiButton button = new CMIGuiButton(one) {
                 @Override
                 public void click(GUIClickType type) {
                     pickedMaterial(type, one);

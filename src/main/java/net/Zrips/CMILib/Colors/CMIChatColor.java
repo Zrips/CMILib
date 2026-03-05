@@ -18,6 +18,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Color;
 
 import net.Zrips.CMILib.CMILibConfig;
+import net.Zrips.CMILib.Container.CMICachedLinkedMap;
 import net.Zrips.CMILib.Version.Version;
 
 public class CMIChatColor {
@@ -26,7 +27,6 @@ public class CMIChatColor {
     private static final Map<String, CMIChatColor> BY_CHAR = new HashMap<>();
     // Limited to 23 entries
     private static final Map<String, CMIChatColor> BY_NAME = new HashMap<>();
-
     private static final LinkedHashMap<String, CMIChatColor> CUSTOM_BY_NAME = new LinkedHashMap<>();
 
     private static final TreeMap<String, CMIChatColor> CUSTOM_BY_HEX = new TreeMap<String, CMIChatColor>() {
@@ -49,19 +49,8 @@ public class CMIChatColor {
         }
     };
 
-    private static Map<String, String> baseCacheByText = new LinkedHashMap<String, String>(100, 0.75f, true) {
-        @Override
-        protected boolean removeEldestEntry(Map.Entry<String, String> eldest) {
-            return size() > 100;
-        }
-    };
-
-    private static Map<String, String> baseCMICacheByText = new LinkedHashMap<String, String>(100, 0.75f, true) {
-        @Override
-        protected boolean removeEldestEntry(Map.Entry<String, String> eldest) {
-            return size() > 100;
-        }
-    };
+    private static CMICachedLinkedMap<String, String> baseCacheByText = new CMICachedLinkedMap<String, String>(100);
+    private static CMICachedLinkedMap<String, String> baseCMICacheByText = new CMICachedLinkedMap<String, String>(100);
 
     static {
         for (CMICustomColors one : CMICustomColors.values()) {
@@ -98,7 +87,7 @@ public class CMIChatColor {
     public static final Pattern hexColorNamePattern = Pattern.compile(ColorNameRegex);
     public static final Pattern hexColorNamePatternLast = Pattern.compile(ColorNameRegex + "(?!.*\\{#)");
 
-    public static final String ColorFontRegex = "(\\" + colorFontPrefix + ")([a-zA-Z_]{3,})(\\" + colorCodeSuffix + ")";
+    public static final String ColorFontRegex = "(\\" + colorFontPrefix + ")([a-zA-Z_]{2,})(\\" + colorCodeSuffix + ")";
 
     public static final Pattern gradientPattern = Pattern.compile("(\\{(#[^\\{\\}]*?)>\\})(.*?)(\\{(#[^\\{\\}]*?)<(>?)\\})");
 
@@ -216,6 +205,27 @@ public class CMIChatColor {
         }
     }
 
+    public CMIChatColor(Color color) {
+        this(color.getRed(), color.getGreen(), color.getBlue(), Version.isCurrentEqualOrHigher(Version.v1_20_R1) ? color.getAlpha() : 255);
+    }
+
+    public CMIChatColor(int red, int green, int blue) {
+        this(red, green, blue, 255);
+    }
+
+    public CMIChatColor(int red, int green, int blue, int alpha) {
+
+        this.redChannel = red;
+        this.greenChannel = green;
+        this.blueChannel = blue;
+        this.alpha = alpha;
+
+        if (Version.isCurrentEqualOrHigher(Version.v1_20_R1) && alpha < 255)
+            this.hexCode = String.format("%02X%02X%02X%02X", alpha, redChannel, greenChannel, blueChannel);
+        else
+            this.hexCode = String.format("%02X%02X%02X", redChannel, greenChannel, blueChannel);
+    }
+
     public CMIChatColor(String name, char c, Boolean color) {
         this(name, c, color, false);
     }
@@ -314,18 +324,12 @@ public class CMIChatColor {
 
         if (onlyCMIformat) {
             String cached = baseCMICacheByText.get(text);
-            if (cached != null) {
-                // Moving to the end of the queue to keep it in cache
-                baseCMICacheByText.put(text, cached);
+            if (cached != null)
                 return cached;
-            }
         } else {
             String cached = baseCacheByText.get(text);
-            if (cached != null) {
-                // Moving to the end of the queue to keep it in cache
-                baseCacheByText.put(text, cached);
+            if (cached != null)
                 return cached;
-            }
         }
 
         String ori = text;
@@ -681,6 +685,7 @@ public class CMIChatColor {
         return isReset;
     }
 
+    @Deprecated
     public ChatColor getColor() {
         return ChatColor.getByChar(this.getChar());
     }
@@ -896,6 +901,10 @@ public class CMIChatColor {
 
     public int getARGB() {
         return alpha << 24 | getRed() << 16 | getGreen() << 8 | getBlue();
+    }
+
+    public int getRGBA() {
+        return getRed() << 24 | getGreen() << 16 | getBlue() << 8 | alpha;
     }
 
     public int getRGB() {

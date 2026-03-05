@@ -13,10 +13,12 @@ import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Colors.CMIChatColor;
 import net.Zrips.CMILib.Container.CMIList;
+import net.Zrips.CMILib.Container.CMIVector3D;
 
 public class Language {
     public FileConfiguration enlocale;
@@ -57,6 +59,7 @@ public class Language {
 
     /**
      * Get the message with the correct key
+     * 
      * @param key - the key of the message
      * @return the message
      */
@@ -80,27 +83,45 @@ public class Language {
 
         for (Object one : variables) {
 
-            if (one instanceof Snd && snd == null) {
-                snd = (Snd) one;
-                remove.add(one);
+            if (one instanceof Snd) {
+                if (snd == null) {
+                    snd = (Snd) one;
+                    remove.add(one);
+                }
                 continue;
             }
 
             if (CMILib.getInstance().isCmiPresent() && one instanceof com.Zrips.CMI.Containers.Snd) {
                 com.Zrips.CMI.Containers.Snd cmisnd = (com.Zrips.CMI.Containers.Snd) one;
                 msg = updateCmiSnd(cmisnd, msg);
-
+                remove.add(one);
+                continue;
+            }
+            if (one instanceof CMIVector3D) {
+                msg = ((CMIVector3D) one).translateVariables(msg);
                 remove.add(one);
                 continue;
             }
 
-            if (one instanceof Location && customLoc == null) {
-                customLoc = (Location) one;
-                remove.add(one);
+            if (one instanceof Vector) {
+                if (customLoc == null) {
+                    msg = new CMIVector3D((Vector) one).translateVariables(msg);
+                    remove.add(one);
+                }
                 continue;
             }
-            if (one instanceof Player && snd == null) {
-                snd = new Snd().setTarget((Player) one).setTarget((Player) one);
+
+            if (one instanceof Location) {
+                if (customLoc == null) {
+                    customLoc = (Location) one;
+                    remove.add(one);
+                }
+                continue;
+            }
+
+            if (one instanceof Player) {
+                if (snd == null)
+                    snd = new Snd().setTarget((Player) one).setTarget((Player) one);
                 continue;
             }
         }
@@ -134,16 +155,13 @@ public class Language {
         return CMIChatColor.translate(msg);
     }
 
-    public String filterNewLine(String msg) {
-        Pattern patern = Pattern.compile("([ ]?[\\/][n][$|\\s])|([ ]?\\\\n)");
-        Matcher match = patern.matcher(msg);
-        while (match.find()) {
-            if (match.group(1) != null && !match.group(1).isEmpty())
-                msg = msg.replace(match.group(1), "\n");
-            if (match.group(2) != null && !match.group(2).isEmpty())
-                msg = msg.replace(match.group(2), "\n");
+    private static final Pattern NEWLINE_PATTERN = Pattern.compile(" ?(?:/n(?=$|\\s)|\\\\n)");
+
+    public static String filterNewLine(String msg) {
+        if (msg == null || msg.isEmpty()) {
+            return msg;
         }
-        return msg;
+        return NEWLINE_PATTERN.matcher(msg).replaceAll("\n");
     }
 
     private String getM(LC lc) {
@@ -254,9 +272,10 @@ public class Language {
             return msg;
         }
 
-        msg = replace(msg, "serverName", com.Zrips.CMI.CMI.getInstance().getBungeeCordManager().isBungeeCord() ? com.Zrips.CMI.CMI.getInstance().getBungeeCordManager().getThisServerName() : plugin
-            .getReflectionManager()
-            .getServerName());
+        msg = replace(msg, "serverName", com.Zrips.CMI.CMI.getInstance().getBungeeCordManager().isBungeeCord() ? com.Zrips.CMI.CMI.getInstance().getBungeeCordManager().getThisServerName()
+                : plugin
+                        .getReflectionManager()
+                        .getServerName());
 
         if (snd.getConsoleSender() != null) {
             String name = snd.getConsoleSender().getName();
@@ -353,9 +372,10 @@ public class Language {
     }
 
     public String replaceCmiUser(String type, com.Zrips.CMI.Containers.CMIUser user, String msg) {
-        msg = replace(msg, "serverName", com.Zrips.CMI.CMI.getInstance().getBungeeCordManager().isBungeeCord() ? com.Zrips.CMI.CMI.getInstance().getBungeeCordManager().getThisServerName() : plugin
-            .getReflectionManager()
-            .getServerName());
+        msg = replace(msg, "serverName", com.Zrips.CMI.CMI.getInstance().getBungeeCordManager().isBungeeCord() ? com.Zrips.CMI.CMI.getInstance().getBungeeCordManager().getThisServerName()
+                : plugin
+                        .getReflectionManager()
+                        .getServerName());
         if (msg == null || user == null)
             return msg;
         if (user.isOnline())
@@ -472,6 +492,7 @@ public class Language {
 
     /**
      * Get the message with the correct key
+     * 
      * @param key - the key of the message
      * @return the message
      */
@@ -523,6 +544,7 @@ public class Language {
 
     /**
      * Check if key exists
+     * 
      * @param key - the key of the message
      * @return true/false
      */
