@@ -182,6 +182,35 @@ public class CMIItemStack {
         return item;
     }
 
+    public boolean hasItemMeta() {
+        return item != null && item.hasItemMeta();
+    }
+
+    public boolean hasDisplayName() {
+        if (!hasItemMeta())
+            return false;
+        ItemMeta meta = item.getItemMeta();
+        return meta != null && meta.hasDisplayName();
+    }
+
+    public boolean hasItemName() {
+        if (!hasItemMeta())
+            return false;
+
+        if (!Version.isPaperBranch() || !Version.isCurrentEqualOrHigher(Version.v1_21_R4))
+            return false;
+
+        ItemMeta meta = item.getItemMeta();
+        return meta != null && meta.hasItemName();
+    }
+
+    public boolean hasLore() {
+        if (!hasItemMeta())
+            return false;
+        ItemMeta meta = item.getItemMeta();
+        return meta != null && meta.hasLore();
+    }
+
     public void setData(short data) {
         this.data = data;
         if (this.getCMIType() != null) {

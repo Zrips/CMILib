@@ -176,6 +176,15 @@ public enum LC {
 
     info_incorrectColor("{gcw}Color defined incorrectly!"),
 
+    info_updateSpeed("{gcp}Update speed: {gcs}[value]"),
+    info_serializeAndShow("{gcp}Serialize and show"),
+    info_amount("{gcp}Amount: {gcs}[value]"),
+    info_speed("{gcp}Speed: {gcs}[value]"),
+    info_color("{gcp}Color: [color]Example"),
+    info_duration("{gcp}Duration: [value]"),
+    info_size("{gcp}Size: [value]"),
+    info_value("{gcp}Value: [value]"),
+
     dialog_signEditor("Sign Editor"),
     dialog_update("Update"),
     dialog_save("Save"),

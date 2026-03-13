@@ -15,11 +15,11 @@ import net.Zrips.CMILib.Container.CMIWorld;
 
 public class CMIBlockArea extends CMIArea {
 
-    protected CMIVectorInt3D p1;
-    protected CMIVectorInt3D p2;
+    protected CMIVectorInt3D p1 = null;
+    protected CMIVectorInt3D p2 = null;
 
-    protected CMIVectorInt3D highPoint;
-    protected CMIVectorInt3D lowPoint;
+    protected CMIVectorInt3D highPoint = null;
+    protected CMIVectorInt3D lowPoint = null;
 
     public CMIBlockArea() {
 
@@ -34,10 +34,15 @@ public class CMIBlockArea extends CMIArea {
     }
 
     public CMIBlockArea(CMIVectorInt3D startLoc, CMIVectorInt3D endLoc) {
-        p1 = startLoc;
-        p2 = endLoc;
-        highPoint = startLoc.clone();
-        lowPoint = endLoc.clone();
+        if (startLoc != null) {
+            p1 = startLoc.clone();
+            highPoint = startLoc.clone();
+        }
+
+        if (endLoc != null) {
+            p2 = endLoc.clone();
+            lowPoint = endLoc.clone();
+        }
         recheck();
     }
 

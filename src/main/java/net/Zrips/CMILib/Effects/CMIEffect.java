@@ -196,7 +196,7 @@ public class CMIEffect {
         return get(name);
     }
 
-    private static final String VECTOR_REGEX = ";\\{((\\d+(?:\\.\\d+)?);(\\d+(?:\\.\\d+)?);(\\d+(?:\\.\\d+)?))\\}";
+    private static final String VECTOR_REGEX = "[^;{}]*(?:\\{[^}]*\\}[^;{}]*)*";
     private static final Pattern VECTOR_PATTERN = Pattern.compile(VECTOR_REGEX, Pattern.MULTILINE);
 
     public static CMIEffect get(String name) {
@@ -207,7 +207,7 @@ public class CMIEffect {
         CMIMaterial mat = CMIMaterial.NONE;
         Color colorFrom = null;
         Color colorTo = null;
-        int duration = 0;
+
         float size = 0;
 
         String sub = null;
@@ -233,16 +233,17 @@ public class CMIEffect {
         if (sub == null)
             return cmiEffect;
 
-        List<String> split = new ArrayList<>();
-
-        final Matcher matcher = VECTOR_PATTERN.matcher(sub);
+        Matcher matcher = VECTOR_PATTERN.matcher(sub);
+        List<String> parts = new ArrayList<>();
 
         while (matcher.find()) {
-            sub = sub.replace(matcher.group(0), "");
-            split.add(matcher.group(1));
+            String part = matcher.group();
+            if (!part.isEmpty()) {
+                parts.add(part);
+            }
         }
 
-        split.addAll(List.of(sub.split(";")));
+        String[] split = parts.toArray(new String[0]);
 
         for (String one : split) {
 
@@ -276,6 +277,24 @@ public class CMIEffect {
                 }
             }
 
+            if (cmiEffect.getOptions() instanceof CMIParticleTrail) {
+
+                if (!one.contains("{")) {
+                    try {
+                        int duration = Integer.parseInt(one);
+                        ((CMIParticleTrail) cmiEffect.getOptions()).setDuration(duration);
+                        continue;
+                    } catch (Throwable e) {
+                    }
+                }
+
+                Color color = processColor(one);
+                if (color != null) {
+                    ((CMIParticleTrail) cmiEffect.getOptions()).setColor(color);
+                    continue;
+                }
+            }
+
             if (cmiEffect.getOptions() instanceof CMIParticleColor && colorFrom == null) {
                 colorFrom = processColor(one);
                 if (colorFrom != null) {
@@ -301,15 +320,6 @@ public class CMIEffect {
                         ((CMIParticleItemStack) cmiEffect.getOptions()).setMaterial(mat);
                     }
                     continue;
-                }
-            }
-
-            if (cmiEffect.getOptions() instanceof CMIParticleTrail && duration == 0) {
-                try {
-                    duration = Integer.parseInt(one);
-                    ((CMIParticleTrail) cmiEffect.getOptions()).setDuration(duration);
-                    continue;
-                } catch (Throwable e) {
                 }
             }
 
@@ -376,7 +386,7 @@ public class CMIEffect {
             sb.append(";s{").append(getSpeed()).append("}");
 
         if (!getOffset().isZero())
-            sb.append(";{").append((new CMIVector3D(getOffset())).toString()).append("}");
+            sb.append(";o{").append((new CMIVector3D(getOffset())).toString()).append("}");
 
         if (getOptions() instanceof CMIParticleDustOptions) {
             float size = ((CMIParticleDustOptions) getOptions()).getSize();
@@ -453,7 +463,7 @@ public class CMIEffect {
                 sb.append(";").append(value);
         }
 
-        return sb.toString();
+        return sb.toString().replace(" ", "");
     }
 
     private static Color processColor(String colorString) {

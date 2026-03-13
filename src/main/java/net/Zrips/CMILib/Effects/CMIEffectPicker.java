@@ -15,6 +15,8 @@ import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
+import com.Zrips.CMI.CMI;
+
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Chat.ChatMessageEdit;
 import net.Zrips.CMILib.Colors.CMIChatColor;
@@ -41,6 +43,13 @@ public class CMIEffectPicker {
     private int tick = 0;
     private int tickRate = 1;
     private boolean showSerializeButton = false;
+    private boolean showExampleParticle = false;
+    private boolean showBackButton = false;
+
+    private double exampleRadius = 2.0D;
+    private double exampleSpacing = 0.2D;
+    private double exampleForwardDistance = 3.5D;
+
     private CMITask task = null;
 
     private static Map<UUID, CMIEffectPicker> openPickers = new HashMap<>();
@@ -59,19 +68,23 @@ public class CMIEffectPicker {
     }
 
     public CMIEffectPicker(Player player) {
-        this(player, null);
+        this(player, (CMIEffect) null);
     }
 
     public CMIEffectPicker(Player player, CMIParticle particle) {
+        this(player, new CMIEffect(particle));
+    }
+
+    public CMIEffectPicker(Player player, CMIEffect effect) {
 
         this.player = player;
 
-        if (particle != null && particle.isParticle())
-            effect = new CMIEffect(particle);
+        if (effect != null && effect.getParticle() != null && effect.getParticle().isParticle())
+            this.effect = effect;
         else if (player != null && openPickers.containsKey(player.getUniqueId())) {
             CMIEffectPicker existingPicker = openPickers.get(player.getUniqueId());
             if (existingPicker != null) {
-                effect = existingPicker.getEffect();
+                this.effect = existingPicker.getEffect();
                 tickRate = existingPicker.tickRate;
             }
         }
@@ -79,6 +92,10 @@ public class CMIEffectPicker {
     }
 
     public void onUIClose() {
+
+    }
+
+    public void onGoingBack() {
 
     }
 
@@ -103,15 +120,14 @@ public class CMIEffectPicker {
         Vector right = forward.clone().crossProduct(up).normalize();
         Vector realUp = right.clone().crossProduct(forward).normalize();
 
-        double radius = 2;
-        double angle = -(tick / tickRate) * 0.2;
+        double angle = -(tick / tickRate) * getExampleSpacing();
 
-        double x = radius * Math.cos(angle);
-        double y = radius * Math.sin(angle);
+        double x = getExampleRadius() * Math.cos(angle);
+        double y = getExampleRadius() * Math.sin(angle);
 
         Vector circleOffset = right.multiply(x).add(realUp.multiply(y));
 
-        return eye.add(forward.clone().multiply(3.5)).add(circleOffset);
+        return eye.add(forward.clone().multiply(getExampleForwardDistance())).add(circleOffset);
     }
 
     private void showParticle() {
@@ -165,8 +181,8 @@ public class CMIEffectPicker {
             @Override
             public void onClose() {
                 stopParticle();
-                onUIClose();
                 recheckCache();
+                CMIScheduler.runTask(CMILib.getInstance(), () -> onUIClose());
             }
         };
 
@@ -214,6 +230,8 @@ public class CMIEffectPicker {
                 default:
                     break;
                 }
+
+                onUpdate();
                 open();
             }
 
@@ -225,26 +243,28 @@ public class CMIEffectPicker {
         button.hideItemFlags();
         gui.addButton(button);
 
-        button = new CMIGuiButton(45, CMIMaterial.STICK) {
-            @Override
-            public void click(GUIClickType type) {
+        if (isShowExampleParticle()) {
+            button = new CMIGuiButton(47, CMIMaterial.STICK) {
+                @Override
+                public void click(GUIClickType type) {
 
-                if (type.equals(GUIClickType.Q) || type.equals(GUIClickType.MiddleMouse)) {
-                    tickRate = 1;
-                } else {
-                    tickRate = CMINumber.clamp(tickRate + returnChange(type), 1);
+                    if (type.equals(GUIClickType.Q) || type.equals(GUIClickType.MiddleMouse)) {
+                        tickRate = 1;
+                    } else {
+                        tickRate = CMINumber.clamp(tickRate + returnChange(type), 1);
+                    }
+                    updateLooks();
+                    update(gui);
+                    updateTitle(gui);
                 }
-                updateLooks();
-                update(gui);
-                updateTitle(gui);
-            }
 
-            @Override
-            public void updateLooks() {
-                setName("Update speed: " + tickRate);
-            }
-        };
-        gui.addButton(button);
+                @Override
+                public void updateLooks() {
+                    setName(LC.info_updateSpeed.getLocale("[value]", tickRate));
+                }
+            };
+            gui.addButton(button);
+        }
 
         if (this.isShowSerializeButton()) {
             button = new CMIGuiButton(49, CMIMaterial.GREEN_WOOL) {
@@ -259,7 +279,7 @@ public class CMIEffectPicker {
 
                 @Override
                 public void updateLooks() {
-                    setName("Serialize and show in chat");
+                    setName(LC.info_serializeAndShow.getLocale());
                 }
             };
             gui.addButton(button);
@@ -282,7 +302,7 @@ public class CMIEffectPicker {
 
             @Override
             public void updateLooks() {
-                setName("Amount: " + getEffect().getAmount());
+                setName(LC.info_amount.getLocale("[value]", getEffect().getAmount()));
             }
         };
         gui.addButton(button);
@@ -310,7 +330,7 @@ public class CMIEffectPicker {
 
             @Override
             public void updateLooks() {
-                setName("Speed: " + getEffect().getSpeed());
+                setName(LC.info_speed.getLocale("[value]", getEffect().getSpeed()));
             }
         };
         gui.addButton(button);
@@ -320,10 +340,10 @@ public class CMIEffectPicker {
             public void click(GUIClickType type) {
                 switch (type) {
                 case Q:
-                    getEffect().setOffset(new Vector(0, 0, 0));
+                    getEffect().setOffset(new Vector());
                     updateLooks();
                     update(gui);
-                    getEffect().resetParticleParameters(player.getLocation());
+                    getEffect().setParticleParameters(null);
                     updateTitle(gui);
                     break;
                 default:
@@ -356,15 +376,15 @@ public class CMIEffectPicker {
 
         if (options instanceof CMIParticleColor) {
             CMIParticleColor option = (CMIParticleColor) options;
-            gui.addButton(addColorButton(28, "{gcp}Color from: [color]Example", player, option.getColor(), newColor -> option.setColor(newColor.getRGBColor())));
+            gui.addButton(addColorButton(28, LC.info_color.getLocale("[color]", toHex(option.getColor())), player, option.getColor(), newColor -> option.setColor(newColor.getRGBColor())));
         } else if (options instanceof CMIParticleTrail) {
             CMIParticleTrail option = (CMIParticleTrail) options;
-            gui.addButton(addColorButton(28, "{gcp}Color from: [color]Example", player, option.getColor(), newColor -> option.setColor(newColor.getRGBColor())));
+            gui.addButton(addColorButton(28, LC.info_color.getLocale("[color]", toHex(option.getColor())), player, option.getColor(), newColor -> option.setColor(newColor.getRGBColor())));
         }
 
         if (options instanceof CMIParticleDustTransition) {
             CMIParticleDustTransition option = (CMIParticleDustTransition) options;
-            gui.addButton(addColorButton(29, "{gcp}Color to: [color]Example", player, option.getColorTo(), newColor -> option.setColorTo(newColor.getRGBColor())));
+            gui.addButton(addColorButton(29, LC.info_color.getLocale("[color]", toHex(option.getColorTo())), player, option.getColorTo(), newColor -> option.setColorTo(newColor.getRGBColor())));
         }
 
         if (options instanceof CMIParticleLocation) {
@@ -375,7 +395,7 @@ public class CMIEffectPicker {
                 public void click(GUIClickType type) {
                     switch (type) {
                     case Q:
-                        option.setOffset(new CMIVector3D(player.getLocation().toVector()));
+                        option.setOffset(new CMIVector3D(0, 0, 0));
                         updateLooks();
                         update(gui);
                         getEffect().resetParticleParameters(player.getLocation());
@@ -489,7 +509,7 @@ public class CMIEffectPicker {
 
                 @Override
                 public void updateLooks() {
-                    setName("Duration: " + option.getDuration());
+                    setName(LC.info_duration.getLocale("[value]", option.getDuration()));
                 }
             };
             gui.addButton(button);
@@ -516,7 +536,7 @@ public class CMIEffectPicker {
 
                 @Override
                 public void updateLooks() {
-                    setName("Size: " + option.getSize());
+                    setName(LC.info_size.getLocale("[value]", option.getSize()));
                 }
             };
 
@@ -543,7 +563,7 @@ public class CMIEffectPicker {
 
                 @Override
                 public void updateLooks() {
-                    setName("Value: " + option.getValue());
+                    setName(LC.info_value.getLocale("[value]", option.getValue()));
                 }
             };
 
@@ -570,25 +590,30 @@ public class CMIEffectPicker {
 
                 @Override
                 public void updateLooks() {
-                    setName("Value: " + option.getValue());
+                    setName(LC.info_value.getLocale("[value]", option.getValue()));
                 }
             };
 
             gui.addButton(button);
         }
 
-//        button = new CMIGuiButton(45, CMILib.getInstance().getConfigManager().getGUIPreviousPage()) {
-//            @Override
-//            public void click(GUIClickType type) {
-//                onBackButtonClick();
-//            }
-//        };
-//        button.setName(LC.info_Back.getLocale());
-//        gui.addButton(button);
+        if (isShowBackButton()) {
+            button = new CMIGuiButton(45, CMILib.getInstance().getConfigManager().getGUIPreviousPage()) {
+                @Override
+                public void click(GUIClickType type) {
+                    onGoingBack();
+                }
+            };
+            button.setName(LC.info_Back.getLocale());
+            gui.addButton(button);
+        }
 
         gui.fillEmptyButtons();
         gui.open();
-        showParticle();
+
+        if (isShowExampleParticle())
+            showParticle();
+
         return true;
     }
 
@@ -691,5 +716,45 @@ public class CMIEffectPicker {
 
     public void setShowSerializeButton(boolean showSerializeButton) {
         this.showSerializeButton = showSerializeButton;
+    }
+
+    public boolean isShowExampleParticle() {
+        return showExampleParticle;
+    }
+
+    public void setShowExampleParticle(boolean showExampleParticle) {
+        this.showExampleParticle = showExampleParticle;
+    }
+
+    public double getExampleRadius() {
+        return exampleRadius;
+    }
+
+    public void setExampleRadius(double exampleRadius) {
+        this.exampleRadius = exampleRadius;
+    }
+
+    public double getExampleSpacing() {
+        return exampleSpacing;
+    }
+
+    public void setExampleSpacing(double exampleSpacing) {
+        this.exampleSpacing = exampleSpacing;
+    }
+
+    public double getExampleForwardDistance() {
+        return exampleForwardDistance;
+    }
+
+    public void setExampleForwardDistance(double exampleForwardDistance) {
+        this.exampleForwardDistance = exampleForwardDistance;
+    }
+
+    public boolean isShowBackButton() {
+        return showBackButton;
+    }
+
+    public void setShowBackButton(boolean showBackButton) {
+        this.showBackButton = showBackButton;
     }
 }

@@ -15,17 +15,10 @@ public class CMITeleporter {
     private static final CMIBaseTeleportImpl implementation;
 
     static {
-        switch (Version.getPlatform()) {
-        case folia:
+        if (Version.isFolia()) {
             implementation = new CMIFoliaImpl(CMILib.getInstance());
-            break;
-        case craftbukkit:
-        case paper:
-        case pufferfish:
-        case spigot:
-        default:
+        } else {
             implementation = new CMIBukkitTeleportImpl(CMILib.getInstance());
-            break;
         }
     }
 
