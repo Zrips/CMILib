@@ -43,11 +43,16 @@ public class ConfigReader extends YamlConfiguration {
     }
 
     public ConfigReader(File file) throws Exception {
+        this(null, file);
+    }
+
+    public ConfigReader(Plugin plugin, File file) throws Exception {
         super();
         comments = new HashMap<String, String>();
         contents = new HashMap<String, Object>();
         this.file = file;
         this.config = getyml(file);
+        this.plugin = plugin;
     }
 
     public void load() {
@@ -290,11 +295,20 @@ public class ConfigReader extends YamlConfiguration {
     }
 
     public void saveToBackup() {
-        saveToBackup(true);
+        saveToBackup(CMIBackupMessageType.Warning);
     }
 
+    @Deprecated
     public void saveToBackup(boolean inform) {
-        File dataFolder = plugin == null ? CMILib.getInstance().getDataFolder() : plugin.getDataFolder();
+        saveToBackup(CMIBackupMessageType.Info);
+    }
+
+    public void saveToBackup(CMIBackupMessageType type) {
+        saveToBackup(this.plugin, type);
+    }
+
+    public void saveToBackup(Plugin originPlugin, CMIBackupMessageType type) {
+        File dataFolder = originPlugin == null ? CMILib.getInstance().getDataFolder() : originPlugin.getDataFolder();
         File cc = new File(dataFolder, "FileBackups");
         if (!cc.isDirectory())
             cc.mkdir();
@@ -302,12 +316,24 @@ public class ConfigReader extends YamlConfiguration {
         Date date = new Date();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss ");
         String newFileName = dateFormat.format(date) + file.getName();
-        if (inform)
-            CMIMessages.consoleMessage("&cFailed to load " + file.getName() + "! Backup have been saved into " + dataFolder.getPath() + File.separator + "FileBackups" + File.separator
-                + newFileName);
+
+        String path = dataFolder.getPath() + File.separator + "FileBackups" + File.separator + newFileName;
+        switch (type) {
+        case Error:
+            CMIMessages.consoleMessage("&cFailed to load &6" + file.getName() + "&c! Backup have been saved into &6" + path);
+            break;
+        case Info:
+            CMIMessages.consoleMessage("&eBackup file of &6" + file.getName() + " &ehave been saved into &6" + path);
+            break;
+        case Warning:
+            CMIMessages.consoleMessage("&4Something went wrong while loading &6" + file.getName() + "&4! Backup have been saved into &6" + path);
+            break;
+        case None:
+        default:
+            break;
+        }
 
         File f = new File(dataFolder, "FileBackups" + File.separator + newFileName);
-//	file.renameTo(f);
         try {
             Files.copy(file, f);
         } catch (IOException e) {

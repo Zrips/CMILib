@@ -25,7 +25,7 @@ public enum MinecraftPlatform {
     private boolean async;
 
     MinecraftPlatform(boolean async) {
-        this.async = async;
+        this.async = async;        
     }
 
     public boolean isAsync() {

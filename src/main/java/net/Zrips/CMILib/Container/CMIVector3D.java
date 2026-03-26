@@ -105,7 +105,7 @@ public class CMIVector3D extends CMIVector2D {
 
     @Override
     public String toString() {
-        return String.format(java.util.Locale.ROOT, "%.2f;%.2f;%.2f", x, y, z);
+        return super.toString() + ";" + CMINumber.formatNumber(z);
     }
 
     public static CMIVector3D fromString(String value) {

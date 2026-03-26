@@ -88,6 +88,54 @@ public class CMITimeManager {
         return time;
     }
 
+    public static String to24hourExtraShort(Long ticks, boolean trim) {
+
+        long secondsTotal = ticks / 1000L;
+
+        long years = secondsTotal / 31536000L;
+        long days = (secondsTotal % 31536000L) / 86400L;
+        long hours = (secondsTotal % 86400L) / 3_600L;
+        long minutes = (secondsTotal % 3600L) / 60L;
+        long sec = secondsTotal % 60L;
+
+        StringBuilder time = new StringBuilder();
+
+        String separator = LC.info_time_separator.getLocale();
+
+        if (years > 0)
+            time.append(LC.info_time_short_year.getLocale("[years]", years));
+
+        if (days > 0 || (!trim && years > 0)) {
+            // Keep it this way to have java 8 compatability
+            if (!time.toString().isEmpty())
+                time.append(separator);
+            time.append(LC.info_time_short_month.getLocale("[days]", days));
+        }
+
+        if (hours > 0 || (!trim && (days > 0 || years > 0))) {
+            if (!time.toString().isEmpty())
+                time.append(separator);
+            time.append(LC.info_time_short_hour.getLocale("[hours]", hours));
+        }
+
+        if (minutes > 0 || (!trim && (hours > 0 || days > 0 || years > 0))) {
+            if (!time.toString().isEmpty())
+                time.append(separator);
+            time.append(LC.info_time_short_min.getLocale("[mins]", minutes));
+        }
+
+        if (sec > 0 || (!trim && (minutes > 0 || hours > 0 || days > 0 || years > 0))) {
+            if (!time.toString().isEmpty())
+                time.append(separator);
+            time.append(LC.info_time_short_sec.getLocale("[secs]", sec));
+        }
+
+        if (time.isEmpty())
+            time.append(LC.info_time_short_sec.getLocale("[secs]", 0));
+
+        return time.toString();
+    }
+
     public static String to24hourAproximateShort(Long ticks, boolean trim) {
 
         long years = ticks / 1000L / 60L / 60L / 24L / 365L;

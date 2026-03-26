@@ -77,6 +77,7 @@ public class Reflections {
     private Class<?> CraftNamespacedKey;
     private Class<?> Item;
     private Class<?> IStack;
+    private Class<?> IStackTemplate;
     private Class<?> IChatBaseComponent;
     private Class<?> nmsChatSerializer;
     private Class<?> dimensionManager;
@@ -124,6 +125,14 @@ public class Reflections {
     }
 
     private void initialize() {
+
+        if (Version.isCurrentEqualOrHigher(Version.v26_1_0)) {
+            try {
+                IStackTemplate = Class.forName("net.minecraft.world.item.ItemStackTemplate");
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+        }
 
         if (Version.isMojangMappings()) {
             try {
@@ -173,7 +182,7 @@ public class Reflections {
                 packetPlayOutAdvancementsClass = Class.forName("net.minecraft.network.protocol.game.ClientboundUpdateAdvancementsPacket");
 
                 vec3DClass = Class.forName("net.minecraft.world.phys.Vec3");
-                posMoveRotClass = Class.forName("net.minecraft.world.entity.PositionMoveRotation");                
+                posMoveRotClass = Class.forName("net.minecraft.world.entity.PositionMoveRotation");
                 teleportPacketClass = Class.forName("net.minecraft.network.protocol.game.ClientboundTeleportEntityPacket");
 
             } catch (Throwable e) {
@@ -479,8 +488,6 @@ public class Reflections {
             try {
                 if (nmsChatSerializerMethod == null)
                     nmsChatSerializerMethod = CraftChatMessage.getMethod("fromJSON", String.class);
-                // fromJSON(String text)
-//                return org.bukkit.craftbukkit.v1_20_R4.util.CraftChatMessage.fromJSON(text);
                 return nmsChatSerializerMethod.invoke(null, text);
             } catch (Throwable e) {
                 e.printStackTrace();
@@ -1736,7 +1743,7 @@ public class Reflections {
 
     public void superficialEntityTeleport(Player player, Object entity, Location targetLoc) {
         try {
-            
+
             if (entity == null || !CEntity.isInstance(entity))
                 return;
 
@@ -2118,15 +2125,18 @@ public class Reflections {
                     else if (advancement.getFrame().name().equals("GOAL"))
                         frame = advancementFrameTypeClass.getField("GOAL").get(null);
 
-                    Object itemStack = CMINBT.asNMSCopy(advancement.getItem());
+                    Object itemStack = Version.isCurrentEqualOrHigher(Version.v26_1_0) ? CMINBT.asItemStackTemplate(advancement.getItem()) : CMINBT.asNMSCopy(advancement.getItem());
                     Object title = textToIChatBaseComponent(new RawMessage().addText(advancement.getTitle()).getRaw());
                     Object description = textToIChatBaseComponent(new RawMessage().addText(advancement.getDescription()).getRaw());
 
+                    if (itemStack == null)
+                        return;
+                    
                     Object identifier = getIdentifier(advancement.getId().getNamespace(), advancement.getId().getKey());
 
                     if (toastAdvancementDisplay == null) {
                         toastAdvancementDisplay = advancementDisplayClass.getConstructor(
-                                IStack,
+                                Version.isCurrentEqualOrHigher(Version.v1_21_R1) ? IStackTemplate : IStack,
                                 IChatBaseComponent,
                                 IChatBaseComponent,
                                 java.util.Optional.class,

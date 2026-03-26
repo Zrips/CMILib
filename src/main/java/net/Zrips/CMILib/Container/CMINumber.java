@@ -58,6 +58,13 @@ public class CMINumber {
         return dcf.format(number);
     }
 
+    public static String formatNumber(double value) {
+        if (value == (long) value) {
+            return String.valueOf((long) value);
+        }
+        return String.valueOf((long) (value * 100) / 100D);
+    }
+
     public static double sum(double number1, double number2) {
         return sum(number1, number2, 2);
     }

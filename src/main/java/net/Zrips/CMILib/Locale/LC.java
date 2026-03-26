@@ -129,6 +129,15 @@ public enum LC {
     info_oneHour("{gcs}[hours] {gcp}hour "),
     info_min("{gcs}[mins] {gcp}min "),
     info_sec("{gcs}[secs] {gcp}sec "),
+    
+
+    info_time_separator("{gcn}:"),
+    info_time_short_year("{gcs}[years]{gcp}Y"),
+    info_time_short_month("{gcs}[months]{gcp}M"),
+    info_time_short_day("{gcs}[days]{gcp}d"),
+    info_time_short_hour("{gcs}[hours]{gcp}h"),
+    info_time_short_min("{gcs}[mins]{gcp}m"),
+    info_time_short_sec("{gcs}[secs]{gcp}s"),
 
     info_nextPageConsole("{gcn}For next page perform {gcs}[command]"),
     info_prevPage("{gcn}----<< {gcp}Prev "),

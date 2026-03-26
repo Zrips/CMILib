@@ -295,9 +295,9 @@ public class CMILocation extends Location {
             MethodHandles.Lookup lookup = MethodHandles.lookup();
             try {
                 getBlockTypeId = lookup.findVirtual(ChunkSnapshot.class, "getBlockTypeId", MethodType.methodType(int.class, int.class, int.class)).asType(MethodType.methodType(int.class,
-                    ChunkSnapshot.class));
+                        ChunkSnapshot.class));
                 getBlockData = lookup.findVirtual(ChunkSnapshot.class, "getBlockData", MethodType.methodType(int.class, int.class, int.class)).asType(MethodType.methodType(int.class,
-                    ChunkSnapshot.class));
+                        ChunkSnapshot.class));
             } catch (NoSuchMethodException | IllegalAccessException e) {
                 e.printStackTrace();
             }
@@ -384,9 +384,9 @@ public class CMILocation extends Location {
             return null;
 
         loc = new CMILocation(worldName,
-            x == null ? 0 : x,
-            y == null ? 0 : y,
-            z == null ? 0 : z);
+                x == null ? 0 : x,
+                y == null ? 0 : y,
+                z == null ? 0 : z);
         loc.setYaw(yaw == null ? 0 : yaw);
         loc.setPitch(pitch == null ? 0 : pitch);
 
@@ -467,17 +467,17 @@ public class CMILocation extends Location {
                     map.append(separator + getBlockY());
                     map.append(separator + getBlockZ());
                 } else {
-                    map.append(separator + fNumber(getX()));
-                    map.append(separator + (long) (getY() * 100) / 100D);
-                    map.append(separator + fNumber(getZ()));
+                    map.append(separator + CMINumber.formatNumber(getX()));
+                    map.append(separator + CMINumber.formatNumber(getY()));
+                    map.append(separator + CMINumber.formatNumber(getZ()));
                 }
                 if (!noPitchYaw) {
                     if (integers) {
                         map.append(separator + (long) getYaw());
                         map.append(separator + (long) getPitch());
                     } else {
-                        map.append(separator + (long) (getYaw() * 100) / 100D);
-                        map.append(separator + (long) (getPitch() * 100) / 100D);
+                        map.append(separator + CMINumber.formatNumber(getYaw()));
+                        map.append(separator + CMINumber.formatNumber(getPitch()));
                     }
                 }
             }
@@ -498,10 +498,6 @@ public class CMILocation extends Location {
             ls.add(toString(loc, separator));
         }
         return ls;
-    }
-
-    private static Double fNumber(Double amount) {
-        return (long) (amount * 100) / 100D;
     }
 
     public static World getWorld(String name) {

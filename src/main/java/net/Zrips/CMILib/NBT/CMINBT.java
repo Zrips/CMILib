@@ -222,6 +222,12 @@ public class CMINBT {
             return CMINBTLegacy.getNbt(block);
     }
 
+    public static Object asItemStackTemplate(ItemStack item) {
+        if (!Version.isMojangMappings())
+            return null;
+        return CMINBTMojang.asItemTemplate(item);
+    }
+
     public static Object asNMSCopy(ItemStack item) {
         if (Version.isMojangMappings())
             return CMINBTMojang.asNMSCopy(item);

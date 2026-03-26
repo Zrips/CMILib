@@ -1,6 +1,8 @@
 package net.Zrips.CMILib.NBT;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,9 +44,11 @@ public class CMINBTMojang implements CMINBTInterface {
     private static Class<?> CUSTOM_DATA;
     private static Class<?> COMPOUND_TAG;
     private static Class<?> COMPOUND_TAGLIST;
+    private static Constructor<?> ITEM_TEMPLATE;
 
     private static Method AS_NMS_COPY;
     private static Method AS_BUKKIT_COPY;
+    private static Method GET_ITEM;
 
     private static Method NMS_GET_COMPONENT;
     private static Method NMS_SET_COMPONENT;
@@ -93,12 +97,20 @@ public class CMINBTMojang implements CMINBTInterface {
 
         try {
 
+            if (Version.isCurrentEqualOrHigher(Version.v26_1_0)) {
+                ITEM_TEMPLATE = Class.forName("net.minecraft.world.item.ItemStackTemplate").getConstructor(Class.forName("net.minecraft.world.item.Item"));
+            }
+
             CRAFT_ITEM_STACK = Class.forName("org.bukkit.craftbukkit.inventory.CraftItemStack");
             NMS_ITEM_STACK = Class.forName("net.minecraft.world.item.ItemStack");
             DATA_COMPONENTS = Class.forName("net.minecraft.core.component.DataComponents");
             CUSTOM_DATA = Class.forName("net.minecraft.world.item.component.CustomData");
             COMPOUND_TAG = Class.forName("net.minecraft.nbt.CompoundTag");
-            COMPOUND_TAGLIST = Class.forName("net.minecraft.nbt.NBTTagList");
+
+            if (Version.isPaperBranch())
+                COMPOUND_TAGLIST = Class.forName("net.minecraft.nbt.NBTTagList");
+            else
+                COMPOUND_TAGLIST = Class.forName("net.minecraft.nbt.ListTag");
 
             AS_NMS_COPY = CRAFT_ITEM_STACK.getMethod("asNMSCopy", ItemStack.class);
             AS_BUKKIT_COPY = CRAFT_ITEM_STACK.getMethod("asBukkitCopy", NMS_ITEM_STACK);
@@ -114,6 +126,8 @@ public class CMINBTMojang implements CMINBTInterface {
             TAG_CONTAINS = COMPOUND_TAG.getMethod("contains", String.class);
 
             TAG_GET = COMPOUND_TAG.getMethod("get", String.class);
+
+            GET_ITEM = NMS_ITEM_STACK.getMethod("getItem");
 
             TAG_EQUALS = NMS_ITEM_STACK.getMethod("matches", NMS_ITEM_STACK, NMS_ITEM_STACK);
 
@@ -923,6 +937,30 @@ public class CMINBTMojang implements CMINBTInterface {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public static Object asItemTemplate(ItemStack item) {
+        if (item == null)
+            return null;
+
+        Object nms = asNMSCopy(item);
+
+        Object baseItem = null;
+
+        try {
+            baseItem = GET_ITEM.invoke(nms);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        try {
+            return ITEM_TEMPLATE.newInstance(baseItem);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     public static Object asBukkitCopy(Object item) {

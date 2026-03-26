@@ -50,7 +50,7 @@ public class CMIVector2D {
 
     @Override
     public String toString() {
-        return String.format(java.util.Locale.ROOT, "%.2f;%.2f", x, y);
+        return CMINumber.formatNumber(x) + ";" + CMINumber.formatNumber(y);
     }
 
     public static CMIVector2D fromString(String value) {
