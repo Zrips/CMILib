@@ -107,10 +107,7 @@ public class CMINBTMojang implements CMINBTInterface {
             CUSTOM_DATA = Class.forName("net.minecraft.world.item.component.CustomData");
             COMPOUND_TAG = Class.forName("net.minecraft.nbt.CompoundTag");
 
-            if (Version.isPaperBranch())
-                COMPOUND_TAGLIST = Class.forName("net.minecraft.nbt.NBTTagList");
-            else
-                COMPOUND_TAGLIST = Class.forName("net.minecraft.nbt.ListTag");
+            COMPOUND_TAGLIST = Class.forName("net.minecraft.nbt.ListTag");
 
             AS_NMS_COPY = CRAFT_ITEM_STACK.getMethod("asNMSCopy", ItemStack.class);
             AS_BUKKIT_COPY = CRAFT_ITEM_STACK.getMethod("asBukkitCopy", NMS_ITEM_STACK);
