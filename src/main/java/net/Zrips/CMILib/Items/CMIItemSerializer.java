@@ -775,7 +775,7 @@ public class CMIItemSerializer {
         if (damage <= 0)
             return true;
 
-        if (Version.isCurrentEqualOrHigher(Version.v1_13_R1)) {
+        if (Version.isCurrentEqualOrHigher(Version.v1_13_0)) {
             if (!(item.getItemMeta() instanceof Damageable))
                 return false;
             Damageable damageable = (Damageable) item.getItemMeta();
@@ -786,6 +786,7 @@ public class CMIItemSerializer {
         } else {
             item.setDurability((short) (damage));
         }
+        
         cim.setDurability((short) (damage));
         return true;
     }

@@ -22,6 +22,7 @@ import net.Zrips.CMILib.GUI.GUIListener1_9;
 import net.Zrips.CMILib.GUI.GUIManager;
 import net.Zrips.CMILib.Items.ItemManager;
 import net.Zrips.CMILib.Locale.Language;
+import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Logs.CMILogManager;
 import net.Zrips.CMILib.Messages.CMIMessages;
 import net.Zrips.CMILib.Placeholders.Placeholder;
@@ -288,11 +289,12 @@ public class CMILib extends JavaPlugin {
         this.getCommand(CommandsHandler.getLabel()).setTabCompleter(getTab());
 
         pm.registerEvents(new CMIPlayerConnection(), this);
-        
+
         pm.registerEvents(new ChatEditorListener(this), this);
         pm.registerEvents(new BossBarListener(this), this);
         pm.registerEvents(new GUIListener(this), this);
-        pm.registerEvents(new GUIListener1_9(this), this);
+        if (Version.isCurrentEqualOrHigher(Version.v1_9_0))
+            pm.registerEvents(new GUIListener1_9(this), this);
         pm.registerEvents(new RawMessageListener(), this);
         pm.registerEvents(new ShadowCommandListener(), this);
         pm.registerEvents(new WorldsListener(), this);
@@ -300,7 +302,8 @@ public class CMILib extends JavaPlugin {
 
         // Primary initialization to record locale
         CMIEnchantment.initialize();
-        // Secondary initialization in case 3rd party plugin adds custom enchants after CMILib load
+        // Secondary initialization in case 3rd party plugin adds custom enchants after
+        // CMILib load
         CMIScheduler.runTask(CMIEnchantment::initialize);
 
         getConfigManager().LoadLang("EN");

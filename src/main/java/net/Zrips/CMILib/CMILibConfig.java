@@ -421,10 +421,10 @@ public class CMILibConfig {
 		Long time = System.currentTimeMillis();
 		boolean configLoaded = load(true);
 		boolean langLoaded = reloadLanguage();
+        CMIWorld.onDisable();
 		plugin.getItemManager().loadLocale();
 
 		CMIEntityType.cache.clear();
-		CMIWorld.onDisable();
 		CMIChatColor.clearCache();
 
 		if (configLoaded && langLoaded)

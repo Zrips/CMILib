@@ -990,6 +990,28 @@ public class CMIItemStack {
 
     public void setDurability(short durability) {
         this.durability = durability;
+
+        if (item != null) {
+
+            if (Version.isCurrentEqualOrHigher(Version.v1_13_0)) {
+                if (!item.hasItemMeta())
+                    return;
+
+                ItemMeta meta = item.getItemMeta();
+
+                if (!(meta instanceof Damageable))
+                    return;
+
+                Damageable rmeta = (Damageable) meta;
+
+                rmeta.setDamage(durability);
+                item.setItemMeta(rmeta);
+                return;
+            }
+
+            item.setDurability((short) durability);
+        }
+
     }
 
     public Set<Enchantment> getValidEnchants() {
