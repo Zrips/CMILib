@@ -2136,7 +2136,7 @@ public class Reflections {
 
                     if (toastAdvancementDisplay == null) {
                         toastAdvancementDisplay = advancementDisplayClass.getConstructor(
-                                Version.isCurrentEqualOrHigher(Version.v1_21_R1) ? IStackTemplate : IStack,
+                                Version.isCurrentEqualOrHigher(Version.v26_1_0) ? IStackTemplate : IStack,
                                 IChatBaseComponent,
                                 IChatBaseComponent,
                                 java.util.Optional.class,
