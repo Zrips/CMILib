@@ -174,6 +174,7 @@ public enum Version {
     // Change in version naming from 2026
     v26_1_0,
     v26_1_1,
+    v26_1_2,
     v26_2_0,
     v26_3_0,
     v27_1_0,

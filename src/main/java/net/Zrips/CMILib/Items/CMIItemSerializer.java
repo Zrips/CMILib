@@ -41,6 +41,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
+import org.jetbrains.annotations.NotNull;
 
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.CMILibConfig;
@@ -786,7 +787,7 @@ public class CMIItemSerializer {
         } else {
             item.setDurability((short) (damage));
         }
-        
+
         cim.setDurability((short) (damage));
         return true;
     }
@@ -1026,8 +1027,7 @@ public class CMIItemSerializer {
         String f = value.substring(mMatch.group().length());
 
         try {
-            int data = Integer.parseInt(f);
-            cim.setCustomModelData(data);
+            cim.setCustomModelDataComponent(CMICustomModelDataComponent.fromString(f));
             return true;
         } catch (Throwable e) {
             cim.setCustomModelData(value);
@@ -1389,6 +1389,16 @@ public class CMIItemSerializer {
             }
             str.append("e" + prefix + enchantS.toString() + suffix);
         }
+        
+        
+        @NotNull
+        CMICustomModelDataComponent data = CMICustomModelDataComponent.fromItem(item);
+        if (!data.isEmpty()) {        
+            str.append(";");   
+            str.append("cmd" + prefix +  data.toString() + suffix);
+        }
+        
+        
 
         return str.toString();
     }

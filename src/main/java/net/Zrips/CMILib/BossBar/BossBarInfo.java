@@ -263,7 +263,7 @@ public class BossBarInfo {
     }
 
     public Integer getAuto() {
-        return auto == null ? 20 : auto;
+        return CMINumber.clamp(auto == null ? 20 : auto, 1, 999);
     }
 
     public void setAuto(Integer auto) {
@@ -316,7 +316,7 @@ public class BossBarInfo {
         }
 
         return getAdjustPerc() == null && this.getKeepFor() < 0 || (getPercentage() != null && getPercentage() <= 0 && getAdjustPerc() != null && getAdjustPerc() < 0) || (getPercentage() != null
-            && getPercentage() >= 1 && getAdjustPerc() != null && getAdjustPerc() > 0);
+                && getPercentage() >= 1 && getAdjustPerc() != null && getAdjustPerc() > 0);
     }
 
     public boolean isGlobal() {

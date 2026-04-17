@@ -1109,10 +1109,12 @@ public class CMIItemStack {
         return item != null && !CMIMaterial.isAir(item.getType());
     }
 
+    @Deprecated
     public Integer getCustomModelData() {
         return getCustomModelData(this.getItemStack());
     }
 
+    @Deprecated
     public static Integer getCustomModelData(ItemStack item) {
         if (item == null)
             return null;
@@ -1130,6 +1132,15 @@ public class CMIItemStack {
         return old == null ? null : old;
     }
 
+    public @NotNull CMICustomModelDataComponent getCustomModelDataComponent() {
+        return getCustomModelDataComponent(this.getItemStack());
+    }
+
+    public static @NotNull CMICustomModelDataComponent getCustomModelDataComponent(ItemStack item) {
+        return CMICustomModelDataComponent.fromItem(item);
+    }
+
+    @Deprecated
     public CMIItemStack setCustomModelData(int data) {
         if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
             setCustomModelData(this.getItemStack(), data);
@@ -1140,6 +1151,7 @@ public class CMIItemStack {
         return this;
     }
 
+    @Deprecated
     public static ItemStack setCustomModelData(ItemStack item, int data) {
         if (item == null)
             return item;
@@ -1169,6 +1181,7 @@ public class CMIItemStack {
         return (ItemStack) new CMINBT(item).setInt("CustomModelData", data);
     }
 
+    @Deprecated
     public CMIItemStack setCustomModelData(String data) {
         if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
             setCustomModelData(this.getItemStack(), data);
@@ -1179,6 +1192,21 @@ public class CMIItemStack {
         return this;
     }
 
+    public CMIItemStack setCustomModelDataComponent(CMICustomModelDataComponent data) {
+        if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
+            setCustomModelDataComponent(this.getItemStack(), data);
+            return this;
+        }
+
+        this.setItemStack(setCustomModelDataComponent(this.getItemStack(), data));
+        return this;
+    }
+
+    public static ItemStack setCustomModelDataComponent(ItemStack item, CMICustomModelDataComponent data) {
+        return data.apply(item);
+    }
+
+    @Deprecated
     public static ItemStack setCustomModelData(ItemStack item, String data) {
         if (item == null)
             return item;
