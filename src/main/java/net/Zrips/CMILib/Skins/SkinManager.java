@@ -43,19 +43,24 @@ public class SkinManager {
         this.plugin = plugin;
     }
 
+    public void clearCache() {
+        skinCacheByUUID.clear();
+        skinCacheByName.clear();
+    }
+
     public void loadConfig() {
 
         ConfigReader cfg = plugin.getConfigManager().getConfigFile();
 
         cfg.addComment("Skins.SkinUpdateTimer", "Defines time in minutes how often we want to update skin information from online Mojang servers",
-            "Keep in mind that your server can only send 1 request every minute, so keep it at a decent amount, hour or more",
-            "So if you have this set to 1 hour, then player skin information will be updated if player old skin information is older then 1 hour",
-            "This only triggers when player joins server or changes skin manually");
-        SkinUpdateTimer = cfg.get("Skins.SkinUpdateTimer", 1320);
-        SkinUpdateTimer = SkinUpdateTimer < 5 ? 5 : SkinUpdateTimer;
+                "Keep in mind that your server can only send 1 request every minute, so keep it at a decent amount, hour or more",
+                "So if you have this set to 1 hour, then player skin information will be updated if player old skin information is older then 1 hour",
+                "This only triggers when player joins server or changes skin manually");
+        setSkinUpdateTimer(cfg.get("Skins.SkinUpdateTimer", 1320));
+        setSkinUpdateTimer(getSkinUpdateTimer() < 5 ? 5 : getSkinUpdateTimer());
 
         cfg.addComment("Skins.SkinRequestFrequency", "Defines time in minutes how often we want to send requests to Mojang servers",
-            "This is to limit amount of requests in specific time to avoid clutter with possible requests");
+                "This is to limit amount of requests in specific time to avoid clutter with possible requests");
 
         SkinRequestFrequency = cfg.get("Skins.SkinRequestFrequency", 10);
         SkinRequestFrequency = SkinRequestFrequency < 1 ? 1 : SkinRequestFrequency;
@@ -85,8 +90,9 @@ public class SkinManager {
             return true;
         try {
 
-            HttpsURLConnection connection = (HttpsURLConnection) new URL(String.format("https://sessionserver.mojang.com/session/minecraft/profile/%s?unsigned=false", uuid.toString().replace("-", "")))
-                .openConnection();
+            HttpsURLConnection connection = (HttpsURLConnection) new URL(
+                    String.format("https://sessionserver.mojang.com/session/minecraft/profile/%s?unsigned=false", uuid.toString().replace("-", "")))
+                    .openConnection();
             if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 InputStream stream = connection.getInputStream();
                 BufferedReader buffer = new BufferedReader(new InputStreamReader(stream));
@@ -187,7 +193,7 @@ public class SkinManager {
         if (profile == null)
             return false;
         CMISkin cache = skinCacheByUUID.get(uuid);
-        if (cache != null && cache.getSkin() != null && cache.getSignature() != null && cache.getLastUpdate() + (SkinUpdateTimer * 60 * 1000L) > System.currentTimeMillis()) {
+        if (cache != null && cache.getSkin() != null && cache.getSignature() != null && cache.getLastUpdate() + (getSkinUpdateTimer() * 60 * 1000L) > System.currentTimeMillis()) {
 
             try {
 
@@ -294,12 +300,12 @@ public class SkinManager {
             Matcher matcher = pattern.matcher(response.toString());
             if (matcher.find()) {
                 uuid = UUID.fromString(matcher.group(2).replaceFirst(
-                    "([0-9a-fA-F]{8})([0-9a-fA-F]{4})([0-9a-fA-F]{4})([0-9a-fA-F]{4})([0-9a-fA-F]+)", "$1-$2-$3-$4-$5"));
+                        "([0-9a-fA-F]{8})([0-9a-fA-F]{4})([0-9a-fA-F]{4})([0-9a-fA-F]{4})([0-9a-fA-F]+)", "$1-$2-$3-$4-$5"));
             }
         } catch (Exception e) {
             try {
                 String id = response.toString().split("\",\"")[0].split(":")[1].replace("\"", "").replaceFirst(
-                    "([0-9a-fA-F]{8})([0-9a-fA-F]{4})([0-9a-fA-F]{4})([0-9a-fA-F]{4})([0-9a-fA-F]+)", "$1-$2-$3-$4-$5");
+                        "([0-9a-fA-F]{8})([0-9a-fA-F]{4})([0-9a-fA-F]{4})([0-9a-fA-F]{4})([0-9a-fA-F]+)", "$1-$2-$3-$4-$5");
                 uuid = UUID.fromString(id);
             } catch (Exception ex) {
             }
@@ -377,5 +383,13 @@ public class SkinManager {
 
     public HashMap<String, UUID> preFetchUUIDS() {
         return preFetchUUIDs;
+    }
+
+    public long getSkinUpdateTimer() {
+        return SkinUpdateTimer;
+    }
+
+    public void setSkinUpdateTimer(long skinUpdateTimer) {
+        SkinUpdateTimer = skinUpdateTimer;
     }
 }

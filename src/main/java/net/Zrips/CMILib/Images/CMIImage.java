@@ -1,6 +1,7 @@
 package net.Zrips.CMILib.Images;
 
 import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.io.File;
@@ -8,7 +9,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
@@ -20,9 +23,14 @@ import javax.imageio.stream.ImageInputStream;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Colors.CMIChatColor;
+import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.RawMessages.RawMessage;
+import net.Zrips.CMILib.Skins.CMISkin;
 
 public class CMIImage {
 
@@ -33,16 +41,16 @@ public class CMIImage {
     public static String imageEmptyFiller = CMIChatColor.GRAY + "_|";
 
     private static String[][] steveHeadRaw = {
-        { "{#2f200d}", "{#2b1e0d}", "{#2f1f0f}", "{#281c0b}", "{#241808}", "{#261a0a}", "{#2b1e0d}", "{#2a1d0d}" },
-        { "{#2b1e0d}", "{#2b1e0d}", "{#2b1e0d}", "{#332411}", "{#422a12}", "{#3f2a15}", "{#2c1e0e}", "{#281c0b}" },
-        { "{#2b1e0d}", "{#b6896c}", "{#bd8e72}", "{#c69680}", "{#bd8b72}", "{#bd8e74}", "{#ac765a}", "{#342512}" },
-        { "{#aa7d67}", "{#b4846d}", "{#aa7d66}", "{#ad806d}", "{#9c725c}", "{#bb8972}", "{#9c694c}", "{#9c694c}" },
-        // herobrine type head
-        { "{#b4846d}", "{#white}", "{#white}", "{#b57b67}", "{#bb8972}", "{#white}", "{#white}", "{#aa7d66}" },
+            { "{#2f200d}", "{#2b1e0d}", "{#2f1f0f}", "{#281c0b}", "{#241808}", "{#261a0a}", "{#2b1e0d}", "{#2a1d0d}" },
+            { "{#2b1e0d}", "{#2b1e0d}", "{#2b1e0d}", "{#332411}", "{#422a12}", "{#3f2a15}", "{#2c1e0e}", "{#281c0b}" },
+            { "{#2b1e0d}", "{#b6896c}", "{#bd8e72}", "{#c69680}", "{#bd8b72}", "{#bd8e74}", "{#ac765a}", "{#342512}" },
+            { "{#aa7d67}", "{#b4846d}", "{#aa7d66}", "{#ad806d}", "{#9c725c}", "{#bb8972}", "{#9c694c}", "{#9c694c}" },
+            // herobrine type head
+            { "{#b4846d}", "{#white}", "{#white}", "{#b57b67}", "{#bb8972}", "{#white}", "{#white}", "{#aa7d66}" },
 //	{ "{#b4846d}", "{#white}", "{#523d89}", "{#b57b67}", "{#bb8972}", "{#523d89}", "{#white}", "{#aa7d66}" },
-        { "{#9c6346}", "{#b37b62}", "{#b78272}", "{#6a4030}", "{#6a4030}", "{#be886c}", "{#a26a47}", "{#805334}" },
-        { "{#905e43}", "{#965f40}", "{#40200a}", "{#874a3a}", "{#874a3a}", "{#40200a}", "{#8f5e3e}", "{#815339}" },
-        { "{#6f452c}", "{#6d432b}", "{#40200a}", "{#40200a}", "{#40200a}", "{#40200a}", "{#83553b}", "{#7a4e33}" },
+            { "{#9c6346}", "{#b37b62}", "{#b78272}", "{#6a4030}", "{#6a4030}", "{#be886c}", "{#a26a47}", "{#805334}" },
+            { "{#905e43}", "{#965f40}", "{#40200a}", "{#874a3a}", "{#874a3a}", "{#40200a}", "{#8f5e3e}", "{#815339}" },
+            { "{#6f452c}", "{#6d432b}", "{#40200a}", "{#40200a}", "{#40200a}", "{#40200a}", "{#83553b}", "{#7a4e33}" },
     };
 
     private static Color[][] steveHead = new Color[8][8];
@@ -56,6 +64,10 @@ public class CMIImage {
     }
 
     private static ConcurrentHashMap<String, CMIImage> cache = new ConcurrentHashMap<String, CMIImage>();
+
+    public static void clearCache() {
+        cache.clear();
+    }
 
     public ArrayList<BufferedImage> getGifFrames(File gif) throws IOException {
         ArrayList<BufferedImage> frames = new ArrayList<BufferedImage>();
@@ -229,31 +241,55 @@ public class CMIImage {
             if (specification.startsWith("img:head:")) {
                 String headName = specification.substring("img:head:".length());
                 headName = headName.split(" ")[0];
-                bimg = getImage(new URL("https://minotar.net/avatar/" + headName + "/8.png"));
+
+                try {
+                    CMISkin skin = CMILib.getInstance().getSkinManager().getSkin(headName);
+                    if (skin != null)
+                        bimg = skin.getHeadSkin();
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
+
                 if (bimg == null)
                     bimg = getImage(new URL("https://minepic.org/avatar/" + headName + "/8"));
+
+                if (bimg == null)
+                    bimg = getImage(new URL("https://minotar.net/avatar/" + headName + "/8.png"));
             } else if (specification.startsWith("img:helmet:")) {
                 String line = specification.substring("img:helmet:".length());
                 String headName = line.split(" ")[0];
-                bimg = getImage(new URL("https://minepic.org/avatar/8/" + headName));
+
+                try {
+                    CMISkin skin = CMILib.getInstance().getSkinManager().getSkin(headName);
+                    if (skin != null)
+                        bimg = skin.getHelmetSkin();
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
+
+                if (bimg == null)
+                    bimg = getImage(new URL("https://minepic.org/avatar/8/" + headName));
                 if (bimg == null)
                     bimg = getImage(new URL("https://minotar.net/helm/" + headName + "/8.png"));
             } else if (specification.startsWith("img:body:")) {
                 String line = specification.substring("img:body:".length());
                 String headName = line.split(" ")[0];
-                bimg = getImage(new URL("https://mc-heads.net/player/" + headName + "/64"));
                 if (bimg == null)
                     bimg = getImage(new URL("https://minepic.org/skin/" + headName + "/64"));
+                if (bimg == null)
+                    bimg = getImage(new URL("https://mc-heads.net/player/" + headName + "/64"));
             } else if (specification.startsWith("img:iso:")) {
                 String line = specification.substring("img:iso:".length());
                 String headName = line.split(" ")[0];
-                bimg = getImage(new URL("https://mc-heads.net/head/" + headName + "/64"));
                 if (bimg == null)
                     bimg = getImage(new URL("https://minepic.org/head/" + headName + "/64"));
+                if (bimg == null)
+                    bimg = getImage(new URL("https://mc-heads.net/head/" + headName + "/64"));
             } else if (specification.startsWith("img:bust:")) {
                 String line = specification.substring("img:bust:".length());
                 String headName = line.split(" ")[0];
-                bimg = getImage(new URL("https://minotar.net/armor/bust/" + headName + "/64"));
+                if (bimg == null)
+                    bimg = getImage(new URL("https://minotar.net/armor/bust/" + headName + "/64"));
             } else if (specification.startsWith("img:")) {
                 String path = specification.substring("img:".length());
                 path = path.split(" ")[0];
@@ -264,9 +300,9 @@ public class CMIImage {
 
                 File file = new File(baseFolder + path);
 
-                if (file.isFile()) {
+                if (file.isFile() && bimg == null)
                     bimg = ImageIO.read(new File(baseFolder + path));
-                }
+
             }
 
             Color[][] arr = steveHead;

@@ -25,6 +25,8 @@ public class CMILocation extends Location {
 
     private static final String separator = ";";
 
+    private String worldName;
+
     public CMILocation(World world, double x, double y, double z, float yaw, float pitch) {
         super(world, x, y, z, yaw, pitch);
         this.worldName = world.getName();
@@ -35,8 +37,6 @@ public class CMILocation extends Location {
         if (world != null)
             this.worldName = world.getName();
     }
-
-    private String worldName;
 
     public CMILocation(Location loc) {
         super(loc.getWorld(), loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
@@ -61,8 +61,12 @@ public class CMILocation extends Location {
     private void updateWorld() {
 
         try {
-            if (Version.isCurrentEqualOrHigher(Version.v1_16_R1) && super.getWorld() != null && !super.isWorldLoaded())
+            if (Version.isCurrentEqualOrHigher(Version.v1_16_R1) && super.getWorld() != null && !super.isWorldLoaded()) {
+                // Null it to allow for reset on next call
+                if (worldName != null)
+                    this.setWorld(null);
                 return;
+            }
         } catch (Throwable e) {
         }
 
