@@ -303,11 +303,11 @@ public class CMIItemStack {
 
         if (meta != null && Version.isPaperBranch() && Version.isCurrentEqualOrHigher(Version.v1_21_R4)) {
 
-            if (meta.hasItemName())
-                return CMIKyori.serialize(meta.itemName());
-
             if (meta.hasDisplayName())
-                return CMIKyori.serialize(meta.displayName());
+                return CMIKyori.serializeLegacy(meta.displayName());
+
+            if (meta.hasItemName())
+                return CMIKyori.serializeLegacy(meta.itemName());
 
             return getRealName();
         }
