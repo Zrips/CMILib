@@ -183,7 +183,7 @@ public class CMISkin {
             e.printStackTrace();
         }
 
-        return getSkinBuffer();
+        return skinBuffer;
     }
 
     private static BufferedImage getImage(URL url) {
