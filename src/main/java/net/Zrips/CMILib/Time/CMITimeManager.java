@@ -109,7 +109,7 @@ public class CMITimeManager {
             // Keep it this way to have java 8 compatability
             if (!time.toString().isEmpty())
                 time.append(separator);
-            time.append(LC.info_time_short_month.getLocale("[days]", days));
+            time.append(LC.info_time_short_day.getLocale("[days]", days));
         }
 
         if (hours > 0 || (!trim && (days > 0 || years > 0))) {
