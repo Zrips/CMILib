@@ -90,10 +90,55 @@ public class CMISkin {
         this.skinBuffer = skinBuffer;
     }
 
+    private boolean isEmpty(BufferedImage img) {
+        int w = img.getWidth();
+        int h = img.getHeight();
+
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                int rgba = img.getRGB(x, y);
+                if ((rgba >>> 24) != 0) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     public BufferedImage getHeadSkin() {
 
         BufferedImage skinImage = getSkinBuffer();
 
+        if (skinImage == null)
+            return null;
+
+        try {
+            // Base head layer
+            BufferedImage head = skinImage.getSubimage(8, 8, 8, 8);
+
+            // Final combined 8x8 head
+            BufferedImage bimg = new BufferedImage(8, 8, BufferedImage.TYPE_INT_ARGB);
+
+            Graphics2D g = bimg.createGraphics();
+
+            g.drawImage(head, 0, 0, null);
+
+            g.dispose();
+
+            if (isEmpty(bimg))
+                return null;
+
+            return bimg;
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public BufferedImage getHelmetSkin() {
+
+        BufferedImage skinImage = getSkinBuffer();
         if (skinImage == null)
             return null;
 
@@ -114,32 +159,8 @@ public class CMISkin {
 
             g.dispose();
 
-            return bimg;
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
-    public BufferedImage getHelmetSkin() {
-
-        BufferedImage skinImage = getSkinBuffer();
-        if (skinImage == null)
-            return null;
-
-        try {
-            // Hat/overlay layer
-            BufferedImage overlay = skinImage.getSubimage(40, 8, 8, 8);
-
-            // Final combined 8x8 head
-            BufferedImage bimg = new BufferedImage(8, 8, BufferedImage.TYPE_INT_ARGB);
-
-            Graphics2D g = bimg.createGraphics();
-
-            g.drawImage(overlay, 0, 0, null);
-
-            g.dispose();
+            if (isEmpty(bimg))
+                return null;
 
             return bimg;
 

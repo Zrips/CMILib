@@ -10,7 +10,6 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.bukkit.Bukkit;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.command.CommandSender;
@@ -26,6 +25,7 @@ import org.bukkit.inventory.meta.BundleMeta;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.jetbrains.annotations.NotNull;
 
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Colors.CMIChatColor;
@@ -34,13 +34,14 @@ import net.Zrips.CMILib.Items.CMIItemStack;
 import net.Zrips.CMILib.Items.CMIMC;
 import net.Zrips.CMILib.Items.CMIMaterial;
 import net.Zrips.CMILib.Locale.LC;
-import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Messages.CMIMessages;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.Shadow.ShadowCommand;
 import net.Zrips.CMILib.Shadow.ShadowCommandType;
 import net.Zrips.CMILib.Version.Version;
 import net.Zrips.CMILib.commands.CommandsHandler;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 
 public class RawMessage {
 
@@ -648,15 +649,30 @@ public class RawMessage {
             item = cloned;
         }
 
+        if (Version.isPaperBranch() && Version.isCurrentEqualOrHigher(Version.v1_21_0)) {
+            try {
+                Component component = Component.empty().hoverEvent(item.asHoverEvent());
+                @NotNull
+                String json = GsonComponentSerializer.gson().serialize(component);
+                json = json.substring(1, json.length() - 1);
+                temp.put(RawMessagePartType.HoverItem, json);
+                return this;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
         String res = CMINBT.toJson(item);
 
-        // Cleaning up useless information. Italic not included due to some weird behavior which defaults to italic look if not specifically set to not be one
+        // Cleaning up useless information. Italic not included due to some weird
+        // behavior which defaults to italic look if not specifically set to not be one
         res = res.replaceAll("\\\"bold\\\":false,?|\\\"underlined\\\":false,?|\\\"strikethrough\\\":false,?|\\\"obfuscated\\\":false,?", "");
 
         if (Version.isCurrentEqualOrHigher(Version.v1_21_R4)) {
 
             // Temp fix due to serializer using 0b and 1b for false and true
-            // custom model converts ints to floats, at the moment solution is to just remove entire section
+            // custom model converts ints to floats, at the moment solution is to just
+            // remove entire section
             // int array adds I which isn't valid anymore
             res = updateFloats(res);
             res = updateBooleans(res);
@@ -693,7 +709,8 @@ public class RawMessage {
 //                res = CMINBT.toJson(item);
 //            }
 
-            // Lets not even try to add item if its near a limit which still gives 200 bytes to play around
+            // Lets not even try to add item if its near a limit which still gives 200 bytes
+            // to play around
             if (res.length() > 32566) {
                 return this;
             }

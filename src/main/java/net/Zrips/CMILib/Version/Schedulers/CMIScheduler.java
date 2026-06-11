@@ -16,18 +16,10 @@ public class CMIScheduler {
     private static final CMIBaseImpl implementation;
 
     static {
-        switch (Version.getPlatform()) {
-        case folia:
+        if (Version.isFolia())
             implementation = new CMIFoliaImpl(CMILib.getInstance());
-            break;
-        case craftbukkit:
-        case paper:
-        case pufferfish:
-        case spigot:
-        default:
+        else
             implementation = new CMIBukkitImpl(CMILib.getInstance());
-            break;
-        }
     }
 
     public static CMIBaseImpl get() {

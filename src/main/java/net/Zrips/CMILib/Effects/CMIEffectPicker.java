@@ -15,8 +15,6 @@ import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
-import com.Zrips.CMI.CMI;
-
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Chat.ChatMessageEdit;
 import net.Zrips.CMILib.Colors.CMIChatColor;

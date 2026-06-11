@@ -281,10 +281,6 @@ public enum Version {
         return getPlatform().isAsync();
     }
 
-    public static boolean isPaperBranch() {
-        return getPlatform().isAsync();
-    }
-
     public static boolean isMojangMappings() {
         return Version.isCurrentEqualOrHigher(Version.v26_1_0) || Version.isCurrentEqualOrHigher(Version.v1_21_11) && Version.isPaperBranch();
     }
@@ -311,16 +307,75 @@ public enum Version {
         return isPaperBranch();
     }
 
+    public static boolean isPaperBranch() {
+        return getPlatform().isAsync();
+    }
+
     public static boolean isSpigot() {
         return !getPlatform().equals(MinecraftPlatform.craftbukkit);
     }
 
     public static boolean isFolia() {
-        return getPlatform().equals(MinecraftPlatform.folia) || getPlatform().equals(MinecraftPlatform.canvas);
+        return getPlatform().equals(MinecraftPlatform.folia) || isCanvas();
+    }
+
+    public static boolean isCanvas() {
+        return getPlatform().equals(MinecraftPlatform.canvas);
     }
 
     public static boolean isPurpur() {
         return getPlatform().equals(MinecraftPlatform.purpur);
+    }
+
+    private static MinecraftPlatform checkPlatform(String version) {
+        if (version.contains("mohist")) {
+            return MinecraftPlatform.mohist;
+        }
+
+        if (version.contains("arclight")) {
+            return MinecraftPlatform.arclight;
+        }
+
+        if (version.contains("purpur")) {
+            return MinecraftPlatform.purpur;
+        }
+
+        if (version.contains("tuinity")) {
+            return MinecraftPlatform.tuinity;
+        }
+
+        if (version.contains("yatopia")) {
+            return MinecraftPlatform.yatopia;
+        }
+
+        if (version.contains("tacospigot")) {
+            return MinecraftPlatform.tacospigot;
+        }
+
+        if (version.contains("glowstone")) {
+            return MinecraftPlatform.glowstone;
+        }
+
+        if (version.contains("pufferfish")) {
+            return MinecraftPlatform.pufferfish;
+        }
+
+        if (version.contains("airplane")) {
+            return MinecraftPlatform.airplane;
+        }
+
+        if (version.contains("fabric")) {
+            return MinecraftPlatform.fabric;
+        }
+
+        if (version.contains("magma")) {
+            return MinecraftPlatform.magma;
+        }
+
+        if (version.contains("canvas")) {
+            return MinecraftPlatform.canvas;
+        }
+        return null;
     }
 
     public static MinecraftPlatform getPlatform() {
@@ -329,64 +384,31 @@ public enum Version {
 
         String version = Bukkit.getVersion().toLowerCase();
 
-        if (version.contains("mohist")) {
-            platform = MinecraftPlatform.mohist;
+        Bukkit.getConsoleSender().sendMessage(version);
+        platform = checkPlatform(version);
+
+        if (platform != null)
             return platform;
+
+        try {
+            version = Bukkit.getName().toLowerCase();
+            Bukkit.getConsoleSender().sendMessage(version);
+            platform = checkPlatform(version);
+        } catch (Exception e) {
         }
 
-        if (version.contains("arclight")) {
-            platform = MinecraftPlatform.arclight;
+        if (platform != null)
             return platform;
+
+        try {
+            version = Bukkit.getServer().getVersion().toLowerCase();
+            Bukkit.getConsoleSender().sendMessage(version);
+            platform = checkPlatform(version);
+        } catch (Exception e) {
         }
 
-        if (version.contains("purpur")) {
-            platform = MinecraftPlatform.purpur;
+        if (platform != null)
             return platform;
-        }
-
-        if (version.contains("tuinity")) {
-            platform = MinecraftPlatform.tuinity;
-            return platform;
-        }
-
-        if (version.contains("yatopia")) {
-            platform = MinecraftPlatform.yatopia;
-            return platform;
-        }
-
-        if (version.contains("tacospigot")) {
-            platform = MinecraftPlatform.tacospigot;
-            return platform;
-        }
-
-        if (version.contains("glowstone")) {
-            platform = MinecraftPlatform.glowstone;
-            return platform;
-        }
-
-        if (version.contains("pufferfish")) {
-            platform = MinecraftPlatform.pufferfish;
-            return platform;
-        }
-        if (version.contains("airplane")) {
-            platform = MinecraftPlatform.airplane;
-            return platform;
-        }
-
-        if (version.contains("fabric")) {
-            platform = MinecraftPlatform.fabric;
-            return platform;
-        }
-
-        if (version.contains("magma")) {
-            platform = MinecraftPlatform.magma;
-            return platform;
-        }
-
-        if (version.contains("canvas")) {
-            platform = MinecraftPlatform.canvas;
-            return platform;
-        }
 
         try {
             Class.forName("io.papermc.paper.threadedregions.RegionizedServer");
@@ -417,9 +439,7 @@ public enum Version {
             if (platform == null)
                 platform = MinecraftPlatform.paper;
             return platform;
-        } catch (
-
-        ClassNotFoundException e) {
+        } catch (ClassNotFoundException e) {
         }
 
         try {
