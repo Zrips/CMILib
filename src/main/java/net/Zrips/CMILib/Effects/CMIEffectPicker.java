@@ -2,6 +2,7 @@ package net.Zrips.CMILib.Effects;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -44,6 +45,8 @@ public class CMIEffectPicker {
     private boolean showExampleParticle = false;
     private boolean showBackButton = false;
 
+    private String id = null;
+
     private double exampleRadius = 2.0D;
     private double exampleSpacing = 0.2D;
     private double exampleForwardDistance = 3.5D;
@@ -58,6 +61,12 @@ public class CMIEffectPicker {
         openPickers.put(picker.player.getUniqueId(), picker);
     }
 
+    public static void removePicker(UUID uuid) {
+        if (uuid == null)
+            return;
+        openPickers.remove(uuid);
+    }
+
     private static void recheckCache() {
         openPickers.entrySet().removeIf(entry -> {
             Player p = Bukkit.getPlayer(entry.getKey());
@@ -65,23 +74,39 @@ public class CMIEffectPicker {
         });
     }
 
+    @Deprecated
     public CMIEffectPicker(Player player) {
-        this(player, (CMIEffect) null);
+        this(player, null, (CMIEffect) null);
     }
 
+    @Deprecated
     public CMIEffectPicker(Player player, CMIParticle particle) {
-        this(player, new CMIEffect(particle));
+        this(player, null, new CMIEffect(particle));
     }
 
+    @Deprecated
     public CMIEffectPicker(Player player, CMIEffect effect) {
+        this(player, null, effect);
+    }
+
+    public CMIEffectPicker(Player player, String id) {
+        this(player, null, (CMIEffect) null);
+    }
+
+    public CMIEffectPicker(Player player, String id, CMIParticle particle) {
+        this(player, null, new CMIEffect(particle));
+    }
+
+    public CMIEffectPicker(Player player, String id, CMIEffect effect) {
 
         this.player = player;
+        this.id = id;
 
         if (effect != null && effect.getParticle() != null && effect.getParticle().isParticle())
             this.effect = effect;
         else if (player != null && openPickers.containsKey(player.getUniqueId())) {
             CMIEffectPicker existingPicker = openPickers.get(player.getUniqueId());
-            if (existingPicker != null) {
+            if (existingPicker != null && Objects.equals(this.id, existingPicker.getId())) {
                 this.effect = existingPicker.getEffect();
                 tickRate = existingPicker.tickRate;
             }
@@ -754,5 +779,14 @@ public class CMIEffectPicker {
 
     public void setShowBackButton(boolean showBackButton) {
         this.showBackButton = showBackButton;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public CMIEffectPicker setId(String id) {
+        this.id = id;
+        return this;
     }
 }

@@ -304,7 +304,7 @@ public class CMILib extends JavaPlugin {
         CMIEnchantment.initialize();
         // Secondary initialization in case 3rd party plugin adds custom enchants after
         // CMILib load
-        CMIScheduler.runTask(CMIEnchantment::initialize);
+        CMIScheduler.runTask(this, CMIEnchantment::initialize);
 
         getConfigManager().LoadLang("EN");
 

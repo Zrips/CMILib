@@ -110,7 +110,10 @@ public class CMINBTMojang implements CMINBTInterface {
             COMPOUND_TAGLIST = Class.forName("net.minecraft.nbt.ListTag");
 
             AS_NMS_COPY = CRAFT_ITEM_STACK.getMethod("asNMSCopy", ItemStack.class);
-            AS_BUKKIT_COPY = CRAFT_ITEM_STACK.getMethod("asBukkitCopy", NMS_ITEM_STACK);
+            if (Version.isCurrentEqualOrHigher(Version.v26_2_0))
+                AS_BUKKIT_COPY = CRAFT_ITEM_STACK.getMethod("asCraftMirror", NMS_ITEM_STACK);
+            else
+                AS_BUKKIT_COPY = CRAFT_ITEM_STACK.getMethod("asBukkitCopy", NMS_ITEM_STACK);
 
             NMS_GET_COMPONENT = NMS_ITEM_STACK.getMethod("get", Class.forName("net.minecraft.core.component.DataComponentType"));
             NMS_SET_COMPONENT = NMS_ITEM_STACK.getMethod("set", Class.forName("net.minecraft.core.component.DataComponentType"), Object.class);
