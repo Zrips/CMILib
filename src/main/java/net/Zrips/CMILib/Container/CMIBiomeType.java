@@ -111,7 +111,10 @@ public enum CMIBiomeType {
     BAMBOO_JUNGLE("A1C551"),
 
     //1.21.6
-    PALE_GARDEN("AAC8A4");
+    PALE_GARDEN("AAC8A4"),
+    
+    //26.2
+    SULFUR_CAVES("8CB831");
 
     private Color color = new Color(0, 0, 0);
     private int id = -1;

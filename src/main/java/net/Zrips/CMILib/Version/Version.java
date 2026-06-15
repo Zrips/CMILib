@@ -384,7 +384,6 @@ public enum Version {
 
         String version = Bukkit.getVersion().toLowerCase();
 
-        Bukkit.getConsoleSender().sendMessage(version);
         platform = checkPlatform(version);
 
         if (platform != null)
@@ -392,7 +391,6 @@ public enum Version {
 
         try {
             version = Bukkit.getName().toLowerCase();
-            Bukkit.getConsoleSender().sendMessage(version);
             platform = checkPlatform(version);
         } catch (Exception e) {
         }
@@ -402,7 +400,6 @@ public enum Version {
 
         try {
             version = Bukkit.getServer().getVersion().toLowerCase();
-            Bukkit.getConsoleSender().sendMessage(version);
             platform = checkPlatform(version);
         } catch (Exception e) {
         }

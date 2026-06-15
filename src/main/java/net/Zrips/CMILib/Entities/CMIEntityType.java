@@ -363,7 +363,10 @@ public enum CMIEntityType {
     ),
     ZOMBIE_NAUTILUS(Arrays.asList(
             "ZmQ5YTkzMzM3NmRhNDRjMzM5MTMwN2NiOWY0Y2YwM2YxNmYzYTU0ZjQ5NWZkNWExMWJhZDhhMzczZjlkNTcyMCJ9fX0=")
+    ),
 
+    SULFUR_CUBE(Arrays.asList(
+            "MjA1ZWMwMjQxZjA4NGUxNzc2YTIwMWY2ZGY4YzEyNGM4NjM3NjcxZmQ4NWUwYWY1ZTc3MDkwZjRlOWMzODYwMiJ9fX0=")
     ),
 
     // if possible we can remove this string for each texture to save up some space
