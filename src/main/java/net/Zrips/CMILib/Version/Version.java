@@ -14,91 +14,130 @@ import net.Zrips.CMILib.Messages.CMIMessages;
 public enum Version {
 
     /** @deprecated Use {@link #v1_7_10} */
+    @Deprecated
     v1_7_R1(1),
     /** @deprecated Use {@link #v1_7_10} */
+    @Deprecated
     v1_7_R2(2),
     /** @deprecated Use {@link #v1_7_10} */
+    @Deprecated
     v1_7_R3(3),
     /** @deprecated Use {@link #v1_7_10} */
+    @Deprecated
     v1_7_R4(10),
     /** @deprecated Use {@link #v1_8_0} {@link #v1_8_1} {@link #v1_8_2} */
+    @Deprecated
     v1_8_R1(0, 1, 2),
     /** @deprecated Use {@link #v1_8_3} */
+    @Deprecated
     v1_8_R2(3),
     /**
      * @deprecated Use {@link #v1_8_4} {@link #v1_8_5} {@link #v1_8_6}
      *             {@link #v1_8_7} {@link #v1_8_8}
      */
+    @Deprecated
     v1_8_R3(4, 5, 6, 7, 8),
     /**
      * @deprecated Use {@link #v1_9_0} {@link #v1_9_1} {@link #v1_9_2}
      *             {@link #v1_9_3}
      */
+    @Deprecated
     v1_9_R1(0, 1, 2, 3),
     /** @deprecated Use {@link #v1_9_4} */
+    @Deprecated
     v1_9_R2(4),
     /** @deprecated Use {@link #v1_10_0} {@link #v1_10_1} {@link #v1_10_2} */
+    @Deprecated
     v1_10_R1(0, 1, 2),
     /** @deprecated Use {@link #v1_11_0} {@link #v1_11_1} {@link #v1_11_2} */
+    @Deprecated
     v1_11_R1(0, 1, 2),
     /** @deprecated Use {@link #v1_12_0} {@link #v1_12_1} {@link #v1_12_2} */
+    @Deprecated
     v1_12_R1(0, 1, 2),
     /** @deprecated Use {@link #v1_13_0} */
+    @Deprecated
     v1_13_R1(0),
     /** @deprecated Use {@link #v1_13_1} {@link #v1_13_2} */
+    @Deprecated
     v1_13_R2(1, 2),
     /** @deprecated Use {@link #v1_13_3} */
+    @Deprecated
     v1_13_R3(3),
     /**
      * @deprecated Use {@link #v1_14_0} {@link #v1_14_1} {@link #v1_14_2}
      *             {@link #v1_14_3} {@link #v1_14_4}
      */
+    @Deprecated
     v1_14_R1(0, 1, 2, 3, 4),
     /** @deprecated Use {@link #v1_14_5} */
+    @Deprecated
     v1_14_R2(5),
     /** @deprecated Use {@link #v1_15_0} {@link #v1_15_1} {@link #v1_15_2} */
+    @Deprecated
     v1_15_R1(0, 1, 2),
     /** @deprecated Use {@link #v1_15_3} */
+    @Deprecated
     v1_15_R2(3),
     /** @deprecated Use {@link #v1_16_0} {@link #v1_16_1} */
+    @Deprecated
     v1_16_R1(0, 1),
     /** @deprecated Use {@link #v1_16_2} {@link #v1_16_3} */
+    @Deprecated
     v1_16_R2(2, 3),
     /** @deprecated Use {@link #v1_16_4} {@link #v1_16_5} */
+    @Deprecated
     v1_16_R3(4, 5),
     /** @deprecated Use {@link #v1_17_0} {@link #v1_17_1} */
+    @Deprecated
     v1_17_R1(0, 1),
     /** @deprecated Use {@link #v1_18_0} {@link #v1_18_1} */
+    @Deprecated
     v1_18_R1(0, 1),
     /** @deprecated Use {@link #v1_18_2} */
+    @Deprecated
     v1_18_R2(2),
     /** @deprecated Use {@link #v1_19_0} {@link #v1_19_1} {@link #v1_19_2} */
+    @Deprecated
     v1_19_R1(0, 1, 2),
     /** @deprecated Use {@link #v1_19_3} */
+    @Deprecated
     v1_19_R2(3),
     /** @deprecated Use {@link #v1_19_4} */
+    @Deprecated
     v1_19_R3(4),
     /** @deprecated Use {@link #v1_20_0} {@link #v1_20_1} */
+    @Deprecated
     v1_20_R1(0, 1),
     /** @deprecated Use {@link #v1_20_2} */
+    @Deprecated
     v1_20_R2(2),
     /** @deprecated Use {@link #v1_20_3} {@link #v1_20_4} */
+    @Deprecated
     v1_20_R3(3, 4),
     /** @deprecated Use {@link #v1_20_5} {@link #v1_20_6} */
+    @Deprecated
     v1_20_R4(5, 6),
     /** @deprecated Use {@link #v1_21_0} {@link #v1_21_1} */
+    @Deprecated
     v1_21_R1(0, 1),
     /** @deprecated Use {@link #v1_21_2} {@link #v1_21_3} */
+    @Deprecated
     v1_21_R2(2, 3),
     /** @deprecated Use {@link #v1_21_4} */
+    @Deprecated
     v1_21_R3(4),
     /** @deprecated Use {@link #v1_21_5} */
+    @Deprecated
     v1_21_R4(5),
     /** @deprecated Use {@link #v1_21_6} {@link #v1_21_7} {@link #v1_21_8} */
+    @Deprecated
     v1_21_R5(6, 7, 8),
     /** @deprecated Use {@link #v1_21_9} {@link #v1_21_10} */
+    @Deprecated
     v1_21_R6(9, 10),
     /** @deprecated Use {@link #v1_21_11} */
+    @Deprecated
     v1_21_R7(11),
 
     v1_7_10(4),
