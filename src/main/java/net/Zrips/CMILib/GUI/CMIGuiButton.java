@@ -12,7 +12,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import net.Zrips.CMILib.CMILib;
@@ -28,8 +27,6 @@ import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.Version.Version;
 import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
 import net.Zrips.CMILib.Version.Schedulers.CMITask;
-import net.kyori.adventure.text.Component;
-import net.md_5.bungee.api.chat.BaseComponent;
 
 public class CMIGuiButton {
 
@@ -82,7 +79,7 @@ public class CMIGuiButton {
                 meta.addItemFlags(ItemFlag.HIDE_STORED_ENCHANTS);
             } catch (Throwable e) {
             }
-            
+
             item.setItemMeta(meta);
             return;
         }
