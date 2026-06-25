@@ -17,6 +17,7 @@ public enum LC {
     info_Console("{gcp}Server"),
     info_FromConsole("{gcw}You can only use this in the console!"),
     info_NotOnline("{gcw}The player is not online!"),
+    info_NotOffline("{gcw}The player is not offline!"),
     info_NobodyOnline("{gcw}There is no one online!"),
     info_NoPlayer("{gcw}Can't find player with this name! ({gcs}[name]{gcw})"),
     info_NoCommand("{gcw}There is no command by this name!"),

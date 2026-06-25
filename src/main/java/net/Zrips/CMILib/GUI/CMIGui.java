@@ -31,6 +31,7 @@ import net.Zrips.CMILib.Items.CMIMaterial;
 import net.Zrips.CMILib.Locale.LC;
 import net.Zrips.CMILib.Sounds.CMISound;
 import net.Zrips.CMILib.Version.Version;
+import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
 
 public class CMIGui {
 
@@ -111,7 +112,9 @@ public class CMIGui {
     }
 
     public CMIGui open() {
-        CMILib.getInstance().getGUIManager().openGui(this);
+        CMIScheduler.runAtEntity(CMILib.getInstance(), player, () -> {
+            CMILib.getInstance().getGUIManager().openGui(this);
+        });
         return this;
     }
 

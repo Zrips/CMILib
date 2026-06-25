@@ -25,11 +25,11 @@ import org.bukkit.inventory.meta.BundleMeta;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.jetbrains.annotations.NotNull;
 
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Colors.CMIChatColor;
 import net.Zrips.CMILib.Container.CMICommandSender;
+import net.Zrips.CMILib.Container.CMIKyori;
 import net.Zrips.CMILib.Items.CMIItemStack;
 import net.Zrips.CMILib.Items.CMIMC;
 import net.Zrips.CMILib.Items.CMIMaterial;
@@ -40,8 +40,6 @@ import net.Zrips.CMILib.Shadow.ShadowCommand;
 import net.Zrips.CMILib.Shadow.ShadowCommandType;
 import net.Zrips.CMILib.Version.Version;
 import net.Zrips.CMILib.commands.CommandsHandler;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 
 public class RawMessage {
 
@@ -651,10 +649,7 @@ public class RawMessage {
 
         if (Version.isPaperBranch() && Version.isCurrentEqualOrHigher(Version.v1_21_0)) {
             try {
-                Component component = Component.empty().hoverEvent(item.asHoverEvent());
-                @NotNull
-                String json = GsonComponentSerializer.gson().serialize(component);
-                json = json.substring(1, json.length() - 1);
+                String json = CMIKyori.parse(item);
                 temp.put(RawMessagePartType.HoverItem, json);
                 return this;
             } catch (Exception e) {
