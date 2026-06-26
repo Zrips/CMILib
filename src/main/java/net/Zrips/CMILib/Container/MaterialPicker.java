@@ -4,11 +4,14 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import net.Zrips.CMILib.GUI.CMIGui;
 import net.Zrips.CMILib.GUI.CMIGuiButton;
 import net.Zrips.CMILib.GUI.GUIManager.GUIClickType;
+import net.Zrips.CMILib.GUI.GUIManager.InvType;
 import net.Zrips.CMILib.Items.CMIMaterial;
+import net.Zrips.CMILib.Logs.CMIDebug;
 
 public class MaterialPicker {
 
@@ -40,6 +43,22 @@ public class MaterialPicker {
             @Override
             public void onClose() {
                 onUIClose();
+            }
+
+            @Override
+            public boolean click(int slot, GUIClickType type, ItemStack currentItem) {
+
+                if (this.getInvSize().getFields() >= slot)
+                    return true;
+
+                CMIMaterial mat = CMIMaterial.get(currentItem);
+
+                if (!validMaterial(mat))
+                    return true;
+
+                pickedMaterial(type, mat);
+
+                return false;
             }
         };
         gui.setTitle(title);
@@ -77,6 +96,7 @@ public class MaterialPicker {
         gui.addPagination(pi);
 
         gui.fillEmptyButtons();
+        gui.addLock(InvType.Main);
         gui.open();
         return true;
     }
