@@ -69,6 +69,7 @@ public class MaterialPicker {
                     pickedMaterial(type, one);
                 }
             };
+            button.setName("&f" + one.getTranslatedName());
 
             gui.addButton(button);
         }
