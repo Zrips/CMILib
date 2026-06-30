@@ -112,9 +112,7 @@ public class CMIGui {
     }
 
     public CMIGui open() {
-        CMIScheduler.runAtEntity(CMILib.getInstance(), player, () -> {
-            CMILib.getInstance().getGUIManager().openGui(this);
-        });
+        CMILib.getInstance().getGUIManager().openGui(this);
         return this;
     }
 
