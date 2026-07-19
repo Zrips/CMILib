@@ -9,6 +9,7 @@ import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
@@ -29,10 +30,10 @@ import net.Zrips.CMILib.Messages.CMIMessages;
 import net.Zrips.CMILib.Version.Version;
 
 public class SkinManager {
-    public HashMap<UUID, CMISkin> skinCacheByUUID = new HashMap<UUID, CMISkin>();
-    public HashMap<String, CMISkin> skinCacheByName = new HashMap<String, CMISkin>();
+    public ConcurrentHashMap<UUID, CMISkin> skinCacheByUUID = new ConcurrentHashMap<UUID, CMISkin>();
+    public ConcurrentHashMap<String, CMISkin> skinCacheByName = new ConcurrentHashMap<String, CMISkin>();
 
-    protected HashMap<String, List<String>> preFetchNames = new HashMap<String, List<String>>();
+    protected ConcurrentHashMap<String, List<String>> preFetchNames = new ConcurrentHashMap<String, List<String>>();
     protected HashMap<String, UUID> preFetchUUIDs = new HashMap<String, UUID>();
 
     CMILib plugin;
@@ -93,6 +94,8 @@ public class SkinManager {
             HttpsURLConnection connection = (HttpsURLConnection) new URL(
                     String.format("https://sessionserver.mojang.com/session/minecraft/profile/%s?unsigned=false", uuid.toString().replace("-", "")))
                     .openConnection();
+            connection.setConnectTimeout(5000);
+            connection.setReadTimeout(5000);
             if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 InputStream stream = connection.getInputStream();
                 BufferedReader buffer = new BufferedReader(new InputStreamReader(stream));
@@ -268,6 +271,8 @@ public class SkinManager {
         try {
             URL url = new URL(target);
             connection = (HttpURLConnection) url.openConnection();
+            connection.setConnectTimeout(5000);
+            connection.setReadTimeout(5000);
             connection.setRequestMethod("GET");
             connection.setUseCaches(false);
             connection.setDoOutput(true);

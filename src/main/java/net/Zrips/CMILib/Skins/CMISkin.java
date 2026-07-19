@@ -213,8 +213,11 @@ public class CMISkin {
         }
         InputStream stream = null;
         BufferedImage res = null;
+        HttpURLConnection connection = null;
         try {
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection = (HttpURLConnection) url.openConnection();
+            connection.setConnectTimeout(5000);
+            connection.setReadTimeout(5000);
             stream = connection.getInputStream();
             res = ImageIO.read(stream);
         } catch (Throwable e) {
@@ -226,6 +229,8 @@ public class CMISkin {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+            if (connection != null)
+                connection.disconnect();
         }
         return res;
     }
