@@ -530,17 +530,16 @@ public class CMINBTLegacy implements CMINBTInterface {
 
     public Integer getInt(String path) {
 
-        if (!this.hasNBT(path))
+        @Nullable
+        CMIPersistentDataContainer persistentDataContainer = Version.isCurrentEqualOrHigher(Version.v1_20_R4) ? CMIPersistentDataContainer.get(object) : null;
+
+        if (!this.hasNBT(path, persistentDataContainer))
             return null;
 
-        if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
-            @Nullable
-            CMIPersistentDataContainer persistentDataContainer = CMIPersistentDataContainer.get(object);
-            if (persistentDataContainer != null) {
-                Integer v = persistentDataContainer.getInt(path);
-                if (v != null)
-                    return v;
-            }
+        if (persistentDataContainer != null) {
+            Integer v = persistentDataContainer.getInt(path);
+            if (v != null)
+                return v;
         }
 
         try {
@@ -552,17 +551,17 @@ public class CMINBTLegacy implements CMINBTInterface {
     }
 
     public Byte getByte(String path) {
-        if (!this.hasNBT(path))
+
+        @Nullable
+        CMIPersistentDataContainer persistentDataContainer = Version.isCurrentEqualOrHigher(Version.v1_20_R4) ? CMIPersistentDataContainer.get(object) : null;
+
+        if (!this.hasNBT(path, persistentDataContainer))
             return null;
 
-        if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
-            @Nullable
-            CMIPersistentDataContainer persistentDataContainer = CMIPersistentDataContainer.get(object);
-            if (persistentDataContainer != null) {
-                Byte v = CMIPersistentDataContainer.get(object).getByte(path);
-                if (v != null)
-                    return v;
-            }
+        if (persistentDataContainer != null) {
+            Byte v = persistentDataContainer.getByte(path);
+            if (v != null)
+                return v;
         }
 
         try {
@@ -574,18 +573,18 @@ public class CMINBTLegacy implements CMINBTInterface {
     }
 
     public Long getLong(String path) {
-        if (!this.hasNBT(path))
+
+        @Nullable
+        CMIPersistentDataContainer persistentDataContainer = Version.isCurrentEqualOrHigher(Version.v1_20_R4) ? CMIPersistentDataContainer.get(object) : null;
+
+        if (!this.hasNBT(path, persistentDataContainer))
             return null;
 
-        if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
-            @Nullable
-            CMIPersistentDataContainer persistentDataContainer = CMIPersistentDataContainer.get(object);
-            if (persistentDataContainer != null) {
-                Long v = persistentDataContainer.getLong(path);
+        if (persistentDataContainer != null) {
+            Long v = persistentDataContainer.getLong(path);
 
-                if (v != null)
-                    return v;
-            }
+            if (v != null)
+                return v;
         }
 
         try {
@@ -597,18 +596,18 @@ public class CMINBTLegacy implements CMINBTInterface {
     }
 
     public Boolean getBoolean(String path) {
-        if (!this.hasNBT(path))
+
+        @Nullable
+        CMIPersistentDataContainer persistentDataContainer = Version.isCurrentEqualOrHigher(Version.v1_20_R4) ? CMIPersistentDataContainer.get(object) : null;
+
+        if (!this.hasNBT(path, persistentDataContainer))
             return null;
 
-        if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
-            @Nullable
-            CMIPersistentDataContainer persistentDataContainer = CMIPersistentDataContainer.get(object);
-            if (persistentDataContainer != null) {
-                Boolean v = persistentDataContainer.getBoolean(path);
+        if (persistentDataContainer != null) {
+            Boolean v = persistentDataContainer.getBoolean(path);
 
-                if (v != null)
-                    return v;
-            }
+            if (v != null)
+                return v;
         }
 
         try {
@@ -620,18 +619,18 @@ public class CMINBTLegacy implements CMINBTInterface {
     }
 
     public float getFloat(String path) {
-        if (!this.hasNBT(path))
+
+        @Nullable
+        CMIPersistentDataContainer persistentDataContainer = Version.isCurrentEqualOrHigher(Version.v1_20_R4) ? CMIPersistentDataContainer.get(object) : null;
+
+        if (!this.hasNBT(path, persistentDataContainer))
             return 0.0F;
 
-        if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
-            @Nullable
-            CMIPersistentDataContainer persistentDataContainer = CMIPersistentDataContainer.get(object);
-            if (persistentDataContainer != null) {
-                Float v = persistentDataContainer.getFloat(path);
+        if (persistentDataContainer != null) {
+            Float v = persistentDataContainer.getFloat(path);
 
-                if (v != null)
-                    return v;
-            }
+            if (v != null)
+                return v;
         }
 
         try {
@@ -666,18 +665,18 @@ public class CMINBTLegacy implements CMINBTInterface {
     }
 
     public double getDouble(String path) {
-        if (!this.hasNBT(path))
+
+        @Nullable
+        CMIPersistentDataContainer persistentDataContainer = Version.isCurrentEqualOrHigher(Version.v1_20_R4) ? CMIPersistentDataContainer.get(object) : null;
+
+        if (!this.hasNBT(path, persistentDataContainer))
             return 0.0D;
 
-        if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
-            @Nullable
-            CMIPersistentDataContainer persistentDataContainer = CMIPersistentDataContainer.get(object);
-            if (persistentDataContainer != null) {
-                Double v = persistentDataContainer.getDouble(path);
+        if (persistentDataContainer != null) {
+            Double v = persistentDataContainer.getDouble(path);
 
-                if (v != null)
-                    return v;
-            }
+            if (v != null)
+                return v;
         }
 
         try {
@@ -689,18 +688,18 @@ public class CMINBTLegacy implements CMINBTInterface {
     }
 
     public byte[] getByteArray(String path) {
-        if (!this.hasNBT(path))
+
+        @Nullable
+        CMIPersistentDataContainer persistentDataContainer = Version.isCurrentEqualOrHigher(Version.v1_20_R4) ? CMIPersistentDataContainer.get(object) : null;
+
+        if (!this.hasNBT(path, persistentDataContainer))
             return new byte[0];
 
-        if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
-            @Nullable
-            CMIPersistentDataContainer persistentDataContainer = CMIPersistentDataContainer.get(object);
-            if (persistentDataContainer != null) {
-                byte[] v = persistentDataContainer.getByteArray(path);
+        if (persistentDataContainer != null) {
+            byte[] v = persistentDataContainer.getByteArray(path);
 
-                if (v != null)
-                    return v;
-            }
+            if (v != null)
+                return v;
         }
 
         try {
@@ -740,17 +739,16 @@ public class CMINBTLegacy implements CMINBTInterface {
 
     public String getString(String path) {
 
-        if (!this.hasNBT(path))
+        @Nullable
+        CMIPersistentDataContainer persistentDataContainer = Version.isCurrentEqualOrHigher(Version.v1_20_R4) ? CMIPersistentDataContainer.get(object) : null;
+
+        if (!this.hasNBT(path, persistentDataContainer))
             return null;
 
-        if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
-            @Nullable
-            CMIPersistentDataContainer persistentDataContainer = CMIPersistentDataContainer.get(object);
-            if (persistentDataContainer != null) {
-                String v = persistentDataContainer.getString(path);
-                if (v != null) {
-                    return v;
-                }
+        if (persistentDataContainer != null) {
+            String v = persistentDataContainer.getString(path);
+            if (v != null) {
+                return v;
             }
         }
 
@@ -787,17 +785,17 @@ public class CMINBTLegacy implements CMINBTInterface {
     }
 
     public List<String> getList(String path, int type) {
-        if (!this.hasNBT(path))
+
+        @Nullable
+        CMIPersistentDataContainer persistentDataContainer = Version.isCurrentEqualOrHigher(Version.v1_20_R4) ? CMIPersistentDataContainer.get(object) : null;
+
+        if (!this.hasNBT(path, persistentDataContainer))
             return null;
 
-        if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
-            @Nullable
-            CMIPersistentDataContainer persistentDataContainer = CMIPersistentDataContainer.get(object);
-            if (persistentDataContainer != null) {
-                List<String> v = persistentDataContainer.getListString(path);
-                if (v != null) {
-                    return new ArrayList<String>(v);
-                }
+        if (persistentDataContainer != null) {
+            List<String> v = persistentDataContainer.getListString(path);
+            if (v != null) {
+                return new ArrayList<String>(v);
             }
         }
 
@@ -1483,13 +1481,13 @@ public class CMINBTLegacy implements CMINBTInterface {
     }
 
     public boolean hasNBT(String key) {
+        return hasNBT(key, Version.isCurrentEqualOrHigher(Version.v1_20_R4) ? CMIPersistentDataContainer.get(object) : null);
+    }
 
-        if (Version.isCurrentEqualOrHigher(Version.v1_20_R4)) {
-            @Nullable
-            CMIPersistentDataContainer persistent = CMIPersistentDataContainer.get(object);
-            if (persistent != null && persistent.hasKey(key))
-                return true;
-        }
+    private boolean hasNBT(String key, @Nullable CMIPersistentDataContainer persistent) {
+
+        if (persistent != null && persistent.hasKey(key))
+            return true;
 
         Object t = updateLegacyTag(tag);
 
