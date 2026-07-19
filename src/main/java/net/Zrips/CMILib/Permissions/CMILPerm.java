@@ -1,8 +1,10 @@
 package net.Zrips.CMILib.Permissions;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -231,10 +233,15 @@ public enum CMILPerm {
 	return false;
     }
 
-    private static HashMap<UUID, HashMap<String, PermissionInfo>> cache = new HashMap<UUID, HashMap<String, PermissionInfo>>();
+    private static Map<UUID, HashMap<String, PermissionInfo>> cache = new ConcurrentHashMap<UUID, HashMap<String, PermissionInfo>>();
 
     public void removeFromCache(Player player) {
 	cache.remove(player.getUniqueId());
+    }
+
+    public static void removeFromCache(UUID uuid) {
+	if (uuid != null)
+	    cache.remove(uuid);
     }
 
     public PermissionInfo getFromCache(Player player, String perm) {
