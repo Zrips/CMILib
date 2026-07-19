@@ -9,7 +9,6 @@ import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
@@ -30,10 +29,10 @@ import net.Zrips.CMILib.Messages.CMIMessages;
 import net.Zrips.CMILib.Version.Version;
 
 public class SkinManager {
-    public ConcurrentHashMap<UUID, CMISkin> skinCacheByUUID = new ConcurrentHashMap<UUID, CMISkin>();
-    public ConcurrentHashMap<String, CMISkin> skinCacheByName = new ConcurrentHashMap<String, CMISkin>();
+    public HashMap<UUID, CMISkin> skinCacheByUUID = new HashMap<UUID, CMISkin>();
+    public HashMap<String, CMISkin> skinCacheByName = new HashMap<String, CMISkin>();
 
-    protected ConcurrentHashMap<String, List<String>> preFetchNames = new ConcurrentHashMap<String, List<String>>();
+    protected HashMap<String, List<String>> preFetchNames = new HashMap<String, List<String>>();
     protected HashMap<String, UUID> preFetchUUIDs = new HashMap<String, UUID>();
 
     CMILib plugin;
