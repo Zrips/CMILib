@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -330,7 +331,7 @@ public class Placeholder {
                     if (!message.contains("%"))
                         break;
                     String group = match.group();
-                    int id = (new Random()).nextInt(Integer.MAX_VALUE);
+                    int id = ThreadLocalRandom.current().nextInt(Integer.MAX_VALUE);
                     String with = "|" + id + "|";
                     temp.put(with, group);
                     message = message.replaceFirst(Matcher.quoteReplacement(group), Matcher.quoteReplacement(with));
@@ -461,7 +462,7 @@ public class Placeholder {
                     if (!message.contains("%"))
                         break;
                     String group = match.group();
-                    int id = (new Random()).nextInt(Integer.MAX_VALUE);
+                    int id = ThreadLocalRandom.current().nextInt(Integer.MAX_VALUE);
                     String with = "|" + id + "|";
                     temp.put(with, group);
                     message = message.replaceFirst(Matcher.quoteReplacement(group), Matcher.quoteReplacement(with));
@@ -486,7 +487,7 @@ public class Placeholder {
                         break;
                     String group = matchKeep.group();
 
-                    int id = (new Random()).nextInt(Integer.MAX_VALUE);
+                    int id = ThreadLocalRandom.current().nextInt(Integer.MAX_VALUE);
 
                     String with = "|" + id + "|";
 
