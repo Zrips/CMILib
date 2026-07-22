@@ -23,6 +23,7 @@ import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 
 import net.Zrips.CMILib.CMILib;
+import net.Zrips.CMILib.CMILibConfig;
 import net.Zrips.CMILib.GUI.GUIManager.InvType;
 import net.Zrips.CMILib.Items.CMIItemStack;
 import net.Zrips.CMILib.NBT.CMINBT;
@@ -45,6 +46,8 @@ public class GUIListener implements Listener {
     }
 
     private static void clearIconItems(Player player) {
+        if (!CMILibConfig.ClearProtectedIcons)
+            return;
         for (ItemStack one : player.getInventory().getContents()) {
             CMINBT nbt = new CMINBT(one);
             String res = nbt.getString(GUIManager.CMIGUIIcon);
