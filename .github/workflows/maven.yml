@@ -10,7 +10,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     
-    # 关键修正：使用 contents: write 而不是 dependency-graph
     permissions:
       contents: write
 
@@ -27,8 +26,6 @@ jobs:
     - name: Build with Maven
       run: mvn -B package --file pom.xml
 
-    # 升级到 v4 修复 set-output 弃用警告
-    # 仅在 push 时执行，PR（尤其是 fork 的 PR）没有写入权限
     - name: Update dependency graph
       if: github.event_name == 'push'
       uses: advanced-security/maven-dependency-submission-action@v4
