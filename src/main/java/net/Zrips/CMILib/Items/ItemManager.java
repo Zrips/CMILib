@@ -42,6 +42,8 @@ public class ItemManager {
     private CMILib plugin;
 
     static HashMap<Material, CMIMaterial> byRealMaterial = new HashMap<Material, CMIMaterial>();
+    private static final Pattern TAG_PATTERN = Pattern.compile("(\\{).+(\\})");
+
     static HashMap<String, CMIMaterial> byName = new HashMap<String, CMIMaterial>();
     private static HashMap<String, Material> byNameMaterial = new HashMap<String, Material>();
 
@@ -211,8 +213,7 @@ public class ItemManager {
 
         String tag = null;
         if (name.contains("{") && name.contains("}")) {
-            Pattern ptr = Pattern.compile("(\\{).+(\\})");
-            Matcher match = ptr.matcher(name);
+            Matcher match = TAG_PATTERN.matcher(name);
             if (match.find()) {
                 tag = match.group();
                 name = name.replace(match.group(), "");

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
 import org.bukkit.boss.BarColor;
@@ -30,8 +31,10 @@ public class BossBarManager {
 
     ConcurrentHashMap<UUID, ConcurrentHashMap<String, BossBarInfo>> barMap = new ConcurrentHashMap<UUID, ConcurrentHashMap<String, BossBarInfo>>();
 
+    private static final Pattern CLEAN = Pattern.compile("[^a-zA-Z0-9]");
+
     private static String cleanName(String name) {
-        return name.replaceAll("[^a-zA-Z0-9]", "");
+        return CLEAN.matcher(name).replaceAll("");
     }
 
     public synchronized void addGlobalBar(BossBarInfo binfo) {
