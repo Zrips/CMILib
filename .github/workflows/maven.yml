@@ -10,10 +10,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     
-    # 关键：为 GITHUB_TOKEN 添加依赖图写入权限
+    # 关键修正：使用 contents: write 而不是 dependency-graph
     permissions:
-      contents: read
-      dependency-graph: write
+      contents: write
 
     steps:
     - uses: actions/checkout@v4
@@ -28,7 +27,8 @@ jobs:
     - name: Build with Maven
       run: mvn -B package --file pom.xml
 
-    # 使用最新版本提交依赖图谱（修复 set-output 弃用警告）
+    # 升级到 v4 修复 set-output 弃用警告
+    # 仅在 push 时执行，PR（尤其是 fork 的 PR）没有写入权限
     - name: Update dependency graph
-      if: github.event_name == 'push'  # 仅在 push 时提交，PR 不需要
+      if: github.event_name == 'push'
       uses: advanced-security/maven-dependency-submission-action@v4
