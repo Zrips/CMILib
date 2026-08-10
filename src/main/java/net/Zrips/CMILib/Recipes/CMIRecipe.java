@@ -2,6 +2,7 @@ package net.Zrips.CMILib.Recipes;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -10,11 +11,14 @@ import java.util.Map.Entry;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.inventory.FurnaceRecipe;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
+import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.ShapelessRecipe;
+import org.bukkit.inventory.TransmuteRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import net.Zrips.CMILib.CMILib;
@@ -103,7 +107,34 @@ public class CMIRecipe {
             FurnaceRecipe fc = (FurnaceRecipe) this.recipe;
             map.put(1, fc.getInput());
             return map;
+        case Transmute:
+            TransmuteRecipe tc = (TransmuteRecipe) this.recipe;
+
+            CMIRecipeIngredient base = getRecipeChoice(tc.getMaterial());
+            CMIRecipeIngredient ingredient = getRecipeChoice(tc.getInput());
+
+            if (base == null || ingredient == null)
+                return map;
+
+            map.put(1, base.getItem());
+            map.put(2, ingredient.getItem());
+            return map;
         }
+        return null;
+    }
+
+    private static CMIRecipeIngredient getRecipeChoice(RecipeChoice choice) {
+        if (choice instanceof RecipeChoice.MaterialChoice) {
+            for (Material material : ((RecipeChoice.MaterialChoice) choice).getChoices()) {
+                return new CMIRecipeIngredient(new ItemStack(material)).setChoice(CMIRecipeChoice.byMaterial);
+            }
+            return null;
+        }
+
+        if (choice instanceof RecipeChoice.ExactChoice) {
+            return new CMIRecipeIngredient(((RecipeChoice.ExactChoice) choice).getChoices().get(0)).setChoice(CMIRecipeChoice.byItemStack);
+        }
+
         return null;
     }
 
@@ -115,8 +146,9 @@ public class CMIRecipe {
     public static Recipe makeShapedRecipe(ItemStack result, HashMap<Integer, CMIRecipeIngredient> Recipe, String customKey) {
 
         if (Version.isCurrentEqualOrHigher(Version.v1_13_R1)) {
-            ShapedRecipe NewShapedRecipe = new ShapedRecipe(new org.bukkit.NamespacedKey(CMILib.getInstance(), customKey == null ? getRecipeIdentificator(CMIRecipeType.Shaped, result, Recipe) : customKey),
-                result);
+            ShapedRecipe NewShapedRecipe = new ShapedRecipe(
+                    new org.bukkit.NamespacedKey(CMILib.getInstance(), customKey == null ? getRecipeIdentificator(CMIRecipeType.Shaped, result, Recipe) : customKey),
+                    result);
 
             LinkedHashMap<String, CMIRecipeIngredient> itemsused = new LinkedHashMap<String, CMIRecipeIngredient>();
 
@@ -161,7 +193,8 @@ public class CMIRecipe {
 
         ShapedRecipe NewShapedRecipe = null;
         if (Version.isCurrentHigher(Version.v1_11_R1))
-            NewShapedRecipe = new ShapedRecipe(new org.bukkit.NamespacedKey(CMILib.getInstance(), customKey == null ? getRecipeIdentificator(CMIRecipeType.Shaped, result, Recipe) : customKey), result);
+            NewShapedRecipe = new ShapedRecipe(new org.bukkit.NamespacedKey(CMILib.getInstance(), customKey == null ? getRecipeIdentificator(CMIRecipeType.Shaped, result, Recipe) : customKey),
+                    result);
         else
             NewShapedRecipe = new ShapedRecipe(result);
 
@@ -230,8 +263,9 @@ public class CMIRecipe {
 
         if (Version.isCurrentEqualOrHigher(Version.v1_13_R1)) {
             ShapelessRecipe NewShapelessRecipe = new ShapelessRecipe(
-                key == null ? new org.bukkit.NamespacedKey(CMILib.getInstance(), customKey == null ? getRecipeIdentificator(CMIRecipeType.Shapeless, result, recipe) : customKey)
-                    : new org.bukkit.NamespacedKey(key.getNamespace(), key.getKey()), result);
+                    key == null ? new org.bukkit.NamespacedKey(CMILib.getInstance(), customKey == null ? getRecipeIdentificator(CMIRecipeType.Shapeless, result, recipe) : customKey)
+                            : new org.bukkit.NamespacedKey(key.getNamespace(), key.getKey()),
+                    result);
             for (CMIRecipeIngredient item : recipe.values()) {
                 if (item == null)
                     continue;
@@ -243,9 +277,10 @@ public class CMIRecipe {
         }
         ShapelessRecipe NewShapelessRecipe = null;
         if (Version.isCurrentHigher(Version.v1_11_R1))
-            NewShapelessRecipe = new ShapelessRecipe(key == null ? new org.bukkit.NamespacedKey(CMILib.getInstance(), customKey == null ? getRecipeIdentificator(CMIRecipeType.Shapeless, result, recipe)
-                : customKey)
-                : new org.bukkit.NamespacedKey(key.getNamespace(), key.getKey()), result);
+            NewShapelessRecipe = new ShapelessRecipe(key == null
+                    ? new org.bukkit.NamespacedKey(CMILib.getInstance(), customKey == null ? getRecipeIdentificator(CMIRecipeType.Shapeless, result, recipe)
+                            : customKey)
+                    : new org.bukkit.NamespacedKey(key.getNamespace(), key.getKey()), result);
         else
             NewShapelessRecipe = new ShapelessRecipe(result);
         for (CMIRecipeIngredient item : recipe.values()) {
@@ -276,8 +311,9 @@ public class CMIRecipe {
             }
 
             return new FurnaceRecipe(new org.bukkit.NamespacedKey(CMILib.getInstance(), customKey == null ? getRecipeIdentificator(CMIRecipeType.Furnace, result, Recipe) : customKey), result,
-                (org.bukkit.inventory.RecipeChoice) Recipe
-                    .generateChoice(), exp, duration);
+                    (org.bukkit.inventory.RecipeChoice) Recipe
+                            .generateChoice(),
+                    exp, duration);
         }
         FurnaceRecipe NewShapelessRecipe = new FurnaceRecipe(result, Recipe.getItem().getData());
         return NewShapelessRecipe;
@@ -292,10 +328,10 @@ public class CMIRecipe {
             return null;
 
         return new org.bukkit.inventory.SmithingRecipe(
-            new org.bukkit.NamespacedKey(CMILib.getInstance(), customKey == null ? getRecipeIdentificator(CMIRecipeType.Smithing, result, ingredient1, ingredient2) : customKey),
-            result,
-            (org.bukkit.inventory.RecipeChoice) ingredient1.generateChoice(),
-            (org.bukkit.inventory.RecipeChoice) ingredient2.generateChoice());
+                new org.bukkit.NamespacedKey(CMILib.getInstance(), customKey == null ? getRecipeIdentificator(CMIRecipeType.Smithing, result, ingredient1, ingredient2) : customKey),
+                result,
+                (org.bukkit.inventory.RecipeChoice) ingredient1.generateChoice(),
+                (org.bukkit.inventory.RecipeChoice) ingredient2.generateChoice());
     }
 
     public static Recipe makeStonecuttingRecipe(ItemStack result, CMIRecipeIngredient ingredient1) {
@@ -306,9 +342,9 @@ public class CMIRecipe {
         if (Version.isCurrentEqualOrLower(Version.v1_13_R1))
             return null;
         return new org.bukkit.inventory.StonecuttingRecipe(
-            new org.bukkit.NamespacedKey(CMILib.getInstance(), customKey == null ? getRecipeIdentificator(CMIRecipeType.Stonecutting, result, ingredient1) : customKey),
-            result,
-            (org.bukkit.inventory.RecipeChoice) ingredient1.generateChoice());
+                new org.bukkit.NamespacedKey(CMILib.getInstance(), customKey == null ? getRecipeIdentificator(CMIRecipeType.Stonecutting, result, ingredient1) : customKey),
+                result,
+                (org.bukkit.inventory.RecipeChoice) ingredient1.generateChoice());
     }
 
     public static Recipe makeCampfireRecipe(ItemStack result, CMIRecipeIngredient ingredient1, CMIRecipeCraftData temp) {
@@ -327,8 +363,8 @@ public class CMIRecipe {
         }
 
         return new org.bukkit.inventory.CampfireRecipe(new org.bukkit.NamespacedKey(CMILib.getInstance(), customKey == null ? getRecipeIdentificator(CMIRecipeType.Campfire, result, ingredient1)
-            : customKey), result,
-            (org.bukkit.inventory.RecipeChoice) ingredient1.generateChoice(), exp, duration);
+                : customKey), result,
+                (org.bukkit.inventory.RecipeChoice) ingredient1.generateChoice(), exp, duration);
     }
 
     public static Recipe makeSmokingRecipe(ItemStack result, CMIRecipeIngredient ingredient1, CMIRecipeCraftData temp) {
@@ -347,9 +383,9 @@ public class CMIRecipe {
         }
 
         return new org.bukkit.inventory.SmokingRecipe(new org.bukkit.NamespacedKey(CMILib.getInstance(), customKey == null ? getRecipeIdentificator(CMIRecipeType.Smoking, result, ingredient1)
-            : customKey), result,
-            (org.bukkit.inventory.RecipeChoice) ingredient1.generateChoice(), exp,
-            duration);
+                : customKey), result,
+                (org.bukkit.inventory.RecipeChoice) ingredient1.generateChoice(), exp,
+                duration);
     }
 
     public static Recipe makeTransmuteRecipe(ItemStack result, CMIRecipeIngredient ingredient1, String customKey) {
@@ -357,7 +393,7 @@ public class CMIRecipe {
             return null;
 
         return new org.bukkit.inventory.TransmuteRecipe(new org.bukkit.NamespacedKey(CMILib.getInstance(), customKey == null ? getRecipeIdentificator(CMIRecipeType.Smoking, result, ingredient1)
-            : customKey), result.getType(), (org.bukkit.inventory.RecipeChoice) ingredient1.generateChoice(), (org.bukkit.inventory.RecipeChoice) ingredient1.generateChoice());
+                : customKey), result.getType(), (org.bukkit.inventory.RecipeChoice) ingredient1.generateChoice(), (org.bukkit.inventory.RecipeChoice) ingredient1.generateChoice());
     }
 
     public static Recipe makeBlastingRecipe(ItemStack result, CMIRecipeIngredient ingredient1, CMIRecipeCraftData temp) {
@@ -376,9 +412,9 @@ public class CMIRecipe {
         }
 
         return new org.bukkit.inventory.BlastingRecipe(new org.bukkit.NamespacedKey(CMILib.getInstance(), customKey == null ? getRecipeIdentificator(CMIRecipeType.Blasting, result, ingredient1)
-            : customKey), result,
-            (org.bukkit.inventory.RecipeChoice) ingredient1.generateChoice(), exp,
-            duration);
+                : customKey), result,
+                (org.bukkit.inventory.RecipeChoice) ingredient1.generateChoice(), exp,
+                duration);
     }
 
     public static Recipe createRecipe(CMIRecipeType type, ItemStack result, HashMap<Integer, CMIRecipeIngredient> Recipe) {
@@ -578,6 +614,19 @@ public class CMIRecipe {
                 }
                 map.put(1, CMIri);
                 break;
+            case Transmute:
+
+                TransmuteRecipe tc = (TransmuteRecipe) recipe;
+
+                CMIRecipeIngredient base = getRecipeChoice(tc.getMaterial());
+                CMIRecipeIngredient ingredient = getRecipeChoice(tc.getInput());
+
+                if (base == null || ingredient == null)
+                    return map;
+
+                map.put(1, base);
+                map.put(2, ingredient);
+                break;
             }
 
         }
@@ -636,7 +685,8 @@ public class CMIRecipe {
                     str.append(":" + value);
             }
 
-            str.append(one.getValue().getItem().getType() + ":" + one.getValue().getItem().getAmount() + ":" + (one.getValue().getChoice().equals(CMIRecipeChoice.byItemStack) ? "1:" : "") + one.getKey());
+            str.append(one.getValue().getItem().getType() + ":" + one.getValue().getItem().getAmount() + ":" + (one.getValue().getChoice().equals(CMIRecipeChoice.byItemStack) ? "1:" : "")
+                    + one.getKey());
         }
         return UUID.nameUUIDFromBytes(str.toString().getBytes()).toString();
     }
