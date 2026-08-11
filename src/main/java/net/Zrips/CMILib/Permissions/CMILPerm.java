@@ -1,8 +1,10 @@
 package net.Zrips.CMILib.Permissions;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -231,14 +233,19 @@ public enum CMILPerm {
 	return false;
     }
 
-    private static HashMap<UUID, HashMap<String, PermissionInfo>> cache = new HashMap<UUID, HashMap<String, PermissionInfo>>();
+    private static Map<UUID, Map<String, PermissionInfo>> cache = new ConcurrentHashMap<UUID, Map<String, PermissionInfo>>();
 
     public void removeFromCache(Player player) {
 	cache.remove(player.getUniqueId());
     }
 
+    public static void removeFromCache(UUID uuid) {
+	if (uuid != null)
+	    cache.remove(uuid);
+    }
+
     public PermissionInfo getFromCache(Player player, String perm) {
-	HashMap<String, PermissionInfo> old = cache.get(player.getUniqueId());
+	Map<String, PermissionInfo> old = cache.get(player.getUniqueId());
 	if (old == null) {
 	    return null;
 	}
@@ -253,17 +260,13 @@ public enum CMILPerm {
     }
 
     public PermissionInfo addToCache(Player player, String perm, boolean has, Long delayInMiliseconds) {
-	HashMap<String, PermissionInfo> old = cache.get(player.getUniqueId());
-	if (old == null) {
-	    old = new HashMap<String, PermissionInfo>();
-	}
+	Map<String, PermissionInfo> old = cache.computeIfAbsent(player.getUniqueId(), k -> new ConcurrentHashMap<String, PermissionInfo>());
 
 	PermissionInfo info = new PermissionInfo(perm, delayInMiliseconds);
 	info.setLastChecked(System.currentTimeMillis());
 	info.setEnabled(has);
 
 	old.put(perm, info);
-	cache.put(player.getUniqueId(), old);
 
 	return info;
     }
@@ -302,9 +305,7 @@ public enum CMILPerm {
 	if (player == null)
 	    return new PermissionInfo(perm, delay);
 
-	HashMap<String, PermissionInfo> c = cache.get(player.getUniqueId());
-	if (c == null)
-	    c = new HashMap<String, PermissionInfo>();
+	Map<String, PermissionInfo> c = cache.computeIfAbsent(player.getUniqueId(), k -> new ConcurrentHashMap<String, PermissionInfo>());
 
 	PermissionInfo p = c.get(perm);
 
@@ -350,7 +351,6 @@ public enum CMILPerm {
 	}
 	p.setLastChecked(System.currentTimeMillis());
 	c.put(perm, p);
-	cache.put(player.getUniqueId(), c);
 	return p;
     }
 

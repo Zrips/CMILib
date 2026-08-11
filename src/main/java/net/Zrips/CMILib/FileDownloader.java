@@ -75,7 +75,7 @@ public class FileDownloader {
                     CMIMessages.consoleMessage("You can do it manually, try again later or simply ignore it.");
                 }
 
-                FileDownloader.this.failedDownload();
+                CMIScheduler.runTask(FileDownloader.this::failedDownload);
             } finally {
                 if (fileOutputStream != null)
                     try {

@@ -208,6 +208,8 @@ public class CMINBTMojang implements CMINBTInterface {
     Object tag;
     Object object;
 
+    private boolean tagComputed = false;
+
     private nmbtType type;
 
     static {
@@ -225,7 +227,6 @@ public class CMINBTMojang implements CMINBTInterface {
 
     public CMINBTMojang(ItemStack item) {
         object = item;
-        tag = getNbt(item);
         type = nmbtType.item;
     }
 
@@ -277,11 +278,12 @@ public class CMINBTMojang implements CMINBTInterface {
 
     public Integer getInt(String path) {
 
-        if (!this.hasNBT(path))
-            return null;
-
         @Nullable
         CMIPersistentDataContainer persistentDataContainer = CMIPersistentDataContainer.get(object);
+
+        if (!this.hasNBT(path, persistentDataContainer))
+            return null;
+
         if (persistentDataContainer != null) {
             Integer v = persistentDataContainer.getInt(path);
             if (v != null)
@@ -298,13 +300,15 @@ public class CMINBTMojang implements CMINBTInterface {
     }
 
     public Byte getByte(String path) {
-        if (!this.hasNBT(path))
-            return null;
 
         @Nullable
         CMIPersistentDataContainer persistentDataContainer = CMIPersistentDataContainer.get(object);
+
+        if (!this.hasNBT(path, persistentDataContainer))
+            return null;
+
         if (persistentDataContainer != null) {
-            Byte v = CMIPersistentDataContainer.get(object).getByte(path);
+            Byte v = persistentDataContainer.getByte(path);
             if (v != null)
                 return v;
         }
@@ -318,11 +322,13 @@ public class CMINBTMojang implements CMINBTInterface {
     }
 
     public Long getLong(String path) {
-        if (!this.hasNBT(path))
-            return null;
 
         @Nullable
         CMIPersistentDataContainer persistentDataContainer = CMIPersistentDataContainer.get(object);
+
+        if (!this.hasNBT(path, persistentDataContainer))
+            return null;
+
         if (persistentDataContainer != null) {
             Long v = persistentDataContainer.getLong(path);
 
@@ -339,11 +345,13 @@ public class CMINBTMojang implements CMINBTInterface {
     }
 
     public Boolean getBoolean(String path) {
-        if (!this.hasNBT(path))
-            return null;
 
         @Nullable
         CMIPersistentDataContainer persistentDataContainer = CMIPersistentDataContainer.get(object);
+
+        if (!this.hasNBT(path, persistentDataContainer))
+            return null;
+
         if (persistentDataContainer != null) {
             Boolean v = persistentDataContainer.getBoolean(path);
 
@@ -360,11 +368,13 @@ public class CMINBTMojang implements CMINBTInterface {
     }
 
     public float getFloat(String path) {
-        if (!this.hasNBT(path))
-            return 0.0F;
 
         @Nullable
         CMIPersistentDataContainer persistentDataContainer = CMIPersistentDataContainer.get(object);
+
+        if (!this.hasNBT(path, persistentDataContainer))
+            return 0.0F;
+
         if (persistentDataContainer != null) {
             Float v = persistentDataContainer.getFloat(path);
 
@@ -390,7 +400,7 @@ public class CMINBTMojang implements CMINBTInterface {
                 return v;
         }
 
-        if (tag == null)
+        if (getTag() == null)
             return null;
 
         try {
@@ -402,11 +412,13 @@ public class CMINBTMojang implements CMINBTInterface {
     }
 
     public double getDouble(String path) {
-        if (!this.hasNBT(path))
-            return 0.0D;
 
         @Nullable
         CMIPersistentDataContainer persistentDataContainer = CMIPersistentDataContainer.get(object);
+
+        if (!this.hasNBT(path, persistentDataContainer))
+            return 0.0D;
+
         if (persistentDataContainer != null) {
             Double v = persistentDataContainer.getDouble(path);
 
@@ -423,11 +435,13 @@ public class CMINBTMojang implements CMINBTInterface {
     }
 
     public byte[] getByteArray(String path) {
-        if (!this.hasNBT(path))
-            return new byte[0];
 
         @Nullable
         CMIPersistentDataContainer persistentDataContainer = CMIPersistentDataContainer.get(object);
+
+        if (!this.hasNBT(path, persistentDataContainer))
+            return new byte[0];
+
         if (persistentDataContainer != null) {
             byte[] v = persistentDataContainer.getByteArray(path);
 
@@ -469,11 +483,12 @@ public class CMINBTMojang implements CMINBTInterface {
 
     public String getString(String path) {
 
-        if (!this.hasNBT(path))
-            return null;
-
         @Nullable
         CMIPersistentDataContainer persistentDataContainer = CMIPersistentDataContainer.get(object);
+
+        if (!this.hasNBT(path, persistentDataContainer))
+            return null;
+
         if (persistentDataContainer != null) {
             String v = persistentDataContainer.getString(path);
             if (v != null) {
@@ -517,11 +532,13 @@ public class CMINBTMojang implements CMINBTInterface {
     }
 
     public List<String> getList(String path, int type) {
-        if (!this.hasNBT(path))
-            return null;
 
         @Nullable
         CMIPersistentDataContainer persistentDataContainer = CMIPersistentDataContainer.get(object);
+
+        if (!this.hasNBT(path, persistentDataContainer))
+            return null;
+
         if (persistentDataContainer != null) {
             List<String> v = persistentDataContainer.getListString(path);
             if (v != null) {
@@ -745,6 +762,7 @@ public class CMINBTMojang implements CMINBTInterface {
 
         if (getType().equals(nmbtType.item)) {
             tag = getNbt((ItemStack) object);
+            tagComputed = true;
         }
 
         return removeItemTag(path);
@@ -772,12 +790,14 @@ public class CMINBTMojang implements CMINBTInterface {
     }
 
     public boolean hasNBT() {
-        return tag != null;
+        return getTag() != null;
     }
 
     public boolean hasNBT(String key) {
-        @Nullable
-        CMIPersistentDataContainer persistent = CMIPersistentDataContainer.get(object);
+        return hasNBT(key, CMIPersistentDataContainer.get(object));
+    }
+
+    private boolean hasNBT(String key, @Nullable CMIPersistentDataContainer persistent) {
         if (persistent != null && persistent.hasKey(key))
             return true;
 
@@ -793,8 +813,16 @@ public class CMINBTMojang implements CMINBTInterface {
         return contains;
     }
 
-    public Object getNbt() {
+    private Object getTag() {
+        if (!tagComputed && type == nmbtType.item && object instanceof ItemStack) {
+            tag = getNbt((ItemStack) object);
+            tagComputed = true;
+        }
         return tag;
+    }
+
+    public Object getNbt() {
+        return getTag();
     }
 
     public Set<String> getKeys() {

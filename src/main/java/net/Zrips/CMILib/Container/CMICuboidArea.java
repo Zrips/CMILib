@@ -103,10 +103,10 @@ public class CMICuboidArea {
         boolean found = false;
         int it = 0;
         int maxIt = 30;
+        Random ran = new Random();
         while (!found && it < maxIt) {
             it++;
 
-            Random ran = new Random(System.currentTimeMillis());
             if (randomLocList.isEmpty())
                 break;
             int check = ran.nextInt(randomLocList.size());
@@ -125,8 +125,8 @@ public class CMICuboidArea {
             for (int i = max; i > getLowPoint().getY(); i--) {
                 loc.setY(i);
                 Block block = loc.getBlock();
-                Block block2 = loc.clone().add(0, 1, 0).getBlock();
-                Block block3 = loc.clone().add(0, -1, 0).getBlock();
+                Block block2 = loc.getWorld().getBlockAt(loc.getBlockX(), i + 1, loc.getBlockZ());
+                Block block3 = loc.getWorld().getBlockAt(loc.getBlockX(), i - 1, loc.getBlockZ());
                 if (block3.getType() != Material.AIR && block.getType() == Material.AIR && block2.getType() == Material.AIR) {
                     break;
                 }

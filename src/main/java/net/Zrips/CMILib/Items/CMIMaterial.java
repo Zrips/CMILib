@@ -2156,7 +2156,7 @@ public enum CMIMaterial {
             }
 
         idMap.put(id, mat);
-        return CMIMaterial.NONE;
+        return mat;
     }
 
     public static @NotNull CMIMaterial get(ItemStack item) {

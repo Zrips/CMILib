@@ -10,6 +10,7 @@ import org.bukkit.event.server.ServerCommandEvent;
 
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Locale.Snd;
+import net.Zrips.CMILib.Permissions.CMILPerm;
 import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
 
 public class ShadowCommandListener implements Listener {
@@ -17,6 +18,7 @@ public class ShadowCommandListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerQuitEvent(PlayerQuitEvent event) {
         ShadowCommand.remove(event.getPlayer().getUniqueId());
+        CMILPerm.removeFromCache(event.getPlayer().getUniqueId());
     }
 
     @EventHandler(priority = EventPriority.LOWEST)

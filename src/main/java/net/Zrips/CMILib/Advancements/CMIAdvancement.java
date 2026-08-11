@@ -258,10 +258,11 @@ public class CMIAdvancement {
         add();
         grant(players);
         final CMIAdvancement ad = this;
-        CMIScheduler.runTaskLater(() -> {
-            revoke(players);
-            CMILib.getInstance().getReflectionManager().removeAdvancement(ad);
-        }, 20L);
+        for (Player player : players) {
+            final Player one = player;
+            CMIScheduler.runAtEntityLater(one, () -> revoke(one), 20L);
+        }
+        CMIScheduler.runTaskLater(() -> CMILib.getInstance().getReflectionManager().removeAdvancement(ad), 40L);
         return this;
     }
 

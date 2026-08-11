@@ -843,51 +843,51 @@ public class RawMessage {
 
     public List<String> softCombine() {
         List<String> ls = new ArrayList<String>();
-        String f = "";
+        StringBuilder f = new StringBuilder();
         for (String part : parts) {
-            if (f.isEmpty())
-                f = "[\"\",";
+            if (f.length() == 0)
+                f.append("[\"\",");
             else {
                 if (f.length() > 30000) {
-                    ls.add(f + "]");
-                    f = "[\"\"," + part;
+                    ls.add(f.toString() + "]");
+                    f = new StringBuilder("[\"\",").append(part);
                     continue;
                 }
-                f += ",";
+                f.append(",");
             }
-            f += part;
+            f.append(part);
         }
-        if (!f.isEmpty())
-            f += "]";
-        ls.add(f);
+        if (f.length() != 0)
+            f.append("]");
+        ls.add(f.toString());
         return ls;
     }
 
     private RawMessage combine() {
-        String f = "";
+        StringBuilder f = new StringBuilder();
         for (String part : parts) {
-            if (f.isEmpty())
-                f = "[\"\",";
+            if (f.length() == 0)
+                f.append("[\"\",");
             else
-                f += ",";
-            f += part;
+                f.append(",");
+            f.append(part);
         }
-        if (!f.isEmpty())
-            f += "]";
+        if (f.length() != 0)
+            f.append("]");
 
-        if (f.isEmpty())
-            f = "{\"text\":\" \"}";
-
-        combined = f;
+        if (f.length() == 0)
+            combined = "{\"text\":\" \"}";
+        else
+            combined = f.toString();
         return this;
     }
 
     public RawMessage combineClean() {
-        String f = "";
+        StringBuilder f = new StringBuilder();
         for (String part : onlyText) {
-            f += part.replace("\\\"", "\"");
+            f.append(part.replace("\\\"", "\""));
         }
-        combinedClean = f;
+        combinedClean = f.toString();
         return this;
     }
 
@@ -946,23 +946,23 @@ public class RawMessage {
     }
 
     public int getFinalLength() {
-        String f = "";
+        StringBuilder f = new StringBuilder();
         for (String part : parts) {
-            if (f.isEmpty())
-                f = "[\"\",";
+            if (f.length() == 0)
+                f.append("[\"\",");
             else
-                f += ",";
-            f += part;
+                f.append(",");
+            f.append(part);
         }
         for (String part : temp.values()) {
-            if (f.isEmpty())
-                f = "[\"\",";
+            if (f.length() == 0)
+                f.append("[\"\",");
             else
-                f += ",";
-            f += part;
+                f.append(",");
+            f.append(part);
         }
-        if (!f.isEmpty())
-            f += "]";
+        if (f.length() != 0)
+            f.append("]");
         return f.length();
     }
 
@@ -1019,15 +1019,13 @@ public class RawMessage {
 
     public String getShortRaw() {
         build();
-        String f = "";
+        StringBuilder f = new StringBuilder();
         for (String part : parts) {
-            if (!f.isEmpty())
-                f += ",";
-            f += part;
+            if (f.length() != 0)
+                f.append(",");
+            f.append(part);
         }
-        f = truncate(f);
-
-        return f;
+        return truncate(f.toString());
     }
 
     public boolean isDontBreakLine() {

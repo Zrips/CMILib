@@ -3,10 +3,11 @@ package net.Zrips.CMILib.Future;
 import java.util.Queue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class CMIFutureBatcher {
     private Queue<CompletableFuture<?>> queue = new ConcurrentLinkedQueue<>();
-    private boolean running = false;
+    private final AtomicBoolean running = new AtomicBoolean(false);
     private int delayBetweenBatches = 0;
 
     public CMIFutureBatcher() {
@@ -24,26 +25,30 @@ public class CMIFutureBatcher {
     }
 
     public void processQueue() {
-        if (running && !queue.isEmpty())
+        if (!running.compareAndSet(false, true))
             return;
-        running = true;
         CompletableFuture.runAsync(() -> {
-            while (!queue.isEmpty()) {
-                CompletableFuture<?> future = queue.poll();
+            while (true) {
+                while (!queue.isEmpty()) {
+                    CompletableFuture<?> future = queue.poll();
 
-                if (future == null)
-                    break;
+                    if (future == null)
+                        break;
 
-                if (delayBetweenBatches > 0)
-                    try {
-                        Thread.sleep(delayBetweenBatches);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                        Thread.currentThread().interrupt();
-                    }
-                future.complete(null);
+                    if (delayBetweenBatches > 0)
+                        try {
+                            Thread.sleep(delayBetweenBatches);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                            Thread.currentThread().interrupt();
+                        }
+                    future.complete(null);
+                }
+                running.set(false);
+                if (!queue.isEmpty() && running.compareAndSet(false, true))
+                    continue;
+                break;
             }
-            running = false;
         });
     }
 
@@ -60,6 +65,6 @@ public class CMIFutureBatcher {
     }
 
     public boolean isRunning() {
-        return running;
+        return running.get();
     }
 }

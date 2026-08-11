@@ -180,13 +180,13 @@ public class CMIGuiButton {
     }
 
     public void startAutoUpdate(int intervalTicks) {
-        updateInterval = intervalTicks;
+        updateInterval = Math.max(1, intervalTicks);
         tasker();
     }
 
     @Deprecated
     public void startAutoUpdate(CMIGui sgui, int intervalTicks) {
-        updateInterval = intervalTicks;
+        updateInterval = Math.max(1, intervalTicks);
         this.sgui = sgui;
         tasker();
     }

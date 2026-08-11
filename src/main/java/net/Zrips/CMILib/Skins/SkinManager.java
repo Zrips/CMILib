@@ -93,6 +93,8 @@ public class SkinManager {
             HttpsURLConnection connection = (HttpsURLConnection) new URL(
                     String.format("https://sessionserver.mojang.com/session/minecraft/profile/%s?unsigned=false", uuid.toString().replace("-", "")))
                     .openConnection();
+            connection.setConnectTimeout(5000);
+            connection.setReadTimeout(5000);
             if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 InputStream stream = connection.getInputStream();
                 BufferedReader buffer = new BufferedReader(new InputStreamReader(stream));
@@ -268,6 +270,8 @@ public class SkinManager {
         try {
             URL url = new URL(target);
             connection = (HttpURLConnection) url.openConnection();
+            connection.setConnectTimeout(5000);
+            connection.setReadTimeout(5000);
             connection.setRequestMethod("GET");
             connection.setUseCaches(false);
             connection.setDoOutput(true);
