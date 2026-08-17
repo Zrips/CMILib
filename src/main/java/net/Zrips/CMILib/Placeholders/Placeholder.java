@@ -405,6 +405,9 @@ public class Placeholder {
                         break;
 
                     CMIPlaceHolders place = CMIPlaceHolders.getByNameExact(cmd);
+                    if (cmd.equalsIgnoreCase("command")) {
+                        CMIMessages.consoleMessage("&e[CMIL-DEBUG] matchInception saw '{" + cmd + "}', resolved enum = " + place);
+                    }
                     if (place == null) {
                         if (plugin.isPlaceholderAPIEnabled()) {
                             try {
@@ -431,11 +434,15 @@ public class Placeholder {
 
                     String group = match.group();
                     String with = this.getValue(uuid, place, group);
+                    if (cmd.equalsIgnoreCase("command")) {
+                        CMIMessages.consoleMessage("&e[CMIL-DEBUG] {command} getValue() returned: '" + with + "' for uuid " + uuid);
+                    }
                     if (with == null)
                         with = "";
                     message = message.replaceFirst(Matcher.quoteReplacement(group), Matcher.quoteReplacement(with));
                 }
             } catch (Throwable e) {
+                CMIMessages.consoleMessage("&c[CMIL-DEBUG] matchInception threw: " + e);
             }
         }
 
@@ -446,10 +453,21 @@ public class Placeholder {
         if (message == null)
             return null;
 
+        boolean hadCommandToken = message.toLowerCase().contains("{command}");
+        if (hadCommandToken) {
+            CMIMessages.consoleMessage("&e[CMIL-DEBUG] translateOwnPlaceHolder start, isCmiPresent=" + CMILib.getInstance().isCmiPresent() + ", msg='" + message + "'");
+        }
+
         if (CMILib.getInstance().isCmiPresent()) {
             try {
                 message = com.Zrips.CMI.CMI.getInstance().getPlaceholderAPIManager().translateOwnPlaceHolder(uuid, message);
+                if (hadCommandToken) {
+                    CMIMessages.consoleMessage("&e[CMIL-DEBUG] after CMI delegation: '" + message + "'");
+                }
             } catch (Throwable e) {
+                if (hadCommandToken) {
+                    CMIMessages.consoleMessage("&c[CMIL-DEBUG] CMI delegation threw: " + e);
+                }
             }
         }
 

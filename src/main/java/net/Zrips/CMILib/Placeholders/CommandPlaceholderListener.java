@@ -7,6 +7,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+import net.Zrips.CMILib.Messages.CMIMessages;
+
 /**
  * Keeps track of the last command each player performed so it can be
  * exposed through the {command} placeholder (returns the command without
@@ -18,6 +20,8 @@ public class CommandPlaceholderListener implements Listener {
     public void onCommand(PlayerCommandPreprocessEvent event) {
         Player player = event.getPlayer();
         Placeholder.setLastCommand(player.getUniqueId(), event.getMessage());
+        CMIMessages.consoleMessage("&e[CMIL-DEBUG] Cached last command for " + player.getName() + ": '" + event.getMessage() + "' -> stored as '"
+                + Placeholder.getLastCommand(player.getUniqueId()) + "'");
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
