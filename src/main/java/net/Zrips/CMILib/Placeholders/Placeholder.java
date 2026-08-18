@@ -439,7 +439,7 @@ public class Placeholder {
                     }
                     if (with == null)
                         with = "";
-                    message = message.replaceFirst(Matcher.quoteReplacement(group), Matcher.quoteReplacement(with));
+                    message = message.replaceFirst(Pattern.quote(group), Matcher.quoteReplacement(with));
                 }
             } catch (Throwable e) {
                 CMIMessages.consoleMessage("&c[CMIL-DEBUG] matchInception threw: " + e);
