@@ -118,7 +118,7 @@ public class CommandsHandler implements CommandExecutor {
             if (cmiSender.isPlayer()) {
                 boolean showPerm = CMILibConfig.permisionOnError || CMILPerm.permisiononerror.hasPermission(sender, false, 5000L);
                 RawMessage rm = new RawMessage();
-                rm.addText(CMIMessages.getMsg(LC.info_NoPermission)).addHover(showPerm ? "&2" + CMILPerm.command.getPermission() : null);
+                rm.addText(CMIMessages.getMsg(LC.info_NoPermission, cmiSender.getPlayer())).addHover(showPerm ? "&2" + CMILPerm.command.getPermission() : null);
                 rm.show(sender);
             }
 
@@ -203,7 +203,7 @@ public class CommandsHandler implements CommandExecutor {
                 boolean showPerm = CMILibConfig.permisionOnError || CMILPerm.permisiononerror.hasPermission(sender, false, 5000L);
 
                 RawMessage rm = new RawMessage();
-                rm.addText(CMIMessages.getMsg(LC.info_NoPermission)).addHover(showPerm ? "&2" + label + ".command." + cmd : null);
+                rm.addText(CMIMessages.getMsg(LC.info_NoPermission, cmiSender.getPlayer())).addHover(showPerm ? "&2" + label + ".command." + cmd : null);
                 rm.show(sender);
 
                 ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
