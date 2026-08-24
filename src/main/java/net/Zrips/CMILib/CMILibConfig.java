@@ -50,6 +50,7 @@ public class CMILibConfig {
 	public static List<String> mysterySpawners;
 
 	public static boolean ExploitPatcherCheckItem = true;
+	public static boolean ClearProtectedIcons = true;
 
 	private CMIItemStack GUIEmptyField = null;
 	private CMIItemStack GUIPreviousPage = null;
@@ -122,6 +123,9 @@ public class CMILibConfig {
 		ExploitPatcherCheckItem = cfg.get("ExploitPatcher.Placeholders.blocked.checkItem", true);
 
 		plugin.getSkinManager().loadConfig();
+
+		cfg.addComment("GlobalGui.ClearProtectedIcons", "When enabled, clearIconItems removes leaked locked GUI icons from player inventory. Disable to skip that sweep");
+		ClearProtectedIcons = cfg.get("GlobalGui.ClearProtectedIcons", true);
 
 		cfg.addComment("GlobalGui.EmptyField", "Defines item type in empty fields in GUI when its needed to be filled up");
 		GUIEmptyField = CMILib.getInstance().getItemManager().getItem(cfg.get("GlobalGui.EmptyField", "BLACK_STAINED_GLASS_PANE"));
