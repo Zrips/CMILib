@@ -6,14 +6,13 @@
 
 	<groupId>CMILib</groupId>
 	<artifactId>CMILib</artifactId>
-	<version>1.5.9.9</version>
+	<version>1.5.10.0</version>
 	<name>CMILib</name>
 	<url>http://maven.apache.org</url>
 	<packaging>jar</packaging>
 
 	<properties>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
+		<maven.compiler.source>8</maven.compiler.source>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
@@ -27,16 +26,10 @@
 <!--        </dependency>-->
         <dependency>
 			<groupId>io.papermc.paper</groupId>
-			<artifactId>paper-api</artifactId> 
-			<version>1.21.11-R0.1-SNAPSHOT</version> <!-- use latest -->
+			<artifactId>paper-api</artifactId>
+			<version>26.2.build.112-stable</version>
 			<scope>provided</scope>
 		</dependency>
-<!--        <dependency>-->
-<!--            <groupId>org.spigotmc</groupId>-->
-<!--            <artifactId>spigot-api</artifactId>-->
-<!--            <version>1.21.11-R0.1-SNAPSHOT</version>-->
-<!--            <scope>provided</scope>-->
-<!--        </dependency>-->
         <dependency>
             <groupId>com.mojang</groupId>
             <artifactId>authlib</artifactId>
@@ -113,11 +106,10 @@
 			<plugin>
                 <groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-                <version>3.11.0</version>
-                <configuration>
-                    <source>${maven.compiler.source}</source>
-                    <target>${maven.compiler.target}</target>
-                </configuration>
+			    <version>3.13.0</version>
+			    <configuration>
+			        <release>8</release>
+			    </configuration>
 			</plugin>
 		</plugins>
 	</build>

@@ -1,7 +1,6 @@
 package net.Zrips.CMILib.Locale;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import net.Zrips.CMILib.Messages.CMIMessages;
@@ -130,7 +129,6 @@ public enum LC {
     info_oneHour("{gcs}[hours] {gcp}hour "),
     info_min("{gcs}[mins] {gcp}min "),
     info_sec("{gcs}[secs] {gcp}sec "),
-    
 
     info_time_separator("{gcn}:"),
     info_time_short_year("{gcs}[years]{gcp}Y"),

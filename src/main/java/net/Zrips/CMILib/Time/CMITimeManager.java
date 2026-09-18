@@ -130,7 +130,7 @@ public class CMITimeManager {
             time.append(LC.info_time_short_sec.getLocale("[secs]", sec));
         }
 
-        if (time.isEmpty())
+        if (time.toString().isEmpty())
             time.append(LC.info_time_short_sec.getLocale("[secs]", 0));
 
         return time.toString();

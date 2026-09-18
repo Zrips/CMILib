@@ -10,6 +10,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -48,7 +49,6 @@ import net.Zrips.CMILib.Effects.CMIEffect;
 import net.Zrips.CMILib.Effects.CMIEffectManager;
 import net.Zrips.CMILib.Items.CMIItemStack;
 import net.Zrips.CMILib.Items.CMIMaterial;
-import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.NBT.CMINBT;
 import net.Zrips.CMILib.RawMessages.RawMessage;
 import net.Zrips.CMILib.Skins.SkinManager;
@@ -2131,7 +2131,7 @@ public class Reflections {
 
                     if (itemStack == null)
                         return;
-                    
+
                     Object identifier = getIdentifier(advancement.getId().getNamespace(), advancement.getId().getKey());
 
                     if (toastAdvancementDisplay == null) {
@@ -2157,36 +2157,80 @@ public class Reflections {
                             false);
 
                     List<List<String>> adreq = Arrays.asList(Arrays.asList(CMIAdvancement.identificator));
+
                     Object requirements = advancementRequirementsClass.getConstructor(List.class).newInstance(adreq);
 
                     Object progress = advancementProgressClass.getConstructor().newInstance();
+
                     advancementProgressClass.getMethod("update", advancementRequirementsClass).invoke(progress, requirements);
+
                     advancementProgressClass.getMethod("grantProgress", String.class).invoke(progress, CMIAdvancement.identificator);
 
                     Map<Object, Object> progressMap = new HashMap<>();
                     progressMap.put(identifier, progress);
 
-                    Set<Object> addedSet = new HashSet<>();
-                    Object serializedAdv = SerializedAdvancement.getConstructor().newInstance();
-                    SerializedAdvancement.getMethod("display", advancementDisplayClass).invoke(serializedAdv, display);
-                    SerializedAdvancement.getMethod("requirements", advancementRequirementsClass).invoke(serializedAdv, requirements);
-                    Object holder = SerializedAdvancement.getMethod("build", identifierClass).invoke(serializedAdv, identifier);
-                    addedSet.add(holder);
-
                     Set<Object> removedSet = new HashSet<>();
                     removedSet.add(identifier);
 
-                    try {
-                        if (toastPacketPlayOutAdvancements == null)
-                            toastPacketPlayOutAdvancements = packetPlayOutAdvancementsClass.getConstructor(boolean.class, Collection.class, Set.class, Map.class, boolean.class);
-                    } catch (Throwable e) {
-                        e.printStackTrace();
-                        return;
-                    }
+                    if (Version.isCurrentEqualOrHigher(Version.v26_3_0)) {
 
-                    for (Player player : players) {
-                        CMIPlayerConnection.sendPacket(player, toastPacketPlayOutAdvancements.newInstance(false, addedSet, new HashSet<>(), progressMap, true));
-                        CMIPlayerConnection.sendPacket(player, toastPacketPlayOutAdvancements.newInstance(false, new HashSet<>(), removedSet, new HashMap<>(), true));
+                        try {
+                            if (toastPacketPlayOutAdvancements == null) {
+                                toastPacketPlayOutAdvancements = packetPlayOutAdvancementsClass.getConstructor(boolean.class, List.class, Set.class, Map.class, boolean.class);
+                            }
+                        } catch (Throwable e) {
+                            e.printStackTrace();
+                            return;
+                        }
+
+                        Object positionedAdvancement = null;
+
+                        try {
+                            Class<?> positionedAdvancementClass = Class.forName(packetPlayOutAdvancementsClass.getName() + "$PositionedAdvancement");
+
+                            Object serializedAdv = SerializedAdvancement.getConstructor().newInstance();
+                            SerializedAdvancement.getMethod("display", advancementDisplayClass).invoke(serializedAdv, display);
+                            SerializedAdvancement.getMethod("requirements", advancementRequirementsClass).invoke(serializedAdv, requirements);
+                            Object holder = SerializedAdvancement.getMethod("build", identifierClass).invoke(serializedAdv, identifier);
+
+                            Constructor<?> positionedAdvancementConstructor = positionedAdvancementClass.getConstructor(holder.getClass(), float.class, float.class);
+
+                            positionedAdvancement = positionedAdvancementConstructor.newInstance(holder, 0.0F, 0.0F);
+                        } catch (Throwable e) {
+                            e.printStackTrace();
+                            return;
+                        }
+
+                        List<Object> addedList = new ArrayList<>();
+                        addedList.add(positionedAdvancement);
+
+                        for (Player player : players) {
+                            CMIPlayerConnection.sendPacket(player, toastPacketPlayOutAdvancements.newInstance(false, addedList, new HashSet<>(), progressMap, true));
+                            CMIPlayerConnection.sendPacket(player, toastPacketPlayOutAdvancements.newInstance(false, new ArrayList<Object>(), removedSet, new HashMap<>(), true));
+                        }
+                    } else {
+
+                        Object serializedAdv = SerializedAdvancement.getConstructor().newInstance();
+                        SerializedAdvancement.getMethod("display", advancementDisplayClass).invoke(serializedAdv, display);
+                        SerializedAdvancement.getMethod("requirements", advancementRequirementsClass).invoke(serializedAdv, requirements);
+                        Object holder = SerializedAdvancement.getMethod("build", identifierClass).invoke(serializedAdv, identifier);
+                        Set<Object> addedSet = new HashSet<>();
+                        addedSet.add(holder);
+                        removedSet.add(identifier);
+
+                        try {
+                            if (toastPacketPlayOutAdvancements == null) {
+                                toastPacketPlayOutAdvancements = packetPlayOutAdvancementsClass.getConstructor(boolean.class, Collection.class, Set.class, Map.class, boolean.class);
+                            }
+                        } catch (Throwable e) {
+                            e.printStackTrace();
+                            return;
+                        }
+
+                        for (Player player : players) {
+                            CMIPlayerConnection.sendPacket(player, toastPacketPlayOutAdvancements.newInstance(false, addedSet, new HashSet<>(), progressMap, true));
+                            CMIPlayerConnection.sendPacket(player, toastPacketPlayOutAdvancements.newInstance(false, new HashSet<>(), removedSet, new HashMap<>(), true));
+                        }
                     }
 
                 } else if (Version.isCurrentEqualOrHigher(Version.v1_20_R3)) {

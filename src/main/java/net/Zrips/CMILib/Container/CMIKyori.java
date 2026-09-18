@@ -22,6 +22,10 @@ public class CMIKyori {
         return PlainTextComponentSerializer.plainText().deserialize(text);
     }
 
+    public static Component deserializeLegacy(String text) {
+        return LegacyComponentSerializer.legacySection().deserialize(text);
+    }
+
     public static String parse(ItemStack item) {
         Component component = Component.empty().hoverEvent(item.asHoverEvent());
         @NotNull
