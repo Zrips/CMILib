@@ -1919,6 +1919,7 @@ public enum CMIMaterial {
     LEGACY_WHEAT("Wheat Block");
 
     private boolean legacy = false;
+
     private String name;
     private String translatedName = null;
     private List<String> legacyName;
@@ -1926,7 +1927,7 @@ public enum CMIMaterial {
     private String mojangName;
     private Set<CMIMC> criteria = new HashSet<>();
 
-    Material mat;
+    private Material mat = null;
 
     CMIMaterial(CMIMC... criteria) {
         this(null, Arrays.asList(criteria));
@@ -1955,9 +1956,7 @@ public enum CMIMaterial {
         if (criteria != null)
             this.criteria = new HashSet<>(criteria);
 
-        if (this.toString().startsWith("LEGACY_")) {
-            legacy = true;
-        }
+        legacy = this.toString().startsWith("LEGACY_");
     }
 
     public String getName() {

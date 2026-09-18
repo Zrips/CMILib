@@ -368,6 +368,11 @@ public enum CMIEntityType {
     SULFUR_CUBE(Arrays.asList(
             "MjA1ZWMwMjQxZjA4NGUxNzc2YTIwMWY2ZGY4YzEyNGM4NjM3NjcxZmQ4NWUwYWY1ZTc3MDkwZjRlOWMzODYwMiJ9fX0=")
     ),
+    
+    // 26.3
+    CUSHION(),
+    POPLAR_BOAT(),
+    POPLAR_CHEST_BOAT(),
 
     // if possible we can remove this string for each texture to save up some space
     // eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUv
