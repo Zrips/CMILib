@@ -8,6 +8,8 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.Zrips.CMILib.Container.CMICachedLinkedMap;
+
 public class GradientColor {
 
     private String startingColor = null;
@@ -155,11 +157,46 @@ public class GradientColor {
     private static Pattern cleanupPattern = Pattern.compile("\\{#([0-9A-Za-z_]{3,})<\\}\\{#\\1>\\}");
 
     private static final Pattern gradientPattern = Pattern.compile("(\\{(#([^\\{\\}]*)?)>\\})(.*?)(\\{(#([^\\{\\}]*)?)<(>?)\\})");
-//    private static final Pattern gradientPattern = Pattern.compile("(\\{(#[^\\{\\}]*?)>\\})(.*?)(\\{(#[^\\{\\}]*?)<(>?)\\})");
+
+    static Pattern pattern = Pattern.compile("(\\{#[^}]+})(.)(.)(\\{#[^}]+})");
+
+    private static CMICachedLinkedMap<String, String> cache = new CMICachedLinkedMap<String, String>(100);
 
     public static String deconvert(String text) {
-
+        
+        text = CMIChatColor.deColorize(text, true);
+        
         text = convertLegacyToHex(text);
+
+        String cached = cache.get(text);
+        if (cached != null)
+            return cached;
+
+        Matcher matcher = pattern.matcher(text);
+
+        StringBuffer result = new StringBuffer();
+
+        while (matcher.find()) {
+            String firstColor = matcher.group(1);
+            String char1 = matcher.group(2);
+            String char2 = matcher.group(3);
+            String secondColor = matcher.group(4);
+
+            matcher.appendReplacement(result, Matcher.quoteReplacement(firstColor + char1 + firstColor + char2 + secondColor));
+        }
+
+        matcher.appendTail(result);
+
+        text = result.toString();
+
+        String res = de(text);
+
+        cache.put(text, res);
+
+        return res;
+    }
+
+    private static String de(String text) {
 
         String original = text;
 
@@ -174,7 +211,7 @@ public class GradientColor {
             }
         }
 
-        if (!CMIChatColor.translate(text).equals(CMIChatColor.translate(original))) {
+        if (!CMIChatColor.translate(text).equalsIgnoreCase(CMIChatColor.translate(original))) {
             text = original;
         }
 
@@ -226,6 +263,9 @@ public class GradientColor {
             if (delta > 2) {
                 gc.calculateFinalString();
                 gradients.add(gc);
+
+//                gc = new GradientColor(firstHex, firstFormats);
+//                gc.setEndingColor(secondHex);
                 gc = null;
                 break;
             }
@@ -248,7 +288,7 @@ public class GradientColor {
         }
 
         if (!gradients.isEmpty() && !original.equals(text)) {
-            text = deconvert(text);
+            text = de(text);
         }
 
         return text;
@@ -292,49 +332,11 @@ public class GradientColor {
             return null;
         }
     }
-//    private static String legacyCodeToHex(char code) {
-//        switch (Character.toLowerCase(code)) {
-//        case '0':
-//            return "000000"; // black
-//        case '1':
-//            return "0000aa"; // dark blue
-//        case '2':
-//            return "00aa00"; // dark green
-//        case '3':
-//            return "00aaaa"; // dark aqua
-//        case '4':
-//            return "aa0000"; // dark red
-//        case '5':
-//            return "aa00aa"; // dark purple
-//        case '6':
-//            return "ffaa00"; // gold
-//        case '7':
-//            return "aaaaaa"; // gray
-//        case '8':
-//            return "555555"; // dark gray
-//        case '9':
-//            return "5555ff"; // blue
-//        case 'a':
-//            return "55ff55"; // green
-//        case 'b':
-//            return "55ffff"; // aqua
-//        case 'c':
-//            return "ff5555"; // red
-//        case 'd':
-//            return "ff55ff"; // light purple
-//        case 'e':
-//            return "ffff55"; // yellow
-//        case 'f':
-//            return "ffffff"; // white
-//        default:
-//            return null;
-//        }
-//    }
 
     private static boolean isHexDigit(char c) {
         return (c >= '0' && c <= '9')
-            || (c >= 'a' && c <= 'f')
-            || (c >= 'A' && c <= 'F');
+                || (c >= 'a' && c <= 'f')
+                || (c >= 'A' && c <= 'F');
     }
 
     public static String convertLegacyToHex(String input) {
@@ -406,6 +408,7 @@ public class GradientColor {
         int greenPart = (int) (color2.getGreen() * percent + color1.getGreen() * inverse_percent);
         int bluePart = (int) (color2.getBlue() * percent + color1.getBlue() * inverse_percent);
         return vanilla ? toHexColorVanilla(redPart, greenPart, bluePart) : toHexColor(redPart, greenPart, bluePart);
+//        return toHexColor(redPart, greenPart, bluePart);
     }
 
     private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
@@ -452,8 +455,18 @@ public class GradientColor {
 
         while (gradientMatch.find()) {
             String fullmatch = gradientMatch.group();
-            CMIChatColor c1 = CMIChatColor.getColor(gradientMatch.group(3));
-            CMIChatColor c2 = CMIChatColor.getColor(gradientMatch.group(7));
+
+//            CMIChatColor c1 = CMIChatColor.getColor(gradientMatch.group(3));
+//            CMIChatColor c2 = CMIChatColor.getColor(gradientMatch.group(7));
+
+            String color1 = gradientMatch.group(3);
+            String color2 = gradientMatch.group(7);
+
+            boolean color1IsHex = color1.matches("(?i)#[0-9a-f]{6}");
+            boolean color2IsHex = color2.matches("(?i)#[0-9a-f]{6}");
+
+            CMIChatColor c1 = CMIChatColor.getColor(color1);
+            CMIChatColor c2 = CMIChatColor.getColor(color2);
 
             if (c1 == null || c2 == null) {
                 continue;
@@ -476,8 +489,21 @@ public class GradientColor {
                 if (vanilla) {
                     updated.append(mixColors(c1, c2, percent, vanilla));
                 } else {
+//                    String mix = mixColors(c1, c2, percent, vanilla);
+//                    updated.append(CMIChatColor.colorCodePrefix).append(mix).append(CMIChatColor.colorCodeSuffix);
+
                     String mix = mixColors(c1, c2, percent, vanilla);
+
+                    if (!color1IsHex && !color2IsHex) {
+                        CMIChatColor mixedColor = CMIChatColor.getColor(mix);
+
+                        if (mixedColor != null) {
+                            mix = mixedColor.getCleanName();
+                        }
+                    }
+
                     updated.append(CMIChatColor.colorCodePrefix).append(mix).append(CMIChatColor.colorCodeSuffix);
+
                 }
                 if (!formats.isEmpty()) {
                     for (CMIChatColor one : formats) {
