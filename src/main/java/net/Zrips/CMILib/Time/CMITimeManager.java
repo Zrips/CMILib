@@ -289,9 +289,9 @@ public class CMITimeManager {
         int additional = 0;
         if (time.contains("pm")) {
             time = time.replace("pm", "");
-            additional = 12;
         } else if (time.contains("am")) {
             time = time.replace("am", "");
+            additional = 12;
         } else if (time.contains("ticks") || !time.contains(":")) {
             time = time.replace("ticks", "");
             long ticks = -1;
