@@ -523,6 +523,7 @@ public enum Version {
                 continue;
 
             version.patchVersion = v.getPatchVersion();
+            version.value = (version.getMajorVersion() * 10000) + (version.getMinorVersion() * 100) + version.getPatchVersion();
 
             return version;
         }
