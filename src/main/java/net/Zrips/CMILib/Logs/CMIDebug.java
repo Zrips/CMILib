@@ -37,26 +37,30 @@ public class CMIDebug {
         if (player == null || !player.isOnline())
             return;
 
-        StringBuilder FullMessage = new StringBuilder();
+        StringBuilder fullMessage = new StringBuilder();
         int i = 1;
         CMIChatColor cl = CMIChatColor.GRAY;
-        for (Object one : message) {
-            i++;
-            if (i >= 2) {
-                i = 0;
-                if (cl == CMIChatColor.GRAY)
-                    cl = CMIChatColor.WHITE;
-                else
-                    cl = CMIChatColor.GRAY;
-                FullMessage.append(cl);
-            }
-            if (one instanceof String[]) {
-                FullMessage.append(String.valueOf(Arrays.asList((String[]) one).toString()) + " ");
-            } else
-                FullMessage.append(String.valueOf(one) + " ");
-        }
 
-        player.sendMessage(CMIChatColor.DARK_GRAY + "[CMID] " + CMIChatColor.DARK_AQUA + FullMessage.toString());
+        if (message == null)
+            fullMessage.append("null");
+        else
+            for (Object one : message) {
+                i++;
+                if (i >= 2) {
+                    i = 0;
+                    if (cl == CMIChatColor.GRAY)
+                        cl = CMIChatColor.WHITE;
+                    else
+                        cl = CMIChatColor.GRAY;
+                    fullMessage.append(cl);
+                }
+                if (one instanceof String[]) {
+                    fullMessage.append(String.valueOf(Arrays.asList((String[]) one).toString()) + " ");
+                } else
+                    fullMessage.append(String.valueOf(one) + " ");
+            }
+
+        player.sendMessage(CMIChatColor.DARK_GRAY + "[CMID] " + CMIChatColor.DARK_AQUA + fullMessage.toString());
     }
 
     public static void cd(Object... message) {
@@ -64,15 +68,19 @@ public class CMIDebug {
         if (player == null || !player.isOnline())
             return;
 
-        StringBuilder FullMessage = new StringBuilder();
-        for (Object one : message) {
-            if (one instanceof String[]) {
-                FullMessage.append(Arrays.asList((String[]) one).toString()).append(" ");
-            } else
-                FullMessage.append(String.valueOf(one)).append(" ");
-        }
+        StringBuilder fullMessage = new StringBuilder();
 
-        player.sendMessage(CMIChatColor.DARK_GRAY + "[CMID] " + CMIChatColor.DARK_AQUA + FullMessage.toString().replace("§", "&"));
+        if (message == null)
+            fullMessage.append("null");
+        else
+            for (Object one : message) {
+                if (one instanceof String[]) {
+                    fullMessage.append(Arrays.asList((String[]) one).toString()).append(" ");
+                } else
+                    fullMessage.append(String.valueOf(one)).append(" ");
+            }
+
+        player.sendMessage(CMIChatColor.DARK_GRAY + "[CMID] " + CMIChatColor.DARK_AQUA + fullMessage.toString().replace("§", "&"));
     }
 
     public static void c(Object... message) {

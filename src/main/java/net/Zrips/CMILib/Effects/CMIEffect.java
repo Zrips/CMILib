@@ -375,6 +375,10 @@ public class CMIEffect {
 
         return cmiEffect;
     }
+    
+    private boolean isZero(Vector vector) {
+        return vector.getX() == 0 && vector.getY() == 0 && vector.getZ() == 0;
+    }
 
     public String serialize() {
         StringBuilder sb = new StringBuilder();
@@ -385,7 +389,7 @@ public class CMIEffect {
         if (getSpeed() != 0)
             sb.append(";s{").append(getSpeed()).append("}");
 
-        if (!getOffset().isZero())
+        if (!isZero(getOffset()))
             sb.append(";o{").append((new CMIVector3D(getOffset())).toString()).append("}");
 
         if (getOptions() instanceof CMIParticleDustOptions) {
