@@ -17,74 +17,74 @@ public class CTextEditorListener implements Listener {
     private CMILib plugin;
 
     public CTextEditorListener(CMILib plugin) {
-	this.plugin = plugin;
+        this.plugin = plugin;
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void AsyncPlayerChatEvent(final AsyncPlayerChatEvent event) {
-	final Player player = event.getPlayer();
+        final Player player = event.getPlayer();
 
-	if (!ListEditor.isChatEditing(player))
-	    return;
-	final String cmd = ListEditor.getChatEditorCmd(player);
-	final String message = event.getMessage().endsWith("?") ? event.getMessage() + ListEditor.questionMarkReplacer : event.getMessage();
+        if (!ListEditor.isChatEditing(player))
+            return;
+        final String cmd = ListEditor.getChatEditorCmd(player);
+        final String message = event.getMessage().endsWith("?") ? event.getMessage() + ListEditor.questionMarkReplacer : event.getMessage();
 
-	if (cmd != null) {
-	    CMIScheduler.get().runTask(new Runnable() {
-		@Override
-		public void run() {
-		    player.performCommand(cmd + message);
-		}
-	    });
-	}
-	ListEditor.removeChatEditor(player);
-	event.setCancelled(true);
-	event.getRecipients().clear();
+        if (cmd != null) {
+            CMIScheduler.get().runTask(new Runnable() {
+                @Override
+                public void run() {
+                    player.performCommand(cmd + message);
+                }
+            });
+        }
+        ListEditor.removeChatEditor(player);
+        event.setCancelled(true);
+        event.getRecipients().clear();
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onShadowCommand(PlayerCommandPreprocessEvent event) {
-	if (event.isCancelled())
-	    return;
+        if (event.isCancelled())
+            return;
 
-	Player player = event.getPlayer();
+        Player player = event.getPlayer();
 
-	String message = event.getMessage();
+        String message = event.getMessage();
 
-	if (!message.startsWith("/" + CommandsHandler.getLabel() + " shadowcmd "))
-	    return;
+        if (!message.startsWith("/" + CommandsHandler.getLabel() + " shadowcmd "))
+            return;
 
-	event.setCancelled(true);
-	String id = message.substring(("/" + CommandsHandler.getLabel() + " shadowcmd ").length(), message.length()).split(" ")[0];
+        event.setCancelled(true);
+        String id = message.substring(("/" + CommandsHandler.getLabel() + " shadowcmd ").length(), message.length()).split(" ")[0];
 
-	ShadowCommandInfo cmd = ListEditor.getShadowCommand(player, id);
+        ShadowCommandInfo cmd = ListEditor.getShadowCommand(player, id);
 
-	if (cmd != null) {
-	    String command = cmd.getCmd();
-	    Snd snd = new Snd(player, player);
-	    command = plugin.getLM().updateSnd(snd, command);
+        if (cmd != null) {
+            String command = cmd.getCmd();
+            Snd snd = new Snd(player, player);
+            command = plugin.getLM().updateSnd(snd, command);
 
-	    switch (cmd.getType()) {
-	    case Console:
-		command = plugin.getPlaceholderAPIManager().translateOwnPlaceHolder(player, command);
-		ServerCommandEvent e = new ServerCommandEvent(plugin.getServer().getConsoleSender(), command);
-		plugin.getServer().getPluginManager().callEvent(e);
-		if (e.isCancelled())
-		    return;
-		plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), e.getCommand());
-		break;
-	    case Player:
-		command = plugin.getPlaceholderAPIManager().translateOwnPlaceHolder(player, command);
-		PlayerCommandPreprocessEvent ev = new PlayerCommandPreprocessEvent(player, "/" + command);
-		plugin.getServer().getPluginManager().callEvent(ev);
-		if (ev.isCancelled())
-		    return;
-		player.performCommand(cmd.getCmd());
-		break;
-	    default:
-		break;
-	    }
-	}
+            switch (cmd.getType()) {
+            case Console:
+                command = plugin.getPlaceholderAPIManager().translateOwnPlaceHolder(player, command);
+                ServerCommandEvent e = new ServerCommandEvent(plugin.getServer().getConsoleSender(), command);
+                plugin.getServer().getPluginManager().callEvent(e);
+                if (e.isCancelled())
+                    return;
+                plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), e.getCommand());
+                break;
+            case Player:
+                command = plugin.getPlaceholderAPIManager().translateOwnPlaceHolder(player, command);
+                PlayerCommandPreprocessEvent ev = new PlayerCommandPreprocessEvent(player, "/" + command);
+                plugin.getServer().getPluginManager().callEvent(ev);
+                if (ev.isCancelled())
+                    return;
+                player.performCommand(cmd.getCmd());
+                break;
+            default:
+                break;
+            }
+        }
     }
 
 }

@@ -20,36 +20,36 @@ public class ChatMessageEdit {
     private String pasteInString = null;
 
     public ChatMessageEdit(CommandSender sender) {
-	this(sender instanceof Player ? ((Player) sender).getUniqueId() : CMILib.getInstance().getServerUUID());
+        this(sender instanceof Player ? ((Player) sender).getUniqueId() : CMILib.getInstance().getServerUUID());
     }
 
     public ChatMessageEdit(CommandSender sender, String pasteInText) {
-	this(sender instanceof Player ? ((Player) sender).getUniqueId() : CMILib.getInstance().getServerUUID(), pasteInText);
+        this(sender instanceof Player ? ((Player) sender).getUniqueId() : CMILib.getInstance().getServerUUID(), pasteInText);
     }
 
     public ChatMessageEdit(UUID uuid) {
-	this(uuid, null);
+        this(uuid, null);
     }
 
     public ChatMessageEdit(UUID uuid, String pasteInText) {
-	this.uuid = uuid;
-	ChatEditorManager.add(this);
-	time = System.currentTimeMillis();
-	this.pasteInString = pasteInText;
+        this.uuid = uuid;
+        ChatEditorManager.add(this);
+        time = System.currentTimeMillis();
+        this.pasteInString = pasteInText;
     }
 
     public void printMessage() {
-	printMessage(null);
+        printMessage(null);
     }
 
     public void printMessage(String customText) {
-	if (pasteInString != null) {
-	    RawMessage rm = new RawMessage();
-	    rm.addText(customText == null ? LC.modify_commandEditInfo.getLocale() : CMIChatColor.translate(customText));
-	    rm.addHover(LC.info_Click.getLocale());
-	    rm.addSuggestion(pasteInString);
-	    rm.show(Bukkit.getPlayer(uuid));
-	}
+        if (pasteInString != null) {
+            RawMessage rm = new RawMessage();
+            rm.addText(customText == null ? LC.modify_commandEditInfo.getLocale() : CMIChatColor.translate(customText));
+            rm.addHover(LC.info_Click.getLocale());
+            rm.addSuggestion(pasteInString);
+            rm.show(Bukkit.getPlayer(uuid));
+        }
     }
 
     public void run(String message) {
@@ -63,42 +63,42 @@ public class ChatMessageEdit {
     }
 
     public void delete() {
-	ChatEditorManager.delete(this);
+        ChatEditorManager.delete(this);
     }
 
     public UUID getUuid() {
-	return uuid;
+        return uuid;
     }
 
     public void setUuid(UUID uuid) {
-	this.uuid = uuid;
+        this.uuid = uuid;
     }
 
     public boolean isKeep() {
-	return keep;
+        return keep;
     }
 
     public void setKeep(boolean keep) {
-	this.keep = keep;
+        this.keep = keep;
     }
 
     public String getCancelVariable() {
-	return cancelVariable;
+        return cancelVariable;
     }
 
     public void setCancelVariable(String cancelVariable) {
-	this.cancelVariable = cancelVariable;
+        this.cancelVariable = cancelVariable;
     }
 
     public boolean isCheckForCancel() {
-	return checkForCancel;
+        return checkForCancel;
     }
 
     public void setCheckForCancel(boolean checkForCancel) {
-	this.checkForCancel = checkForCancel;
+        this.checkForCancel = checkForCancel;
     }
 
     public String getPasteInString() {
-	return pasteInString;
+        return pasteInString;
     }
 }

@@ -377,15 +377,18 @@ public class CMIEffect {
     }
     
     private boolean isZero(Vector vector) {
+        
         return vector.getX() == 0 && vector.getY() == 0 && vector.getZ() == 0;
-    }
-
-    public String serialize() {
+    } 
+        
+    public String serialize() {         
         StringBuilder sb = new StringBuilder();
         sb.append(getParticle().getName().replace(" ", ""));
 
         if (getAmount() != 1)
             sb.append(";a{").append(getAmount()).append("}");
+        
+        
         if (getSpeed() != 0)
             sb.append(";s{").append(getSpeed()).append("}");
 
