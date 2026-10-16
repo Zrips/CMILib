@@ -144,6 +144,8 @@ public class CMIImage {
         BufferedImage res = null;
         try {
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setConnectTimeout(5000);
+            connection.setReadTimeout(5000);
             stream = connection.getInputStream();
             res = ImageIO.read(stream);
 

@@ -279,12 +279,14 @@ public class CMILocation extends Location {
 
         ChunkSnapshot chunkSnapshot = null;
 
-        if (!world.getBlockAt(x, 0, z).getChunk().isLoaded()) {
-            world.getBlockAt(x, 0, z).getChunk().load();
-            chunkSnapshot = world.getBlockAt(x, 0, z).getChunk().getChunkSnapshot(false, false, false);
-            world.getBlockAt(x, 0, z).getChunk().unload();
+        Chunk chunk = world.getBlockAt(x, 0, z).getChunk();
+
+        if (!chunk.isLoaded()) {
+            chunk.load();
+            chunkSnapshot = chunk.getChunkSnapshot(false, false, false);
+            chunk.unload();
         } else {
-            chunkSnapshot = world.getBlockAt(x, 0, z).getChunk().getChunkSnapshot();
+            chunkSnapshot = chunk.getChunkSnapshot();
         }
 
         if (chunkSnapshot == null)

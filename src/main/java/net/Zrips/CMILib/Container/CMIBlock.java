@@ -29,8 +29,10 @@ public class CMIBlock {
             return dir;
         }
 
+        private static final blockDirection[] VALUES = values();
+
         public static blockDirection getByDir(int dir) {
-            for (blockDirection one : blockDirection.values()) {
+            for (blockDirection one : VALUES) {
                 if (one.getDir() == dir)
                     return one;
             }
@@ -70,8 +72,10 @@ public class CMIBlock {
         OUTER_RIGHT,
         STRAIGHT;
 
+        private static final StairShape[] VALUES = values();
+
         public static StairShape getByName(String name) {
-            for (StairShape one : StairShape.values()) {
+            for (StairShape one : VALUES) {
                 if (one.toString().equalsIgnoreCase(name))
                     return one;
             }
@@ -2062,7 +2066,6 @@ public class CMIBlock {
         if (block.getState() instanceof InventoryHolder) {
             try {
                 block.getChunk().load(false);
-                block.getChunk().setForceLoaded(true);
             } catch (Throwable e) {
 
             }
