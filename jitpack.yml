@@ -1,6 +1,5 @@
 jdk:
-  - openjdk21
+  - openjdk25
 
 install:
-  - mvn wrapper:wrapper -Dmaven=3.9.7
-  - ./mvnw clean install -DskipTests
+  - mvn clean install -DskipTests
