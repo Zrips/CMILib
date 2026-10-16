@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import net.Zrips.CMILib.Locale.LC;
+import net.Zrips.CMILib.Logs.CMIDebug;
 
 public class CMITimeManager {
 
@@ -279,6 +280,14 @@ public class CMITimeManager {
         return (tInfo);
     }
 
+    public static long toMinecraftTime(String time) {
+        time = time.toUpperCase().trim();
+        boolean pm = time.endsWith("PM");
+        int hour = Integer.parseInt(time.replaceAll("[^0-9]", ""));
+        hour = hour % 12 + (pm ? 12 : 0);
+        return (hour * 1000L - 6000L + 24000L) % 24000L;
+    }
+
     public static TimeInfo stringToTimeInfo(String time) {
 
         TimeInfo tInfo = new TimeInfo();
@@ -287,11 +296,10 @@ public class CMITimeManager {
         List<String> splited = new ArrayList<String>();
 
         int additional = 0;
-        if (time.contains("pm")) {
-            time = time.replace("pm", "");
-        } else if (time.contains("am")) {
-            time = time.replace("am", "");
-            additional = 12;
+        if (time.contains("pm") || time.contains("am")) {
+            long ticks = toMinecraftTime(time);
+            tInfo.setTicks((int) ticks);
+            return tInfo;
         } else if (time.contains("ticks") || !time.contains(":")) {
             time = time.replace("ticks", "");
             long ticks = -1;

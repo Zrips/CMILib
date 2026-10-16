@@ -1,9 +1,11 @@
 package net.Zrips.CMILib.Items;
 
 public enum CMITrimPattern {
+    BOLT,
     COAST,
     DUNE,
     EYE,
+    FLOW,
     HOST,
     RAISER,
     RIB,
@@ -28,12 +30,16 @@ public enum CMITrimPattern {
 
     public static org.bukkit.inventory.meta.trim.TrimPattern getByName(String name) {
         switch (name.toUpperCase()) {
+        case "BOLT":
+            return org.bukkit.inventory.meta.trim.TrimPattern.BOLT;
         case "COAST":
             return org.bukkit.inventory.meta.trim.TrimPattern.COAST;
         case "DUNE":
             return org.bukkit.inventory.meta.trim.TrimPattern.DUNE;
         case "EYE":
             return org.bukkit.inventory.meta.trim.TrimPattern.EYE;
+        case "FLOW":
+            return org.bukkit.inventory.meta.trim.TrimPattern.FLOW;
         case "HOST":
             return org.bukkit.inventory.meta.trim.TrimPattern.HOST;
         case "RAISER":

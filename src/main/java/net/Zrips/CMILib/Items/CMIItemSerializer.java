@@ -991,7 +991,7 @@ public class CMIItemSerializer {
                     try {
                         attributeMod = Double.parseDouble(split[ai]);
                         continue;
-                    } catch (Throwable e) {
+                    } catch (Exception e) {
                     }
                 }
                 if (operation == -1) {
@@ -1001,7 +1001,7 @@ public class CMIItemSerializer {
 
             try {
                 attributeMod = Double.parseDouble(split[1]);
-            } catch (NumberFormatException e) {
+            } catch (Exception e) {
                 continue;
             }
 
