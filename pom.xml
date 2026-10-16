@@ -6,65 +6,65 @@
 
 	<groupId>CMILib</groupId>
 	<artifactId>CMILib</artifactId>
-	<version>1.6.0.1</version>
+	<version>1.6.0.2</version>
 	<name>CMILib</name>
 	<url>http://maven.apache.org</url>
 	<packaging>jar</packaging>
 
 	<properties>
-		<maven.compiler.source>8</maven.compiler.source>
+		<maven.compiler.release>8</maven.compiler.release>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
 	<dependencies>
 		<!-- APIs -->
-<!--        <dependency>-->
-<!--            <groupId>dev.folia</groupId>-->
-<!--            <artifactId>folia-api</artifactId>-->
-<!--            <version>1.21.4-R0.1-SNAPSHOT</version>-->
-<!--            <scope>provided</scope>-->
-<!--        </dependency>-->
-        <dependency>
+		<!--        <dependency>-->
+		<!--            <groupId>dev.folia</groupId>-->
+		<!--            <artifactId>folia-api</artifactId>-->
+		<!--            <version>1.21.4-R0.1-SNAPSHOT</version>-->
+		<!--            <scope>provided</scope>-->
+		<!--        </dependency>-->
+		<dependency>
 			<groupId>io.papermc.paper</groupId>
 			<artifactId>paper-api</artifactId>
 			<version>26.2.build.112-stable</version>
 			<scope>provided</scope>
 		</dependency>
-        <dependency>
-            <groupId>com.mojang</groupId>
-            <artifactId>authlib</artifactId>
-            <version>7.0.61</version>
-            <scope>provided</scope>
-        </dependency>
+		<dependency>
+			<groupId>com.mojang</groupId>
+			<artifactId>authlib</artifactId>
+			<version>7.0.61</version>
+			<scope>provided</scope>
+		</dependency>
 
 		<!-- Utilities -->
-        <dependency>
-            <groupId>net.kyori</groupId>
-            <artifactId>adventure-nbt</artifactId>
-            <version>4.24.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains</groupId>
-            <artifactId>annotations</artifactId>
-            <version>24.0.0</version>
-        </dependency>
+		<dependency>
+			<groupId>net.kyori</groupId>
+			<artifactId>adventure-nbt</artifactId>
+			<version>4.24.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jetbrains</groupId>
+			<artifactId>annotations</artifactId>
+			<version>24.0.0</version>
+		</dependency>
 
 		<!-- CMI -->
 		<dependency>
 			<groupId>com.github.Zrips</groupId>
 			<artifactId>CMI-API</artifactId>
 			<version>9.7.14.3</version>
-			<scope>provided</scope> 
+			<scope>provided</scope>
 		</dependency>
 		<!-- PlaceholderAPI -->
-        <dependency>
-            <groupId>me.clip</groupId>
-            <artifactId>placeholderapi</artifactId>
-            <version>2.11.6</version>
-            <scope>provided</scope>
-        </dependency>
-    </dependencies>
-    
+		<dependency>
+			<groupId>me.clip</groupId>
+			<artifactId>placeholderapi</artifactId>
+			<version>2.11.6</version>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+
 	<repositories>
 		<repository>
 			<id>papermc</id>
@@ -89,7 +89,7 @@
 			<url>https://jitpack.io</url>
 		</repository>
 	</repositories>
-	
+
 	<build>
 		<defaultGoal>clean package</defaultGoal>
 		<finalName>CMILib${project.version}</finalName>
@@ -104,12 +104,12 @@
 		<plugins>
 			<!-- Make a Jar -->
 			<plugin>
-                <groupId>org.apache.maven.plugins</groupId>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-			    <version>3.13.0</version>
-			    <configuration>
-			        <release>8</release>
-			    </configuration>
+				<version>3.11.0</version>
+				<configuration>
+					<release>8</release>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
