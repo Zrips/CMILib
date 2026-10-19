@@ -2,7 +2,6 @@ package net.Zrips.CMILib.Shadow;
 
 import java.util.HashMap;
 import java.util.Map.Entry;
-import java.util.Random;
 import java.util.UUID;
 
 import org.bukkit.entity.Player;
@@ -15,10 +14,8 @@ public class ShadowCommand {
 
     private static HashMap<UUID, ShadowCommand> shadowCommand = new HashMap<UUID, ShadowCommand>();
 
-    private static Random rand = new Random();
-
     public static String addShadowCmd(Player player, String cmd, Boolean infinite, ShadowCommandType type) {
-        String id = String.valueOf(rand.nextLong()) + (infinite ? "i" : "");
+        String id = UUID.randomUUID() + (infinite ? "i" : "");
         ShadowCommand shadow = shadowCommand.getOrDefault(player.getUniqueId(), new ShadowCommand());
 
         id = shadow.add(id, cmd, type);

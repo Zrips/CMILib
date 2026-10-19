@@ -23,9 +23,6 @@ import net.Zrips.CMILib.commands.CommandsHandler;
 public class RawMessageManager {
 
     private static Object packet;
-//    private static Method getHandle;
-//    private static Method sendPacket;
-//    private static Field playerConnection;
     private static Class<?> nmsIChatBaseComponent;
     private static Class<?> packetType;
 
@@ -108,14 +105,6 @@ public class RawMessageManager {
             }
         } else if (Version.isCurrentEqualOrHigher(Version.v1_20_R2)) {
             try {
-//                getHandle = Class.forName("org.bukkit.craftbukkit." + version + ".entity.CraftPlayer").getMethod("getHandle");
-//                if (Version.isCurrentEqualOrHigher(Version.v1_21_R5))
-//                    playerConnection = Class.forName("net.minecraft.server.level.EntityPlayer").getField("g");
-//                else if (Version.isCurrentEqualOrHigher(Version.v1_21_R2))
-//                    playerConnection = Class.forName("net.minecraft.server.level.EntityPlayer").getField("f");
-//                else
-//                    playerConnection = Class.forName("net.minecraft.server.level.EntityPlayer").getField("c");
-//                sendPacket = Class.forName("net.minecraft.server.network.PlayerConnection").getMethod("b", Class.forName("net.minecraft.network.protocol.Packet"));
                 constructor = Class.forName("net.minecraft.network.protocol.game.ClientboundSystemChatPacket").getConstructor(Class.forName("net.minecraft.network.chat.IChatBaseComponent"),
                         boolean.class);
             } catch (Throwable e) {
@@ -123,12 +112,8 @@ public class RawMessageManager {
             }
         } else if (Version.isCurrentEqualOrHigher(Version.v1_20_R1)) {
             try {
-//                getHandle = Class.forName("org.bukkit.craftbukkit." + version + ".entity.CraftPlayer").getMethod("getHandle");
                 packetType = Class.forName("net.minecraft.network.protocol.game.ClientboundSystemChatPacket");
                 nmsIChatBaseComponent = Class.forName("net.minecraft.network.chat.IChatBaseComponent");
-//                playerConnection = Class.forName("net.minecraft.server.level.EntityPlayer").getField("c");
-//                sendPacket = Class.forName("net.minecraft.server.network.PlayerConnection").getMethod("a", Class.forName("net.minecraft.network.protocol.Packet"));
-
                 constructor = packetType.getConstructor(nmsIChatBaseComponent, boolean.class);
 
             } catch (Throwable e) {
@@ -136,12 +121,8 @@ public class RawMessageManager {
             }
         } else if (Version.isCurrentEqualOrHigher(Version.v1_19_R1)) {
             try {
-//                getHandle = Class.forName("org.bukkit.craftbukkit." + version + ".entity.CraftPlayer").getMethod("getHandle");
                 packetType = Class.forName("net.minecraft.network.protocol.game.ClientboundSystemChatPacket");
                 nmsIChatBaseComponent = Class.forName("net.minecraft.network.chat.IChatBaseComponent");
-//                playerConnection = Class.forName("net.minecraft.server.level.EntityPlayer").getField("b");
-//                sendPacket = Class.forName("net.minecraft.server.network.PlayerConnection").getMethod(Version.isCurrentEqualOrHigher(Version.v1_18_R1) ? "a" : "sendPacket",
-//                        Class.forName("net.minecraft.network.protocol.Packet"));
 
                 if (Version.isCurrentSubEqual(0))
                     constructor = packetType.getConstructor(nmsIChatBaseComponent, int.class);
@@ -153,12 +134,8 @@ public class RawMessageManager {
             }
         } else if (Version.isCurrentEqualOrHigher(Version.v1_17_R1)) {
             try {
-//                getHandle = Class.forName("org.bukkit.craftbukkit." + version + ".entity.CraftPlayer").getMethod("getHandle");
                 packetType = Class.forName("net.minecraft.network.protocol.game.PacketPlayOutChat");
                 nmsIChatBaseComponent = Class.forName("net.minecraft.network.chat.IChatBaseComponent");
-//                playerConnection = Class.forName("net.minecraft.server.level.EntityPlayer").getField("b");
-//                sendPacket = Class.forName("net.minecraft.server.network.PlayerConnection").getMethod(Version.isCurrentEqualOrHigher(Version.v1_18_R1) ? "a" : "sendPacket",
-//                        Class.forName("net.minecraft.network.protocol.Packet"));
                 ChatMessageclz = Class.forName("net.minecraft.network.chat.ChatMessageType");
                 consts = ChatMessageclz.getEnumConstants();
                 sub = consts[2].getClass();
@@ -170,13 +147,7 @@ public class RawMessageManager {
         } else {
             try {
                 packetType = Class.forName("net.minecraft.server." + version + ".PacketPlayOutChat");
-//                Class<?> typeCraftPlayer = Class.forName("org.bukkit.craftbukkit." + version + ".entity.CraftPlayer");
-//                Class<?> typeNMSPlayer = Class.forName("net.minecraft.server." + version + ".EntityPlayer");
-//                Class<?> typePlayerConnection = Class.forName("net.minecraft.server." + version + ".PlayerConnection");
                 nmsIChatBaseComponent = Class.forName("net.minecraft.server." + version + ".IChatBaseComponent");
-//                getHandle = typeCraftPlayer.getMethod("getHandle");
-//                playerConnection = typeNMSPlayer.getField("playerConnection");
-//                sendPacket = typePlayerConnection.getMethod("sendPacket", Class.forName("net.minecraft.server." + version + ".Packet"));
                 if (Version.isCurrentHigher(Version.v1_11_R1)) {
                     ChatMessageclz = Class.forName("net.minecraft.server." + version + ".ChatMessageType");
                     consts = ChatMessageclz.getEnumConstants();
@@ -232,10 +203,6 @@ public class RawMessageManager {
                 }
 
                 CMIPlayerConnection.sendPacket(receivingPacket, packet);
-
-//                Object player = getHandle.invoke(receivingPacket);
-//                Object connection = playerConnection.get(player);
-//                sendPacket.invoke(connection, packet);
 
             } catch (Exception ex) {
                 ex.printStackTrace();

@@ -426,7 +426,7 @@ public class CMIImage {
                     }
                     rm.addRM(RawMessage.translateRawMessage(sender, "<T>" + sa[i] + "</T>" + text));
                 } else {
-                    rm.addRM(RawMessage.translateRawMessage(sender, "<T>" + sa[i] + imageText.get(i)));
+                    rm.addRM(RawMessage.translateRawMessage(sender, "<T>" + sa[i] + imageText.get(i) + "</T>"));
                 }
             } else {
                 if (i > 0)

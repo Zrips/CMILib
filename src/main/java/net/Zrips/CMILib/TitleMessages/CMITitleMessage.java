@@ -28,8 +28,6 @@ public class CMITitleMessage {
     private static Method fromString;
     private static boolean simpleTitleMessages = false;
 
-    private static Object timerResetPacket = null;
-
     static {
 
         if (Version.isCurrentHigher(Version.v1_7_R4) && !Version.isMojangMappings()) {
@@ -72,14 +70,10 @@ public class CMITitleMessage {
                 try {
                     playerConnection = Class.forName("net.minecraft.server.level.EntityPlayer").getField("b");
                     sendPacket = Class.forName("net.minecraft.server.network.PlayerConnection").getMethod(Version.isCurrentEqualOrHigher(Version.v1_18_R1) ? "a" : "sendPacket",
-                        Class.forName("net.minecraft.network.protocol.Packet"));
+                            Class.forName("net.minecraft.network.protocol.Packet"));
                 } catch (Throwable e) {
                     e.printStackTrace();
                 }
-// Timer reset packet
-//                if (Version.isCurrentEqualOrHigher(Version.v1_19_R1)) {
-//                    timerResetPacket = new net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket(10, 70, 20);
-//                }
 
             } else {
                 try {
@@ -147,13 +141,7 @@ public class CMITitleMessage {
                 case v1_15_R1:
                 case v1_16_R1:
                 default:
-
                     receivingPacket.sendTitle(t, s, fadeIn, keep, fadeOut);
-//                        Timer reset packet, causes some issue
-//                        if (Version.isCurrentEqualOrHigher(Version.v1_19_R1) && timerResetPacket != null) {
-//                            sendPacket(receivingPacket, timerResetPacket);
-//                        }
-
                     break;
                 case v1_9_R1:
                 case v1_9_R2:

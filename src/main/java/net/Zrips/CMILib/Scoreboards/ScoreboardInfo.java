@@ -10,50 +10,49 @@ public class ScoreboardInfo {
     private Objective obj;
     private Long time;
     private long keepSeconds;
-    
 
     public ScoreboardInfo(Scoreboard scoreBoard, DisplaySlot slot, long keepSeconds) {
-	this.scoreBoard = scoreBoard;
-	this.keepSeconds = keepSeconds;
+        this.scoreBoard = scoreBoard;
+        this.keepSeconds = keepSeconds;
 
-	for (Objective one : this.scoreBoard.getObjectives()) {
-	    if (one.getDisplaySlot() == slot)
-		obj = one;
-	}
+        for (Objective one : this.scoreBoard.getObjectives()) {
+            if (one.getDisplaySlot() == slot)
+                obj = one;
+        }
 
-	time = System.currentTimeMillis();
+        time = System.currentTimeMillis();
     }
 
     public Scoreboard getScoreBoard() {
-	return scoreBoard;
+        return scoreBoard;
     }
 
     public void setScoreBoard(Scoreboard scoreBoard) {
-	this.scoreBoard = scoreBoard;
+        this.scoreBoard = scoreBoard;
     }
 
     public Long getTime() {
-	return time;
+        return time;
     }
 
     public void setTime(Long time) {
-	this.time = time;
+        this.time = time;
     }
 
     public Objective getObj() {
-	return obj;
+        return obj;
     }
 
     public void setObj(Objective obj) {
-	this.obj = obj;
+        this.obj = obj;
     }
 
     public long getKeepSeconds() {
-	return keepSeconds;
+        return keepSeconds;
     }
 
     public void setKeepSeconds(long keepSeconds) {
-	this.keepSeconds = keepSeconds;
+        this.keepSeconds = keepSeconds;
     }
 
 }

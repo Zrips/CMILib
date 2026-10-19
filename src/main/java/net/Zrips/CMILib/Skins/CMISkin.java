@@ -185,7 +185,8 @@ public class CMISkin {
         try {
             String decoded = new String(Base64.getDecoder().decode(base64), StandardCharsets.UTF_8);
 
-            JsonObject json = JsonParser.parseString(decoded).getAsJsonObject();
+            // Java 8 doesn't have JsonParser.parseString 
+            JsonObject json = new JsonParser().parse(decoded).getAsJsonObject();
             JsonObject textures = json.getAsJsonObject("textures");
 
             if (textures == null || !textures.has("SKIN"))

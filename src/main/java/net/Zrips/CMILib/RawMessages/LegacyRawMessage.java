@@ -1,0 +1,1079 @@
+package net.Zrips.CMILib.RawMessages;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.bukkit.block.BlockState;
+import org.bukkit.block.ShulkerBox;
+import org.bukkit.command.CommandSender;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ArmorMeta;
+import org.bukkit.inventory.meta.BlockStateMeta;
+import org.bukkit.inventory.meta.BookMeta;
+import org.bukkit.inventory.meta.BundleMeta;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
+
+import net.Zrips.CMILib.ActionBar.CMIActionBar;
+import net.Zrips.CMILib.Colors.CMIChatColor;
+import net.Zrips.CMILib.Container.CMICommandSender;
+import net.Zrips.CMILib.Container.CMIKyori;
+import net.Zrips.CMILib.Items.CMIMC;
+import net.Zrips.CMILib.Items.CMIMaterial;
+import net.Zrips.CMILib.Locale.LC;
+import net.Zrips.CMILib.Messages.CMIMessages;
+import net.Zrips.CMILib.NBT.CMINBT;
+import net.Zrips.CMILib.TitleMessages.CMITitleMessage;
+import net.Zrips.CMILib.Version.Version;
+
+public class LegacyRawMessage implements RawMessageBackend {
+
+    List<String> parts = new ArrayList<String>();
+    List<String> onlyText = new ArrayList<String>();
+
+    private LinkedHashMap<RawMessagePartType, String> temp = new LinkedHashMap<RawMessagePartType, String>();
+
+    RawMessageFragment fragment = new RawMessageFragment();
+    RawMessageFragment hoverFragment = new RawMessageFragment();
+
+    private RawMessageFragment frozenFragment = new RawMessageFragment();
+    private boolean freezeFormat = false;
+
+    private String combined = "";
+    String combinedClean = "";
+
+    private boolean dontBreakLine = false;
+
+    @Override
+    public RawMessageBackend RawMessage() {
+        return this;
+    }
+
+    @Override
+    public RawMessageBackend RawMessage(String text) {
+        this.addText(text);
+        return this;
+    }
+
+    public void clear() {
+        parts = new ArrayList<String>();
+        onlyText = new ArrayList<String>();
+        combined = "";
+        combinedClean = "";
+    }
+
+    private String textIntoJson(String text, boolean hover) {
+
+        if (text.isEmpty()) {
+            return "";
+        }
+        if (text.equalsIgnoreCase(" ")) {
+            return " ";
+        }
+        text = CMIChatColor.deColorize(text, true, false);
+
+        Matcher match = CMIChatColor.fullPattern.matcher(text);
+        String matcher = null;
+
+        List<RawMessageFragment> fragments = new ArrayList<RawMessageFragment>();
+
+        RawMessageFragment f = hover ? hoverFragment : fragment;
+
+        while (match.find()) {
+            matcher = match.group();
+
+            String[] split = text.split(matcher.replace("#", "\\#").replace("{", "\\{").replace("}", "\\}"), 2);
+            text = "";
+            for (int i = 1; i < split.length; i++) {
+                text += split[i];
+            }
+
+            if (split[0] != null && !split[0].isEmpty()) {
+                String t = split[0];
+
+                f.setText(t);
+                fragments.add(f);
+                f = new RawMessageFragment(f);
+            }
+
+            if (matcher.startsWith(CMIChatColor.colorFontPrefix)) {
+                f.setFont(matcher);
+                continue;
+            }
+
+            CMIChatColor color = CMIChatColor.getColor(matcher);
+            if (color == null)
+                continue;
+
+            if (color.isColor()) {
+                f.setLastColor(color);
+            } else {
+                f.addFormat(color);
+            }
+        }
+
+        if (!text.isEmpty()) {
+
+            RawMessageFragment t = new RawMessageFragment(f);
+
+            t.setText(text);
+            fragments.add(t);
+        }
+
+        if (hover)
+            hoverFragment = f;
+        else
+            fragment = f;
+
+        StringBuilder finalText = new StringBuilder();
+
+        for (RawMessageFragment one : fragments) {
+            if (!finalText.toString().isEmpty())
+                finalText.append("},{");
+            StringBuilder options = new StringBuilder();
+            for (CMIChatColor format : one.getFormats()) {
+                if (!options.toString().isEmpty())
+                    options.append(",");
+                if (format.equals(CMIChatColor.UNDERLINE))
+                    options.append("\"underlined\":true");
+                else if (format.equals(CMIChatColor.BOLD))
+                    options.append("\"bold\":true");
+                else if (format.equals(CMIChatColor.ITALIC))
+                    options.append("\"italic\":true");
+                else if (format.equals(CMIChatColor.STRIKETHROUGH))
+                    options.append("\"strikethrough\":true");
+                else if (format.equals(CMIChatColor.OBFUSCATED))
+                    options.append("\"obfuscated\":true");
+            }
+            if (!options.toString().isEmpty()) {
+                finalText.append(options.toString());
+                finalText.append(",");
+            }
+
+            if (one.getFont() != null) {
+                finalText.append("\"font\":\"" + one.getFont() + "\",");
+
+            }
+
+            if (one.getLastColor() != null) {
+                if (one.getLastColor().getHex() != null)
+                    finalText.append("\"color\":\"#" + one.getLastColor().getHex() + "\",");
+                else if (one.getLastColor().getName() != null) {
+                    finalText.append("\"color\":\"" + one.getLastColor().getName().toLowerCase() + "\",");
+                }
+            }
+
+            String t = one.getText();
+
+            // Old server support, we need to add colors and formats to the text directly
+            if (Version.isCurrentLower(Version.v1_16_R1)) {
+                StringBuilder oldColors = new StringBuilder();
+                if (one.getLastColor() != null && one.getLastColor().getName() != null) {
+                    oldColors.append(one.getLastColor().getColorCode());
+                }
+                for (CMIChatColor format : one.getFormats()) {
+                    if (format.equals(CMIChatColor.UNDERLINE))
+                        oldColors.append("&n");
+                    else if (format.equals(CMIChatColor.BOLD))
+                        oldColors.append("&l");
+                    else if (format.equals(CMIChatColor.ITALIC))
+                        oldColors.append("&o");
+                    else if (format.equals(CMIChatColor.STRIKETHROUGH))
+                        oldColors.append("&m");
+                    else if (format.equals(CMIChatColor.OBFUSCATED))
+                        oldColors.append("&k");
+                }
+                t = oldColors.toString() + t;
+            }
+
+            finalText.append("\"text\":\"" + escape(t, this.isDontBreakLine() && !hover) + "\"");
+        }
+
+        if (finalText.toString().isEmpty())
+            return "";
+        return finalText.toString();
+    }
+
+    @Deprecated
+    public LegacyRawMessage add(String text, String hoverText, String command, String suggestion, String url) {
+        add(text, hoverText, command, suggestion, url, null);
+        return this;
+    }
+
+    @Deprecated
+    public LegacyRawMessage add(String text, String hoverText, String command, String suggestion, String url, String insertion) {
+        this.addText(text);
+        this.addHover(hoverText);
+        this.addCommand(command);
+        this.addSuggestion(suggestion);
+        this.addUrl(url);
+        this.addInsertion(insertion);
+        return this;
+    }
+
+    @Deprecated
+    public LegacyRawMessage addUrl(String text, String url) {
+        addUrl(text, url, null);
+        return this;
+    }
+
+    @Deprecated
+    public LegacyRawMessage addUrl(String text, String url, String hoverText) {
+        this.addText(text);
+        this.addHover(hoverText);
+        this.addUrl(url);
+        return this;
+    }
+
+    @Deprecated
+    public LegacyRawMessage add(String text) {
+        return add(text, null, null, null, null);
+    }
+
+    @Deprecated
+    public LegacyRawMessage add(String text, String hoverText) {
+        return add(text, hoverText, null, null, null);
+    }
+
+    @Deprecated
+    public LegacyRawMessage add(String text, List<String> hoverText) {
+
+        String hover = "";
+        if (hoverText != null)
+            for (String one : hoverText) {
+                if (!hover.isEmpty())
+                    hover += "\n";
+                hover += one;
+            }
+        return add(text, hover.isEmpty() ? null : hover, null, null, null);
+    }
+
+    @Deprecated
+    public LegacyRawMessage add(String text, String hoverText, RawMessageCommand rmc) {
+        return add(text, hoverText, rmc.getCommand(), null, null);
+    }
+
+    @Deprecated
+    public LegacyRawMessage add(String text, String hoverText, String command) {
+        return add(text, hoverText, command, null, null);
+    }
+
+    @Deprecated
+    public LegacyRawMessage add(String text, String hoverText, String command, String suggestion) {
+        return add(text, hoverText, command, suggestion, null);
+    }
+
+    @Deprecated
+    public LegacyRawMessage addHoverText(List<String> hoverText) {
+        return addHover(hoverText);
+    }
+
+    @Deprecated
+    public LegacyRawMessage addHoverText(String hover) {
+        return addHover(hover);
+    }
+
+    @Override
+    public LegacyRawMessage append(RawMessage rm) {
+        return append(rm, false);
+    }
+
+    @Override
+    public LegacyRawMessage append(RawMessage rm, boolean sameLine) {
+        rm.build();
+
+        if (!sameLine && !parts.isEmpty()) {
+            addText("\n");
+        }
+        build();
+
+        parts.addAll(((LegacyRawMessage) rm.backend).parts);
+        onlyText.addAll(((LegacyRawMessage) rm.backend).onlyText);
+        return this;
+    }
+
+    public LegacyRawMessage addItem(String text, ItemStack item, String command, String suggestion, String insertion) {
+        this.addText(text);
+        this.addCommand(command);
+        this.addSuggestion(suggestion);
+        this.addInsertion(insertion);
+        this.addItem(item);
+        return this;
+    }
+
+    public LegacyRawMessage addText(LC lc, boolean colorize) {
+        return addText(lc.getLocale(), colorize);
+    }
+
+    public LegacyRawMessage addText(LC lc) {
+        return addText(lc.getLocale(), true);
+    }
+
+    public LegacyRawMessage addText(String text) {
+        return addText(text, true);
+    }
+
+    public LegacyRawMessage addText(String text, boolean colorize) {
+        if (text == null || text.isEmpty())
+            return this;
+        if (temp.containsKey(RawMessagePartType.Text))
+            build();
+
+        onlyText.add(colorize ? CMIChatColor.translate(text) : text);
+
+        text = textIntoJson(text, false);
+
+        String f = "";
+        if (text.isEmpty())
+            f = "\"text\":\"\"";
+        else if (text.equalsIgnoreCase(" "))
+            f = "\"text\":\" \"";
+        else {
+            text = colorize ? CMIChatColor.translate(text) : text;
+            f = "\"text\":\"\",\"extra\":[{" + text.replace(CMIChatColor.colorHexReplacerPlaceholder, CMIChatColor.colorCodePrefix).replace(CMIChatColor.colorReplacerPlaceholder, "&") + "}]";
+        }
+        temp.put(RawMessagePartType.Text, f);
+        return this;
+    }
+
+    public LegacyRawMessage addHover(List<String> hoverText) {
+        StringBuilder hover = new StringBuilder();
+        if (hoverText != null) {
+            for (String one : hoverText) {
+                if (!hover.toString().isEmpty())
+                    hover.append("\n");
+                hover.append(one);
+            }
+        }
+        return addHover(hover.toString());
+    }
+
+    public LegacyRawMessage addHover(LC lc) {
+        return addHover(lc.getLocale());
+    }
+
+    public LegacyRawMessage addHover(String hover) {
+        hoverFragment = new RawMessageFragment();
+        if (hover == null || hover.isEmpty())
+            return this;
+
+        hover = textIntoJson(hover, true);
+
+        String f = "";
+        if (hover.isEmpty())
+            f = "\"text\":\"\"";
+        else if (hover.equalsIgnoreCase(" "))
+            f = "\"text\":\" \"";
+        else {
+            hover = CMIChatColor.translate(hover).replace(CMIChatColor.colorReplacerPlaceholder, "&");
+            if (Version.isCurrentEqualOrHigher(Version.v1_21_R4))
+                f = "\"hover_event\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":[{" + hover + "}]}}";
+            else
+                f = "\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":[{" + hover + "}]}}";
+        }
+        temp.put(RawMessagePartType.HoverText, f);
+        return this;
+    }
+
+    public LegacyRawMessage addCommand(RawMessageCommand rmc) {
+        if (rmc == null || rmc.getCommand().isEmpty())
+            return this;
+        addCommand(rmc.getCommand());
+        return this;
+    }
+
+    public LegacyRawMessage addCommand(String command) {
+        if (command == null || command.isEmpty())
+            return this;
+        if (!command.startsWith("/"))
+            command = "/" + command;
+        command = escape(command, true);
+        command = CMIChatColor.deColorize(command).replace(CMIChatColor.colorReplacerPlaceholder, "&");
+
+        if (Version.isCurrentEqualOrHigher(Version.v1_21_R4))
+            temp.put(RawMessagePartType.ClickCommand, "\"click_event\":{\"action\":\"run_command\",\"command\":\"" + command + "\"}");
+        else
+            temp.put(RawMessagePartType.ClickCommand, "\"clickEvent\":{\"action\":\"run_command\",\"value\":\"" + command + "\"}");
+
+        return this;
+    }
+
+    public LegacyRawMessage addSuggestion(String suggestion) {
+        if (suggestion == null || suggestion.isEmpty())
+            return this;
+        suggestion = escape(suggestion, true);
+        suggestion = CMIChatColor.deColorize(suggestion, false).replace(CMIChatColor.colorReplacerPlaceholder, "&");
+
+        if (Version.isCurrentEqualOrHigher(Version.v1_21_R4))
+            temp.put(RawMessagePartType.ClickSuggestion, "\"click_event\":{\"action\":\"suggest_command\",\"command\":\"" + suggestion + "\"}");
+        else
+            temp.put(RawMessagePartType.ClickSuggestion, "\"clickEvent\":{\"action\":\"suggest_command\",\"value\":\"" + suggestion + "\"}");
+
+        return this;
+    }
+
+    public LegacyRawMessage addInsertion(String insertion) {
+        if (insertion == null || insertion.isEmpty())
+            return this;
+        insertion = escape(insertion, true);
+        String f = "\"insertion\":\"" + CMIChatColor.deColorize(insertion).replace(CMIChatColor.colorReplacerPlaceholder, "&") + "\"";
+        temp.put(RawMessagePartType.ClickInsertion, f);
+        return this;
+    }
+
+//    private static final Pattern BOOLEAN_PATTERN = Pattern.compile("(bold|italic|obfuscated|strikethrough|underlined):(\\d)b");
+    private static final Pattern BOOLEAN_PATTERN = Pattern.compile("(\"?):(([10])b)([,}])");
+
+    // Temp fix due to broken serializer
+    private static String updateBooleans(String input) {
+        if (!input.contains("1b") && !input.contains("0b"))
+            return input;
+
+        Matcher matcher = BOOLEAN_PATTERN.matcher(input);
+        StringBuffer sb = new StringBuffer();
+
+        while (matcher.find()) {
+            matcher.appendReplacement(sb, matcher.group().replace(matcher.group(2), matcher.group(3).equals("1") ? "true" : "false"));
+        }
+
+        matcher.appendTail(sb);
+        return sb.toString();
+    }
+
+    private static final Pattern FLOAT_PATTERN = Pattern.compile("\"([-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?)f\"");
+
+    private static String updateFloats(String input) {
+        if (!input.contains("f\",") && !input.contains("f\"}"))
+            return input;
+
+        Matcher matcher = FLOAT_PATTERN.matcher(input);
+        StringBuffer sb = new StringBuffer();
+
+        while (matcher.find()) {
+            matcher.appendReplacement(sb, matcher.group(1));
+        }
+
+        matcher.appendTail(sb);
+        return sb.toString();
+    }
+
+    private static final Pattern CUSTOM_MODEL_DATA_PATTERN = Pattern.compile("\"minecraft:custom_model_data\":\\{floats:\\[(\\d+(?:\\.\\d+)?)f?\\]\\}\\s*,?");
+
+    private static String updateCustomModelData(String input) {
+
+        if (!input.contains("\"minecraft:custom_model_data\":"))
+            return input;
+
+        Matcher matcher = CUSTOM_MODEL_DATA_PATTERN.matcher(input);
+        StringBuffer sb = new StringBuffer();
+
+        while (matcher.find()) {
+            matcher.appendReplacement(sb, "");
+        }
+
+        matcher.appendTail(sb);
+        return sb.toString();
+    }
+
+    private static final Pattern INT_ARRAY_PATTERN = Pattern.compile("\\[I;\\s*([^\\]]+)\\]");
+
+    private static String fixIntArray(String input) {
+
+        if (!input.contains("[I;"))
+            return input;
+
+        Matcher matcher = INT_ARRAY_PATTERN.matcher(input);
+        StringBuffer sb = new StringBuffer();
+
+        while (matcher.find()) {
+            String numbers = matcher.group(1).trim();
+            String replacement = "[" + numbers + "]";
+            matcher.appendReplacement(sb, replacement);
+        }
+
+        matcher.appendTail(sb);
+        return sb.toString();
+    }
+
+    private static ShulkerBox simplifyShulkerBoxContents(ItemStack shulkerBox) {
+        if (shulkerBox == null || !(shulkerBox.getItemMeta() instanceof BlockStateMeta))
+            return null;
+
+        BlockStateMeta meta = (BlockStateMeta) shulkerBox.getItemMeta();
+
+        BlockState state = meta.getBlockState();
+        if (!(state instanceof ShulkerBox))
+            return null;
+
+        ItemStack newShulkerBox = new ItemStack(shulkerBox.getType());
+        BlockStateMeta newMeta = (BlockStateMeta) newShulkerBox.getItemMeta();
+        ShulkerBox newBox = (ShulkerBox) newMeta.getBlockState();
+
+        ShulkerBox box = (ShulkerBox) state;
+
+        Inventory inventory = box.getInventory();
+        ItemStack[] simplifiedContents = new ItemStack[inventory.getSize()];
+
+        for (int i = 0; i < inventory.getSize(); i++) {
+            ItemStack item = inventory.getItem(i);
+            if (item == null || item.getType().isAir())
+                continue;
+            ItemStack simpleItem = new ItemStack(item.getType(), item.getAmount());
+            ItemMeta originalMeta = item.getItemMeta();
+            if (originalMeta != null && originalMeta.hasDisplayName()) {
+                ItemMeta simpleMeta = simpleItem.getItemMeta();
+                simpleMeta.setDisplayName(originalMeta.getDisplayName());
+                simpleItem.setItemMeta(simpleMeta);
+            }
+            simplifiedContents[i] = simpleItem;
+        }
+
+        newBox.getInventory().setContents(simplifiedContents);
+
+        return newBox;
+    }
+
+    private static BundleMeta simplifyBundleContents(ItemStack shulkerBox) {
+        if (shulkerBox == null || !(shulkerBox.getItemMeta() instanceof BundleMeta))
+            return null;
+
+        ItemStack newShulkerBox = new ItemStack(shulkerBox.getType());
+        BundleMeta newMeta = (BundleMeta) newShulkerBox.getItemMeta();
+
+        List<ItemStack> simplifiedContents = new ArrayList<ItemStack>();
+
+        for (ItemStack one : ((BundleMeta) shulkerBox.getItemMeta()).getItems()) {
+            if (one == null || one.getType().isAir())
+                continue;
+            ItemStack simpleItem = new ItemStack(one.getType(), one.getAmount());
+            ItemMeta originalMeta = one.getItemMeta();
+            if (originalMeta != null && originalMeta.hasDisplayName()) {
+                ItemMeta simpleMeta = simpleItem.getItemMeta();
+                simpleMeta.setDisplayName(originalMeta.getDisplayName());
+                simpleItem.setItemMeta(simpleMeta);
+            }
+            simplifiedContents.add(simpleItem);
+        }
+
+        newMeta.setItems(simplifiedContents);
+
+        return newMeta;
+    }
+
+    public LegacyRawMessage addItem(ItemStack item) {
+        if (item == null)
+            return this;
+
+        item = item.clone();
+
+        if (item.getItemMeta() instanceof org.bukkit.inventory.meta.BookMeta) {
+            org.bukkit.inventory.meta.BookMeta bmeta = (BookMeta) item.getItemMeta();
+            bmeta.setPages(new ArrayList<String>());
+            item.setItemMeta(bmeta);
+        }
+
+        CMIMaterial cmat = CMIMaterial.get(item);
+
+        if (Version.isCurrentEqualOrHigher(Version.v1_21_R1) && item.hasItemMeta()) {
+            ItemStack cloned = cmat.newItemStack();
+            ItemMeta newMeta = cloned.getItemMeta();
+
+            ShulkerBox shulkerMeta = null;
+            if (cmat.isShulkerBox()) {
+                shulkerMeta = simplifyShulkerBoxContents(item);
+                if (shulkerMeta != null)
+                    ((BlockStateMeta) newMeta).setBlockState(shulkerMeta);
+            }
+
+            if (cmat.isPlayerHead()) {
+                SkullMeta skullMeta = (SkullMeta) item.getItemMeta();
+                ((SkullMeta) newMeta).setPlayerProfile(skullMeta.getPlayerProfile());
+            }
+
+            if (cmat.containsCriteria(CMIMC.BUNDLE)) {
+                BundleMeta bundleMeta = simplifyBundleContents(item);
+                if (bundleMeta != null)
+                    newMeta = bundleMeta;
+            }
+
+            if (item.getItemMeta() instanceof EnchantmentStorageMeta) {
+                EnchantmentStorageMeta meta = (EnchantmentStorageMeta) item.getItemMeta();
+                EnchantmentStorageMeta newStorageMeta = (EnchantmentStorageMeta) newMeta;
+                for (Entry<Enchantment, Integer> enchant : meta.getStoredEnchants().entrySet()) {
+                    newStorageMeta.addStoredEnchant(enchant.getKey(), enchant.getValue(), true);
+                }
+            }
+
+            if (item.getItemMeta() instanceof ArmorMeta) {
+                ArmorMeta armorMeta = (ArmorMeta) item.getItemMeta();
+                if (armorMeta.hasTrim()) {
+                    ((ArmorMeta) newMeta).setTrim(armorMeta.getTrim());
+                }
+            }
+
+            ItemMeta originalMeta = item.getItemMeta();
+
+            if (Version.isPaperBranch()) {
+                newMeta.displayName(originalMeta.displayName());
+                newMeta.lore(originalMeta.lore());
+            } else {
+                newMeta.setDisplayName(originalMeta.getDisplayName());
+                newMeta.setLore(originalMeta.getLore());
+            }
+
+            for (ItemFlag flag : originalMeta.getItemFlags()) {
+                newMeta.addItemFlags(flag);
+            }
+
+            for (Entry<Enchantment, Integer> enchant : originalMeta.getEnchants().entrySet()) {
+                newMeta.addEnchant(enchant.getKey(), enchant.getValue(), true);
+            }
+
+            cloned.setItemMeta(newMeta);
+            item = cloned;
+        }
+
+        if (Version.isPaperBranch() && Version.isCurrentEqualOrHigher(Version.v1_21_0)) {
+            try {
+                String json = CMIKyori.parse(item);
+                temp.put(RawMessagePartType.HoverItem, json);
+                return this;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        String res = CMINBT.toJson(item);
+
+        // Cleaning up useless information. Italic not included due to some weird
+        // behavior which defaults to italic look if not specifically set to not be one
+
+        res = removeFalseFormatting(res);
+
+        if (Version.isCurrentEqualOrHigher(Version.v1_21_R4)) {
+
+            // Temp fix due to serializer using 0b and 1b for false and true
+            // custom model converts ints to floats, at the moment solution is to just
+            // remove entire section
+            // int array adds I which isn't valid anymore
+            res = updateFloats(res);
+            res = updateBooleans(res);
+            res = updateCustomModelData(res);
+            res = fixIntArray(res);
+            res = RawMessage.fixQuotedAmountNumbers(res);
+        }
+
+        try {
+
+            // Lets not even try to add item if its near a limit which still gives 200 bytes
+            // to play around
+            if (res.length() > 32566) {
+                return this;
+            }
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+
+        if (Version.isCurrentEqualOrHigher(Version.v1_21_R4)) {
+            res = res.substring(1, res.length() - 1);
+            temp.put(RawMessagePartType.HoverItem, "\"hover_event\":{\"action\":\"show_item\"," + res + "}");
+        } else {
+            if (Version.isCurrentEqualOrHigher(Version.v1_21_R3) && res.startsWith("{components:{")) {
+                res = "{\"components\":{" + res.substring("{components:{".length(), res.length());
+                res = res.replace(",}", "}");
+            }
+
+            temp.put(RawMessagePartType.HoverItem, "\"hoverEvent\":{\"action\":\"show_item\",\"value\":\"" + escape(res, true) + "\"}");
+        }
+        return this;
+    }
+
+    private static String removeFalseFormatting(String text) {
+        StringBuilder result = new StringBuilder(text.length());
+        int i = 0;
+
+        while (i < text.length()) {
+            if (text.startsWith("\"bold\":false", i)
+                    || text.startsWith("\"underlined\":false", i)
+                    || text.startsWith("\"strikethrough\":false", i)
+                    || text.startsWith("\"obfuscated\":false", i)) {
+                i = text.indexOf(',', i);
+                if (i == -1) {
+                    break;
+                }
+                i++;
+            } else {
+                result.append(text.charAt(i++));
+            }
+        }
+
+        return result.toString();
+    }
+
+    public LegacyRawMessage addUrl(String url) {
+        if (url == null || url.isEmpty())
+            return this;
+
+        if (!url.toLowerCase().startsWith("http://") && !url.toLowerCase().startsWith("https://"))
+            url = "https://" + url;
+
+        url = url.replace("\"", "");
+        url = url.replace("\'", "");
+
+        url = escape(url, true);
+        url = CMIChatColor.deColorize(url).replace(CMIChatColor.colorReplacerPlaceholder, "&");
+
+        if (Version.isCurrentEqualOrHigher(Version.v1_21_R4))
+            temp.put(RawMessagePartType.ClickLink, "\"click_event\":{\"action\":\"open_url\",\"url\":\"" + url + "\"}");
+        else
+            temp.put(RawMessagePartType.ClickLink, "\"clickEvent\":{\"action\":\"open_url\",\"value\":\"" + url + "\"}");
+
+        return this;
+    }
+
+    public LegacyRawMessage build() {
+        if (temp.isEmpty())
+            return this;
+
+        if (!temp.containsKey(RawMessagePartType.Text))
+            return this;
+        String part = "";
+        for (RawMessagePartType one : RawMessagePartType.values()) {
+            String t = temp.get(one);
+            if (t == null)
+                continue;
+            if (!part.isEmpty())
+                part += ",";
+            part += t;
+        }
+        part = "{" + part + "}";
+        temp.clear();
+        parts.add(part);
+        return this;
+    }
+
+    private String escape(String s, boolean escapeNewLn) {
+
+        if (s == null)
+            return null;
+        StringBuffer sb = new StringBuffer();
+
+        s = s.replace("\\n", RawMessage.newLine);
+        s = s.replace("\n", RawMessage.newLine);
+
+        escape(s, sb);
+
+        return sb.toString().replace(RawMessage.newLine, escapeNewLn ? "\\\\n" : "\\n");
+    }
+
+    private static void escape(String s, StringBuffer sb) {
+        for (int i = 0; i < s.length(); i++) {
+            char ch = s.charAt(i);
+            switch (ch) {
+            case '"':
+                sb.append("\\\"");
+                break;
+//            case '\n':
+//                sb.append("\\n");
+//                break;
+            case '\\':
+                sb.append("\\\\");
+                break;
+            case '\b':
+                sb.append("\\b");
+                break;
+            case '\f':
+                sb.append("\\f");
+                break;
+            case '\r':
+                sb.append("\\r");
+                break;
+            case '\t':
+                sb.append("\\t");
+                break;
+            case '/':
+                sb.append("\\/");
+                break;
+            default:
+                if ((ch >= '\u0000' && ch <= '\u001F') || (ch >= '\u007F' && ch <= '\u009F') || (ch >= '\u2000' && ch <= '\u20FF')) {
+                    String ss = Integer.toHexString(ch);
+                    sb.append("\\u");
+                    for (int k = 0; k < 4 - ss.length(); k++) {
+                        sb.append('0');
+                    }
+                    sb.append(ss.toUpperCase());
+                } else {
+                    sb.append(ch);
+                }
+            }
+        }
+    }
+
+    public List<String> softCombine() {
+        List<String> ls = new ArrayList<String>();
+        String f = "";
+        for (String part : parts) {
+            if (f.isEmpty())
+                f = "[\"\",";
+            else {
+                if (f.length() > 30000) {
+                    ls.add(f + "]");
+                    f = "[\"\"," + part;
+                    continue;
+                }
+                f += ",";
+            }
+            f += part;
+        }
+        if (!f.isEmpty())
+            f += "]";
+        ls.add(f);
+        return ls;
+    }
+
+    private LegacyRawMessage combine() {
+        String f = "";
+        for (String part : parts) {
+            if (f.isEmpty())
+                f = "[\"\",";
+            else
+                f += ",";
+            f += part;
+        }
+        if (!f.isEmpty())
+            f += "]";
+
+        if (f.isEmpty())
+            f = "{\"text\":\" \"}";
+
+        combined = f;
+        return this;
+    }
+
+    public LegacyRawMessage combineClean() {
+        String f = "";
+        for (String part : onlyText) {
+            f += part.replace("\\\"", "\"");
+        }
+        combinedClean = f;
+        return this;
+    }
+
+    public LegacyRawMessage show(Set<Player> player) {
+        return show(player, true);
+    }
+
+    public LegacyRawMessage show(Set<Player> players, boolean softCombined) {
+        if (players == null)
+            return this;
+        if (combined.isEmpty()) {
+            this.build();
+            combine();
+        }
+
+        if (players.isEmpty())
+            return this;
+        if (softCombined) {
+            for (String one : softCombine()) {
+                if (one.isEmpty())
+                    continue;
+                RawMessageManager.send(players, truncate(one));
+            }
+        } else {
+            RawMessageManager.send(players, truncate(combined));
+        }
+
+        return this;
+    }
+
+    private static String truncate(String value) {
+        if (value.length() < 5000)
+            return value;
+        value = value.replace("\"bold\":false,", "");
+        value = value.replace("\\\"bold\\\":false,", "");
+        value = value.replace("\"italic\":false,", "");
+        value = value.replace("\\\"italic\\\":false,", "");
+        value = value.replace("\"obfuscated\":false,", "");
+        value = value.replace("\\\"obfuscated\\\":false,", "");
+        value = value.replace("\"strikethrough\":false,", "");
+        value = value.replace("\\\"strikethrough\\\":false,", "");
+        value = value.replace("\"underlined\":false,", "");
+        value = value.replace("\\\"underlined\\\":false,", "");
+
+        return value;
+    }
+
+    public LegacyRawMessage show(Player player) {
+        return show(player, true);
+    }
+
+    public LegacyRawMessage show(Player player, boolean softCombined) {
+        HashSet<Player> set = new HashSet<Player>();
+        set.add(player);
+        return show(set, softCombined);
+    }
+
+    public int getFinalLength() {
+        String f = "";
+        for (String part : parts) {
+            if (f.isEmpty())
+                f = "[\"\",";
+            else
+                f += ",";
+            f += part;
+        }
+        for (String part : temp.values()) {
+            if (f.isEmpty())
+                f = "[\"\",";
+            else
+                f += ",";
+            f += part;
+        }
+        if (!f.isEmpty())
+            f += "]";
+        return f.length();
+    }
+
+    public LegacyRawMessage show(CMICommandSender sender) {
+        if (sender.isPlayer())
+            return show(sender.getPlayer(), true);
+        CMIMessages.sendMessage(sender.getSender(), this.combineClean().combinedClean);
+        return this;
+    }
+
+    public int getFinalLenght() {
+        String f = "";
+        for (String part : parts) {
+            if (f.isEmpty())
+                f = "[\"\",";
+            else
+                f += ",";
+            f += part;
+        }
+        if (!f.isEmpty())
+            f += "]";
+        return f.length();
+    }
+
+    public LegacyRawMessage show(CommandSender sender) {
+        if (combined.isEmpty()) {
+            this.build();
+            combine();
+        }
+        if (sender instanceof Player) {
+            show((Player) sender);
+        } else {
+            CMIMessages.sendMessage(sender, this.combineClean().combinedClean);
+        }
+        return this;
+    }
+
+    public String getTextOnly() {
+        return this.combineClean().combinedClean;
+    }
+
+    public String getRaw() {
+        if (combined.isEmpty()) {
+            build();
+            combine();
+        }
+
+        return combined;
+    }
+
+    public void setCombined(String combined) {
+        this.combined = combined;
+    }
+
+    public String getShortRaw() {
+        build();
+        String f = "";
+        for (String part : parts) {
+            if (!f.isEmpty())
+                f += ",";
+            f += part;
+        }
+        f = truncate(f);
+
+        return f;
+    }
+
+    public boolean isDontBreakLine() {
+        return dontBreakLine;
+    }
+
+    public void setDontBreakLine(boolean dontBreakLine) {
+        this.dontBreakLine = dontBreakLine;
+    }
+
+    public boolean isFormatFrozen() {
+        return freezeFormat;
+    }
+
+    public void freezeFormat() {
+        frozenFragment = new RawMessageFragment(fragment);
+        this.freezeFormat = true;
+    }
+
+    public void unFreezeFormat() {
+        fragment = new RawMessageFragment(frozenFragment);
+        this.freezeFormat = false;
+    }
+
+    public LinkedHashMap<RawMessagePartType, String> getTemporyCache() {
+        return temp;
+    }
+
+    @Override
+    public RawMessageBackend showActionBar(Set<Player> player, int keepFor) {
+        CMIActionBar.send(new ArrayList<>(player), this.getTextOnly(), keepFor);
+        return this;
+    }
+
+    @Override
+    public RawMessageBackend showActionBar(Player player, int keepFor) {
+        CMIActionBar.send(player, this.getTextOnly(), keepFor);
+        return this;
+    }
+
+    @Override
+    public RawMessageBackend showTitle(Set<Player> player, int fadeIn, int keep, int fadeOut) {
+
+        String title = null;
+        String subtitle = null;
+
+        String text = this.getTextOnly();
+
+        if (text.contains("\n")) {
+            String[] parts = text.split("\n", 2);
+            title = parts[0];
+            subtitle = parts[1];
+        } else {
+            title = text;
+        }
+
+        for (Player one : player) {
+            CMITitleMessage.send(one, title, subtitle, fadeIn, keep, fadeOut);
+        }
+
+        return this;
+    }
+
+    @Override
+    public RawMessageBackend showTitle(Player player, int fadeIn, int keep, int fadeOut) {
+        return showTitle(Collections.singleton(player), fadeIn, keep, fadeOut);
+    }
+
+}

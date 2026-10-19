@@ -5,8 +5,8 @@ import java.util.UUID;
 import org.bukkit.command.CommandSender;
 
 public class RawMessageCommand {
-    private Long id = null;
-    private Long time = 0L;
+    private long id = 0L;
+    private long time = 0L;
     private UUID uuid = null;
     private boolean keep = false;
     private String command = null;

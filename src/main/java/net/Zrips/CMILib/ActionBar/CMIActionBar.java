@@ -46,14 +46,14 @@ public class CMIActionBar {
             } catch (Throwable e) {
                 e.printStackTrace();
             }
-        } else if (Version.isCurrentEqualOrHigher(Version.v1_19_R1)) {
+        } else if (Version.isCurrentEqualOrHigher(Version.v1_19_0)) {
             try {
                 packetType = Class.forName("net.minecraft.network.protocol.game.ClientboundSystemChatPacket");
                 nmsIChatBaseComponent = Class.forName("net.minecraft.network.chat.IChatBaseComponent");
             } catch (Throwable e) {
                 e.printStackTrace();
             }
-        } else if (Version.isCurrentEqualOrHigher(Version.v1_17_R1)) {
+        } else if (Version.isCurrentEqualOrHigher(Version.v1_17_0)) {
             try {
                 packetType = Class.forName("net.minecraft.network.protocol.game.PacketPlayOutChat");
                 nmsIChatBaseComponent = Class.forName("net.minecraft.network.chat.IChatBaseComponent");
@@ -65,12 +65,12 @@ public class CMIActionBar {
             } catch (Throwable e) {
                 e.printStackTrace();
             }
-        } else if (Version.isCurrentHigher(Version.v1_7_R4)) {
+        } else if (Version.isCurrentHigher(Version.v1_7_10)) {
             Version version = Version.getCurrent();
             try {
                 packetType = Class.forName("net.minecraft.server." + version + ".PacketPlayOutChat");
                 nmsIChatBaseComponent = Class.forName("net.minecraft.server." + version + ".IChatBaseComponent");
-                if (Version.isCurrentHigher(Version.v1_11_R1)) {
+                if (Version.isCurrentHigher(Version.v1_11_0)) {
                     ChatMessageclz = Class.forName("net.minecraft.server." + version + ".ChatMessageType");
                     consts = ChatMessageclz.getEnumConstants();
                     sub = consts[2].getClass();
@@ -83,18 +83,18 @@ public class CMIActionBar {
         try {
             if (Version.isMojangMappings()) {
 
-            } else if (Version.isCurrentEqualOrHigher(Version.v1_20_R1)) {
+            } else if (Version.isCurrentEqualOrHigher(Version.v1_20_0)) {
                 constructor = packetType.getConstructor(nmsIChatBaseComponent, boolean.class);
-            } else if (Version.isCurrentEqualOrHigher(Version.v1_19_R1)) {
+            } else if (Version.isCurrentEqualOrHigher(Version.v1_19_0)) {
                 if (Version.isCurrentSubEqual(0))
                     constructor = packetType.getConstructor(nmsIChatBaseComponent, int.class);
                 else
                     constructor = packetType.getConstructor(nmsIChatBaseComponent, boolean.class);
-            } else if (Version.isCurrentHigher(Version.v1_15_R1)) {
+            } else if (Version.isCurrentHigher(Version.v1_15_0)) {
                 constructor = packetType.getConstructor(nmsIChatBaseComponent, sub, UUID.class);
-            } else if (Version.isCurrentHigher(Version.v1_11_R1)) {
+            } else if (Version.isCurrentHigher(Version.v1_11_0)) {
                 constructor = packetType.getConstructor(nmsIChatBaseComponent, sub);
-            } else if (Version.isCurrentHigher(Version.v1_7_R4)) {
+            } else if (Version.isCurrentHigher(Version.v1_7_10)) {
                 constructor = packetType.getConstructor(nmsIChatBaseComponent, byte.class);
             } else {
                 constructor = packetType.getConstructor(nmsIChatBaseComponent, int.class);
@@ -148,7 +148,7 @@ public class CMIActionBar {
         keepFor = CMINumber.clamp(keepFor, 0, 60 * 60);
 
         try {
-            if (!Version.getCurrent().isHigher(Version.v1_7_R4)) {
+            if (!Version.getCurrent().isHigher(Version.v1_7_10)) {
                 msg = CMIChatColor.translate(msg);
                 for (Player player : receivingPacket) {
                     if (player == null)
@@ -169,18 +169,18 @@ public class CMIActionBar {
 
             if (Version.isMojangMappings()) {
                 p = constructor.newInstance(serialized, true);
-            } else if (Version.isCurrentEqualOrHigher(Version.v1_20_R1)) {
+            } else if (Version.isCurrentEqualOrHigher(Version.v1_20_0)) {
                 p = constructor.newInstance(serialized, true);
-            } else if (Version.isCurrentEqualOrHigher(Version.v1_19_R1)) {
+            } else if (Version.isCurrentEqualOrHigher(Version.v1_19_0)) {
                 if (Version.isCurrentSubEqual(0))
                     p = constructor.newInstance(serialized, 2);
                 else
                     p = constructor.newInstance(serialized, true);
-            } else if (Version.isCurrentHigher(Version.v1_15_R1)) {
+            } else if (Version.isCurrentHigher(Version.v1_15_0)) {
                 p = constructor.newInstance(serialized, consts[2], new UUID(0, 0));
-            } else if (Version.isCurrentHigher(Version.v1_11_R1)) {
+            } else if (Version.isCurrentHigher(Version.v1_11_0)) {
                 p = constructor.newInstance(serialized, consts[2]);
-            } else if (Version.isCurrentHigher(Version.v1_7_R4)) {
+            } else if (Version.isCurrentHigher(Version.v1_7_10)) {
                 p = constructor.newInstance(serialized, (byte) 2);
             } else {
                 p = constructor.newInstance(serialized, 2);
