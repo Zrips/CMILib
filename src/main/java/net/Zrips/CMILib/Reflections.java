@@ -70,6 +70,7 @@ public class Reflections {
     private Class<?> CraftPlayer;
     private Class<?> CraftEntity;
     private Class<?> CEntity;
+    private Class<?> CItemEntity;
     private Class<?> nbtTagCompound;
     private Class<?> EntityLiving;
     private Class<?> BlockPosition;
@@ -166,6 +167,7 @@ public class Reflections {
                 CraftEntity = Class.forName("org.bukkit.craftbukkit.entity.CraftEntity");
                 PropertyManagerClass = Class.forName("net.minecraft.server.dedicated.Settings");
                 CEntity = Class.forName("net.minecraft.world.entity.Entity");
+                CItemEntity = Class.forName("net.minecraft.world.entity.item.ItemEntity");
                 nbtTagCompound = Class.forName("net.minecraft.nbt.CompoundTag");
                 EntityLiving = Class.forName("net.minecraft.world.entity.LivingEntity");
                 Item = Class.forName("net.minecraft.world.item.Item");
@@ -1744,10 +1746,10 @@ public class Reflections {
     public void superficialEntityTeleport(Player player, Object entity, Location targetLoc) {
         try {
 
-            if (entity == null || !CEntity.isInstance(entity))
-                return;
-
             if (Version.isMojangMappings()) {
+
+                if (entity == null || !CEntity.isInstance(entity) && !CItemEntity.isInstance(entity))
+                    return;
 
                 Object craft = entity.getClass().getMethod("getBukkitEntity").invoke(entity);
                 int id = (int) craft.getClass().getMethod("getEntityId").invoke(craft);
@@ -1779,6 +1781,9 @@ public class Reflections {
                 sendPlayerPacket(player, packet);
                 return;
             }
+
+            if (entity == null || !CEntity.isInstance(entity))
+                return;
 
             if (Version.isCurrentEqualOrHigher(Version.v1_21_R2)) {
 
