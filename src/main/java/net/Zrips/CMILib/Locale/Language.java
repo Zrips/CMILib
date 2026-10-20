@@ -190,7 +190,7 @@ public class Language {
         if (msg == null)
             return null;
 
-        if (!msg.contains("[")) {
+        if (!msg.contains("[") && !msg.contains("{") && !msg.contains("%")) {
             msg = this.filterNewLine(msg);
             return msg;
         }
@@ -267,7 +267,7 @@ public class Language {
     public String updateCmiSnd(com.Zrips.CMI.Containers.Snd snd, String msg) {
         if (msg == null)
             return null;
-        if (!msg.contains("[")) {
+        if (!msg.contains("[") && !msg.contains("{") && !msg.contains("%")) {
             msg = this.filterNewLine(msg);
             return msg;
         }
