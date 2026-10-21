@@ -1,7 +1,7 @@
-# Full color code support and some variables
-# Keep in mind that variables wont work for some lines, when it will for anothers :)
-# Just keep them where there are now and everything will be ok :)
-# Some lines can have global variables set. For player who will be effected. In example /heal Zrips then Zrips data will be used
+# The phrases support full color (hex) code, and some variables.
+# Keep in mind that some variables will not work for certain lines.
+# Just keep them where there are now and everything will be okay :)
+# Some lines can have global variables set. For the player who will be affected. For example /heal Zrips then Zrips data will be used as variable
 # [serverName] to show server name
 # [playerName] to show target player name
 # [playerDisplayName] to show target player display name
@@ -13,7 +13,7 @@
 # [gameMode] to show target player gamemode
 # [prefix] to show target player prefix if possible
 # [suffix] to show target player suffix if possible
-# Sender is console or player who performs command. In example Zrips performs /heal Zhax then Zrips data will be used
+# Sender is console or player who performs the command. For example Zrips performs /heal Zhax then Zrips data will be used
 # [senderName] to show Sender player name
 # [senderDisplayName] to show Sender player display name
 # [senderLvl] to show Sender player level
@@ -24,7 +24,7 @@
 # [senderGameMode] to show Sender player gamemode
 # [senderPrefix] to show Sender player prefix if possible
 # [senderSuffix] to show Sender player suffix if possible
-# Source is player which is being used for extra info. In example Zrips performs /tp Zhax Zrips then Zhax data will be used as its location is being taken for new player location
+# Source is player which is being used for extra info. For example Zrips performs /tp Zhax Zrips then Zhax data will be used as its location is being taken for new player location
 # [sourceName] to show source player name
 # [sourceDisplayName] to show source player display name
 # [sourceLvl] to show source player level
@@ -36,14 +36,14 @@
 # [sourcePrefix] to show source player prefix if possible
 # [sourceSuffix] to show source player suffix if possible
 # ***********************************************
-# Some lines supports option to send them to custom places, like action bar, title, sub title or even create JSON/clickable messages
-# If line starts with !toast! then player will get toast message (advancement popup, only 1.12 and up). Some extra variables can be used to define type and icon. example: !toast! -t:goal -icon:paper Hello world!
-# If line starts with !actionbar! then player will get action bar message defined after this variable
-# If line starts with !actionbar:[seconds]! then player will get action bar message for defined amount of time
-# If line starts with !broadcast! then everyone will receive message. You can add extra !toast! !actionbar! or !title! to send message for everyone to specific place, in example !broadcast!!title!
-# If line starts with !customtext:[cTextName]! then custom text will be taken by name provided and shown for player. In case its used after !broadcast! then everyone who is online will get this custom text message
-# If line starts with !title! then player will get title message defined after this variable, in addition it can contain !subtitle! which will add subtitle message
-# If line starts with !bosbar:[name]-[timer]! then player will get bossbar message defined after this variable, in addition you can define how long this message will be visible. You need to define bossbar name which can be anything you want, but lines with same name will override each other to prevent stacking
+# Some lines support the option to send them to custom places, like action bar, title, sub-title, or even create JSON/clickable messages
+# If the line starts with !toast! then player will get toast message (advancement popup, only 1.12 and up). Some extra variables can be used to define type and icon. example: !toast! -t:goal -icon:paper Hello world!
+# If the line starts with !actionbar! then player will get action bar message defined after this variable
+# If the line starts with !actionbar:[seconds]! then player will get action bar message for a defined amount of time
+# If the line starts with !broadcast! then everyone will receive message. You can add extra !toast! !actionbar! or !title! to send message for everyone to specific place, in example !broadcast!!title!
+# If the line starts with !customtext:[cTextName]! then custom text will be taken by name provided and shown for player. In case it is used after !broadcast! then everyone who is online will get this custom text message
+# If the line starts with !title! then player will get title message defined after this variable, in addition it can contain !subtitle! which will add subtitle message
+# If the line starts with !bossbar:[name]-[timer]! then player will get bossbar message defined after this variable, in addition you can define how long this message will be visible. You need to define bossbar name which can be anything you want, but lines with same name will override each other to prevent stacking
 # To include clickable messages: <T>Text</T><H>Hover text</H><C>command</C><SC>Suggested text</SC>
 # <T> and </T> required, other is optional
 # Use /n to break line
@@ -52,783 +52,625 @@
 # <CC> performs command from console once
 # <CCI> performs command from console every time player clicks text
 # <URL> includes url
+
 info:
   # Use !prefix! in any locale line to automatically include this prefix
-  prefix: '&e[&aCMI&e] '
-  NoPermission: '&cYetkin yok!'
-  CantHavePermission: '&cBu yetkiye sahip olamazsın!'
-  WrongGroup: '&cBunun için yanlış gruptasın!'
-  NoPlayerPermission: '&c[playerName] adlı kullanıcının bu yetkiye izni yok: [permission]'
-  Ingame: '&cBunu sadece oyunda kullanabilirsin!'
-  NoInformation: '&cHiçbir bilgi bulunamadı!'
-  Console: '&6Sunucu'
-  FromConsole: '&cBunu sadece konsolda kullanabilirsin!'
-  NotOnline: '&cOyuncu çevrimiçi değil!'
-  NobodyOnline: '&cÇevrimiçi olan birisi yok!'
-  Same: '&cKendi envanterini düzenlemek için açamazsın!'
-  cantLoginWithDifCap: '&cFarklı isim, büyük isimle giriş yapılamıyor! Eski isim:
-    &e[oldName]&c. Şuanki isim: &e[currentName]'
-  Searching: '&eOyuncunun verisi araştırılıyor, lütfen bekle, bunun bitmesi biraz
-    zaman alıcak!'
-  NoPlayer: '&cBu isimde bir oyuncu bulunamadı!'
-  NoCommand: '&cBu isimle bir komut yok!'
-  NoCommandWhileSleeping: '&cUyurken komut çalıştıramazsın!'
-  cantFindCommand: '&5&7[%1]&5 adlı komut bulunamadı, bunu mu demek istedin: &7[%2]&5?'
-  nolocation: '&4Uygun konum bulunamadı'
-  PurgeNotEnabled: '&cConfig dosyasında temizleme işlevi etkin değil!'
-  FeatureNotEnabled: '&cBu özellik etkin değil!'
-  TeamManagementDisabled: '&7DisableTeamManagement True olarak ayarlandığı zaman bu
-    özellik sınırlı olacak'
-  ModuleNotEnabled: '&cBu modül etkin değil!'
-  versionNotSupported: '&cSunucu versiyonu bu özelliği desteklemiyor'
-  bungeeNoGo: '&cBu özellik bunge ağ tabanlı sunucularda çalışmayacaktır'
-  clickToTeleport: '&eIşınlanmak için tıkla'
-  UseMaterial: '&4Lütfen materyal ismi kullanın!'
-  IncorrectMaterial: '&4Incorrect material name!'
-  UseInteger: '&4Lütfen sayı kullanın!'
-  UseBoolean: '&4Lütfen Doğru veya Yanlış komutlarından birini kullanın!'
-  NoLessThan: '&4Numara sayısı belirtilen miktardan az olamaz: [amount]!'
-  NoMoreThan: '&4Değer belirtilen miktardan fazla olamaz: [amount]'
-  NoGameMode: '&cLütfen bunlardan birini kullanın 0/1/2/3 veya Survival/Creative/Adventure/Spectator
-    veya s/c/a/sp!'
-  NoWorld: '&4Bu isimde dünya bulunamadı!'
-  IncorrectLocation: '&4Konum yanlış tanımlandı!'
-  NameChange: '&6[playerDisplayName] &eGriş yaptı, aynı zamanda olarak biliniyor:
-    &6[namelist]'
-  Cooldowns: '&eBu komutu bir daha kullanabilmek için beklemen gereken süre: &6[time]'
-  specializedCooldowns: '&eBu komut için hareket halinde bekleme süresi, lütfen bekleyin
-    &6[time]'
-  specializedRunning: '&eKomut hala çalışıyor, lütfen bekleyin &6[time]'
-  CooldownOneTime: '&eBu komut yalnızca bir kez kullanılabilir!'
-  WarmUp:
-    canceled: '&eHareketinle beraber komut iptal edildi'
-    counter: '!actionbar!&6-->&e[time] &6süre bekleyiniz <--'
-    DontMove: '!title!&6Hareket etme!!subtitle!&7 &c[time] &7süre bekleyiniz'
-    Boss:
-      DontMove: '&4 &7[autoTimeLeft] &4kadar süre hareket etme!'
-      WaitFor: '&4&7[autoTimeLeft] &4kadar süre bekle!'
-  Spawner: '&r[type] Spawner'
-  FailedSpawnerMine: '!actionbar!&cSpawner kazısı başarısız. &7[percent]% &cdüşme
-    şansı'
-  ClickSpawner: '!actionbar!&7[percent]% &eDüşme şansı'
-  Elevator:
-    created: '&eAsansör işareti oluşturuldu'
-  CantPlaceSpawner: '&eSpawnerı başka bir spawnerın yakınına yerleştiremezsiniz (&6[range]&e)'
-  ChunksLoading: '&eDünya chunk verisi hala yükleniyor. Lütfen biraz bekle ve tekrar
-    dene.'
-  ShulkerBox: Shulker Box
-  CantUseNonEncrypted: '!actionbar!&cBu öğeyle ilgili komutlar şifrelenmemiş. Onları
-    kullanamazsın!'
-  CantDecode: '!actionbar!&cMesaj/komut deşifre edemezsin. Bu görev için anahtar dosyası
-    yanlış anahtarı içeriyor. Sunucu yönetimini bu konuda bilgilendirin'
-  Show: '&eGöstermek'
-  Remove: '&cKaldır'
-  Back: '&eGeri'
-  Forward: '&eİleri'
-  Update: '&eYükle'
-  Save: '&eKaydet'
-  Delete: '&cSil'
-  Click: '&eTıkla'
-  Preview: '&eGörüntülemek'
-  PasteOld: '&eEskiyi yapıştır'
-  ClickToPaste: '&eSohbete yapıştırmak için tıklayın'
-  CantTeleportWorld: '&eBu dünyaya ışınlanamazsın'
-  CantTeleportNoWorld: '&cHedef dünya mevcut değil. Işınlanma iptal edildi'
-  CantTeleport: '&eIşınlanamazsın çünkü çok fazla sınırlı eşyan var. İzin verilen
-    maksimum öge miktarını görmek için bu satırı kaydırın.'
-  ClickToConfirmDelete: '&eClick to confirm removal of &6[name]'
-  teleported: '&eIşınlandırıldınız.'
-  BlackList: '&e[material] [amount] &6Max: [max]'
-  PlayerSpliter: '&e----- &6[playerDisplayName] &e-----'
-  Spliter: '&e--------------------------------------------------'
-  SpliterValue: '&e------------------ &6[value] &e------------------'
-  singleSpliter: '&e-'
-  SpliterMiddle: ' &6[value] '
+  prefix: '{gcp}[{gcn}CMI{gcp}] '
+  NoPermission: '{gcw}Bunun için yetkin yok!'
+  CantHavePermission: '{gcw}Bu yetkiye sahip olamazsın!'
+  WrongGroup: '{gcw}Bunun için doğru grupta değilsin!'
+  NoPlayerPermission: '{gcw}[playerName] şu yetkiye sahip değil: [permission]'
+  Ingame: '{gcw}Bunu yalnızca oyun içinde kullanabilirsin!'
+  NoInformation: '{gcw}Herhangi bir bilgi bulunamadı!'
+  Console: '{gcp}Sunucu'
+  FromConsole: '{gcw}Bunu yalnızca konsolda kullanabilirsin!'
+  NotOnline: '{gcw}Oyuncu çevrim içi değil!'
+  NotOffline: '{gcw}Oyuncu çevrim dışı değil!'
+  NobodyOnline: '{gcw}Çevrim içi kimse yok!'
+  NoPlayer: '{gcw}Bu isimde bir oyuncu bulunamadı! ({gcs}[name]{gcw})'
+  NoCommand: '{gcw}Bu isimde bir komut yok!'
+  cantFindCommand: '{gcn}{gcs}[%1] {gcn}komutu bulunamadı. {gcs}[%2]{gcn} komutunu
+    mu demek istedin?'
+  nolocation: '{gcp}Uygun bir konum bulunamadı'
+  FeatureNotEnabled: '{gcw}Bu özellik etkin değil!'
+  ModuleNotEnabled: '{gcw}Bu modül etkin değil!'
+  versionNotSupported: '{gcw}Sunucu sürümü bu özelliği desteklemiyor'
+  spigotNotSupported: '{gcw}Bunun çalışması için PaperSpigot tabanlı bir sunucu kullanmalısın'
+  bungeeNoGo: '{gcw}Bu özellik Bungee network tabanlı sunucularda çalışmaz'
+  clickToTeleport: '{gcp}Işınlanmak için tıkla'
+  UseMaterial: '{gcd}Lütfen geçerli bir eşya veya blok adı kullan!'
+  IncorrectMaterial: '{gcd}Geçersiz eşya veya blok adı!'
+  UseInteger: '{gcd}Lütfen sayı kullan!'
+  UseBoolean: '{gcd}Lütfen True veya False kullan!'
+  NoLessThan: '{gcd}Sayı {gcs}[amount]{gcd} değerinden küçük olamaz!'
+  NoMoreThan: '{gcd}Değer {gcs}[amount] değerinden büyük olamaz'
+  NoWorld: '{gcd}Bu isimde bir dünya bulunamadı!'
+  IncorrectLocation: '{gcd}Konum yanlış tanımlanmış!'
+  Show: '{gcp}Göster'
+  Remove: '{gcd}Kaldır'
+  Back: '{gcp}Geri'
+  Forward: '{gcp}İleri'
+  Update: '{gcp}Güncelle'
+  Save: '{gcp}Kaydet'
+  Delete: '{gcd}Sil'
+  Click: '{gcp}Tıkla'
+  Preview: '{gcp}Önizle'
+  PasteOld: '{gcp}Eski metni yapıştır'
+  ClickToPaste: '{gcp}Sohbete yapıştırmak için tıkla'
+  CantTeleportWorld: '{gcp}Bu dünyaya ışınlanamazsın'
+  CantTeleportNoWorld: '{gcw}Hedef dünya mevcut değil. Işınlanma iptal edildi'
+  ClickToConfirmDelete: '{gcs}[name] {gcp}ögesini kaldırmayı onaylamak için tıkla'
+  ClickToConfirm: '{gcp}Onaylamak için tıkla'
+  teleported: '{gcp}Işınlandın.'
+  PlayerSpliter: '{gcp}----- {gcs}[playerDisplayName] {gcp}-----'
+  Spliter: '{gcp}--------------------------------------------------'
+  SpliterValue: '{gcp}------------------ {gcs}[value] {gcp}------------------'
+  singleSpliter: '{gcp}-'
+  SpliterMiddle: ' {gcs}[value] '
   ListSpliter: ', '
-  ProgressBarFill: '&2▏'
-  ProgressBarEmpty: '&e▏'
-  nothingInHand: '!actionbar!&eElinde eşya tutmalısın'
-  nothingInHandLeather: '&eDeri eşyayı elinizde tutmanız gerekiyor'
-  nothingToShow: '&eGösterilecek bir şey yok'
-  noItem: '&cİtem bulunamadı'
-  dontHaveItem: '&cEnvanterinde bu itemden belirtilen miktarda&6[amount]x [itemName]
-    &citem yok'
-  wrongWorld: '&cBu dünyada bunu yapamazsın'
-  wrongPortal: '&cYanlış etki alanındasın'
-  differentWorld: '&cFarklı dünyalar'
-  HaveItem: '&cEnvanterinde bu itemden belirtilen miktarda&6[amount]x [itemName] &citem
-    yok'
-  ItemWillBreak: '!actionbar!&e (&6[itemName]&e) adlı item yakında kırılacak! &e[current]&6/&e[max]'
-  ArmorWillBreak: '!actionbar!&e[itemName] adlı zırh yakında kırılacak! &e[current]&6/&e[max]'
-  cantDoInGamemode: '&eBu oyun modunda bunu yapamazsın'
-  cantDoForPlayer: '&e &6[playerDisplayName] adlı oyuncuya bunu yapamazsın'
-  cantDoForYourSelf: '&eBunu kendine yapamazsın'
-  cantDetermineMobType: '&c&e[type] &cDeğişkeninden mob türü belirlenemiyor'
-  cantRename: '!actionbar!&eBu ismi kullanamazsın'
-  confirmRedefine: '&eClick to confirm redefining'
-  cantEdit: '&eYou can''t edit this'
-  wrongName: '&cYanlış isim'
-  unknown: unknown
-  invalidName: '&cGeçersiz isim'
-  alreadyexist: '&4Bu isim alınmış'
-  dontexist: '&4Bu isimde bir şey bulunamadı'
-  worldDontExist: '&cHedef dünyaya artık erişilemez. Seni oraya ışınlayamam!'
-  flyingToHigh: '&cBu kadar yükseğe uçamazsın, maksimum yükseklik: &6[max]&c!'
-  specializedItemFail: '&cÖzel item gereksinimini değer göre belirleyemiyorum: &7[value]'
-  sunSpeeding: Sleeping [count] of [total] [hour] hour [speed]X speed
-  sleepersRequired: '!actionbar!&f[sleeping] &7of &f[required] &7sleeping from required
-    for night time speedup'
-  sunSpeedingTitle: '&7[hour]'
-  skippingNight: '!title!&7Bütün geceleri atlamak'
-  sunSpeedingSubTitle: '&f[count]&7/&f[total] &7(&f[speed]X&7)'
-  repairConfirm: '&eeşyaları onaylamak içn tıkla &7[items] &eEşya tamir maliyeti:
-    &7[cost]'
-  bookDate: '&7&f[date] &7 tarihinde yazıldı'
-  maintenance: '&7Bakım modu'
-  notSet: not set
-  mapLimit: '&c30 000 000 blokun ilerisine gidemezsin'
-  startedEditingPainting: '&eResmi düzenlemeye başladın. İptal etmek için başla bloka
-    tıkla.'
-  canceledEditingPainting: '&eBoyama düzenleme modunu iptal ettiniz'
-  changedPainting: '!actionbar!&e&6[id] bu ID ile boyama ismi &6[name] &eolmak üzere
-    değiştirildi'
-  noSpam: '!title!&cSpam yapmayınız!'
-  noCmdSpam: '!title!&cKomut spamı yapmayınız!'
-  spamConsoleInform: '&cOyuncu (&7[playerName]&c),bu mesajı ile (&7[rules]&c)  adlı
-    kurala uymadı:&r [message]'
-  lookAtSign: '&eİşarete bak'
-  lookAtBlock: '&eBloğa bak'
-  lookAtEntity: '&eVarlığa bak'
-  noSpace: '&eNot enough free space'
-  notOnGround: '&eUçarken bunu uygulayamazsın'
-  # This line can have extra variables: [totalUsers] [onlinePlayers]
-  FirstJoin: '&e&6[playerDisplayName] &eSunucumuza hoşgeldin!'
-  LogoutCustom: ' &6[playerDisplayName] &eSunucudan çıktı'
-  LoginCustom: ' &6[playerDisplayName] &eSunucuya katıldı'
-  deathlocation: '&eÖldüğün yer: x:&6[x]&e, y:&6[y]&e, z:&6[z]&e in &6[world]'
-  book:
-    exploit: '&cYou cant create book with more than [amount] pages'
-  combat:
-    CantUseShulkerBox: '&cBir başka oyuncu ile savaştayken shulker kutusunu kullanamazsın.
-      Beklemelisin: [time]'
-    CantUseCommand: '!actionbar!&csavaştayken bu komutu kullanmazsın. Bekle: [time]'
-    bossBarPvp: '&cSavaş modu [autoTimeLeft]'
-    bossBarPve: '&2Savaş modu [autoTimeLeft]'
+  ProgressBarFill: '{gcu}▏'
+  ProgressBarEmpty: '{gcn}▏'
+  nothingInHand: '!actionbar!{gcp}Elinde bir eşya tutmalısın'
+  nothingInHandLeather: '{gcp}Elinde deri bir eşya tutmalısın'
+  nothingToShow: '{gcp}Gösterilecek bir şey yok'
+  noItem: '{gcw}Eşya bulunamadı'
+  dontHaveItem: '{gcw}Envanterinde {gcs}[amount]x [itemName] {gcw}yok'
+  wrongWorld: '{gcw}Bunu bu dünyada yapamazsın'
+  differentWorld: '{gcw}Farklı dünyalar'
+  HaveItem: '{gcw}Envanterinde {gcs}[amount]x [itemName] {gcw}var'
+  cantDoInGamemode: '{gcp}Bunu bu oyun modunda yapamazsın'
+  cantDoForPlayer: '{gcp}Bunu {gcs}[playerDisplayName] adlı oyuncuya yapamazsın'
+  cantDoForYourSelf: '{gcp}Bunu kendine yapamazsın'
+  cantDetermineMobType: '{gcw}{gcs}[type] {gcw}değişkeninden canlı türü belirlenemedi'
+  cantRename: '!actionbar!{gcp}Bu ismi kullanamazsın'
+  confirmRedefine: '{gcp}Yeniden tanımlamayı onaylamak için tıkla'
+  cantEdit: '{gcp}Bunu düzenleyemezsin'
+  wrongName: '{gcw}Yanlış isim'
+  unknown: bilinmiyor
+  invalidName: '{gcw}Geçersiz isim'
+  alreadyexist: '{gcd}Bu isim zaten kullanılıyor'
+  dontexist: '{gcd}Bu isimde bir şey bulunamadı'
+  worldDontExist: '{gcw}Hedef dünyaya artık erişilemiyor. Seni oraya ışınlayamam!'
+  notSet: ayarlanmamış
+  lookAtSign: '{gcp}Tabelaya bak'
+  lookAtBlock: '{gcp}Bloğa bak'
+  lookAtEntity: '{gcp}Varlığa bak'
+  noSpace: '{gcp}Yeterli boş alan yok'
+  notOnGround: '{gcp}Uçarken bunu yapamazsın'
   bungee:
-    Online: '&6Çevrimiçi'
-    Offline: '&cÇevrimdışı'
-    not: '&cSunucu bungee ağına ait değil'
-    noserver: '&cBu isimde sunucu bulunamadı!'
-    server: '&eSunucu: &7[name]'
+    Online: '{gcu}Çevrim içi'
+    Offline: '{gcn}Çevrim dışı'
+    not: '{gcw}Sunucu Bungee network''e bağlı değil'
+    noserver: '{gcw}Bu isimde bir sunucu bulunamadı!'
+    server: '{gcp}Sunucu: {gcs}[name]'
   variables:
-    am: '&eAM'
-    pm: '&ePM'
-    Online: '&6Çevrimiçi'
-    Offline: '&cÇevrimdışı'
-    TrueColor: '&2'
-    FalseColor: '&4'
-    'True': '&6Açık'
-    'False': '&cKapalı'
-    Enabled: '&6Etkin'
-    Disabled: '&cDevre dışı'
-    survival: '&6Survival'
-    creative: '&6Yaratıcı'
-    adventure: '&6Macera'
-    spectator: '&6İzleyici'
-    flying: '&6Uçuş'
-    notflying: '&6Uçmuyorsun'
-  noSchedule: '&cBu isme göre program bulunamadı'
-  totem:
-    cooldown: '&eTotem bekleme süresi: [time]'
-    warmup: '&eTotem etkisi: [time]'
-    cantConsume: '&eTotem kullanma bekleme süresine bağlı reddedildi'
+    am: AM
+    pm: PM
+    Online: '{gcu}Çevrim içi'
+    Offline: '{gcd}Çevrim dışı'
+    TrueColor: '{gcu}'
+    FalseColor: '{gcd}'
+    'True': '{gcu}Doğru'
+    'False': '{gcd}Yanlış'
+    Enabled: '{gcu}Etkin'
+    Disabled: '{gcd}Devre dışı'
+    survival: Hayatta Kalma
+    creative: Yaratıcı
+    adventure: Macera
+    spectator: Seyirci
+    flying: Uçuyor
+    notflying: Uçmuyor
   Inventory:
-    FullDrop: '&5Envanterinize tüm öğeler sığmıyor. Yere düşürüldüler'
-  InventorySave:
-    info: '&8Bilgi: &8[playerDisplayName]'
-    saved: '&e[time] &ebu id ile envanter kaydedildi: &e[id]'
-    NoSavedInv: '&eBu oyuncunun kaydedilmiş envanteri yok'
-    NoEntries: '&4Dosya mevcut, Ama envanterler bulunamadı!'
-    CantFind: '&eBu id ile envanter bulunamadı'
-    TopLine: '&e----------- &6[playerDisplayName] Kayıtlı envanter &e-----------'
-    List: '&eid: &6[id]&e. &6[time]'
-    KillerSymbol: '&c ☠'
-    Click: '&eKayıtlı envanteri ([id]) kontrol etmek için tıkla'
-    IdDontExist: '&4Bu kayıt IDsi mevcut değil!'
-    Deleted: '&eKayıtlı envanter başarılı şekilde silindi!'
-    Restored: '&e[targetname] adlı kullanıcının envanterini &egeri yükledin.&e[sourcename]'
-    GotRestored: '&eEnvanterin &e[sourcename] &etarafından geri yüklendi. &eEnvanter
-      kaydedildi&e[time]'
-    LoadForSelf: '&eBu envanteri kendiniz yükleyiniz'
-    LoadForOwner: '&eSahibi için bu envanteri yükleyiniz'
-    NextInventory: '&eSonraki envanter'
-    PreviousInventory: '&eÖnceki envanter'
-    Editable: '&eDüzenleme modu etkin'
-    NonEditable: '&eDüzenleme modu devre dışı'
-  TimeNotRecorded: '&e-Kayıt yok-'
-  years: '&e[years] &6yıl '
-  oneYear: '&e[years] &6yıl '
-  day: '&e[days] &6gün '
-  oneDay: '&e[days] &6gün '
-  hour: '&e[hours] &6saat '
-  oneHour: '&e[hours] &6saat '
-  min: '&e[mins] &6dakika '
-  sec: '&e[secs] &6saniye '
-  vanishSymbolOn: '&8[&7H&8]&r'
-  vanishSymbolOff: ''
-  afkSymbolOn: '&8[&7Afk&8]&r'
-  afkSymbolOff: ''
-  nextPageConsole: '&fSonraki sayfa için &5[command]'
-  prevPage: '&2----<< &6Prev '
-  prevPageGui: '&6Önceki sayfa'
-  prevPageClean: '&6Önceki '
-  prevPageOff: '&2----<< &7Önceki '
-  prevPageHover: '&7<<<'
-  firstPageHover: '&7|<'
-  nextPage: '&6 Sonraki &2>>----'
-  nextPageGui: '&6Sonraki sayfa'
-  nextPageClean: '&6 Sonraki'
-  nextPageOff: '&7 Sonraki &2>>----'
-  nextPageHover: '&7>>>'
-  lastPageHover: '&7>|'
-  pageCount: '&2[current]&7/&2[total]'
-  pageCountHover: '&e[totalEntries] sayfa'
-  skullOwner: '!actionbar!&7Owner:&r [playerName]'
-  beeinfo: '!actionbar!&7Bal seviyesi: &e[level]&7/&e[maxlevel] &7İçerideki arılar:
-    &e[count]&7/&e[maxcount]'
-  circle: '&3Daire'
-  square: '&5Kare'
-  clear: '&7Clear'
-  protectedArea: '&cKorumalı alan. Bunu burada yapamam.'
-  valueToLong: '&eDeğer çok yüksek. Maksimum: [max]'
-  valueToShort: '&eDeğer çok düşük. Minimum: [min]'
-  pvp:
-    noGodDamage: '!actionbar!&cÖlümsüzken oyunculara zarar veremezsin'
-  InvEmpty:
-    armor: '&eZırh slotlarının boş olması lazım!'
-    hand: '&eElin boş olmak zorunda!'
-    maininv: '&eAna envanterişn boş olmak zorunda!'
-    maininvslots: '&eAna envanterinde en az&6[count] &eboş slot olmalıdır!'
-    inv: '&eEnvantein boş olmalı!'
-    offhand: '&eHazırlık boş olmalı!'
-    quickbar: '&equick bar boş olmalı!'
-    quickbarslots: '&eQuick barında en az&6[count] &eboş slot olmalıdır'
-    subinv: '&eAlt envanteriniz boş olmalıdır!'
-    subinvslots: '&eAlt envanterinizde en az&6[count] &eboş slot olmalıdır!'
-  pickIcon: '&8İkon seç'
+    Full: '{gcd}Envanterin dolu. Eşya eklenemedi'
+    FullDrop: '{gcd}Eşyaların tamamı envanterine sığmadı ve yere bırakıldı'
+  TimeNotRecorded: '{gcp}-Kayıt yok-'
+  months: '{gcs}[months] {gcp}ay '
+  oneMonth: '{gcs}[months] {gcp}ay '
+  weeks: '{gcs}[weeks] {gcp}hafta '
+  oneWeek: '{gcs}[weeks] {gcp}hafta '
+  years: '{gcs}[years] {gcp}yıl '
+  oneYear: '{gcs}[years] {gcp}yıl '
+  day: '{gcs}[days] {gcp}gün '
+  oneDay: '{gcs}[days] {gcp}gün '
+  hour: '{gcs}[hours] {gcp}saat '
+  oneHour: '{gcs}[hours] {gcp}saat '
+  min: '{gcs}[mins] {gcp}dk '
+  sec: '{gcs}[secs] {gcp}sn '
+  time:
+    separator: '{gcn}:'
+    short:
+      year: '{gcs}[years]{gcp}y'
+      month: '{gcs}[months]{gcp}ay'
+      day: '{gcs}[days]{gcp}g'
+      hour: '{gcs}[hours]{gcp}sa'
+      min: '{gcs}[mins]{gcp}dk'
+      sec: '{gcs}[secs]{gcp}sn'
+  nextPageConsole: '{gcn}Sonraki sayfa için {gcs}[command] komutunu kullan'
+  prevPage: '{gcn}----<< {gcp}Önceki '
+  prevCustomPage: '{gcn}----<< {gcp}[value] '
+  prevPageGui: '{gcp}Önceki sayfa '
+  prevPageClean: '{gcp}Önceki '
+  prevPageOff: '{gcn}----<< {gcp}Önceki '
+  prevCustomPageOff: '{gcn}----<< {gcp}[value] '
+  prevPageHover: '{gcp}<<<'
+  firstPageHover: '{gcp}|<'
+  nextPage: '{gcp} Sonraki {gcn}>>----'
+  nextCustomPage: '{gcp} [value] {gcn}>>----'
+  nextPageGui: '{gcp}Sonraki sayfa'
+  nextPageClean: '{gcp} Sonraki'
+  nextPageOff: '{gcp} Sonraki {gcn}>>----'
+  nextCustomPageOff: '{gcs} [value] {gcn}>>----'
+  nextPageHover: '{gcp}>>>'
+  lastPageHover: '{gcp}>|'
+  pageCount: '{gcn}[current]{gcp}/{gcn}[total]'
+  pageCountHover: '{gcs}[totalEntries] kayıt'
+  skullOwner: '!actionbar!{gcp}Sahibi:&r [playerName]'
+  mobHeadName: '{gcs}[mobName] {gcp}Kafası'
+  circle: '{gcp}Daire'
+  square: '{gcp}Kare'
+  clear: '{gcp}Temizle'
+  protectedArea: '{gcw}Burası korumalı bir alan. Bunu burada yapamazsın.'
+  valueToLong: '{gcp}Değer çok yüksek. En fazla: [max]'
+  valueToShort: '{gcp}Değer çok düşük. En az: [min]'
+  pickIcon: '{gcp}Simge seç'
+  reset: '{gcp}Sıfırlamak için {gcs}Q {gcp}tuşuna bas'
+  basicDirection: '{gcp}Pitch:{gcs}[x] {gcp}Yaw:{gcs}[y]'
+  fullDirection: '{gcp}Pitch:{gcs}[x] {gcp}Yaw:{gcs}[y] {gcp}Roll:{gcs}[z]'
+  basicScale: '{gcp}Genişlik:{gcs}[x] {gcp}Yükseklik:{gcs}[y]'
+  fullScale: '{gcp}Genişlik:{gcs}[x] {gcp}Yükseklik:{gcs}[y] {gcp}Derinlik:{gcs}[z]'
+  basicVector: '{gcp}X:{gcs}[x] {gcp}Y:{gcs}[y]'
+  fullVector: '{gcp}X:{gcs}[x] {gcp}Y:{gcs}[y] {gcp}Z:{gcs}[z]'
+  incorrectColor: '{gcw}Renk yanlış tanımlanmış!'
+  updateSpeed: '{gcp}Güncelleme hızı: {gcs}[value]'
+  serializeAndShow: '{gcp}Serileştir ve göster'
+  amount: '{gcp}Miktar: {gcs}[value]'
+  speed: '{gcp}Hız: {gcs}[value]'
+  color: '{gcp}Renk: [color]Örnek'
+  duration: '{gcp}Süre: [value]'
+  size: '{gcp}Boyut: [value]'
+  value: '{gcp}Değer: [value]'
+  Spawner: '&r[type] Spawner'
   DamageCause:
-    block_explosion: Explosion
-    contact: Block Damage
-    cramming: cramming
-    custom: Unknown
-    dragon_breath: Dragon breath
-    drowning: Drowning
-    dryout: dryout
-    entity_attack: Entity attack
-    entity_explosion: Explosion
-    entity_sweep_attack: entity sweep attack
-    fall: Fall
-    falling_block: Falling block
-    fire: Fire
-    fire_tick: Fire
-    fly_into_wall: Fly into wall
-    hot_floor: Magma block
-    lava: Lava
-    lightning: Lightning
-    magic: Magic
-    melting: Melting
-    poison: Poison
-    projectile: Projectile
-    starvation: Starvation
-    suffocation: Suffocation
-    suicide: Suicide
-    thorns: Thorns
-    void: Void
-    wither: Wither
-  Biomes:
-    BADLANDS: Badlands
-    BADLANDS_PLATEAU: Badlands plateau
-    BAMBOO_JUNGLE: Bamboo jungle
-    BAMBOO_JUNGLE_HILLS: Bamboo jungle hills
-    BASALT_DELTAS: Basalt deltas
-    BEACH: Beach
-    BIRCH_FOREST: Birch forest
-    BIRCH_FOREST_HILLS: Birch forest hills
-    COLD_OCEAN: Cold ocean
-    CRIMSON_FOREST: Crimson forest
-    DARK_FOREST: Dark forest
-    DARK_FOREST_HILLS: Dark forest hills
-    DEEP_COLD_OCEAN: Deep cold ocean
-    DEEP_FROZEN_OCEAN: Deep frozen ocean
-    DEEP_LUKEWARM_OCEAN: Deep lukewarm ocean
-    DEEP_OCEAN: Deep ocean
-    DEEP_WARM_OCEAN: Deep warm ocean
-    DESERT: Desert
-    DESERT_HILLS: Desert hills
-    DESERT_LAKES: Desert lakes
-    END_BARRENS: End barrens
-    END_HIGHLANDS: End highlands
-    END_MIDLANDS: End midlands
-    ERODED_BADLANDS: Eroded badlands
-    FLOWER_FOREST: Flower forest
-    FOREST: Forest
-    FROZEN_OCEAN: Frozen ocean
-    FROZEN_RIVER: Frozen river
-    GIANT_SPRUCE_TAIGA: Giant spruce taiga
-    GIANT_SPRUCE_TAIGA_HILLS: Giant spruce taiga hills
-    GIANT_TREE_TAIGA: Giant tree taiga
-    GIANT_TREE_TAIGA_HILLS: Giant tree taiga hills
-    GRAVELLY_MOUNTAINS: Gravelly mountains
-    ICE_SPIKES: Ice spikes
-    JUNGLE: Jungle
-    JUNGLE_EDGE: Jungle edge
-    JUNGLE_HILLS: Jungle hills
-    LUKEWARM_OCEAN: Lukewarm ocean
-    MODIFIED_BADLANDS_PLATEAU: Modified badlands plateau
-    MODIFIED_GRAVELLY_MOUNTAINS: Modified gravelly mountains
-    MODIFIED_JUNGLE: Modified jungle
-    MODIFIED_JUNGLE_EDGE: Modified jungle edge
-    MODIFIED_WOODED_BADLANDS_PLATEAU: Modified wooded badlands plateau
-    MOUNTAINS: Mountains
-    MOUNTAIN_EDGE: Mountain edge
-    MUSHROOM_FIELDS: Mushroom fields
-    MUSHROOM_FIELD_SHORE: Mushroom field shore
-    NETHER_WASTES: Nether wastes
-    OCEAN: Ocean
-    PLAINS: Plains
-    RIVER: River
-    SAVANNA: Savanna
-    SAVANNA_PLATEAU: Savanna plateau
-    SHATTERED_SAVANNA: Shattered savanna
-    SHATTERED_SAVANNA_PLATEAU: Shattered savanna plateau
-    SMALL_END_ISLANDS: Small end islands
-    SNOWY_BEACH: Snowy beach
-    SNOWY_MOUNTAINS: Snowy mountains
-    SNOWY_TAIGA: Snowy taiga
-    SNOWY_TAIGA_HILLS: Snowy taiga hills
-    SNOWY_TAIGA_MOUNTAINS: Snowy taiga mountains
-    SNOWY_TUNDRA: Snowy tundra
-    SOUL_SAND_VALLEY: Soul sand valley
-    STONE_SHORE: Stone shore
-    SUNFLOWER_PLAINS: Sunflower plains
-    SWAMP: Swamp
-    SWAMP_HILLS: Swamp hills
-    TAIGA: Taiga
-    TAIGA_HILLS: Taiga hills
-    TAIGA_MOUNTAINS: Taiga mountains
-    TALL_BIRCH_FOREST: Tall birch forest
-    TALL_BIRCH_HILLS: Tall birch hills
-    THE_END: The end
-    THE_VOID: The void
-    WARM_OCEAN: Warm ocean
-    WARPED_FOREST: Warped forest
-    WOODED_BADLANDS_PLATEAU: Wooded badlands plateau
-    WOODED_HILLS: Wooded hills
-    WOODED_MOUNTAINS: Wooded mountains
+    block_explosion: Patlama
+    campfire: Kamp ateşi
+    contact: Blok teması
+    cramming: Varlık sıkışması
+    custom: Bilinmiyor
+    dragon_breath: Ejderha nefesi
+    drowning: Boğulma
+    dryout: Kuruma
+    entity_attack: Varlık saldırısı
+    entity_explosion: Patlama
+    entity_sweep_attack: Süpürme saldırısı
+    fall: Düşme
+    falling_block: Düşen blok
+    fire: Ateş
+    fire_tick: Yanma
+    fly_into_wall: Duvara çarpma
+    freeze: Donma
+    hot_floor: Magma bloğu
+    kill: Öldürülme
+    lava: Lav
+    lightning: Yıldırım
+    magic: Büyü
+    melting: Erime
+    poison: Zehir
+    projectile: Fırlatılan cisim
+    sonic_boom: Sonik patlama
+    starvation: Açlık
+    suffocation: Havasız kalma
+    suicide: İntihar
+    thorns: Dikenler
+    void: Boşluk
+    wither: Solma
+    world_border: Dünya sınırı
   EntityType:
-    area_effect_cloud: Area effect cloud
-    armor_stand: Armor stand
-    arrow: Arrow
-    bat: Bat
-    bee: Bee
+    acacia_boat: Akasya Tekne
+    acacia_chest_boat: Sandıklı Akasya Tekne
+    allay: Huzurveren
+    area_effect_cloud: Etki Alanı Bulutu
+    armadillo: Armadillo
+    armor_stand: Zırh Askısı
+    arrow: Ok
+    axolotl: Aksolotl
+    bamboo_chest_raft: Sandıklı Bambu Sal
+    bamboo_raft: Bambu Sal
+    bat: Yarasa
+    bee: Arı
+    birch_boat: Huş Tekne
+    birch_chest_boat: Sandıklı Huş Tekne
     blaze: Blaze
-    boat: Boat
-    cat: Cat
-    cave_spider: Cave spider
-    chicken: Chicken
-    cod: Cod
-    cow: Cow
+    block_display: Blok Gösterici
+    bogged: Batık
+    breeze: Esinti
+    breeze_wind_charge: Rüzgâr Topu
+    camel: Deve
+    camel_husk: Kalıntı Deve
+    cat: Kedi
+    cave_spider: Mağara Örümceği
+    cherry_boat: Kiraz Ağacı Tekne
+    cherry_chest_boat: Sandıklı Kiraz Ağacı Tekne
+    chest_minecart: Sandıklı Vagon
+    chicken: Tavuk
+    cod: Morina
+    command_block_minecart: Komut Bloklu Vagon
+    copper_golem: Bakır Golem
+    cow: İnek
+    creaking: Gıcırtı
     creeper: Creeper
-    dolphin: Dolphin
-    donkey: Donkey
-    dragon_fireball: Dragon fireball
-    dropped_item: Dropped item
-    drowned: Drowned
-    egg: Egg
-    elder_guardian: Elder guardian
+    dark_oak_boat: Koyu Meşe Tekne
+    dark_oak_chest_boat: Sandıklı Koyu Meşe Tekne
+    dolphin: Yunus
+    donkey: Eşek
+    dragon_fireball: Ejderha Ateş Topu
+    drowned: Boğuk
+    egg: Fırlatılmış Yumurta
+    elder_guardian: Yaşlı Gardiyan
     enderman: Enderman
     endermite: Endermite
-    ender_crystal: Ender crystal
-    ender_dragon: Ender dragon
-    ender_pearl: Ender pearl
-    ender_signal: Ender signal
-    evoker: Evoker
-    evoker_fangs: Evoker fangs
-    experience_orb: Experience orb
-    falling_block: Falling block
-    fireball: Fireball
-    firework: Firework
-    fishing_hook: Fishing hook
-    fox: Fox
+    ender_dragon: Ender Ejderhası
+    ender_pearl: Fırlatılmış Ender İncisi
+    end_crystal: End Kristali
+    evoker: Uyandırıcı
+    evoker_fangs: Uyandırıcı Kapanı
+    experience_bottle: Fırlatılmış Tecrübe İksiri
+    experience_orb: Tecrübe Küresi
+    eye_of_ender: Ender Gözü
+    falling_block: Düşen Blok
+    fireball: Ateş Topu
+    firework_rocket: Havai Fişek Roketi
+    fishing_bobber: Olta İğnesi
+    fox: Tilki
+    frog: Kurbağa
+    furnace_minecart: Ocaklı Vagon
     ghast: Ghast
-    giant: Giant
-    guardian: Guardian
+    giant: Dev
+    glow_item_frame: Parlayan Eşya Çerçevesi
+    glow_squid: Parlayan Mürekkep Balığı
+    goat: Keçi
+    guardian: Gardiyan
+    happy_ghast: Mutlu Ghast
     hoglin: Hoglin
-    horse: Horse
-    husk: Husk
-    illusioner: Illusioner
-    iron_golem: Iron golem
-    item_frame: Item frame
-    leash_hitch: Leash hitch
-    lightning: Lightning
-    llama: Llama
-    llama_spit: Llama spit
-    magma_cube: Magma cube
-    minecart: Minecart
-    minecart_chest: Minecart chest
-    minecart_command: Minecart command
-    minecart_furnace: Minecart furnace
-    minecart_hopper: Minecart hopper
-    minecart_mob_spawner: Minecart mob spawner
-    minecart_tnt: Minecart tnt
-    mule: Mule
-    mushroom_cow: Mushroom cow
-    ocelot: Ocelot
-    painting: Painting
+    hopper_minecart: Hunili Vagon
+    horse: At
+    husk: Kalıntı
+    illusioner: Hokkabaz
+    interaction: Etkileşim
+    iron_golem: Demir Golem
+    item: Eşya
+    item_display: Eşya Gösterici
+    item_frame: Eşya Çerçevesi
+    jungle_boat: Orman Ağacı Tekne
+    jungle_chest_boat: Sandıklı Orman Ağacı Tekne
+    leash_knot: Kayış Düğümü
+    lightning_bolt: Yıldırım
+    lingering_potion: Kalıcı İksir
+    llama: Lama
+    llama_spit: Lama Tükürüğü
+    magma_cube: Magma Küpü
+    mangrove_boat: Mangrov Tekne
+    mangrove_chest_boat: Sandıklı Mangrov Tekne
+    mannequin: Manken
+    marker: İşaretleyici
+    minecart: Vagon
+    mooshroom: Mooshroom
+    mule: Katır
+    nautilus: Notilus
+    oak_boat: Meşe Tekne
+    oak_chest_boat: Sandıklı Meşe Tekne
+    ocelot: Oselo
+    ominous_item_spawner: Uğursuz Eşya Spawner'ı
+    painting: Tablo
+    pale_oak_boat: Soluk Meşe Tekne
+    pale_oak_chest_boat: Sandıklı Soluk Meşe Tekne
     panda: Panda
-    parrot: Parrot
-    phantom: Phantom
-    pig: Pig
+    parched: Kavruk
+    parrot: Papağan
+    phantom: Kâbus
+    pig: Domuz
     piglin: Piglin
-    piglin_brute: Piglin brute
-    pillager: Pillager
-    player: Player
-    polar_bear: Polar bear
-    primed_tnt: Primed tnt
-    pufferfish: Pufferfish
-    rabbit: Rabbit
-    ravager: Ravager
-    salmon: Salmon
-    sheep: Sheep
+    piglin_brute: Zalim Piglin
+    pillager: Yağmacı
+    player: Oyuncu
+    polar_bear: Kutup Ayısı
+    pufferfish: Kirpi Balığı
+    rabbit: Tavşan
+    ravager: Yıkıcı
+    salmon: Somon
+    sheep: Koyun
     shulker: Shulker
-    shulker_bullet: Shulker bullet
-    silverfish: Silverfish
-    skeleton: Skeleton
-    skeleton_horse: Skeleton horse
-    slime: Slime
-    small_fireball: Small fireball
-    snowball: Snowball
-    snowman: Snowman
-    spectral_arrow: Spectral arrow
-    spider: Spider
-    splash_potion: Splash potion
-    squid: Squid
-    stray: Stray
-    strider: Strider
-    thrown_exp_bottle: Thrown exp bottle
-    trader_llama: Trader llama
-    trident: Trident
-    tropical_fish: Tropical fish
-    turtle: Turtle
-    unknown: Unknown
-    vex: Vex
-    villager: Villager
-    vindicator: Vindicator
-    wandering_trader: Wandering trader
-    witch: Witch
+    shulker_bullet: Skulker Mermisi
+    silverfish: Gümüşçün
+    skeleton: İskelet
+    skeleton_horse: İskelet At
+    slime: Balçık
+    small_fireball: Küçük Ateş Topu
+    sniffer: Koklarca
+    snowball: Kar Topu
+    snow_golem: Kar Golemi
+    spawner_minecart: Spawner Vagonu
+    spectral_arrow: Spektral Ok
+    spider: Örümcek
+    splash_potion: Patlayıcı İksir
+    spruce_boat: Ladin Tekne
+    spruce_chest_boat: Sandıklı Ladin Tekne
+    squid: Mürekkep Balığı
+    stray: Serseri
+    strider: Lavgezer
+    sulfur_cube: Sülfür Küpü
+    tadpole: İribaş
+    text_display: Yazı Gösterici
+    tnt: Ateşlenmiş TNT
+    tnt_minecart: TNT’li Vagon
+    trader_llama: Tüccar Laması
+    trident: Üçlü Mızrak
+    tropical_fish: Tropikal Balık
+    turtle: Kaplumbağa
+    unknown: Bilinmiyor
+    vex: Sinirbozan
+    villager: Köylü
+    vindicator: İntikamcı
+    wandering_trader: Seyyar Tüccar
+    warden: Muhafız
+    wind_charge: Rüzgâr Topu
+    witch: Cadı
     wither: Wither
-    wither_skeleton: Wither skeleton
-    wither_skull: Wither skull
-    wolf: Wolf
+    wither_skeleton: Wither İskeleti
+    wither_skull: Wither Kafatası
+    wolf: Kurt
     zoglin: Zoglin
-    zombie: Zombie
-    zombie_horse: Zombie horse
-    zombie_villager: Zombie villager
-    zombified_piglin: Zombified piglin
-  EnchantAliases:
-    protection_fire:
-    - FireProtection
-    damage_all:
-    - Sharpness
-    arrow_fire:
-    - Flame
-    soul_speed:
-    - SOULSPEED
-    water_worker:
-    - AquaAffinity
-    arrow_knockback:
-    - Punch
-    loyalty:
-    - Loyalty
-    depth_strider:
-    - DepthStrider
-    vanishing_curse:
-    - VanishingCurse
-    durability:
-    - Unbreaking
-    knockback:
-    - Knockback
-    luck:
-    - Luck
-    binding_curse:
-    - BindingCurse
-    loot_bonus_blocks:
-    - Fortune
-    protection_environmental:
-    - Protection
-    dig_speed:
-    - Efficiency
-    mending:
-    - Mending
-    lure:
-    - Lure
-    loot_bonus_mobs:
-    - Looting
-    piercing:
-    - Piercing
-    damage_undead:
-    - Smite
-    multishot:
-    - Multishot
-    fire_aspect:
-    - FireAspect
-    channeling:
-    - Channeling
-    sweeping_edge:
-    - SweepingEdge
-    thorns:
-    - Thorns
-    damage_arthropods:
-    - BaneOfArthropods
-    oxygen:
-    - Respiration
-    riptide:
-    - Riptide
-    silk_touch:
-    - SilkTouch
-    quick_charge:
-    - QUICKCHARGE
-    protection_projectile:
-    - ProjectileProtection
-    impaling:
-    - Impaling
-    protection_fall:
-    - FallProtection
-    - FeatherFalling
-    arrow_damage:
-    - Power
-    arrow_infinite:
-    - Infinity
+    zombie: Zombi
+    zombie_horse: Zombi At
+    zombie_nautilus: Zombi Notilus
+    zombie_villager: Zombi Köylü
+    zombified_piglin: Zombileşmiş Piglin
+  # Avoid adding color codes to the enchant name
+  EnchantNames:
+    efficiency: Verimlilik
+    fortune: Servet
+    wind_burst: Rüzgâr Patlaması
+    quick_charge: Hızlı Çekiş
+    riptide: Girdap
+    mending: Onarım
+    impaling: Saplama
+    luck_of_the_sea: Deniz Şansı
+    lure: Yemleme
+    piercing: Delme
+    soul_speed: Ruh Hızı
+    projectile_protection: Uzun Menzil Koruması
+    sharpness: Keskinlik
+    fire_protection: Ateş Koruması
+    swift_sneak: Çevik Gizlilik
+    frost_walker: Dondurucu Yürüyüş
+    infinity: Sonsuzluk
+    loyalty: Sadakat
+    power: Güç
+    bane_of_arthropods: Eklembacaklıların Kıyameti
+    breach: Aşma
+    flame: Alev
+    fire_aspect: Alevden Çehre
+    vanishing_curse: Kaybolma Laneti
+    binding_curse: Bağlanma Laneti
+    channeling: Yıldırım Yönlendirmesi
+    punch: İtme
+    multishot: Çoklu Atış
+    blast_protection: Patlama Koruması
+    aqua_affinity: Su Adaptasyonu
+    respiration: Solungaç
+    feather_falling: Tüy Düşüşü
+    looting: Ganimet
+    smite: Çarpma
+    silk_touch: İpeksi Dokunuş
+    density: Yoğunluk
+    sweeping_edge: Süpürücü Kenar
+    depth_strider: Derin Koşucu
+    protection: Koruma
+    unbreaking: Kırılmazlık
+    knockback: Savurma
+    lunge: Atılma
+    thorns: Dikenli
   PotionEffectAliases:
-    speed:
-    - Speed
-    slow:
-    - Slow
-    fast_digging:
-    - Fast digging
-    slow_digging:
-    - Slow digging
-    increase_damage:
-    - Increase damage
-    heal:
-    - Heal
-    harm:
-    - Harm
-    jump:
-    - Jump
-    confusion:
-    - Confusion
-    regeneration:
-    - Regeneration
-    damage_resistance:
-    - Damage resistance
-    fire_resistance:
-    - Fire resistance
-    water_breathing:
-    - Water breathing
-    invisibility:
-    - Invisibility
-    blindness:
-    - Blindness
-    night_vision:
-    - Night vision
+    infested:
+    - İstila Edilmiş
     hunger:
-    - Hunger
+    - Açlık
     weakness:
-    - Weakness
-    poison:
-    - Poison
+    - Zayıflık
     wither:
-    - Wither
-    health_boost:
-    - Health boost
-    absorption:
-    - Absorption
-    saturation:
-    - Saturation
+    - Solma
     glowing:
-    - Glowing
-    levitation:
-    - Levitation
+    - Parlama
+    absorption:
+    - Emilim
+    instanthealth:
+    - Anında Sağlık
+    regeneration:
+    - Yenilenme
+    saturation:
+    - Doygunluk
+    badomen:
+    - Kötü Kehanet
+    instantdamage:
+    - Anında Hasar
+    fireresistance:
+    - Ateş Direnci
     luck:
-    - Luck
+    - Şans
+    waterbreathing:
+    - Su Altında Nefes Alma
+    nightvision:
+    - Gece Görüşü
+    blindness:
+    - Körlük
+    darkness:
+    - Karanlık
+    nausea:
+    - Bulantı
+    oozing:
+    - Sızma
+    strength:
+    - Kuvvet
+    raidomen:
+    - Baskın Kehaneti
+    weaving:
+    - Örme
+    slowness:
+    - Yavaşlık
+    healthboost:
+    - Sağlık Arttırma
+    speed:
+    - Hız
     unluck:
-    - Unluck
-    slow_falling:
-    - Slow falling
-    conduit_power:
-    - Conduit power
-    dolphins_grace:
-    - Dolphins grace
-    bad_omen:
-    - Bad omen
-    hero_of_the_village:
-    - Hero of the village
+    - Kötü Şans
+    trialomen:
+    - Sınama Kehaneti
+    resistance:
+    - Direnç
+    dolphinsgrace:
+    - Yunusun Lütfu
+    heroofthevillage:
+    - Köyün Kahramanı
+    poison:
+    - Zehir
+    slowfalling:
+    - Yavaş Düşüş
+    invisibility:
+    - Görünmezlik
+    windcharged:
+    - Rüzgâr Dolu
+    jumpboost:
+    - Zıplama Desteği
+    haste:
+    - Acele
+    miningfatigue:
+    - Madenci Yorgunluğu
+    conduitpower:
+    - Oluk’un Gücü
+    levitation:
+    - Yükselme
+dialog:
+  signEditor: Tabela Düzenleyici
+  update: Güncelle
+  save: Kaydet
+  close: Kapat
+  line: Satır [line]
 direction:
-  n: North
-  ne: North East
-  e: East
-  se: South East
-  s: South
-  sw: South West
-  w: West
-  nw: North West
+  n: Kuzey
+  ne: Kuzeydoğu
+  e: Doğu
+  se: Güneydoğu
+  s: Güney
+  sw: Güneybatı
+  w: Batı
+  nw: Kuzeybatı
 modify:
-  middlemouse: '&2Düzenlemek için farenin orta tuşuna tıklayın'
-  newItem: '&7Buraya yeni eşya yerleştirin'
-  newLine: '&2<NewLine>'
-  newLineHover: '&2Yeni hat ekle'
-  newPage: '&2<NewPage>'
-  newPageHover: '&2Yeni sayfa oluştur'
-  removePage: '&c<RemovePage>'
-  removePageHover: '&cSayfayı kaldır'
-  deleteSymbol: ' &c[X]'
-  deleteSymbolHover: '&cSil &e[text]'
-  extraEditSymbol: ' &6!'
-  addSymbol: '&2[+]'
-  addSymbolHover: '&2Yeni ekle'
-  cancelSymbol: ' &7&l[X]'
-  cancelSymbolHover: '&aİptal'
-  acceptSymbol: ' &2&l[✔]'
-  acceptSymbolHover: '&aKabul'
-  denySymbol: ' &4&l[X]'
-  denySymbolHover: '&cReddedildi'
-  enabledSymbol: '&2[+]'
-  disabledSymbol: '&c[-]'
-  enabled: '&2Etkin'
-  disabled: '&cDevre dışı'
-  running: '&2İşleniyor'
-  paused: '&cDurduruldu'
-  editSymbol: '&e✎'
-  editSymbolHover: '&eDüzenle &6[text]'
+  middlemouse: '{gcn}Düzenlemek için orta fare tuşuna tıkla'
+  qButtonEdit: '{gcn}Düzenlemek için Q tuşuna bas'
+  newItem: '{gcp}Yeni eşyayı buraya yerleştir'
+  newLine: '{gcn}<YeniSatır>'
+  newLineHover: '{gcp}Yeni satır ekle'
+  newPage: '{gcn}<YeniSayfa>'
+  newPageHover: '{gcp}Yeni sayfa oluştur'
+  removePage: '{gcw}<SayfayıKaldır>'
+  removePageHover: '{gcw}Sayfayı kaldır'
+  deleteSymbol: ' {gcw}[X]'
+  deleteSymbolHover: '{gcw}{gcs}[text] ögesini sil'
+  extraEditSymbol: ' {gcp}!'
+  addSymbol: '{gcu}[+]'
+  addSymbolHover: '{gcu}Yeni ekle'
+  cancelSymbol: ' {gcn}&l[X]'
+  cancelSymbolHover: '{gcn}İptal et'
+  acceptSymbol: ' {gcu}&l[✔]'
+  acceptSymbolHover: '{gcu}Kabul et'
+  denySymbol: ' {gcd}&l[X]'
+  denySymbolHover: '{gcw}Reddet'
+  enabledSymbol: '{gcu}[+]'
+  disabledSymbol: '{gcw}[-]'
+  enabled: '{gcu}Etkin'
+  disabled: '{gcw}Devre dışı'
+  running: '{gcp}Çalışıyor'
+  paused: '{gcw}Duraklatıldı'
+  editSymbol: '{gcs}✎'
+  editSymbolHover: '{gcs}[text] {gcp}ögesini düzenle'
   editLineColor: '&f'
-  listUpSymbol: '&6⇑'
-  listUpSymbolHover: '&eYukarı'
-  listDownSymbol: '&6⇓'
-  listDownSymbolHover: '&eAşağı'
-  listNumbering: '&e[number]. '
+  listUpSymbol: '{gcp}⇑'
+  listUpSymbolHover: '{gcp}Yukarı'
+  listDownSymbol: '{gcp}⇓'
+  listDownSymbolHover: '{gcp}Aşağı'
+  listNumbering: '{gcs}[number]. '
   listAlign: '&80'
-  ChangeHover: '&eDeğiştirmek için tıkla'
-  ChangeCommands: '&eCommands'
-  enabledColor: '&6'
-  disabledColor: '&7'
-  commandTitle: ' &e--- &6[name] &e---'
-  commandList: ' &e[command]  '
-  emptyLine: '&7[Empty line]'
-  commandEdit: '&eListeyi düzenle'
-  lineAddInfo: '&eYeni hat ekle. %6İptal etmek için iptal yazın'
-  commandAddInfo: '&eYeni komut ekle. &6İptal etmek için cancel yazın'
-  commandAddInformationHover: "&e[playerName] Oyuncu adını almak için kullanılabilir\
-    \ \n&eTo Komutlarda gecikme dahil: \n&edelay! 5 \n&eÖzel komutlar desteklenir.\
-    \ Daha fazla bilgi \n&ehttps://www.zrips.net/cmi/commands/specialized/"
-  commandEditInfo: '&eEski metni yapıştırmak için tıklayın. &6İptal etmek için cancel
-    yazın'
-  listLimit: '&eList can''t be bigger than &6[amount] &eentries'
-  commandEditInfoHover: '&eEski metni yapıştırmak için tıkla'
-warp:
-  list: '&e[pos]. &6[warpName] &f- &7[worldName] ([x]:[y]:[z])'
+  ChangeHover: '{gcp}Değiştirmek için tıkla'
+  ChangeCommands: '{gcp}Komutlar'
+  enabledColor: '{gcu}'
+  disabledColor: '{gcd}'
+  commandTitle: ' {gcp}--- {gcs}[name] {gcp}---'
+  commandList: ' {gcs}[command]  '
+  emptyLine: '{gcn}[Boş satır]'
+  commandEdit: '{gcp}Listeyi düzenle'
+  nameAddInfo: '{gcp}Yeni ismi gir. İptal etmek için {gcs}cancel {gcp}yaz'
+  lineAddInfo: '{gcp}Yeni satırı gir. İptal etmek için {gcs}cancel {gcp}yaz'
+  commandAddInfo: '{gcp}Yeni komutu gir. İptal etmek için {gcs}cancel {gcp}yaz'
+  commandAddInformationHover: "{gcp}Oyuncu adını almak için [playerName] kullanılabilir\
+    \ \n{gcp}Komutlara gecikme eklemek için: \n{gcp}delay! 5 \n{gcp}Özel komutlar\
+    \ desteklenir. Daha fazla bilgi: \n{gcp}https://www.zrips.net/cmi/commands/specialized/"
+  commandEditInfo: '{gcp}Eski metni yapıştırmak için tıkla. İşlemi iptal etmek için
+    {gcs}cancel {gcp}yaz'
+  listLimit: '{gcp}Liste {gcs}[amount] {gcp}kayıttan uzun olamaz'
+  commandEditInfoHover: '{gcp}Eski metni yapıştırmak için tıkla'
 teleportation:
-  relocation: '!actionbar!&4Işınlanma konumunuz engellendi. Güvenli bir lokasyona
-    ışınlandın.'
-afk:
-  'on': '&6AFK'
-  'off': '&7Oynuyor'
-  left: '&6[playerDisplayName] &eartık AFK değil'
-  MayNotRespond: '&eOyuncu AFK ve yanıt vermeyebilir'
-  MayNotRespondStaff: '&eYetkili üyesi AFK ve yanıt vermeyebilir. Bizim ile discorddan
-    iletişime geçin'
-BossBar:
-  hpBar: '&f[victim] &e[current]&f/&e[max] &f(&c-[damage]&f)'
-Potion:
-  Effects: '&8İksir etkileri'
-  List: '&e[PotionName] [PotionAmplifier] &eSüre: &e[LeftDuration] &esaniye'
-  NoPotions: '&eNone'
-Information:
-  Title: '&8Oyuncuların bilgileri'
-  Health: '&eKalp: &6[Health]/[maxHealth]'
-  Hunger: '&eAçlık: &6[Hunger]'
-  Saturation: '&eDoyma: &6[Saturation]'
-  Exp: '&eTecrübe: &6[Exp]'
-  NotEnoughExp: '&e tecrübe yeterli değil: &6[Exp]'
-  NotEnoughExpNeed: '&e tecrübe yeterli değil: &6[Exp]/[need]'
-  tooMuchExp: '&eÇok fazla xp: &6[Exp]/[need]'
-  NotEnoughVotes: '&eoy yeterli değil: &6[votes]'
-  TooMuchVotes: '&eÇok fazla oy: &6[votes]'
-  BadGameMode: '&cŞuanki oyun modunda bunu yapamazsın'
-  BadArea: '&cBu eylemi bu bölgede yapamazsın'
-  GameMode: '&eOyun modu: &6[GameMode]'
-  GodMode: '&eGodMode: &6[GodMode]'
-  Flying: '&eFlying: &6[Flying]'
-  CanFly: '&eCan Fly: &6[CanFly]'
-  Uuid: '&6[uuid]'
-  ip: '&eIp address: &6[address]'
-  FirstConnection: '&eİlk bağlantı: &6[time]'
-  Lastseen: '&eSon görülme: &6[time]'
-  Onlinesince: '&eZamandan beri çevrimiçi: &6[time]'
-  Money: '&ePara: &6[money]'
-  Group: '&eGrup: &6[group]'
+  relocation: '!actionbar!{gcd}Işınlanma konumun kapalıydı. Güvenli bir konuma ışınlandın.'
 econ:
-  disabled: '&cEkonomi desteği devre dışı bırakıldığında bu komutu kullanamazsınız'
-  noMoney: '&cParanız yok'
-  charged: '!actionbar!&fYenilendi: &6[amount]'
-  notEnoughMoney: '&cYeterli miktarda paran yok. Gerekli olan: (&6[amount]&c)'
-  tooMuchMoney: '&cÇok fazla paran var'
-  commandCost: '&7Bu komutun bedeli: &6[cost] &7komutu tekrarla veya tıklayarak onayla'
-Elytra:
-  Speed: '&eHız: &6[speed]&ekm/h'
-  SpeedBoost: ' &a+ '
-  SpeedSuperBoost: ' &2+ '
-  CanUse: '&cYetki olmadan elytrayı kullanamazsın!'
-  CantGlide: '&cCan''t use elytra here!'
-  Charging: '&eYenileniliyor &f[percentage]&e%'
+  noMoney: '{gcw}Paran yok'
+  charged: '!actionbar!{gcp}Alınan ücret: {gcs}[amount]'
+  notEnoughMoney: '{gcw}Yeterli paran yok. Gereken: ({gcs}[amount]{gcw})'
+  tooMuchMoney: '{gcw}Çok fazla paran var'
 Selection:
-  SelectPoints: '&cSeçme aleti ile 2 nokta seç! AKA: &6[tool]'
-  PrimaryPoint: '&6İlk seçim noktası yerleştirildi [point]'
-  SecondaryPoint: '&6İkinci seçim noktası yerleştirildi [point]'
-  CoordsTop: '&eX:&6[x] &eY:&6[y] &eZ:&6[z]'
-  CoordsBottom: '&eX:&6[x] &eY:&6[y] &eZ:&6[z]'
-  Area: '&7[world] &f(&6[x1]:[y1]:[z1] &e[x2]:[y2]:[z2]&f)'
-NetherPortal:
-  ToHigh: '&cPortal çok büyük, maksimum yükseklik: &6[max]&c!'
-  ToWide: '&cPortal çok geniş, maksimum genişlik &6[max]&c!'
-  Creation: '!actionbar!&7[height]x[width] Boyutunda cehennem portalı oluşturuldu!'
-  Disabled: '&cPortal oluşumu devre dışı bırakıldı!'
+  SelectPoints: '{gcw}Seçim aracıyla 2 nokta seç! Araç: {gcs}[tool]'
+  PrimaryPoint: '{gcp}{gcs}1. {gcp}seçim noktası yerleştirildi: [point]'
+  SecondaryPoint: '{gcp}{gcs}2. {gcp}seçim noktası yerleştirildi: [point]'
+  CoordsTop: '{gcp}X:{gcs}[x] {gcp}Y:{gcs}[y] {gcp}Z:{gcs}[z]'
+  CoordsBottom: '{gcp}X:{gcs}[x] {gcp}Y:{gcs}[y] {gcp}Z:{gcs}[z]'
+  Area: '{gcn}[world] {gcp}({gcs}[x1]:[y1]:[z1] {gcp}[x2]:[y2]:[z2]{gcp})'
 Location:
-  Title: '&8Oyuncu konumu'
-  Killer: '&eKatil: &6[killer]'
-  OneLiner: '&eKonum: &6[location]'
-  DeathReason: '&eÖlüm sebebi: &6[reason]'
-  Full: '&7[world] &f[x]&7:&f[y]&7:&f[z]'
-  World: '&eDünya: &6[world]'
-  X: '&eX: &6[x]'
-  Y: '&eY: &6[y]'
-  Z: '&eZ: &6[z]'
-  Pitch: '&eYer: &6[pitch]'
-  Yaw: '&eYaw: &6[yaw]'
-Locations: '&7Locations: '
-Ender:
-  Title: '&7Ender sandığı açmak'
-Chat:
-  localPrefix: ''
-  shoutPrefix: '&c[S]&r'
-  LocalNoOne: '!actionbar!&cNobody hear you, write ! before message for global chat'
-  shoutDeduction: '!actionbar!&cbağırmak için &e[amount] &cçıkarıldı'
-  # Use \n to add new line
-  publicHover: '&eGönderilme süresi: &6%server_time_hh:mm:ss%'
-  privateHover: '&eGönderilme süresi: &6%server_time_hh:mm:ss%'
-  staffHover: '&eGönderilme süresi: &6%server_time_hh:mm:ss%'
-  helpopHover: '&eGönderilme süresi: &6%server_time_hh:mm:ss%'
-  link: '&l&4[&7LINK&4]'
-  item: '&7[%cmi_iteminhand_displayname%[amount]&7]'
-  itemAmount: ' x[amount]'
-  itemEmpty: '&7[Mighty fist]'
+  Title: '{gcp}Oyuncunun konumu'
+  Killer: '{gcp}Öldüren: {gcs}[killer]'
+  OneLiner: '{gcp}Konum: {gcs}[location]'
+  DeathReason: '{gcp}Ölüm nedeni: {gcs}[reason]'
+  Full: '{gcp}[world] {gcs}[x]{gcp}:{gcs}[y]{gcp}:{gcs}[z]'
+  World: '{gcp}Dünya: {gcs}[world]'
+  X: '{gcp}X: {gcs}[x]'
+  Y: '{gcp}Y: {gcs}[y]'
+  Z: '{gcp}Z: {gcs}[z]'
+  Pitch: '{gcp}Pitch: {gcs}[pitch]'
+  Yaw: '{gcp}Yaw: {gcs}[yaw]'
+  WorldNames:
+  - world-&2Dünya
+  - world_nether-&2Nether Dünyası
+  - world_the_end-&2End Dünyası
+Locations: '{gcp}Konumlar: '
+command:
+  help:
+    output:
+      usage: '&eKullanım: &7%usage%'
+      cmdInfoFormat: '[command] &f- &e[description]'
+      cmdFormat: '&6/[command]&f[arguments]'
+      helpPageDescription: '&e* [description]'
+      explanation: '&e * [explanation]'
+      title: '&e------ ======= &6Yardım&e &e======= ------'
+  nocmd:
+    help:
+      info: '&eKullanılabilir tüm komutları gösterir'
+      args: ''
+  clearcache:
+    help:
+      info: '&eÖnbelleği temizler'
+      args: ''
+  reload:
+    help:
+      info: '&eEklenti yapılandırmalarını ve dil dosyalarını yeniden yükler'
+      args: ''
+    info:
+      feedback: '&6CMIL yapılandırmaları ve dil dosyaları yeniden yüklendi! [ms] ms
+        sürdü'
+      failedConfig: '&4Yapılandırma dosyası yüklenemedi! Yazımı kontrol et!'
+      failedLocale: '&4Dil dosyası yüklenemedi! Yazımı kontrol et!'
