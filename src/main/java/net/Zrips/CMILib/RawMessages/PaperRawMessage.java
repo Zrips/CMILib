@@ -50,6 +50,8 @@ public class PaperRawMessage implements RawMessageBackend {
     private boolean freezeFormat = false;
     private Component frozenFormat = Component.empty();
 
+    private Style lastFormat = Style.empty();
+
     @Override
     public RawMessageBackend RawMessage() {
         return this;
@@ -88,7 +90,12 @@ public class PaperRawMessage implements RawMessageBackend {
             if (freezeFormat && frozenFormat != null)
                 component = component.style(component.style().merge(frozenFormat.style(), Style.Merge.Strategy.IF_ABSENT_ON_TARGET));
 
+            if (!freezeFormat && !message.equals(Component.empty()) && component.style().color() == null) {
+                component = component.style(component.style().merge(lastFormat, Style.Merge.Strategy.IF_ABSENT_ON_TARGET));
+            }
+
             message = message.append(applyEvents(component));
+            lastFormat = getLastEffectiveStyle(message, Style.empty());
             pending = Component.empty();
         }
 
@@ -99,14 +106,15 @@ public class PaperRawMessage implements RawMessageBackend {
         return this;
     }
 
-    private static Component getLastComponent(Component component) {
+    private static Style getLastEffectiveStyle(Component component, Style inherited) {
+        Style effective = component.style().merge(inherited, Style.Merge.Strategy.IF_ABSENT_ON_TARGET);
         List<Component> children = component.children();
 
         if (children.isEmpty()) {
-            return component;
+            return effective;
         }
 
-        return getLastComponent(children.get(children.size() - 1));
+        return getLastEffectiveStyle(children.get(children.size() - 1), effective);
     }
 
     @Override
@@ -117,6 +125,7 @@ public class PaperRawMessage implements RawMessageBackend {
         clickEvent = null;
         insertion = null;
         plainText.clear();
+        lastFormat = Style.empty();
     }
 
     @Override
@@ -393,7 +402,7 @@ public class PaperRawMessage implements RawMessageBackend {
         commit();
 
         if (sender instanceof Player) {
-            ((Player) sender).sendMessage(message);
+            sender.sendMessage(message);
         } else {
             sender.sendMessage(getCombinedClean());
         }
@@ -470,8 +479,7 @@ public class PaperRawMessage implements RawMessageBackend {
         if (message.equals(Component.empty())) {
             frozenFormat = Component.empty();
         } else {
-            Component last = getLastComponent(message);
-            frozenFormat = Component.empty().style(last.style());
+            frozenFormat = Component.empty().style(getLastEffectiveStyle(message, Style.empty()));
         }
 
         freezeFormat = true;
@@ -625,6 +633,7 @@ public class PaperRawMessage implements RawMessageBackend {
         message = Component.empty();
         pending = Component.empty();
         plainText.clear();
+        lastFormat = Style.empty();
 
         if (combined == null || combined.isEmpty()) {
             return;
