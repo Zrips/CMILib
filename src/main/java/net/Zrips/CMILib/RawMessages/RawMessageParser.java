@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import net.Zrips.CMILib.CMILib;
 import net.Zrips.CMILib.Colors.CMIChatColor;
 import net.Zrips.CMILib.Items.CMIItemStack;
+import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Shadow.ShadowCommand;
 import net.Zrips.CMILib.Shadow.ShadowCommandType;
 import net.Zrips.CMILib.commands.CommandsHandler;
@@ -23,7 +24,7 @@ public class RawMessageParser {
 
     public static RawMessage translateTextOnlyRawMessage(String textLine) {
 
-        textLine = textLine.replace("\n", "\\n");
+        textLine = RawMessage.supportsAdventureComponents() ? textLine : textLine.replace("\n", "\\n");
 
         List<String> split = new ArrayList<String>();
         if (textLine.contains("<Next>"))
@@ -56,7 +57,7 @@ public class RawMessageParser {
 
     public static RawMessage translateRawMessage(CommandSender sender, String textLine, boolean book) {
 
-        textLine = textLine.replace("\n", "\\n");
+        textLine = RawMessage.supportsAdventureComponents() ? textLine : textLine.replace("\n", "\\n");
 
         List<String> split = new ArrayList<String>();
         if (textLine.contains("<Next>"))

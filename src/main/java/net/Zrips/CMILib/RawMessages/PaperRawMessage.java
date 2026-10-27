@@ -83,6 +83,18 @@ public class PaperRawMessage implements RawMessageBackend {
         return component;
     }
 
+    private static boolean hasColor(Component component) {
+        if (component.style().color() != null)
+            return true;
+
+        for (Component child : component.children()) {
+            if (hasColor(child))
+                return true;
+        }
+
+        return false;
+    }
+
     private PaperRawMessage commit() {
         if (!pending.equals(Component.empty())) {
             Component component = pending;
@@ -90,7 +102,7 @@ public class PaperRawMessage implements RawMessageBackend {
             if (freezeFormat && frozenFormat != null)
                 component = component.style(component.style().merge(frozenFormat.style(), Style.Merge.Strategy.IF_ABSENT_ON_TARGET));
 
-            if (!freezeFormat && !message.equals(Component.empty()) && component.style().color() == null) {
+            if (!freezeFormat && !message.equals(Component.empty()) && !hasColor(component)) {
                 component = component.style(component.style().merge(lastFormat, Style.Merge.Strategy.IF_ABSENT_ON_TARGET));
             }
 
@@ -142,6 +154,16 @@ public class PaperRawMessage implements RawMessageBackend {
         return this;
     }
 
+    private static boolean endsWithReset(String text) {
+        if (text == null)
+            return false;
+
+        int lastReset = Math.max(text.lastIndexOf("§r"), text.lastIndexOf("&r"));
+        int lastColor = Math.max(text.lastIndexOf('§'), text.lastIndexOf('&'));
+
+        return lastReset >= 0 && lastReset == lastColor;
+    }
+
     @Override
     public PaperRawMessage addText(String text, boolean colorize) {
         if (text == null || text.isEmpty())
@@ -149,6 +171,9 @@ public class PaperRawMessage implements RawMessageBackend {
 
         if (!pending.equals(Component.empty()))
             commit();
+
+        if (endsWithReset(text))
+            lastFormat = Style.empty();
 
         pending = colorize ? parse(text) : CMIKyori.deserializeLegacy(text);
         plainText.add(colorize ? CMIChatColor.translate(text) : text);
