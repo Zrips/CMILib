@@ -49,7 +49,7 @@ public class RawMessage {
         return supportsAdventureComponents() ? new PaperRawMessage() : new LegacyRawMessage();
     }
 
-    private static boolean supportsAdventureComponents() {
+    static boolean supportsAdventureComponents() {
         return !CMILibConfig.legacyRawMessage && Version.isPaperBranch() && Version.isCurrentEqualOrHigher(Version.v1_16_0);
     }
 
