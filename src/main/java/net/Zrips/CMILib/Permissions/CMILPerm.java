@@ -155,7 +155,7 @@ public enum CMILPerm {
 	if (!has && inform) {
 	    boolean showPerm = CMILibConfig.permisionOnError || CMILPerm.permisiononerror.hasPermission(sender);
 	    RawMessage rm = new RawMessage();
-	    rm.add(CMIMessages.getMsg(LC.info_NoPermission), showPerm ? perm : null);
+	    rm.add(CMIMessages.getMsg(LC.info_NoPermission, player), showPerm ? perm : null);
 	    rm.show(sender);
 
 	    informConsole(sender, perm, informConsole);
@@ -184,7 +184,7 @@ public enum CMILPerm {
 	if (!has && inform) {
 	    boolean showPerm = CMILibConfig.permisionOnError || CMILPerm.permisiononerror.hasPermission(sender);
 	    RawMessage rm = new RawMessage();
-	    rm.add(CMIMessages.getMsg(LC.info_NoPermission), showPerm ? perm : null);
+	    rm.add(CMIMessages.getMsg(LC.info_NoPermission, sender instanceof Player ? (Player) sender : null), showPerm ? perm : null);
 	    rm.show(sender);
 
 	    informConsole(sender, perm, true);
@@ -223,7 +223,7 @@ public enum CMILPerm {
 	if (output) {
 	    boolean showPerm = CMILibConfig.permisionOnError || CMILPerm.permisiononerror.hasPermission(sender);
 	    RawMessage rm = new RawMessage();
-	    rm.addText(CMIMessages.getMsg(LC.info_NoPermission)).addHover(showPerm ? permision : null);
+	    rm.addText(CMIMessages.getMsg(LC.info_NoPermission, player)).addHover(showPerm ? permision : null);
 	    rm.show(sender);
 
 	    informConsole(sender, permision, informConsole);

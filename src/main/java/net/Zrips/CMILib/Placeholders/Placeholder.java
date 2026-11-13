@@ -39,6 +39,8 @@ public class Placeholder {
     Random random = new Random(System.nanoTime());
 
     public enum CMIPlaceHolders {
+
+        command("Returns the command the player performed, without the leading /"),
         ;
 
         static LinkedHashMap<String, CMIPlaceHolders> byNameStatic = new LinkedHashMap<String, CMIPlaceHolders>();
@@ -431,7 +433,7 @@ public class Placeholder {
                     String with = this.getValue(uuid, place, group);
                     if (with == null)
                         with = "";
-                    message = message.replaceFirst(Matcher.quoteReplacement(group), Matcher.quoteReplacement(with));
+                    message = message.replaceFirst(Pattern.quote(group), Matcher.quoteReplacement(with));
                 }
             } catch (Throwable e) {
             }
@@ -529,6 +531,32 @@ public class Placeholder {
 
     private HashMap<String, String> randomCache = new HashMap<String, String>();
 
+    private static final HashMap<UUID, String> lastCommands = new HashMap<UUID, String>();
+
+    /**
+     * Stores the last command a player performed so it can later be read back
+     * through the {command} placeholder. The leading / is stripped.
+     */
+    public static void setLastCommand(UUID uuid, String command) {
+        if (uuid == null || command == null)
+            return;
+
+        if (command.startsWith("/"))
+            command = command.substring(1);
+
+        lastCommands.put(uuid, command);
+    }
+
+    public static String getLastCommand(UUID uuid) {
+        if (uuid == null)
+            return null;
+        return lastCommands.get(uuid);
+    }
+
+    public static void removeLastCommand(UUID uuid) {
+        lastCommands.remove(uuid);
+    }
+
     public String getValue(Player player, CMIPlaceHolders placeHolder) {
         return getValue(player, placeHolder, null);
     }
@@ -538,6 +566,16 @@ public class Placeholder {
     }
 
     public String getValue(UUID uuid, CMIPlaceHolders placeHolder, String value) {
+        if (placeHolder == null)
+            return null;
+
+        switch (placeHolder) {
+        case command:
+            return getLastCommand(uuid);
+        default:
+            break;
+        }
+
         return null;
     }
 

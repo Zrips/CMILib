@@ -25,6 +25,7 @@ import net.Zrips.CMILib.Locale.Language;
 import net.Zrips.CMILib.Logs.CMIDebug;
 import net.Zrips.CMILib.Logs.CMILogManager;
 import net.Zrips.CMILib.Messages.CMIMessages;
+import net.Zrips.CMILib.Placeholders.CommandPlaceholderListener;
 import net.Zrips.CMILib.Placeholders.Placeholder;
 import net.Zrips.CMILib.Placeholders.PlaceholderAPIHook;
 import net.Zrips.CMILib.RawMessages.RawMessageListener;
@@ -298,6 +299,7 @@ public class CMILib extends JavaPlugin {
         pm.registerEvents(new RawMessageListener(), this);
         pm.registerEvents(new ShadowCommandListener(), this);
         pm.registerEvents(new WorldsListener(), this);
+        pm.registerEvents(new CommandPlaceholderListener(), this);
         getCommandManager().fillCommands();
 
         // Primary initialization to record locale
